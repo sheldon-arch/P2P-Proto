@@ -21,6 +21,7 @@ import { transition, legalActions } from "@/lib/services/transition-engine";
 import { stripHiddenFields } from "@/lib/rbac/field-visibility";
 import { buildSeedSnapshot } from "@/lib/seed";
 import { computeWorklist, buildReorderRequisition, type WorklistRow } from "@/lib/services/reorder-service";
+import { splitAwardIntoPos, type AwardLine } from "@/lib/services/award-split";
 import { DEMO_TODAY } from "@/lib/domain/constants";
 
 // collection name -> the entity label used by field-visibility rules
@@ -137,6 +138,44 @@ export const handlers = [
     store.put("tickets", ticket);
     store.put("requisitionLines", line);
     return HttpResponse.json({ ticketId, ticket, line }, { status: 201 });
+  }),
+
+  // ---- award an RFQ: split awarded lines into one PO per supplier ---
+  http.post("/api/rfq/:id/award", async ({ params, request }) => {
+    await settleDelay();
+    const rfqId = params.id as string;
+    const body = (await request.json().catch(() => ({}))) as { awards: AwardLine[]; justification?: string };
+    const awards = body.awards ?? [];
+    if (awards.length === 0) return HttpResponse.json({ error: "no awards" }, { status: 400 });
+    const rfq = store.get("rfqs", rfqId);
+    const ticketId = (rfq?.ticketId as string) ?? (rfq?.requisitionId as string) ?? null;
+
+    const split = splitAwardIntoPos(awards);
+    const poIds: string[] = [];
+    for (const po of split) {
+      const poId = store.nextId("PO");
+      store.put("purchaseOrders", {
+        id: poId,
+        ticketId,
+        rfqId,
+        supplierId: po.supplierId,
+        status: "DRAFT",
+        poDate: DEMO_TODAY,
+        currency: po.currency,
+        value: po.value,
+        poValueInBase: po.value,
+        lines: po.lines,
+        fromMultiSupplierAward: split.length > 1,
+      });
+      poIds.push(poId);
+    }
+    store.patch("rfqs", rfqId, {
+      status: "awarded",
+      awardedSupplierIds: split.map((p) => p.supplierId),
+      resultingPoIds: poIds,
+      awardJustification: body.justification ?? null,
+    });
+    return HttpResponse.json({ poIds, supplierCount: split.length }, { status: 201 });
   }),
 
   // ---- post a stock movement (ADJUSTMENT / TRANSFER) ----------------

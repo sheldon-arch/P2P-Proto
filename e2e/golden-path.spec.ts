@@ -63,9 +63,11 @@ test("landed-cost compare shows the flip and awards", async ({ page }) => {
   // the price spike is flagged on BioCore
   await expect(page.getByTestId("spike-flag")).toBeVisible();
 
-  // award the lowest-landed (Synthex SUP-0001) — no justification needed
-  await page.getByTestId("award-SUP-0001").click();
-  await expect(page.getByText(/awarded to/i).first()).toBeVisible({ timeout: 10_000 });
+  // the lowest-landed (Synthex SUP-0001) is pre-selected; award (single line -> 1 PO)
+  // RFQ-HERO quotes carry itemId (no lineId), so the comparison group key is the itemId.
+  await expect(page.getByTestId("pick-ITM-0006-SUP-0001")).toBeVisible();
+  await page.getByTestId("award-submit").click();
+  await expect(page.getByTestId("award-result")).toBeVisible({ timeout: 10_000 });
 });
 
 // ---- Phase 3: PO -> receipt -> quality --------------------------------

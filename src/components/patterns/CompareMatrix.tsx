@@ -1,57 +1,110 @@
 "use client";
 
 /**
- * Landed-cost comparison matrix — the marquee sourcing screen. Shows each
- * supplier's quote side by side, breaks landed cost into unit + freight + duty,
- * highlights the lowest-landed winner, flags the cheapest-unit-but-not-winner
- * (the flip) and the >5% price spike, and lets the buyer award (with a
- * justification required when not picking the lowest-landed quote).
+ * Landed-cost comparison matrix — the marquee sourcing screen, now PER-LINE.
+ * Quotes are grouped by requisition line; for each line the buyer picks a winning
+ * supplier (defaulting to lowest landed cost). Awarding splits the selections
+ * into ONE PO per distinct supplier (real multi-supplier sourcing). A
+ * single-line RFQ behaves exactly as before (one group, one PO). Shows the
+ * landed-cost flip and the price-spike flag per line; a justification is required
+ * when any line is awarded to a non-lowest-landed supplier.
  */
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Trophy, TrendingUp, AlertTriangle } from "lucide-react";
-import { useList, useUpdate } from "@/queries/hooks";
+import { Trophy, TrendingUp, AlertTriangle, CheckCircle2 } from "lucide-react";
+import { useList, useAwardRfq } from "@/queries/hooks";
 import { rankQuotes, rankingFlipped, type Quote } from "@/lib/services/landed-cost";
 import { RuleBanner } from "./RuleBanner";
 import { cn } from "@/lib/utils";
 
 const money = (v: number, ccy?: string) =>
-  `${ccy ? ccy + " " : ""}${v.toLocaleString(undefined, { maximumFractionDigits: 2 })}`;
+  `${ccy ? ccy + " " : ""}${v.toLocaleString(undefined, { maximumFractionDigits: 3 })}`;
+
+type Q = Quote & Record<string, unknown>;
 
 export function CompareMatrix({ rfqId }: { rfqId: string }) {
-  const { data: quotesRaw, isLoading } = useList<Quote & Record<string, unknown>>("quotes");
+  const router = useRouter();
+  const { data: quotesRaw, isLoading } = useList<Q>("quotes");
+  const { data: rfqs } = useList<Record<string, unknown>>("rfqs");
   const { data: suppliers } = useList<Record<string, unknown>>("suppliers");
-  const updateRfq = useUpdate("rfqs");
-  const [awarded, setAwarded] = useState<string | null>(null);
+  const award = useAwardRfq();
+  const [picked, setPicked] = useState<Record<string, string>>({}); // lineId -> supplierId
   const [justification, setJustification] = useState("");
+  const [awardedPoIds, setAwardedPoIds] = useState<string[] | null>(null);
+
+  const rfq = (rfqs ?? []).find((r) => String(r.id) === rfqId);
+  const supplierName = (id: string) => String((suppliers ?? []).find((s) => s.id === id)?.name ?? id);
+
+  // group this RFQ's quotes by lineId (fall back to itemId for single-line RFQs)
+  const lines = useMemo(() => {
+    const qs = (quotesRaw ?? []).filter((q) => q.rfqId === rfqId);
+    const groups = new Map<string, Q[]>();
+    for (const q of qs) {
+      const key = String(q.lineId ?? q.itemId ?? "line");
+      (groups.get(key) ?? groups.set(key, []).get(key)!).push(q);
+    }
+    return [...groups.entries()].map(([lineId, quotes]) => ({
+      lineId,
+      itemId: String(quotes[0].itemId ?? ""),
+      ranked: rankQuotes(quotes),
+    }));
+  }, [quotesRaw, rfqId]);
 
   if (isLoading) return null;
-  const quotes = (quotesRaw ?? []).filter((q) => q.rfqId === rfqId);
-  if (quotes.length === 0) {
+  if (lines.length === 0) {
     return <RuleBanner tone="info" title="No quotes yet" testId="no-quotes">Quotes appear here once suppliers respond to the RFQ.</RuleBanner>;
   }
 
-  const ranked = rankQuotes(quotes);
-  const flipped = rankingFlipped(ranked);
-  const supplierName = (id: string) =>
-    String((suppliers ?? []).find((s) => s.id === id)?.name ?? id);
+  const isMultiLine = lines.length > 1;
+  const anyFlip = lines.some((l) => rankingFlipped(l.ranked));
 
-  async function award(quoteId: string, supplierId: string, isLowestLanded: boolean) {
-    if (!isLowestLanded && justification.trim() === "") {
+  // default each line's pick to its lowest-landed supplier
+  function supplierForLine(lineId: string): string {
+    if (picked[lineId]) return picked[lineId];
+    const line = lines.find((l) => l.lineId === lineId)!;
+    return line.ranked.find((q) => q.isLowestLanded)?.supplierId ?? line.ranked[0].supplierId;
+  }
+
+  // is any selection a non-lowest-landed pick (requires justification)?
+  const needsJustification = lines.some((l) => {
+    const sel = supplierForLine(l.lineId);
+    return !l.ranked.find((q) => q.supplierId === sel)?.isLowestLanded;
+  });
+
+  // distinct suppliers across selections (preview of how many POs will result)
+  const distinctSuppliers = new Set(lines.map((l) => supplierForLine(l.lineId))).size;
+
+  async function doAward() {
+    if (needsJustification && justification.trim() === "") {
       toast.error("A justification is required to award a non-lowest-landed quote.");
       return;
     }
+    const awards = lines.map((l) => {
+      const sel = supplierForLine(l.lineId);
+      const q = l.ranked.find((x) => x.supplierId === sel)!;
+      // quantity from the matching RFQ line item (match by lineId, else by itemId
+      // for single-line RFQs whose quotes carry only itemId)
+      const rfqLines = (rfq?.lineItems as Array<Record<string, unknown>>) ?? [];
+      const li = rfqLines.find((x) => x.lineId === l.lineId) ?? rfqLines.find((x) => x.itemId === l.itemId);
+      return {
+        lineId: String(li?.lineId ?? l.lineId), itemId: l.itemId,
+        quantity: Number(li?.quantity ?? 1), uom: String(li?.uom ?? "EA"),
+        supplierId: sel, unitPrice: q.landed, currency: q.currency,
+      };
+    });
     try {
-      await updateRfq.mutateAsync({
-        id: rfqId,
-        body: { status: "awarded", awardedQuoteId: quoteId, awardedSupplierId: supplierId, awardJustification: justification },
-      });
-      setAwarded(quoteId);
-      toast.success(`Awarded to ${supplierName(supplierId)}`);
+      const res = await award.mutateAsync({ rfqId, awards, justification });
+      setAwardedPoIds(res.poIds);
+      toast.success(
+        res.supplierCount > 1
+          ? `Awarded across ${res.supplierCount} suppliers — ${res.poIds.length} POs created`
+          : `Awarded — PO created`,
+      );
     } catch (e) {
       toast.error((e as Error).message);
     }
@@ -59,76 +112,105 @@ export function CompareMatrix({ rfqId }: { rfqId: string }) {
 
   return (
     <div className="mt-6" data-testid="compare-matrix">
-      {flipped && (
+      {anyFlip && (
         <RuleBanner tone="info" title="Landed-cost reorders the recommendation" testId="landed-flip-banner" tourId="sourcing.compare">
-          The cheapest unit price is not the lowest landed cost. Once freight and duty are
-          included, the recommended award changes. Rank below is by landed cost.
+          The cheapest unit price is not the lowest landed cost. Once freight and duty are included,
+          the recommended award changes. Each line is ranked by landed cost.
+        </RuleBanner>
+      )}
+      {isMultiLine && (
+        <RuleBanner tone="info" title="Multi-line RFQ — award per line" testId="multi-line-banner">
+          This RFQ covers multiple lines. Pick the winning supplier per line; awarding creates one
+          purchase order per distinct supplier. Current selection: {distinctSuppliers} supplier
+          {distinctSuppliers > 1 ? "s" : ""} → {distinctSuppliers} PO{distinctSuppliers > 1 ? "s" : ""}.
         </RuleBanner>
       )}
 
-      <Card className="mt-4">
-        <CardHeader>
-          <CardTitle className="text-base">Landed-cost comparison</CardTitle>
-        </CardHeader>
-        <CardContent className="overflow-x-auto">
-          <div className="grid gap-4" style={{ gridTemplateColumns: `repeat(${ranked.length}, minmax(220px, 1fr))` }}>
-            {ranked.map((q) => (
-              <div
-                key={q.id}
-                data-testid="quote-card"
-                className={cn(
-                  "rounded-lg border p-4",
-                  q.isLowestLanded && "border-status-success bg-status-success-bg",
-                )}
-              >
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-semibold">{supplierName(q.supplierId)}</span>
-                  {q.isLowestLanded && (
-                    <Badge variant="outline" className="border-status-success/40 bg-status-success-bg text-status-success" data-testid="winner-badge">
-                      <Trophy className="mr-1 h-3 w-3" /> Lowest landed
-                    </Badge>
-                  )}
-                </div>
+      {awardedPoIds && (
+        <RuleBanner tone="success" title={`Awarded — ${awardedPoIds.length} PO${awardedPoIds.length > 1 ? "s" : ""} created`} testId="award-result">
+          {awardedPoIds.map((id) => (
+            <Button key={id} variant="link" className="h-auto p-0 text-sm" data-testid={`go-po-${id}`} onClick={() => router.push(`/purchase-orders/${id}`)}>
+              {id}
+            </Button>
+          ))}
+        </RuleBanner>
+      )}
 
-                <div className="mt-3 space-y-1.5 text-sm">
-                  <Row label="Unit price" value={money(q.unitPrice, q.currency)} hint={q.isCheapestUnit ? "cheapest unit" : undefined} />
-                  <Row label="Freight / unit" value={money(q.freightPerUnit ?? 0, q.currency)} />
-                  <Row label="Duty / unit" value={money(q.dutyPerUnit ?? 0, q.currency)} />
-                  <div className="my-2 border-t" />
-                  <div className="flex items-baseline justify-between">
-                    <span className="text-xs uppercase tracking-wide text-muted-foreground">Landed / unit</span>
-                    <span className="font-mono text-lg font-semibold">{money(q.landed)}</span>
-                  </div>
-                  <div className="text-xs text-muted-foreground">Incoterm {q.incoterm} · {q.paymentTerms}</div>
-                </div>
-
-                {q.priceSpikeFlag && (
-                  <div className="mt-2 flex items-center gap-1 rounded bg-status-warning-bg px-2 py-1 text-xs text-status-warning" data-testid="spike-flag">
-                    <AlertTriangle className="h-3 w-3" /> Price spike +{q.priceSpikePct}% vs last purchase
-                  </div>
-                )}
-                {q.isCheapestUnit && !q.isLowestLanded && (
-                  <div className="mt-2 flex items-center gap-1 rounded bg-status-info-bg px-2 py-1 text-xs text-status-info" data-testid="flip-flag">
-                    <TrendingUp className="h-3 w-3" /> Cheapest unit, but freight + duty raise the landed cost
-                  </div>
-                )}
-
-                <Button
-                  className="mt-3 w-full"
-                  size="sm"
-                  variant={q.isLowestLanded ? "default" : "outline"}
-                  disabled={!!awarded || updateRfq.isPending}
-                  onClick={() => award(q.id, q.supplierId, q.isLowestLanded)}
-                  data-testid={`award-${q.supplierId}`}
-                >
-                  {awarded === q.id ? "Awarded" : "Award"}
-                </Button>
+      {lines.map((line) => {
+        const sel = supplierForLine(line.lineId);
+        return (
+          <Card className="mt-4" key={line.lineId} data-testid={`compare-line-${line.lineId}`}>
+            <CardHeader>
+              <CardTitle className="text-base">
+                {isMultiLine ? `Line ${line.itemId}` : "Landed-cost comparison"} — pick a supplier
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="overflow-x-auto">
+              <div className="grid gap-4" style={{ gridTemplateColumns: `repeat(${line.ranked.length}, minmax(220px, 1fr))` }}>
+                {line.ranked.map((q) => {
+                  const isSelected = sel === q.supplierId;
+                  return (
+                    <div
+                      key={q.id}
+                      data-testid="quote-card"
+                      className={cn(
+                        "rounded-lg border p-4",
+                        q.isLowestLanded && "border-status-success bg-status-success-bg",
+                        isSelected && "ring-2 ring-primary",
+                      )}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-semibold">{supplierName(q.supplierId)}</span>
+                        {q.isLowestLanded && (
+                          <Badge variant="outline" className="border-status-success/40 bg-status-success-bg text-status-success" data-testid="winner-badge">
+                            <Trophy className="mr-1 h-3 w-3" /> Lowest landed
+                          </Badge>
+                        )}
+                      </div>
+                      <div className="mt-3 space-y-1.5 text-sm">
+                        <Row label="Unit price" value={money(q.unitPrice, q.currency)} hint={q.isCheapestUnit ? "cheapest unit" : undefined} />
+                        <Row label="Freight / unit" value={money(q.freightPerUnit ?? 0, q.currency)} />
+                        <Row label="Duty / unit" value={money(q.dutyPerUnit ?? 0, q.currency)} />
+                        <div className="my-2 border-t" />
+                        <div className="flex items-baseline justify-between">
+                          <span className="text-xs uppercase tracking-wide text-muted-foreground">Landed / unit</span>
+                          <span className="font-mono text-lg font-semibold">{money(q.landed)}</span>
+                        </div>
+                        <div className="text-xs text-muted-foreground">Incoterm {q.incoterm} · {q.paymentTerms}</div>
+                      </div>
+                      {q.priceSpikeFlag && (
+                        <div className="mt-2 flex items-center gap-1 rounded bg-status-warning-bg px-2 py-1 text-xs text-status-warning" data-testid="spike-flag">
+                          <AlertTriangle className="h-3 w-3" /> Price spike +{q.priceSpikePct}% vs last purchase
+                        </div>
+                      )}
+                      {q.isCheapestUnit && !q.isLowestLanded && (
+                        <div className="mt-2 flex items-center gap-1 rounded bg-status-info-bg px-2 py-1 text-xs text-status-info" data-testid="flip-flag">
+                          <TrendingUp className="h-3 w-3" /> Cheapest unit, but freight + duty raise the landed cost
+                        </div>
+                      )}
+                      <Button
+                        className="mt-3 w-full"
+                        size="sm"
+                        variant={isSelected ? "default" : "outline"}
+                        disabled={!!awardedPoIds}
+                        onClick={() => setPicked((p) => ({ ...p, [line.lineId]: q.supplierId }))}
+                        data-testid={`pick-${line.lineId}-${q.supplierId}`}
+                      >
+                        {isSelected ? <><CheckCircle2 className="mr-1 h-4 w-4" /> Selected</> : "Select"}
+                      </Button>
+                    </div>
+                  );
+                })}
               </div>
-            ))}
-          </div>
+            </CardContent>
+          </Card>
+        );
+      })}
 
-          {!awarded && (
-            <div className="mt-4">
+      {!awardedPoIds && (
+        <div className="mt-4">
+          {needsJustification && (
+            <>
               <label className="text-xs uppercase tracking-wide text-muted-foreground">
                 Justification (required to award a non-lowest-landed quote)
               </label>
@@ -139,10 +221,13 @@ export function CompareMatrix({ rfqId }: { rfqId: string }) {
                 className="mt-1 text-sm"
                 data-testid="award-justification"
               />
-            </div>
+            </>
           )}
-        </CardContent>
-      </Card>
+          <Button className="mt-3" onClick={doAward} disabled={award.isPending} data-testid="award-submit">
+            Award {isMultiLine ? `(${distinctSuppliers} PO${distinctSuppliers > 1 ? "s" : ""})` : ""}
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

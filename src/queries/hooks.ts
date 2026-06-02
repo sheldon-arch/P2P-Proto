@@ -95,6 +95,26 @@ export function useRaiseReorder() {
   });
 }
 
+/** Award an RFQ per-line; splits into one PO per supplier. */
+export function useAwardRfq() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ rfqId, awards, justification }: { rfqId: string; awards: Row[]; justification?: string }) =>
+      fetch(`/api/rfq/${rfqId}/award`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ awards, justification }),
+      }).then(async (r) => {
+        if (!r.ok) throw new Error((await r.json()).error ?? "award failed");
+        return r.json() as Promise<{ poIds: string[]; supplierCount: number }>;
+      }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["rfqs"] });
+      qc.invalidateQueries({ queryKey: ["purchaseOrders"] });
+    },
+  });
+}
+
 /** Post a stock movement (ADJUSTMENT / TRANSFER); re-evaluates the worklist. */
 export function usePostStockMovement() {
   const qc = useQueryClient();
