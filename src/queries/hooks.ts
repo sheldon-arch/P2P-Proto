@@ -69,3 +69,49 @@ export function useTransition<T = Row>(entity: string) {
     onSuccess: () => qc.invalidateQueries({ queryKey: [entity] }),
   });
 }
+
+/** Reorder worklist (computed). */
+export function useReorderWorklist<T = Row>() {
+  return useQuery({
+    queryKey: ["@reorder-worklist"],
+    queryFn: () => api.computed<T[]>("reorder-worklist"),
+  });
+}
+
+/** Raise a replenishment requisition from a worklist row. */
+export function useRaiseReorder() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (row: Row) =>
+      fetch("/api/reorder/raise", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ row }),
+      }).then((r) => r.json() as Promise<{ ticketId: string }>),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["@reorder-worklist"] });
+      qc.invalidateQueries({ queryKey: ["tickets"] });
+    },
+  });
+}
+
+/** Post a stock movement (ADJUSTMENT / TRANSFER); re-evaluates the worklist. */
+export function usePostStockMovement() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (movement: Row) =>
+      fetch("/api/stock-movement", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(movement),
+      }).then(async (r) => {
+        if (!r.ok) throw new Error((await r.json()).error ?? "movement failed");
+        return r.json();
+      }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["inventory"] });
+      qc.invalidateQueries({ queryKey: ["stockMovements"] });
+      qc.invalidateQueries({ queryKey: ["@reorder-worklist"] });
+    },
+  });
+}

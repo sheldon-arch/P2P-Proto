@@ -20,6 +20,8 @@ import { store } from "@/lib/store/store";
 import { transition, legalActions } from "@/lib/services/transition-engine";
 import { stripHiddenFields } from "@/lib/rbac/field-visibility";
 import { buildSeedSnapshot } from "@/lib/seed";
+import { computeWorklist, buildReorderRequisition, type WorklistRow } from "@/lib/services/reorder-service";
+import { DEMO_TODAY } from "@/lib/domain/constants";
 
 // collection name -> the entity label used by field-visibility rules
 const ENTITY_LABEL: Record<string, string> = {
@@ -103,6 +105,72 @@ export const handlers = [
       .map(([category, amount]) => ({ category, amount: Math.round(amount) }))
       .sort((a, b) => b.amount - a.amount);
     return HttpResponse.json({ spend });
+  }),
+
+  // ---- computed: reorder worklist (diagram 13) ----------------------
+  http.get("/api/reorder-worklist", async () => {
+    await settleDelay();
+    const rows = computeWorklist({
+      items: store.list("items"),
+      inventory: store.list("inventory"),
+      tickets: store.list("tickets"),
+      requisitionLines: store.list("requisitionLines"),
+    });
+    return HttpResponse.json(rows);
+  }),
+
+  // ---- raise a replenishment requisition from a worklist row --------
+  http.post("/api/reorder/raise", async ({ request }) => {
+    await settleDelay();
+    const body = (await request.json().catch(() => ({}))) as { row: WorklistRow };
+    const row = body.row;
+    if (!row) return HttpResponse.json({ error: "missing row" }, { status: 400 });
+    // derive purchaseType from the primary supplier (Import if supplier is import-type)
+    const supplier = row.primarySupplierId ? store.get("suppliers", row.primarySupplierId) : undefined;
+    const purchaseType = (supplier?.purchaseType as "Local" | "Import") ?? "Local";
+    const ticketId = store.nextId("TKT");
+    const lineId = store.nextId("TL");
+    const { ticket, line } = buildReorderRequisition({
+      row, requesterId: request.headers.get("x-user-id") ?? "U-INV1",
+      department: "Stores", purchaseType, demoToday: DEMO_TODAY, ticketId, lineId,
+    });
+    store.put("tickets", ticket);
+    store.put("requisitionLines", line);
+    return HttpResponse.json({ ticketId, ticket, line }, { status: 201 });
+  }),
+
+  // ---- post a stock movement (ADJUSTMENT / TRANSFER) ----------------
+  http.post("/api/stock-movement", async ({ request }) => {
+    await settleDelay();
+    const m = (await request.json().catch(() => ({}))) as Record<string, unknown>;
+    const type = String(m.type ?? "ADJUSTMENT");
+    if (type === "ADJUSTMENT" && !String(m.note ?? "").trim()) {
+      return HttpResponse.json({ error: "ADJUSTMENT requires a note" }, { status: 400 });
+    }
+    function applyDelta(itemId: string, warehouseCode: string, delta: number, ref: string) {
+      const bal = store.list("inventory").find((b) => b.itemId === itemId && b.warehouseCode === warehouseCode);
+      const movementId = store.nextId("SMV");
+      store.put("stockMovements", {
+        id: movementId, itemId, warehouseCode, type, quantity: Math.abs(delta),
+        direction: delta >= 0 ? "add" : "subtract", reference: ref, at: DEMO_TODAY, note: m.note ?? null,
+      });
+      if (bal) {
+        const soh = Number(bal.stockOnHand ?? 0) + delta;
+        store.patch("inventory", String(bal.id), {
+          stockOnHand: soh, available: soh - Number(bal.allocated ?? 0), lastMovementAt: DEMO_TODAY,
+        });
+      }
+    }
+    if (type === "TRANSFER") {
+      const qty = Number(m.quantity ?? 0);
+      const orderId = store.nextId("MOV");
+      applyDelta(String(m.itemId), String(m.sourceWarehouse), -qty, orderId);
+      applyDelta(String(m.itemId), String(m.destWarehouse), qty, orderId);
+    } else {
+      const signed = String(m.direction) === "subtract" ? -Number(m.quantity ?? 0) : Number(m.quantity ?? 0);
+      applyDelta(String(m.itemId), String(m.warehouseCode), signed, String(m.reference ?? "manual"));
+    }
+    return HttpResponse.json({ ok: true }, { status: 201 });
   }),
 
   // ---- computed: budget availability --------------------------------

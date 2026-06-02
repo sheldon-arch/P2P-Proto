@@ -33,6 +33,7 @@ export default function NewRequisition() {
   const router = useRouter();
   const { user } = useSession();
   const create = useCreate("tickets");
+  const createLine = useCreate("requisitionLines");
   const { data: budgets } = useList<Record<string, unknown>>("budgets");
 
   const [category, setCategory] = useState("Items");
@@ -78,8 +79,24 @@ export default function NewRequisition() {
         budgetId: budgetId || undefined,
         budgetOverride: overBudget ? { approvedBy: user.id, reason: justification } : undefined,
       });
+      const ticketId = (created as { id: string }).id;
+      // persist each line item so the requisition detail shows them
+      await Promise.all(
+        lines
+          .filter((l) => l.itemId.trim())
+          .map((l) =>
+            createLine.mutateAsync({
+              ticketId,
+              itemId: l.itemId,
+              quantity: Number(l.quantity) || 0,
+              unitPrice: Number(l.unitPrice) || 0,
+              hsCode: isImport ? l.hsCode || undefined : undefined,
+              unitOfMeasure: "EA",
+            }),
+          ),
+      );
       toast.success("Requisition created");
-      router.push(`/requisitions/${(created as { id: string }).id}`);
+      router.push(`/requisitions/${ticketId}`);
     } catch (e) {
       toast.error((e as Error).message);
     }
