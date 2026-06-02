@@ -25,7 +25,19 @@ import { useSession } from "@/lib/session/SessionProvider";
 // `priceAutoFilled` tracks whether the est. unit price was pre-filled from the
 // item master (vs typed by the requester). We only auto-fill while it is still
 // auto-filled/blank, so a value the requester edited is never clobbered.
-type LineDraft = { itemId: string; quantity: string; unitPrice: string; hsCode: string; priceAutoFilled: boolean };
+// Service-category lines (Services) capture serviceName / itemReferenceNumber /
+// contractDuration instead of the goods fields (HS code, unit price), per
+// 02-requisition.md.
+type LineDraft = {
+  itemId: string; quantity: string; unitPrice: string; hsCode: string; priceAutoFilled: boolean;
+  serviceName: string; itemReferenceNumber: string; contractDuration: string;
+};
+
+const CONTRACT_DURATIONS = ["3m", "6m", "1y", "2y", "Custom"];
+const emptyLine = (): LineDraft => ({
+  itemId: "", quantity: "", unitPrice: "", hsCode: "", priceAutoFilled: false,
+  serviceName: "", itemReferenceNumber: "", contractDuration: "",
+});
 
 const CATEGORIES = ["Items", "Spares", "Services", "ProductDesign"];
 const DIRECTIONS = ["Direct", "Indirect"];
@@ -49,9 +61,10 @@ export default function NewRequisition() {
   const [priority, setPriority] = useState("Within1Week");
   const [budgetId, setBudgetId] = useState<string>("");
   const [justification, setJustification] = useState("");
-  const [lines, setLines] = useState<LineDraft[]>([{ itemId: "", quantity: "", unitPrice: "", hsCode: "", priceAutoFilled: false }]);
+  const [lines, setLines] = useState<LineDraft[]>([emptyLine()]);
 
   const isImport = purchaseType === "Import";
+  const isService = category === "Services";
 
   // Last purchase price for a typed item id (the budgetary estimate). Items are
   // matched on `id` (e.g. "ITM-0006"); `code` is a non-unique structured string.
@@ -73,9 +86,12 @@ export default function NewRequisition() {
     setLines((prev) => prev.map((l, idx) => (idx === i ? { ...l, ...patch } : l)));
   }
 
+  // A line is filled if it has an item (goods) or a service name (services).
+  const lineFilled = (l: LineDraft) => (isService ? l.serviceName.trim() !== "" : l.itemId.trim() !== "");
+
   async function submit() {
-    if (lines.every((l) => !l.itemId)) {
-      toast.error("Add at least one line item.");
+    if (lines.every((l) => !lineFilled(l))) {
+      toast.error(isService ? "Add at least one service line." : "Add at least one line item.");
       return;
     }
     if (overBudget && justification.trim() === "") {
@@ -94,19 +110,30 @@ export default function NewRequisition() {
         budgetOverride: overBudget ? { approvedBy: user.id, reason: justification } : undefined,
       });
       const ticketId = (created as { id: string }).id;
-      // persist each line item so the requisition detail shows them
+      // persist each line so the requisition detail shows them. Service lines
+      // carry serviceName/itemReferenceNumber/contractDuration; goods lines carry
+      // item/qty/price/HS.
       await Promise.all(
         lines
-          .filter((l) => l.itemId.trim())
+          .filter(lineFilled)
           .map((l) =>
-            createLine.mutateAsync({
-              ticketId,
-              itemId: l.itemId,
-              quantity: Number(l.quantity) || 0,
-              unitPrice: Number(l.unitPrice) || 0,
-              hsCode: isImport ? l.hsCode || undefined : undefined,
-              unitOfMeasure: "EA",
-            }),
+            createLine.mutateAsync(
+              isService
+                ? {
+                    ticketId,
+                    serviceName: l.serviceName,
+                    itemReferenceNumber: l.itemReferenceNumber || undefined,
+                    contractDuration: l.contractDuration || undefined,
+                  }
+                : {
+                    ticketId,
+                    itemId: l.itemId,
+                    quantity: Number(l.quantity) || 0,
+                    unitPrice: Number(l.unitPrice) || 0,
+                    hsCode: isImport ? l.hsCode || undefined : undefined,
+                    unitOfMeasure: "EA",
+                  },
+            ),
           ),
       );
       toast.success("Requisition created");
@@ -155,45 +182,70 @@ export default function NewRequisition() {
         <CardContent className="space-y-3">
           {lines.map((l, i) => (
             <div key={i} className="grid grid-cols-12 items-end gap-2" data-testid="line-row">
-              <div className="col-span-4">
-                <Label className="text-xs">Item code</Label>
-                <Input
-                  value={l.itemId}
-                  onChange={(e) => {
-                    const itemId = e.target.value;
-                    // Pre-fill the budgetary estimate from the item master, but
-                    // only while the price is still auto-filled or blank (never
-                    // overwrite a price the requester typed themselves).
-                    if (l.priceAutoFilled || l.unitPrice === "") {
-                      const est = estPriceFor(itemId);
-                      setLine(i, { itemId, unitPrice: est, priceAutoFilled: est !== "" });
-                    } else {
-                      setLine(i, { itemId });
-                    }
-                  }}
-                  placeholder="ITM-0006 or free text"
-                  data-testid="line-item"
-                />
-              </div>
-              <div className="col-span-2">
-                <Label className="text-xs">Qty</Label>
-                <Input value={l.quantity} onChange={(e) => setLine(i, { quantity: e.target.value })} inputMode="decimal" data-testid="line-qty" />
-              </div>
-              <div className="col-span-2">
-                <Label className="text-xs">Est. unit price</Label>
-                <Input
-                  value={l.unitPrice}
-                  onChange={(e) => setLine(i, { unitPrice: e.target.value, priceAutoFilled: false })}
-                  inputMode="decimal"
-                  placeholder="optional"
-                  data-testid="line-price"
-                />
-              </div>
-              {isImport && (
-                <div className="col-span-3">
-                  <Label className="text-xs">HS code (import)</Label>
-                  <Input value={l.hsCode} onChange={(e) => setLine(i, { hsCode: e.target.value })} placeholder="2942..." data-testid="line-hscode" />
-                </div>
+              {isService ? (
+                <>
+                  {/* Service-category line: scope of work, not goods fields (02-requisition.md) */}
+                  <div className="col-span-5">
+                    <Label className="text-xs">Service name</Label>
+                    <Input value={l.serviceName} onChange={(e) => setLine(i, { serviceName: e.target.value })} placeholder="e.g. HVAC maintenance" data-testid="line-serviceName" />
+                  </div>
+                  <div className="col-span-3">
+                    <Label className="text-xs">Item reference no.</Label>
+                    <Input value={l.itemReferenceNumber} onChange={(e) => setLine(i, { itemReferenceNumber: e.target.value })} placeholder="optional" data-testid="line-itemReferenceNumber" />
+                  </div>
+                  <div className="col-span-3">
+                    <Label className="text-xs">Contract duration</Label>
+                    <Select value={l.contractDuration} onValueChange={(v) => setLine(i, { contractDuration: v })}>
+                      <SelectTrigger data-testid="line-contractDuration"><SelectValue placeholder="Select" /></SelectTrigger>
+                      <SelectContent>
+                        {CONTRACT_DURATIONS.map((d) => <SelectItem key={d} value={d}>{d}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="col-span-4">
+                    <Label className="text-xs">Item code</Label>
+                    <Input
+                      value={l.itemId}
+                      onChange={(e) => {
+                        const itemId = e.target.value;
+                        // Pre-fill the budgetary estimate from the item master, but
+                        // only while the price is still auto-filled or blank (never
+                        // overwrite a price the requester typed themselves).
+                        if (l.priceAutoFilled || l.unitPrice === "") {
+                          const est = estPriceFor(itemId);
+                          setLine(i, { itemId, unitPrice: est, priceAutoFilled: est !== "" });
+                        } else {
+                          setLine(i, { itemId });
+                        }
+                      }}
+                      placeholder="ITM-0006 or free text"
+                      data-testid="line-item"
+                    />
+                  </div>
+                  <div className="col-span-2">
+                    <Label className="text-xs">Qty</Label>
+                    <Input value={l.quantity} onChange={(e) => setLine(i, { quantity: e.target.value })} inputMode="decimal" data-testid="line-qty" />
+                  </div>
+                  <div className="col-span-2">
+                    <Label className="text-xs">Est. unit price</Label>
+                    <Input
+                      value={l.unitPrice}
+                      onChange={(e) => setLine(i, { unitPrice: e.target.value, priceAutoFilled: false })}
+                      inputMode="decimal"
+                      placeholder="optional"
+                      data-testid="line-price"
+                    />
+                  </div>
+                  {isImport && (
+                    <div className="col-span-3">
+                      <Label className="text-xs">HS code (import)</Label>
+                      <Input value={l.hsCode} onChange={(e) => setLine(i, { hsCode: e.target.value })} placeholder="2942..." data-testid="line-hscode" />
+                    </div>
+                  )}
+                </>
               )}
               <div className="col-span-1">
                 <Button variant="ghost" size="icon" onClick={() => setLines((p) => p.filter((_, idx) => idx !== i))} aria-label="Remove line">
@@ -202,24 +254,28 @@ export default function NewRequisition() {
               </div>
             </div>
           ))}
-          <Button variant="outline" size="sm" onClick={() => setLines((p) => [...p, { itemId: "", quantity: "", unitPrice: "", hsCode: "", priceAutoFilled: false }])} data-testid="add-line">
+          <Button variant="outline" size="sm" onClick={() => setLines((p) => [...p, emptyLine()])} data-testid="add-line">
             <Plus className="mr-1 h-4 w-4" /> Add line
           </Button>
-          <div className="flex justify-end pt-2 text-sm">
-            <span className="text-muted-foreground">Est. total:&nbsp;</span>
-            <span className="font-mono font-semibold" data-testid="req-total">${total.toLocaleString()}</span>
-          </div>
-          <div
-            className="mt-1 flex items-start gap-2 rounded-md bg-muted/50 px-3 py-2 text-xs text-muted-foreground"
-            data-tour-id="req.price-note"
-            data-testid="req-price-note"
-          >
-            <Info className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-            <span>
-              Estimated price is optional and pre-filled from the item&apos;s last purchase price. It is used only for the
-              budget check. The firm price is set later, competitively, at sourcing.
-            </span>
-          </div>
+          {!isService && (
+            <>
+              <div className="flex justify-end pt-2 text-sm">
+                <span className="text-muted-foreground">Est. total:&nbsp;</span>
+                <span className="font-mono font-semibold" data-testid="req-total">${total.toLocaleString()}</span>
+              </div>
+              <div
+                className="mt-1 flex items-start gap-2 rounded-md bg-muted/50 px-3 py-2 text-xs text-muted-foreground"
+                data-tour-id="req.price-note"
+                data-testid="req-price-note"
+              >
+                <Info className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+                <span>
+                  Estimated price is optional and pre-filled from the item&apos;s last purchase price. It is used only for the
+                  budget check. The firm price is set later, competitively, at sourcing.
+                </span>
+              </div>
+            </>
+          )}
         </CardContent>
       </Card>
 

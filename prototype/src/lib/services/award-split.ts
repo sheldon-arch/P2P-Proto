@@ -16,6 +16,7 @@ export type AwardLine = {
   supplierId: string; // the winning supplier for this line
   unitPrice: number; // landed (or agreed) per unit, for the PO line + value
   currency?: string;
+  incoterm?: string; // awarded quote's incoterm; drives the freight-forwarder PO (A19)
 };
 
 export type SplitPo = {
@@ -23,7 +24,16 @@ export type SplitPo = {
   currency: string;
   lines: { lineId: string; itemId: string; quantity: number; uom: string; agreedPrice: number; lineValue: number }[];
   value: number; // sum of line values
+  incoterm?: string; // the supplier PO's incoterm (first awarded line's)
 };
+
+/** Buyer-arranged incoterms (EXW, FOB) require the buyer to arrange freight, so
+ *  a parallel freight-forwarder PO is emitted; seller-arranged (CIF, CFR) do not
+ *  (A19; Incoterms 2020). Case-insensitive; unknown/empty -> no FF-PO. */
+export function needsFreightForwarder(incoterm: string | undefined | null): boolean {
+  if (!incoterm) return false;
+  return ["EXW", "FOB"].includes(incoterm.trim().toUpperCase());
+}
 
 /**
  * Group awarded lines by supplier into one PO each. Lines with no supplier are
@@ -35,7 +45,8 @@ export function splitAwardIntoPos(awards: AwardLine[]): SplitPo[] {
     if (!a.supplierId) continue;
     const po =
       bySupplier.get(a.supplierId) ??
-      { supplierId: a.supplierId, currency: a.currency ?? "USD", lines: [], value: 0 };
+      { supplierId: a.supplierId, currency: a.currency ?? "USD", lines: [], value: 0, incoterm: a.incoterm };
+    if (po.incoterm == null && a.incoterm != null) po.incoterm = a.incoterm;
     const lineValue = Math.round(a.quantity * a.unitPrice * 100) / 100;
     po.lines.push({
       lineId: a.lineId,

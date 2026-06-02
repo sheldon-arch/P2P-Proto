@@ -44,11 +44,16 @@ describe("referential integrity (sample FKs resolve)", () => {
     expect(store.get("users", hero.requesterId as string)).toBeDefined();
   });
 
-  it("live POs reference existing suppliers", () => {
+  it("live POs reference existing suppliers (freight-forwarder POs reference a freight forwarder)", () => {
     const pos = store.list("purchaseOrders");
     expect(pos.length).toBeGreaterThan(0);
     for (const po of pos) {
-      expect(store.get("suppliers", po.supplierId as string)).toBeDefined();
+      if (po.poType === "freight-forwarder") {
+        // A19: a freight-forwarder PO's party is a freight forwarder, not a supplier.
+        expect(store.get("freightForwarders", po.supplierId as string)).toBeDefined();
+      } else {
+        expect(store.get("suppliers", po.supplierId as string)).toBeDefined();
+      }
     }
   });
 

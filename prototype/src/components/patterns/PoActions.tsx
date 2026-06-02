@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { ActionPanel } from "./ActionPanel";
 import { RuleBanner } from "./RuleBanner";
 import { useOne } from "@/queries/hooks";
+import { useFieldVisibility } from "@/lib/rbac/useFieldVisibility";
 
 const val = (po: Record<string, unknown>) =>
   Number(po.poValueInBase ?? po.value ?? po.poValue ?? 0);
@@ -24,15 +25,29 @@ export function PoActions({ po }: { po: Record<string, unknown> }) {
   const [override, setOverride] = useState(false);
   const budgetId = po.budgetId as string | undefined;
   const { data: budget } = useOne<Record<string, unknown>>("budgets", budgetId);
+  const { hidden } = useFieldVisibility();
 
   const poValue = val(po);
   const available = budget ? Number(budget.availableAmount) : undefined;
   const overBudget = available != null && poValue > available;
   const isDraft = po.status === "DRAFT";
+  // Commercial-field wall (A17): the budget-impact panel exposes PO value and
+  // budget figures, so it is hidden from roles denied commercial visibility.
+  const showBudgetImpact = !hidden("PurchaseOrder", "value");
+
+  const isFreightForwarder = po.poType === "freight-forwarder";
 
   return (
     <div>
-      {isDraft && budget && (
+      {isFreightForwarder && (
+        <RuleBanner tone="info" title="Freight-forwarder PO (buyer-arranged incoterm)" testId="ff-po-banner">
+          The awarded incoterm ({String(po.incoterm ?? "EXW/FOB")}) is buyer-arranged, so this parallel
+          purchase order is raised to the freight forwarder to cover freight, insurance, and customs
+          clearing. A seller-arranged incoterm (CIF or CFR) would not need one.
+          {po.linkedPoId ? ` Linked to supplier PO ${String(po.linkedPoId)}.` : ""}
+        </RuleBanner>
+      )}
+      {isDraft && budget && showBudgetImpact && (
         <Card className="mt-6" data-tour-id="po.budget-impact">
           <CardHeader><CardTitle className="text-base">Budget impact (hard commit at issue)</CardTitle></CardHeader>
           <CardContent className="space-y-2 text-sm">

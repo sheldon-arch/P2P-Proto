@@ -10,6 +10,7 @@ const columns: Column<PO>[] = [
   { key: "supplierId", header: "Supplier", mono: true },
   { key: "poDate", header: "Date", mono: true },
   { key: "incoterm", header: "Incoterm" },
+  { key: "poType", header: "Type", render: (r) => (r.poType === "freight-forwarder" ? "Freight forwarder" : "Supplier") },
   { key: "status", header: "Status", render: (r) => <StatusBadge status={r.status as string} /> },
   { key: "value", header: "Value", mono: true, className: "text-right",
     render: (r) => (r.value ? `${r.currency ?? ""} ${Number(r.value).toLocaleString()}` : "—") },

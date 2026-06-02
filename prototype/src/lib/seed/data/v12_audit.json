@@ -1,0 +1,37 @@
+{
+  "_comment": "v1.2 domain-audit scenarios. Separate file so reseed is safe. PO-FOB-1 is a buyer-arranged (FOB) supplier PO; PO-FOB-1-FF is its parallel freight-forwarder PO (A19). Demonstrates that EXW/FOB awards emit a freight-forwarder PO covering freight/insurance/customs.",
+  "purchaseOrders": [
+    {
+      "id": "PO-FOB-1",
+      "ticketId": "TKT-HERO",
+      "supplierId": "SUP-0002",
+      "status": "DRAFT",
+      "poDate": "2026-05-30",
+      "currency": "USD",
+      "incoterm": "FOB",
+      "contractQty": 4000,
+      "value": 52000,
+      "poValueInBase": 52000,
+      "budgetId": "BUD-0012",
+      "lines": [
+        { "lineId": "TL-FOB-1", "itemId": "ITM-0010", "quantity": 4000, "uom": "KG", "agreedPrice": 13, "lineValue": 52000 }
+      ]
+    },
+    {
+      "id": "PO-FOB-1-FF",
+      "ticketId": "TKT-HERO",
+      "linkedPoId": "PO-FOB-1",
+      "poType": "freight-forwarder",
+      "supplierId": "FF-001",
+      "status": "DRAFT",
+      "poDate": "2026-05-30",
+      "currency": "USD",
+      "incoterm": "FOB",
+      "value": 0,
+      "poValueInBase": 0,
+      "lines": [],
+      "freightForwarderName": "Apex Global Logistics",
+      "narrative": "Freight-forwarder PO for PO-FOB-1 (incoterm FOB, buyer-arranged): covers freight, insurance, and customs clearing. Seller-arranged incoterms (CIF/CFR) would not emit one."
+    }
+  ]
+}

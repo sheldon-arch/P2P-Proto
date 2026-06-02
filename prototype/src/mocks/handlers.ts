@@ -21,7 +21,7 @@ import { transition, legalActions } from "@/lib/services/transition-engine";
 import { stripHiddenFields } from "@/lib/rbac/field-visibility";
 import { buildSeedSnapshot } from "@/lib/seed";
 import { computeWorklist, buildReorderRequisition, type WorklistRow } from "@/lib/services/reorder-service";
-import { splitAwardIntoPos, type AwardLine } from "@/lib/services/award-split";
+import { splitAwardIntoPos, needsFreightForwarder, type AwardLine } from "@/lib/services/award-split";
 import { eventBus } from "@/lib/events/event-bus";
 import { DEMO_TODAY } from "@/lib/domain/constants";
 
@@ -154,6 +154,7 @@ export const handlers = [
 
     const split = splitAwardIntoPos(awards);
     const poIds: string[] = [];
+    const ffPoIds: string[] = [];
     for (const po of split) {
       const poId = store.nextId("PO");
       store.put("purchaseOrders", {
@@ -164,21 +165,48 @@ export const handlers = [
         status: "DRAFT",
         poDate: DEMO_TODAY,
         currency: po.currency,
+        incoterm: po.incoterm ?? null,
         value: po.value,
         poValueInBase: po.value,
         lines: po.lines,
         fromMultiSupplierAward: split.length > 1,
       });
       poIds.push(poId);
+      // A19: a buyer-arranged incoterm (EXW/FOB) means the buyer arranges freight,
+      // so emit a parallel freight-forwarder PO covering freight/insurance/customs.
+      // Seller-arranged (CIF/CFR) bears its own freight, so no FF-PO is emitted.
+      if (needsFreightForwarder(po.incoterm)) {
+        const ff = (store.list("freightForwarders")[0] ?? {}) as Record<string, unknown>;
+        const ffId = store.nextId("PO");
+        store.put("purchaseOrders", {
+          id: ffId,
+          ticketId,
+          rfqId,
+          supplierId: (ff.id as string) ?? "FF-001",
+          poType: "freight-forwarder",
+          linkedPoId: poId,
+          status: "DRAFT",
+          poDate: DEMO_TODAY,
+          currency: po.currency,
+          incoterm: po.incoterm ?? null,
+          value: 0,
+          poValueInBase: 0,
+          lines: [],
+          freightForwarderName: (ff.name as string) ?? "Freight Forwarder",
+          narrative: `Freight-forwarder PO for ${poId} (incoterm ${po.incoterm}, buyer-arranged): covers freight, insurance, and customs clearing.`,
+        });
+        ffPoIds.push(ffId);
+      }
     }
     store.patch("rfqs", rfqId, {
       status: "awarded",
       awardedSupplierIds: split.map((p) => p.supplierId),
       resultingPoIds: poIds,
+      freightForwarderPoIds: ffPoIds,
       awardJustification: body.justification ?? null,
     });
-    eventBus.emit({ type: "rfq.awarded", entity: "rfqs", entityId: rfqId, payload: { poIds } });
-    return HttpResponse.json({ poIds, supplierCount: split.length }, { status: 201 });
+    eventBus.emit({ type: "rfq.awarded", entity: "rfqs", entityId: rfqId, payload: { poIds, ffPoIds } });
+    return HttpResponse.json({ poIds, supplierCount: split.length, freightForwarderPoIds: ffPoIds }, { status: 201 });
   }),
 
   // ---- post a stock movement (ADJUSTMENT / TRANSFER) ----------------
