@@ -18,9 +18,19 @@ export type TourStep = {
   body: string;
   /** preferred popover side; floating-ui flips if it would overflow */
   placement?: "top" | "bottom" | "left" | "right";
+  /** "watch" (default): advance on Next. "tryit": the viewer performs the
+   *  highlighted action; the step auto-advances when advanceWhen fires. */
+  mode?: "watch" | "tryit";
+  /** for tryit steps: the domain event (eventBus type) whose firing advances */
+  advanceWhen?: string;
+  /** short instruction shown on a tryit step (e.g. "Click Approve") */
+  hint?: string;
 };
+
+export type TourVariant = "short" | "long";
 
 export type TourState = {
   active: boolean;
   index: number;
+  variant: TourVariant;
 };

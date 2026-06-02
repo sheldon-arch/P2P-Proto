@@ -38,12 +38,15 @@ function walk(dir) {
   }
   return out;
 }
+// The overlay anchors by data-tour-id, falling back to data-testid; accept both.
 const anchorDefs = new Set();
 for (const f of [...walk(join(ROOT, "src/app")), ...walk(join(ROOT, "src/components"))]) {
   const txt = readFileSync(f, "utf8");
   for (const m of txt.matchAll(/data-tour-id="([^"]+)"/g)) anchorDefs.add(m[1]);
-  // tourId="x" prop form
   for (const m of txt.matchAll(/tourId="([^"]+)"/g)) anchorDefs.add(m[1]);
+  for (const m of txt.matchAll(/data-testid="([^"]+)"/g)) anchorDefs.add(m[1]);
+  // testId="x" prop form (RuleBanner etc.)
+  for (const m of txt.matchAll(/testId="([^"]+)"/g)) anchorDefs.add(m[1]);
 }
 
 for (const block of stepBlocks) {
@@ -53,12 +56,15 @@ for (const block of stepBlocks) {
   const route = (block.match(/route:\s*"([^"]+)"/) ?? [])[1];
   const title = (block.match(/title:\s*"([^"]+)"/) ?? [])[1];
   const body = (block.match(/body:\s*"([^"]+)"/) ?? [])[1];
+  const mode = (block.match(/mode:\s*"([^"]+)"/) ?? [])[1];
+  const advanceWhen = (block.match(/advanceWhen:\s*"([^"]+)"/) ?? [])[1];
 
   if (persona && !VALID_ROLES.has(persona)) problems.push(`step ${id}: invalid persona "${persona}"`);
   if (!route) problems.push(`step ${id}: missing route`);
   if (!title) problems.push(`step ${id}: missing title`);
   if (!body) problems.push(`step ${id}: missing body`);
-  if (anchor && !anchorDefs.has(anchor)) problems.push(`step ${id}: anchor "${anchor}" has no data-tour-id in src (would center-fallback)`);
+  if (anchor && !anchorDefs.has(anchor)) problems.push(`step ${id}: anchor "${anchor}" has no data-tour-id/testid in src (would center-fallback)`);
+  if (mode === "tryit" && !advanceWhen) problems.push(`step ${id}: tryit step must declare advanceWhen`);
   for (const re of BANNED) {
     if (re.test(title ?? "") || re.test(body ?? "")) problems.push(`step ${id}: banned wording /${re.source}/ in narration`);
   }

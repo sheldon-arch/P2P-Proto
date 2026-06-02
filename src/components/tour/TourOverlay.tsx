@@ -10,7 +10,8 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { computePosition, flip, shift, offset, arrow, autoUpdate } from "@floating-ui/dom";
 import { Button } from "@/components/ui/button";
-import { X } from "lucide-react";
+import { X, Hand } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { useTour } from "./TourProvider";
 
 type Rect = { top: number; left: number; width: number; height: number };
@@ -18,7 +19,7 @@ type Rect = { top: number; left: number; width: number; height: number };
 const PAD = 8; // spotlight padding around the anchor
 
 export function TourOverlay() {
-  const { index, steps, next, back, exit } = useTour();
+  const { index, steps, next, back, exit, awaitingAction } = useTour();
   const step = steps[index];
   const [rect, setRect] = useState<Rect | null>(null);
   const [resolved, setResolved] = useState(false); // anchor found?
@@ -34,7 +35,11 @@ export function TourOverlay() {
     setRect(null);
     setCardPos(null);
 
-    const selector = step.anchor ? `[data-tour-id="${step.anchor}"]` : null;
+    // Anchor by data-tour-id, falling back to data-testid so existing tagged
+    // elements (banners/panels) can be targeted without duplicating attributes.
+    const selector = step.anchor
+      ? `[data-tour-id="${step.anchor}"], [data-testid="${step.anchor}"]`
+      : null;
     const deadline = Date.now() + 4000;
 
     function attempt() {
@@ -113,7 +118,14 @@ export function TourOverlay() {
     : undefined;
 
   return (
-    <div className="fixed inset-0 z-50" data-testid="tour-overlay" aria-live="polite">
+    // On a Try-it step the overlay is click-through (pointer-events-none) so the
+    // viewer can click the highlighted real control; the coach-mark re-enables
+    // its own pointer events below. On a Watch step the overlay captures clicks.
+    <div
+      className={cn("fixed inset-0 z-50", awaitingAction && "pointer-events-none")}
+      data-testid="tour-overlay"
+      aria-live="polite"
+    >
       {/* dim layer with a spotlight hole punched via box-shadow */}
       {rect ? (
         <div
@@ -126,14 +138,14 @@ export function TourOverlay() {
           }}
         />
       ) : (
-        <div className="absolute inset-0 bg-slate-900/55" />
+        <div className={cn("absolute inset-0 bg-slate-900/55", awaitingAction && "pointer-events-none")} />
       )}
 
-      {/* coach-mark */}
+      {/* coach-mark (always interactive, even when the overlay is click-through) */}
       <div
         ref={cardRef}
         data-testid="tour-coachmark"
-        className="absolute w-[340px] max-w-[90vw] rounded-lg border bg-popover p-4 text-popover-foreground shadow-xl"
+        className="pointer-events-auto absolute w-[340px] max-w-[90vw] rounded-lg border bg-popover p-4 text-popover-foreground shadow-xl"
         style={cardPos ? { top: cardPos.y, left: cardPos.x } : { top: "50%", left: "50%", transform: "translate(-50%,-50%)" }}
       >
         {staticSide && (
@@ -155,11 +167,20 @@ export function TourOverlay() {
         </div>
         <h3 className="text-sm font-semibold" data-testid="tour-title">{step.title}</h3>
         <p className="mt-1 text-sm text-muted-foreground" data-testid="tour-body">{step.body}</p>
+        {awaitingAction && (
+          <div className="mt-3 flex items-center gap-2 rounded-md border border-primary/30 bg-primary/5 px-3 py-2 text-sm font-medium text-primary" data-testid="tour-tryit-hint">
+            <Hand className="h-4 w-4" /> {step.hint ?? "Perform the highlighted action to continue."}
+          </div>
+        )}
         <div className="mt-4 flex items-center justify-between">
           <span className="text-xs text-muted-foreground" data-testid="tour-progress">{index + 1} / {steps.length}</span>
           <div className="flex gap-2">
             {!isFirst && <Button variant="outline" size="sm" onClick={back} data-testid="tour-back">Back</Button>}
-            <Button size="sm" onClick={next} data-testid="tour-next">{isLast ? "Finish" : "Next"}</Button>
+            {awaitingAction ? (
+              <Button variant="outline" size="sm" onClick={next} data-testid="tour-skip">Skip</Button>
+            ) : (
+              <Button size="sm" onClick={next} data-testid="tour-next">{isLast ? "Finish" : "Next"}</Button>
+            )}
           </div>
         </div>
       </div>

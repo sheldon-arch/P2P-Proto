@@ -33,7 +33,7 @@ export default function PortalHome() {
   const myPos = (pos ?? []).filter((p) => p.supplierId === SUPPLIER_ID);
 
   return (
-    <div>
+    <div data-tour-id="portal-home">
       <PageHeader title="Welcome, Synthex Food Ingredients" description="Your open requests from Harvest Foods" />
 
       <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">RFQs to quote</h2>

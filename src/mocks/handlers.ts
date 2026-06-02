@@ -22,6 +22,7 @@ import { stripHiddenFields } from "@/lib/rbac/field-visibility";
 import { buildSeedSnapshot } from "@/lib/seed";
 import { computeWorklist, buildReorderRequisition, type WorklistRow } from "@/lib/services/reorder-service";
 import { splitAwardIntoPos, type AwardLine } from "@/lib/services/award-split";
+import { eventBus } from "@/lib/events/event-bus";
 import { DEMO_TODAY } from "@/lib/domain/constants";
 
 // collection name -> the entity label used by field-visibility rules
@@ -137,6 +138,7 @@ export const handlers = [
     });
     store.put("tickets", ticket);
     store.put("requisitionLines", line);
+    eventBus.emit({ type: "reorder.raised", entity: "tickets", entityId: ticketId });
     return HttpResponse.json({ ticketId, ticket, line }, { status: 201 });
   }),
 
@@ -175,6 +177,7 @@ export const handlers = [
       resultingPoIds: poIds,
       awardJustification: body.justification ?? null,
     });
+    eventBus.emit({ type: "rfq.awarded", entity: "rfqs", entityId: rfqId, payload: { poIds } });
     return HttpResponse.json({ poIds, supplierCount: split.length }, { status: 201 });
   }),
 
