@@ -17,7 +17,7 @@ const TONE_BY_STATUS: Record<string, Tone> = {
   NOT_STARTED: "neutral", upcoming: "info",
   ON_HOLD: "warning", EXCEPTION: "warning", RAISED: "warning", overdue: "warning",
   RESCHEDULED: "warning", IN_CAPA: "warning",
-  CANCELLED: "danger", REJECTED: "danger", SUSPENDED: "danger", OFFBOARDED: "danger",
+  CANCELLED: "danger", REJECTED: "danger", SUSPENDED: "danger", OFFBOARDED: "danger", DECLINED: "danger",
 };
 
 const TONE_CLASS: Record<Tone, string> = {

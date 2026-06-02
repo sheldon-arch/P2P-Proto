@@ -47,6 +47,7 @@ const ACTIONS: Record<string, ActionSpec> = {
   reschedule: { label: "Hold / reschedule (checker)", roles: ["finance_checker", "administrator"], variant: "outline" },
   // returns
   authorize: { label: "Authorize return", roles: ["buyer", "administrator"] },
+  decline: { label: "Decline (re-disposition)", roles: ["buyer", "administrator"], variant: "destructive" },
   identifyCondition: { label: "Identify condition", roles: ["quality", "administrator"] },
   scheduleShipment: { label: "Schedule shipment", roles: ["receiving", "administrator"] },
   closeOrAdjust: { label: "Close + credit/debit note", roles: ["finance_maker", "administrator"] },

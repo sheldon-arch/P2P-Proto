@@ -1,0 +1,31 @@
+{
+  "_doc": "v1.1 edge-case demo records (separate file; survives reseed). A DRAFT PO to a SUSPENDED supplier (to demonstrate the suspended-supplier-blocks-issue guard), and a return in INITIATED state (to demonstrate authorize vs decline / re-disposition).",
+  "purchaseOrders": [
+    {
+      "id": "PO-SUSP-1",
+      "ticketId": "TKT-LV-001",
+      "supplierId": "SUP-0046",
+      "status": "DRAFT",
+      "poDate": "2026-05-30",
+      "currency": "USD",
+      "value": 24000,
+      "poValueInBase": 24000,
+      "incoterm": "FOB",
+      "contractQty": 1200,
+      "note": "Draft PO to a suspended supplier — issue is blocked until the supplier is reinstated."
+    }
+  ],
+  "returns": [
+    {
+      "id": "RMA-EDGE-1",
+      "rmaNumber": "RMA-2026-0021",
+      "sourceOrderId": "PO-LV-3",
+      "supplierId": "SUP-0005",
+      "reason": "damaged",
+      "productCondition": "Cartons crushed in transit; partial lot affected",
+      "authorizationStatus": "PENDING",
+      "closureStatus": "INITIATED",
+      "linkedNcrId": null
+    }
+  ]
+}

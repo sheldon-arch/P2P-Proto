@@ -172,7 +172,7 @@
 
   "06-supplier-onboarding#UploadFile": "screen:/admin/bulk-import",
   "07-item-onboarding#UploadFile": "screen:/admin/bulk-import",
-  "11-returns-rma#Declined": "action:authorize",
+  "11-returns-rma#Declined": "action:decline",
   "e03-qty-tolerance#BuyerDisposition": "action:disposition",
   "e04-ncr-capa#RootCause": "action:raiseCapa",
 

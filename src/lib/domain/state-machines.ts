@@ -127,10 +127,11 @@ export const ncrLifecycle: StateMachine = {
   ],
 };
 export const returnLifecycle: StateMachine = {
-  entity: 'Return', dimension: 'closureStatus', initial: 'INITIATED', terminal: ['CLOSED'],
-  states: ['INITIATED', 'AUTHORIZED', 'CONDITION_IDENTIFIED', 'SHIPMENT_SCHEDULED', 'CLOSED'],
+  entity: 'Return', dimension: 'closureStatus', initial: 'INITIATED', terminal: ['CLOSED', 'DECLINED'],
+  states: ['INITIATED', 'AUTHORIZED', 'CONDITION_IDENTIFIED', 'SHIPMENT_SCHEDULED', 'CLOSED', 'DECLINED'],
   transitions: [
     { from: 'INITIATED', to: 'AUTHORIZED', on: 'authorize', guard: 'RMA number issued (S4.2)', role: 'Procurement/Buyer|Supplier/Vendor' },
+    { from: 'INITIATED', to: 'DECLINED', on: 'decline', guard: 'supplier/buyer rejects the return claim; re-disposition required', effect: 'notify originator; the goods stay and a different disposition (rework/use-as-is/scrap) is chosen', role: 'Procurement/Buyer|Supplier/Vendor' },
     { from: 'AUTHORIZED', to: 'CONDITION_IDENTIFIED', on: 'identifyCondition', guard: 'reason in ReturnReason (S4.3)', role: 'Quality' },
     { from: 'CONDITION_IDENTIFIED', to: 'SHIPMENT_SCHEDULED', on: 'scheduleShipment', guard: 'carrier+label+date (S4.4)', role: 'Receiving/Warehouse' },
     { from: 'SHIPMENT_SCHEDULED', to: 'CLOSED', on: 'closeOrAdjust', guard: 'credit/debit note posted (S4.5)', effect: 'adjust creditor ledger + payable; reverse GR/IR', role: 'Finance-Maker' },
