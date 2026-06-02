@@ -5,7 +5,8 @@
     "poDate": "2025-11-23",
     "grnDate": "2025-12-12",
     "receivedQty": 33000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02000"
   },
   {
     "id": "GRN-02001",
@@ -13,7 +14,8 @@
     "poDate": "2026-03-27",
     "grnDate": "2026-05-07",
     "receivedQty": 67500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02001"
   },
   {
     "id": "GRN-02002",
@@ -21,7 +23,8 @@
     "poDate": "2026-02-22",
     "grnDate": "2026-03-11",
     "receivedQty": 12500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02002"
   },
   {
     "id": "GRN-02003",
@@ -29,7 +32,8 @@
     "poDate": "2026-01-29",
     "grnDate": "2026-02-26",
     "receivedQty": 1500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02003"
   },
   {
     "id": "GRN-02004",
@@ -37,7 +41,8 @@
     "poDate": "2025-07-24",
     "grnDate": "2025-08-26",
     "receivedQty": 3500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02004"
   },
   {
     "id": "GRN-02005",
@@ -45,7 +50,8 @@
     "poDate": "2025-10-05",
     "grnDate": "2025-10-25",
     "receivedQty": 3000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02005"
   },
   {
     "id": "GRN-02006",
@@ -53,7 +59,8 @@
     "poDate": "2025-10-22",
     "grnDate": "2025-11-10",
     "receivedQty": 25000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02006"
   },
   {
     "id": "GRN-02007",
@@ -61,7 +68,8 @@
     "poDate": "2025-10-28",
     "grnDate": "2025-11-18",
     "receivedQty": 20000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02007"
   },
   {
     "id": "GRN-02008",
@@ -69,7 +77,8 @@
     "poDate": "2025-09-06",
     "grnDate": "2025-09-23",
     "receivedQty": 14000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02008"
   },
   {
     "id": "GRN-02009",
@@ -77,7 +86,8 @@
     "poDate": "2025-06-28",
     "grnDate": "2025-07-10",
     "receivedQty": 20000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02009"
   },
   {
     "id": "GRN-02010",
@@ -85,7 +95,8 @@
     "poDate": "2026-02-20",
     "grnDate": "2026-05-06",
     "receivedQty": 4000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02010"
   },
   {
     "id": "GRN-02011",
@@ -93,7 +104,8 @@
     "poDate": "2025-10-27",
     "grnDate": "2025-12-05",
     "receivedQty": 82500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02011"
   },
   {
     "id": "GRN-02012",
@@ -101,7 +113,8 @@
     "poDate": "2026-03-08",
     "grnDate": "2026-04-09",
     "receivedQty": 40000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02012"
   },
   {
     "id": "GRN-02013",
@@ -109,7 +122,8 @@
     "poDate": "2026-02-17",
     "grnDate": "2026-03-28",
     "receivedQty": 1000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02013"
   },
   {
     "id": "GRN-02014",
@@ -117,7 +131,8 @@
     "poDate": "2026-01-08",
     "grnDate": "2026-02-16",
     "receivedQty": 105000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02014"
   },
   {
     "id": "GRN-02015",
@@ -125,7 +140,8 @@
     "poDate": "2025-10-07",
     "grnDate": "2025-11-05",
     "receivedQty": 7500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02015"
   },
   {
     "id": "GRN-02016",
@@ -133,7 +149,8 @@
     "poDate": "2025-09-15",
     "grnDate": "2025-10-11",
     "receivedQty": 25500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02016"
   },
   {
     "id": "GRN-02017",
@@ -141,7 +158,8 @@
     "poDate": "2025-11-29",
     "grnDate": "2026-01-08",
     "receivedQty": 5500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02017"
   },
   {
     "id": "GRN-02018",
@@ -149,7 +167,8 @@
     "poDate": "2026-02-21",
     "grnDate": "2026-03-21",
     "receivedQty": 5000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02018"
   },
   {
     "id": "GRN-02019",
@@ -157,7 +176,8 @@
     "poDate": "2025-10-30",
     "grnDate": "2025-11-21",
     "receivedQty": 13000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02019"
   },
   {
     "id": "GRN-02020",
@@ -165,7 +185,8 @@
     "poDate": "2025-07-30",
     "grnDate": "2025-08-18",
     "receivedQty": 20000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02020"
   },
   {
     "id": "GRN-02021",
@@ -173,7 +194,8 @@
     "poDate": "2026-04-18",
     "grnDate": "2026-05-20",
     "receivedQty": 27500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02021"
   },
   {
     "id": "GRN-02022",
@@ -181,7 +203,8 @@
     "poDate": "2025-12-19",
     "grnDate": "2026-01-07",
     "receivedQty": 20000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02022"
   },
   {
     "id": "GRN-02023",
@@ -189,7 +212,8 @@
     "poDate": "2025-12-15",
     "grnDate": "2025-12-24",
     "receivedQty": 81000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02023"
   },
   {
     "id": "GRN-02024",
@@ -197,7 +221,8 @@
     "poDate": "2025-08-03",
     "grnDate": "2025-09-15",
     "receivedQty": 90000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02024"
   },
   {
     "id": "GRN-02025",
@@ -205,7 +230,8 @@
     "poDate": "2026-02-21",
     "grnDate": "2026-03-26",
     "receivedQty": 5000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02025"
   },
   {
     "id": "GRN-02026",
@@ -213,7 +239,8 @@
     "poDate": "2025-07-13",
     "grnDate": "2025-08-06",
     "receivedQty": 75000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02026"
   },
   {
     "id": "GRN-02027",
@@ -221,7 +248,8 @@
     "poDate": "2026-04-27",
     "grnDate": "2026-05-09",
     "receivedQty": 32500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02027"
   },
   {
     "id": "GRN-02028",
@@ -229,7 +257,8 @@
     "poDate": "2025-12-07",
     "grnDate": "2025-12-31",
     "receivedQty": 11000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02028"
   },
   {
     "id": "GRN-02029",
@@ -237,7 +266,8 @@
     "poDate": "2026-02-19",
     "grnDate": "2026-05-03",
     "receivedQty": 6500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02029"
   },
   {
     "id": "GRN-02030",
@@ -245,7 +275,8 @@
     "poDate": "2025-07-06",
     "grnDate": "2025-08-17",
     "receivedQty": 70000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02030"
   },
   {
     "id": "GRN-02031",
@@ -253,7 +284,8 @@
     "poDate": "2026-02-12",
     "grnDate": "2026-03-05",
     "receivedQty": 15000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02031"
   },
   {
     "id": "GRN-02032",
@@ -261,7 +293,8 @@
     "poDate": "2026-04-17",
     "grnDate": "2026-05-27",
     "receivedQty": 57500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02032"
   },
   {
     "id": "GRN-02033",
@@ -269,7 +302,8 @@
     "poDate": "2026-01-23",
     "grnDate": "2026-02-09",
     "receivedQty": 80500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02033"
   },
   {
     "id": "GRN-02034",
@@ -277,7 +311,8 @@
     "poDate": "2025-07-18",
     "grnDate": "2025-08-01",
     "receivedQty": 1000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02034"
   },
   {
     "id": "GRN-02035",
@@ -285,7 +320,8 @@
     "poDate": "2026-01-31",
     "grnDate": "2026-02-18",
     "receivedQty": 65000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02035"
   },
   {
     "id": "GRN-02036",
@@ -293,7 +329,8 @@
     "poDate": "2025-12-13",
     "grnDate": "2025-12-27",
     "receivedQty": 65000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02036"
   },
   {
     "id": "GRN-02037",
@@ -301,7 +338,8 @@
     "poDate": "2025-11-18",
     "grnDate": "2025-12-03",
     "receivedQty": 21000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02037"
   },
   {
     "id": "GRN-02038",
@@ -309,7 +347,8 @@
     "poDate": "2025-12-08",
     "grnDate": "2026-01-02",
     "receivedQty": 6000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02038"
   },
   {
     "id": "GRN-02039",
@@ -317,7 +356,8 @@
     "poDate": "2026-01-22",
     "grnDate": "2026-02-15",
     "receivedQty": 40000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02039"
   },
   {
     "id": "GRN-02040",
@@ -325,7 +365,8 @@
     "poDate": "2025-09-05",
     "grnDate": "2025-09-22",
     "receivedQty": 21000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02040"
   },
   {
     "id": "GRN-02041",
@@ -333,7 +374,8 @@
     "poDate": "2026-01-15",
     "grnDate": "2026-01-31",
     "receivedQty": 2500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02041"
   },
   {
     "id": "GRN-02042",
@@ -341,7 +383,8 @@
     "poDate": "2025-10-26",
     "grnDate": "2025-11-27",
     "receivedQty": 80000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02042"
   },
   {
     "id": "GRN-02043",
@@ -349,7 +392,8 @@
     "poDate": "2026-04-12",
     "grnDate": "2026-06-25",
     "receivedQty": 52000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02043"
   },
   {
     "id": "GRN-02044",
@@ -357,7 +401,8 @@
     "poDate": "2025-11-23",
     "grnDate": "2025-12-24",
     "receivedQty": 70500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02044"
   },
   {
     "id": "GRN-02045",
@@ -365,7 +410,8 @@
     "poDate": "2026-01-19",
     "grnDate": "2026-04-04",
     "receivedQty": 40000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02045"
   },
   {
     "id": "GRN-02046",
@@ -373,7 +419,8 @@
     "poDate": "2025-09-16",
     "grnDate": "2025-10-09",
     "receivedQty": 25000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02046"
   },
   {
     "id": "GRN-02047",
@@ -381,7 +428,8 @@
     "poDate": "2025-07-23",
     "grnDate": "2025-08-08",
     "receivedQty": 26000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02047"
   },
   {
     "id": "GRN-02048",
@@ -389,7 +437,8 @@
     "poDate": "2025-11-17",
     "grnDate": "2025-12-04",
     "receivedQty": 3000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02048"
   },
   {
     "id": "GRN-02049",
@@ -397,7 +446,8 @@
     "poDate": "2026-02-09",
     "grnDate": "2026-02-18",
     "receivedQty": 25000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02049"
   },
   {
     "id": "GRN-02050",
@@ -405,7 +455,8 @@
     "poDate": "2025-10-31",
     "grnDate": "2025-11-20",
     "receivedQty": 82500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02050"
   },
   {
     "id": "GRN-02051",
@@ -413,7 +464,8 @@
     "poDate": "2025-12-04",
     "grnDate": "2026-02-16",
     "receivedQty": 55500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02051"
   },
   {
     "id": "GRN-02052",
@@ -421,7 +473,8 @@
     "poDate": "2026-05-04",
     "grnDate": "2026-05-23",
     "receivedQty": 40000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02052"
   },
   {
     "id": "GRN-02053",
@@ -429,7 +482,8 @@
     "poDate": "2026-02-06",
     "grnDate": "2026-02-25",
     "receivedQty": 1500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02053"
   },
   {
     "id": "GRN-02054",
@@ -437,7 +491,8 @@
     "poDate": "2025-07-27",
     "grnDate": "2025-08-14",
     "receivedQty": 61000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02054"
   },
   {
     "id": "GRN-02055",
@@ -445,7 +500,8 @@
     "poDate": "2026-01-13",
     "grnDate": "2026-02-10",
     "receivedQty": 37500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02055"
   },
   {
     "id": "GRN-02056",
@@ -453,7 +509,8 @@
     "poDate": "2025-12-01",
     "grnDate": "2025-12-19",
     "receivedQty": 10500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02056"
   },
   {
     "id": "GRN-02057",
@@ -461,7 +518,8 @@
     "poDate": "2025-12-30",
     "grnDate": "2026-02-01",
     "receivedQty": 40000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02057"
   },
   {
     "id": "GRN-02058",
@@ -469,7 +527,8 @@
     "poDate": "2025-07-31",
     "grnDate": "2025-08-25",
     "receivedQty": 85000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02058"
   },
   {
     "id": "GRN-02059",
@@ -477,7 +536,8 @@
     "poDate": "2025-07-10",
     "grnDate": "2025-08-03",
     "receivedQty": 6500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02059"
   },
   {
     "id": "GRN-02060",
@@ -485,7 +545,8 @@
     "poDate": "2026-02-15",
     "grnDate": "2026-03-20",
     "receivedQty": 10000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02060"
   },
   {
     "id": "GRN-02061",
@@ -493,7 +554,8 @@
     "poDate": "2025-11-09",
     "grnDate": "2025-12-07",
     "receivedQty": 500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02061"
   },
   {
     "id": "GRN-02062",
@@ -501,7 +563,8 @@
     "poDate": "2026-01-19",
     "grnDate": "2026-02-07",
     "receivedQty": 27500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02062"
   },
   {
     "id": "GRN-02063",
@@ -509,7 +572,8 @@
     "poDate": "2025-11-01",
     "grnDate": "2025-12-08",
     "receivedQty": 5000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02063"
   },
   {
     "id": "GRN-02064",
@@ -517,7 +581,8 @@
     "poDate": "2025-12-24",
     "grnDate": "2026-01-16",
     "receivedQty": 20000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02064"
   },
   {
     "id": "GRN-02065",
@@ -525,7 +590,8 @@
     "poDate": "2025-06-26",
     "grnDate": "2025-08-07",
     "receivedQty": 27000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02065"
   },
   {
     "id": "GRN-02066",
@@ -533,7 +599,8 @@
     "poDate": "2025-09-20",
     "grnDate": "2025-10-22",
     "receivedQty": 5500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02066"
   },
   {
     "id": "GRN-02067",
@@ -541,7 +608,8 @@
     "poDate": "2026-01-05",
     "grnDate": "2026-01-31",
     "receivedQty": 21000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02067"
   },
   {
     "id": "GRN-02068",
@@ -549,7 +617,8 @@
     "poDate": "2025-08-16",
     "grnDate": "2025-10-30",
     "receivedQty": 41000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02068"
   },
   {
     "id": "GRN-02069",
@@ -557,7 +626,8 @@
     "poDate": "2025-08-04",
     "grnDate": "2025-08-27",
     "receivedQty": 62500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02069"
   },
   {
     "id": "GRN-02070",
@@ -565,7 +635,8 @@
     "poDate": "2026-03-03",
     "grnDate": "2026-04-04",
     "receivedQty": 500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02070"
   },
   {
     "id": "GRN-02071",
@@ -573,7 +644,8 @@
     "poDate": "2025-07-14",
     "grnDate": "2025-08-09",
     "receivedQty": 40000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02071"
   },
   {
     "id": "GRN-02072",
@@ -581,7 +653,8 @@
     "poDate": "2025-12-15",
     "grnDate": "2026-01-17",
     "receivedQty": 40000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02072"
   },
   {
     "id": "GRN-02073",
@@ -589,7 +662,8 @@
     "poDate": "2026-01-02",
     "grnDate": "2026-01-11",
     "receivedQty": 100500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02073"
   },
   {
     "id": "GRN-02074",
@@ -597,7 +671,8 @@
     "poDate": "2026-04-23",
     "grnDate": "2026-05-17",
     "receivedQty": 13000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02074"
   },
   {
     "id": "GRN-02075",
@@ -605,7 +680,8 @@
     "poDate": "2026-01-11",
     "grnDate": "2026-01-28",
     "receivedQty": 44000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02075"
   },
   {
     "id": "GRN-02076",
@@ -613,7 +689,8 @@
     "poDate": "2025-07-15",
     "grnDate": "2025-08-10",
     "receivedQty": 500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02076"
   },
   {
     "id": "GRN-02077",
@@ -621,7 +698,8 @@
     "poDate": "2025-06-25",
     "grnDate": "2025-07-26",
     "receivedQty": 30000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02077"
   },
   {
     "id": "GRN-02078",
@@ -629,7 +707,8 @@
     "poDate": "2026-03-06",
     "grnDate": "2026-03-22",
     "receivedQty": 45000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02078"
   },
   {
     "id": "GRN-02079",
@@ -637,7 +716,8 @@
     "poDate": "2025-09-18",
     "grnDate": "2025-10-14",
     "receivedQty": 5000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02079"
   },
   {
     "id": "GRN-02080",
@@ -645,7 +725,8 @@
     "poDate": "2025-11-26",
     "grnDate": "2025-12-11",
     "receivedQty": 11000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02080"
   },
   {
     "id": "GRN-02081",
@@ -653,7 +734,8 @@
     "poDate": "2025-09-29",
     "grnDate": "2025-11-07",
     "receivedQty": 20000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02081"
   },
   {
     "id": "GRN-02082",
@@ -661,7 +743,8 @@
     "poDate": "2026-03-21",
     "grnDate": "2026-04-04",
     "receivedQty": 15500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02082"
   },
   {
     "id": "GRN-02083",
@@ -669,7 +752,8 @@
     "poDate": "2026-03-07",
     "grnDate": "2026-04-08",
     "receivedQty": 53500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02083"
   },
   {
     "id": "GRN-02084",
@@ -677,7 +761,8 @@
     "poDate": "2025-11-12",
     "grnDate": "2025-12-02",
     "receivedQty": 55500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02084"
   },
   {
     "id": "GRN-02085",
@@ -685,7 +770,8 @@
     "poDate": "2026-04-02",
     "grnDate": "2026-04-20",
     "receivedQty": 43500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02085"
   },
   {
     "id": "GRN-02086",
@@ -693,7 +779,8 @@
     "poDate": "2025-11-12",
     "grnDate": "2025-12-12",
     "receivedQty": 50500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02086"
   },
   {
     "id": "GRN-02087",
@@ -701,7 +788,8 @@
     "poDate": "2025-07-10",
     "grnDate": "2025-07-25",
     "receivedQty": 25000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02087"
   },
   {
     "id": "GRN-02088",
@@ -709,7 +797,8 @@
     "poDate": "2025-07-15",
     "grnDate": "2025-07-27",
     "receivedQty": 51000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02088"
   },
   {
     "id": "GRN-02089",
@@ -717,7 +806,8 @@
     "poDate": "2026-04-02",
     "grnDate": "2026-05-12",
     "receivedQty": 25000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02089"
   },
   {
     "id": "GRN-02090",
@@ -725,7 +815,8 @@
     "poDate": "2025-09-01",
     "grnDate": "2025-09-26",
     "receivedQty": 11500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02090"
   },
   {
     "id": "GRN-02091",
@@ -733,7 +824,8 @@
     "poDate": "2026-01-17",
     "grnDate": "2026-02-20",
     "receivedQty": 10500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02091"
   },
   {
     "id": "GRN-02092",
@@ -741,7 +833,8 @@
     "poDate": "2025-11-23",
     "grnDate": "2025-12-08",
     "receivedQty": 52000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02092"
   },
   {
     "id": "GRN-02093",
@@ -749,7 +842,8 @@
     "poDate": "2025-09-01",
     "grnDate": "2025-10-03",
     "receivedQty": 15000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02093"
   },
   {
     "id": "GRN-02094",
@@ -757,7 +851,8 @@
     "poDate": "2026-04-24",
     "grnDate": "2026-05-19",
     "receivedQty": 31000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02094"
   },
   {
     "id": "GRN-02095",
@@ -765,7 +860,8 @@
     "poDate": "2025-06-25",
     "grnDate": "2025-07-04",
     "receivedQty": 66000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02095"
   },
   {
     "id": "GRN-02096",
@@ -773,7 +869,8 @@
     "poDate": "2026-01-16",
     "grnDate": "2026-01-30",
     "receivedQty": 20000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02096"
   },
   {
     "id": "GRN-02097",
@@ -781,7 +878,8 @@
     "poDate": "2025-08-25",
     "grnDate": "2025-09-13",
     "receivedQty": 1000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02097"
   },
   {
     "id": "GRN-02098",
@@ -789,7 +887,8 @@
     "poDate": "2025-08-23",
     "grnDate": "2025-10-05",
     "receivedQty": 91000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02098"
   },
   {
     "id": "GRN-02099",
@@ -797,7 +896,8 @@
     "poDate": "2025-11-04",
     "grnDate": "2025-12-16",
     "receivedQty": 85000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02099"
   },
   {
     "id": "GRN-02100",
@@ -805,7 +905,8 @@
     "poDate": "2025-11-19",
     "grnDate": "2025-12-08",
     "receivedQty": 80000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02100"
   },
   {
     "id": "GRN-02101",
@@ -813,7 +914,8 @@
     "poDate": "2025-11-05",
     "grnDate": "2025-11-19",
     "receivedQty": 20000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02101"
   },
   {
     "id": "GRN-02102",
@@ -821,7 +923,8 @@
     "poDate": "2025-08-25",
     "grnDate": "2025-09-12",
     "receivedQty": 21000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02102"
   },
   {
     "id": "GRN-02103",
@@ -829,7 +932,8 @@
     "poDate": "2025-12-12",
     "grnDate": "2025-12-27",
     "receivedQty": 60000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02103"
   },
   {
     "id": "GRN-02104",
@@ -837,7 +941,8 @@
     "poDate": "2026-01-31",
     "grnDate": "2026-03-04",
     "receivedQty": 7500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02104"
   },
   {
     "id": "GRN-02105",
@@ -845,7 +950,8 @@
     "poDate": "2025-07-14",
     "grnDate": "2025-07-22",
     "receivedQty": 40000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02105"
   },
   {
     "id": "GRN-02106",
@@ -853,7 +959,8 @@
     "poDate": "2026-02-05",
     "grnDate": "2026-02-26",
     "receivedQty": 2500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02106"
   },
   {
     "id": "GRN-02107",
@@ -861,7 +968,8 @@
     "poDate": "2026-04-23",
     "grnDate": "2026-07-05",
     "receivedQty": 35000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02107"
   },
   {
     "id": "GRN-02108",
@@ -869,7 +977,8 @@
     "poDate": "2026-04-15",
     "grnDate": "2026-05-21",
     "receivedQty": 45000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02108"
   },
   {
     "id": "GRN-02109",
@@ -877,7 +986,8 @@
     "poDate": "2025-12-14",
     "grnDate": "2026-01-02",
     "receivedQty": 75000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02109"
   },
   {
     "id": "GRN-02110",
@@ -885,7 +995,8 @@
     "poDate": "2025-12-23",
     "grnDate": "2026-01-31",
     "receivedQty": 110000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02110"
   },
   {
     "id": "GRN-02111",
@@ -893,7 +1004,8 @@
     "poDate": "2025-12-03",
     "grnDate": "2025-12-27",
     "receivedQty": 1000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02111"
   },
   {
     "id": "GRN-02112",
@@ -901,7 +1013,8 @@
     "poDate": "2026-03-04",
     "grnDate": "2026-03-23",
     "receivedQty": 30500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02112"
   },
   {
     "id": "GRN-02113",
@@ -909,7 +1022,8 @@
     "poDate": "2026-03-13",
     "grnDate": "2026-03-28",
     "receivedQty": 2500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02113"
   },
   {
     "id": "GRN-02114",
@@ -917,7 +1031,8 @@
     "poDate": "2026-02-06",
     "grnDate": "2026-02-22",
     "receivedQty": 1000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02114"
   },
   {
     "id": "GRN-02115",
@@ -925,7 +1040,8 @@
     "poDate": "2025-10-23",
     "grnDate": "2025-11-22",
     "receivedQty": 500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02115"
   },
   {
     "id": "GRN-02116",
@@ -933,7 +1049,8 @@
     "poDate": "2025-12-21",
     "grnDate": "2026-01-07",
     "receivedQty": 15000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02116"
   },
   {
     "id": "GRN-02117",
@@ -941,7 +1058,8 @@
     "poDate": "2026-01-15",
     "grnDate": "2026-02-12",
     "receivedQty": 5000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02117"
   },
   {
     "id": "GRN-02118",
@@ -949,7 +1067,8 @@
     "poDate": "2026-04-12",
     "grnDate": "2026-05-21",
     "receivedQty": 100000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02118"
   },
   {
     "id": "GRN-02119",
@@ -957,7 +1076,8 @@
     "poDate": "2025-11-05",
     "grnDate": "2025-12-05",
     "receivedQty": 10000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02119"
   },
   {
     "id": "GRN-02120",
@@ -965,7 +1085,8 @@
     "poDate": "2025-10-27",
     "grnDate": "2025-11-26",
     "receivedQty": 40500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02120"
   },
   {
     "id": "GRN-02121",
@@ -973,7 +1094,8 @@
     "poDate": "2025-12-04",
     "grnDate": "2026-02-15",
     "receivedQty": 5000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02121"
   },
   {
     "id": "GRN-02122",
@@ -981,7 +1103,8 @@
     "poDate": "2025-07-06",
     "grnDate": "2025-08-03",
     "receivedQty": 41000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02122"
   },
   {
     "id": "GRN-02123",
@@ -989,7 +1112,8 @@
     "poDate": "2025-12-05",
     "grnDate": "2025-12-31",
     "receivedQty": 1500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02123"
   },
   {
     "id": "GRN-02124",
@@ -997,7 +1121,8 @@
     "poDate": "2025-08-06",
     "grnDate": "2025-09-01",
     "receivedQty": 42500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02124"
   },
   {
     "id": "GRN-02125",
@@ -1005,7 +1130,8 @@
     "poDate": "2026-02-22",
     "grnDate": "2026-03-12",
     "receivedQty": 1000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02125"
   },
   {
     "id": "GRN-02126",
@@ -1013,7 +1139,8 @@
     "poDate": "2025-09-01",
     "grnDate": "2025-10-10",
     "receivedQty": 20000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02126"
   },
   {
     "id": "GRN-02127",
@@ -1021,7 +1148,8 @@
     "poDate": "2026-04-25",
     "grnDate": "2026-05-21",
     "receivedQty": 500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02127"
   },
   {
     "id": "GRN-02128",
@@ -1029,7 +1157,8 @@
     "poDate": "2025-10-16",
     "grnDate": "2025-11-24",
     "receivedQty": 51500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02128"
   },
   {
     "id": "GRN-02129",
@@ -1037,7 +1166,8 @@
     "poDate": "2025-10-03",
     "grnDate": "2025-11-06",
     "receivedQty": 20000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02129"
   },
   {
     "id": "GRN-02130",
@@ -1045,7 +1175,8 @@
     "poDate": "2026-03-06",
     "grnDate": "2026-05-24",
     "receivedQty": 5000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02130"
   },
   {
     "id": "GRN-02131",
@@ -1053,7 +1184,8 @@
     "poDate": "2025-09-19",
     "grnDate": "2025-10-22",
     "receivedQty": 20000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02131"
   },
   {
     "id": "GRN-02132",
@@ -1061,7 +1193,8 @@
     "poDate": "2026-02-03",
     "grnDate": "2026-03-07",
     "receivedQty": 60000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02132"
   },
   {
     "id": "GRN-02133",
@@ -1069,7 +1202,8 @@
     "poDate": "2025-12-22",
     "grnDate": "2026-01-17",
     "receivedQty": 5000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02133"
   },
   {
     "id": "GRN-02134",
@@ -1077,7 +1211,8 @@
     "poDate": "2025-08-12",
     "grnDate": "2025-09-14",
     "receivedQty": 12000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02134"
   },
   {
     "id": "GRN-02135",
@@ -1085,7 +1220,8 @@
     "poDate": "2025-09-11",
     "grnDate": "2025-11-24",
     "receivedQty": 1000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02135"
   },
   {
     "id": "GRN-02136",
@@ -1093,7 +1229,8 @@
     "poDate": "2026-03-05",
     "grnDate": "2026-03-31",
     "receivedQty": 21000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02136"
   },
   {
     "id": "GRN-02137",
@@ -1101,7 +1238,8 @@
     "poDate": "2026-03-19",
     "grnDate": "2026-04-09",
     "receivedQty": 8500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02137"
   },
   {
     "id": "GRN-02138",
@@ -1109,7 +1247,8 @@
     "poDate": "2026-03-12",
     "grnDate": "2026-04-02",
     "receivedQty": 10000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02138"
   },
   {
     "id": "GRN-02139",
@@ -1117,7 +1256,8 @@
     "poDate": "2025-07-11",
     "grnDate": "2025-08-04",
     "receivedQty": 5000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02139"
   },
   {
     "id": "GRN-02140",
@@ -1125,7 +1265,8 @@
     "poDate": "2025-06-29",
     "grnDate": "2025-07-18",
     "receivedQty": 30000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02140"
   },
   {
     "id": "GRN-02141",
@@ -1133,7 +1274,8 @@
     "poDate": "2025-06-13",
     "grnDate": "2025-08-27",
     "receivedQty": 23000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02141"
   },
   {
     "id": "GRN-02142",
@@ -1141,7 +1283,8 @@
     "poDate": "2026-01-26",
     "grnDate": "2026-02-18",
     "receivedQty": 60000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02142"
   },
   {
     "id": "GRN-02143",
@@ -1149,7 +1292,8 @@
     "poDate": "2025-11-09",
     "grnDate": "2025-12-09",
     "receivedQty": 25000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02143"
   },
   {
     "id": "GRN-02144",
@@ -1157,7 +1301,8 @@
     "poDate": "2025-12-28",
     "grnDate": "2026-02-03",
     "receivedQty": 6000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02144"
   },
   {
     "id": "GRN-02145",
@@ -1165,7 +1310,8 @@
     "poDate": "2025-12-24",
     "grnDate": "2026-01-08",
     "receivedQty": 70000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02145"
   },
   {
     "id": "GRN-02146",
@@ -1173,7 +1319,8 @@
     "poDate": "2025-09-28",
     "grnDate": "2025-10-19",
     "receivedQty": 70000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02146"
   },
   {
     "id": "GRN-02147",
@@ -1181,7 +1328,8 @@
     "poDate": "2025-10-02",
     "grnDate": "2025-11-03",
     "receivedQty": 20000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02147"
   },
   {
     "id": "GRN-02148",
@@ -1189,7 +1337,8 @@
     "poDate": "2026-02-22",
     "grnDate": "2026-03-12",
     "receivedQty": 10000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02148"
   },
   {
     "id": "GRN-02149",
@@ -1197,7 +1346,8 @@
     "poDate": "2025-10-09",
     "grnDate": "2025-11-12",
     "receivedQty": 5000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02149"
   },
   {
     "id": "GRN-02150",
@@ -1205,7 +1355,8 @@
     "poDate": "2025-08-04",
     "grnDate": "2025-09-13",
     "receivedQty": 500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02150"
   },
   {
     "id": "GRN-02151",
@@ -1213,7 +1364,8 @@
     "poDate": "2025-11-19",
     "grnDate": "2025-12-28",
     "receivedQty": 20500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02151"
   },
   {
     "id": "GRN-02152",
@@ -1221,7 +1373,8 @@
     "poDate": "2025-10-15",
     "grnDate": "2025-11-15",
     "receivedQty": 15500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02152"
   },
   {
     "id": "GRN-02153",
@@ -1229,7 +1382,8 @@
     "poDate": "2026-01-17",
     "grnDate": "2026-04-16",
     "receivedQty": 21500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02153"
   },
   {
     "id": "GRN-02154",
@@ -1237,7 +1391,8 @@
     "poDate": "2025-11-02",
     "grnDate": "2025-11-10",
     "receivedQty": 7500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02154"
   },
   {
     "id": "GRN-02155",
@@ -1245,7 +1400,8 @@
     "poDate": "2025-11-03",
     "grnDate": "2025-12-04",
     "receivedQty": 5000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02155"
   },
   {
     "id": "GRN-02156",
@@ -1253,7 +1409,8 @@
     "poDate": "2026-04-23",
     "grnDate": "2026-05-17",
     "receivedQty": 23500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02156"
   },
   {
     "id": "GRN-02157",
@@ -1261,7 +1418,8 @@
     "poDate": "2026-01-07",
     "grnDate": "2026-01-26",
     "receivedQty": 32500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02157"
   },
   {
     "id": "GRN-02158",
@@ -1269,7 +1427,8 @@
     "poDate": "2025-12-15",
     "grnDate": "2026-01-10",
     "receivedQty": 20500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02158"
   },
   {
     "id": "GRN-02159",
@@ -1277,7 +1436,8 @@
     "poDate": "2025-12-14",
     "grnDate": "2026-01-09",
     "receivedQty": 2500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02159"
   },
   {
     "id": "GRN-02160",
@@ -1285,7 +1445,8 @@
     "poDate": "2025-08-12",
     "grnDate": "2025-09-11",
     "receivedQty": 1000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02160"
   },
   {
     "id": "GRN-02161",
@@ -1293,7 +1454,8 @@
     "poDate": "2026-01-24",
     "grnDate": "2026-02-16",
     "receivedQty": 24000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02161"
   },
   {
     "id": "GRN-02162",
@@ -1301,7 +1463,8 @@
     "poDate": "2025-12-21",
     "grnDate": "2026-01-08",
     "receivedQty": 120500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02162"
   },
   {
     "id": "GRN-02163",
@@ -1309,7 +1472,8 @@
     "poDate": "2025-06-13",
     "grnDate": "2025-07-16",
     "receivedQty": 63000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02163"
   },
   {
     "id": "GRN-02164",
@@ -1317,7 +1481,8 @@
     "poDate": "2026-01-20",
     "grnDate": "2026-02-21",
     "receivedQty": 500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02164"
   },
   {
     "id": "GRN-02165",
@@ -1325,7 +1490,8 @@
     "poDate": "2025-08-30",
     "grnDate": "2025-09-28",
     "receivedQty": 20000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02165"
   },
   {
     "id": "GRN-02166",
@@ -1333,7 +1499,8 @@
     "poDate": "2025-10-12",
     "grnDate": "2025-10-27",
     "receivedQty": 32500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02166"
   },
   {
     "id": "GRN-02167",
@@ -1341,7 +1508,8 @@
     "poDate": "2025-12-12",
     "grnDate": "2025-12-31",
     "receivedQty": 1000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02167"
   },
   {
     "id": "GRN-02168",
@@ -1349,7 +1517,8 @@
     "poDate": "2026-04-16",
     "grnDate": "2026-05-12",
     "receivedQty": 23000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02168"
   },
   {
     "id": "GRN-02169",
@@ -1357,7 +1526,8 @@
     "poDate": "2025-10-03",
     "grnDate": "2025-11-02",
     "receivedQty": 45000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02169"
   },
   {
     "id": "GRN-02170",
@@ -1365,7 +1535,8 @@
     "poDate": "2026-02-10",
     "grnDate": "2026-03-05",
     "receivedQty": 65000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02170"
   },
   {
     "id": "GRN-02171",
@@ -1373,7 +1544,8 @@
     "poDate": "2025-06-18",
     "grnDate": "2025-07-09",
     "receivedQty": 91000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02171"
   },
   {
     "id": "GRN-02172",
@@ -1381,7 +1553,8 @@
     "poDate": "2026-01-10",
     "grnDate": "2026-02-11",
     "receivedQty": 23500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02172"
   },
   {
     "id": "GRN-02173",
@@ -1389,7 +1562,8 @@
     "poDate": "2025-09-16",
     "grnDate": "2025-10-17",
     "receivedQty": 500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02173"
   },
   {
     "id": "GRN-02174",
@@ -1397,7 +1571,8 @@
     "poDate": "2025-09-25",
     "grnDate": "2025-10-25",
     "receivedQty": 20500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02174"
   },
   {
     "id": "GRN-02175",
@@ -1405,7 +1580,8 @@
     "poDate": "2025-09-12",
     "grnDate": "2025-10-02",
     "receivedQty": 25000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02175"
   },
   {
     "id": "GRN-02176",
@@ -1413,7 +1589,8 @@
     "poDate": "2025-06-19",
     "grnDate": "2025-07-17",
     "receivedQty": 43500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02176"
   },
   {
     "id": "GRN-02177",
@@ -1421,7 +1598,8 @@
     "poDate": "2025-12-20",
     "grnDate": "2026-01-08",
     "receivedQty": 5000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02177"
   },
   {
     "id": "GRN-02178",
@@ -1429,7 +1607,8 @@
     "poDate": "2025-11-10",
     "grnDate": "2025-12-01",
     "receivedQty": 95000,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02178"
   },
   {
     "id": "GRN-02179",
@@ -1437,6 +1616,7 @@
     "poDate": "2025-11-29",
     "grnDate": "2025-12-24",
     "receivedQty": 2500,
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    "poId": "PO-H-02179"
   }
 ]
