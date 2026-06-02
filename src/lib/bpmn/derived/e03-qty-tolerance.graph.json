@@ -1,0 +1,238 @@
+{
+  "id": "e03-qty-tolerance",
+  "file": "e03-qty-tolerance.bpmn",
+  "name": "e03 - Quantity Tolerance and Partial Deliveries",
+  "lanes": [
+    {
+      "id": "L_buyer",
+      "name": "Procurement / Buyer",
+      "role": "Procurement / Buyer"
+    },
+    {
+      "id": "L_recv",
+      "name": "Receiving / Warehouse",
+      "role": "Receiving / Warehouse"
+    },
+    {
+      "id": "L_qc",
+      "name": "Quality",
+      "role": "Quality"
+    },
+    {
+      "id": "L_sys",
+      "name": "Platform / System",
+      "role": "Platform / System"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "CountReceived",
+      "type": "userTask",
+      "name": "Count and record received quantity per line",
+      "lane": "Receiving / Warehouse",
+      "documentation": "Receiving counts each PO line and records receivedQuantity (number, >0, mandatory) into the delivery block itemsDelivery JSON [{poLineId, quantity}]. Captures deliveryNoteNumber (text, mandatory), packing-list reference, photos (attachments). No GRN raised yet. The recorded receivedQuantity is compared to POLine.quantity (the ordered quantity for this shipment, which for a full-contract PO is the full contract quantity, e.g. 100000 bottles). [SCOR S2.4 | ISO 8.6 receiving records | source: AB + RA itemsDelivery]"
+    },
+    {
+      "id": "BuyerDisposition",
+      "type": "userTask",
+      "name": "Buyer dispositions breach",
+      "lane": "Procurement / Buyer",
+      "documentation": "Buyer chooses disposition (dropdown {accept-and-amend | accept-partial-reject-excess | reject-return}). accept-and-amend: amend PO to full received quantity (over) or to received quantity and keep balance open (under). accept-partial-reject-excess: accept up to band, return excess via RMA (S4). reject-return: refuse the breach portion. Requires po.amend permission; buyer cannot approve own PO for issue but may amend pre-receipt (audited). [SCOR S2.4/S4 | source: build-new + AB editable-until-receipt]"
+    },
+    {
+      "id": "AmendPO",
+      "type": "userTask",
+      "name": "Amend PO line to actual received quantity",
+      "lane": "Procurement / Buyer",
+      "documentation": "Buyer edits POLine.quantity to the actual physical count (within-tolerance auto-path) or to the buyer-approved quantity (breach path). Action po.amend: allowed only while PO is editable-until-first-GR; recomputes line value = amendedQuantity * agreedPrice, recomputes tax, adjusts the budget commitment delta (commitment += or -= value change) and re-derives totalAmountInBase via the FX service. PO stays issued/acknowledged; no re-approval unless financial-revert rule fires (edit to pay terms / schedules reverts auto-approved finance completions). [SCOR S2.1/OE11 | ISO 8.4.3 | source: AB amend + build-new commitment]"
+    },
+    {
+      "id": "RaiseGRN",
+      "type": "userTask",
+      "name": "Raise GRN for this shipment against amended PO",
+      "lane": "Receiving / Warehouse",
+      "documentation": "Receiving raises ONE GRN per shipment (per partial block) against the (amended) PO line. GRN fields: erpGrNumber (auto), poId, poLineId, receivedQuantity, deliveryNoteNumber, actualDeliveryDate, qcStatus (passed|n/a), attachments. Action grn.raise (Receiving permission; Quality only after QC pass). GR/IR clearing accrues a liability = receivedQuantity * agreedPrice incl. tax to the GR/IR account, status accrued, invoiceId null until matched. Relieves the commitment for the received quantity. [SCOR S2.4 | ISO 8.6 | source: build-new GR/IR + RA grn]"
+    },
+    {
+      "id": "AuditAmend",
+      "type": "serviceTask",
+      "name": "Write immutable amend audit + commitment delta",
+      "lane": "Platform / System",
+      "documentation": "System writes an append-only audit entry (category po): actor, timestamp, poLineId, oldQuantity, newQuantity, oldValue, newValue, reason (tolerance-amend|breach-disposition), delivery-block reference. Posts the commitment delta to the budget service and emits an SSE {poId}. Immutable, field-level humanised diff (RA buildUpdateMetadata). This audit BEFORE GRN is the control that makes the three-way match reconcilable. [SCOR OE4 | ISO 7.5 records | source: platform-services audit + RA]"
+    },
+    {
+      "id": "NotifyBuyerBreach",
+      "type": "sendTask",
+      "name": "Raise tolerance-breach exception to buyer",
+      "lane": "Receiving / Warehouse",
+      "documentation": "Receiving raises a tolerance-breach exception (type {over-tolerance|under-tolerance}, poId, poLineId, ordered, received, band) and notifies the buyer. The line is held; no GRN until the buyer dispositions. The shipment is not rejected outright (goods are physically present); the decision is commercial. [SCOR S2.4 | ISO 8.7 | source: build-new exception routing]"
+    },
+    {
+      "id": "GwToleranceItem",
+      "type": "exclusiveGateway",
+      "name": "Line carries a quantity tolerance?",
+      "lane": "Receiving / Warehouse",
+      "documentation": "Expression: POLine.tolerance != null AND POLine.tolerance.qtyPercent > 0. Tolerance items are printed/converted goods where supplier overrun/underrun is inherent: labels and cartons carry +/-5% to +/-10% (configurable per line, default labels 10%, cartons 5%). True -> evaluate variance. False (fixed-count items: finished bottles counted as discrete units, electronics, spares) -> skip tolerance, go straight to partial-vs-full evaluation. [SCOR S2.4 | source: AB POLine tolerance +/-5-10%]"
+    },
+    {
+      "id": "GwWithinTolerance",
+      "type": "exclusiveGateway",
+      "name": "Received within tolerance band?",
+      "lane": "Receiving / Warehouse",
+      "documentation": "Expression: abs(receivedQuantity - POLine.quantity) <= POLine.quantity * (POLine.tolerance.qtyPercent / 100). Example: ordered 100000 labels, tolerance 10%, band 90000..110000; received 104000 is within. Within band -> the receipt is accepted but the PO line quantity does not match the physical count, so the PO must be amended to the actual received quantity BEFORE the GRN so the three-way match reconciles. Outside band -> over/under-tolerance exception. [SCOR S2.4 | source: AB tolerance rule]"
+    },
+    {
+      "id": "GwToleranceBreach",
+      "type": "exclusiveGateway",
+      "name": "Over or under the band?",
+      "lane": "Receiving / Warehouse",
+      "documentation": "Expression on the breach direction. receivedQuantity > POLine.quantity * (1 + qtyPercent/100) -> over-tolerance (excess delivery, supplier shipped more than the band allows). receivedQuantity < POLine.quantity * (1 - qtyPercent/100) -> under-tolerance (short delivery beyond the band). Either way the buyer must decide before GRN; receiving cannot self-clear a breach. [SCOR S2.4 | source: AB + build-new control]"
+    },
+    {
+      "id": "GwPartialOrFull",
+      "type": "exclusiveGateway",
+      "name": "Shipment satisfies the full PO line?",
+      "lane": "Receiving / Warehouse",
+      "documentation": "Expression: sum(receivedQuantity across all delivery blocks for the line) >= POLine.quantity (after any amend). True -> line fully received, derived delivery status = delivered. False -> partial: line stays open, derived status = partial, ticket stage = PARTIAL_DELIVERY. A full-contract PO (e.g. 100000 bottles) received in 20000-unit lots produces five partial shipments, one GRN each, against the same PO line until cumulative >= contract quantity. [SCOR S2.4 | source: RA derived delivery status + AB partial blocks]"
+    },
+    {
+      "id": "QcGate",
+      "type": "exclusiveGateway",
+      "name": "Material requires QC and COA?",
+      "lane": "Quality",
+      "documentation": "Expression: item.category in {Items} AND item.requiresCoa = true (RM/PM materials). True -> COA + sample to QC; QC approve/reject is a HARD block (no GRN without COA). False (cartons, non-COA consumables, spares) -> skip QC, proceed to GRN. Each partial shipment is inspected on its own sample; passing one block does not waive inspection of the next. [SCOR S2.5 | ISO 8.6 | source: AB hard QC block]"
+    },
+    {
+      "id": "GwLineComplete",
+      "type": "exclusiveGateway",
+      "name": "Cumulative received >= PO line quantity?",
+      "lane": "Receiving / Warehouse",
+      "documentation": "Expression: sum(GRN.receivedQuantity for poLineId) >= POLine.quantity. True -> line complete, derived status delivered, ready for invoice/three-way match per line; if all lines complete the ticket can advance toward POST_DELIVERY. False -> remain PARTIAL_DELIVERY and await the next shipment, looping back to the start for the next inbound block. [SCOR S2.4/S2.6 | source: RA stage machine + AB partial]"
+    },
+    {
+      "id": "Start",
+      "type": "startEvent",
+      "name": "Shipment arrives against open PO",
+      "lane": "Receiving / Warehouse",
+      "documentation": "Trigger: a physical shipment (labels, cartons, bottles, RM, PM) arrives at the warehouse against a PO with status in {acknowledged, partially-received}. PO is editable-until-first-GR for tolerance amend. Receiving opens the inbound record: fields trackingNumber (MAWB/HAWB, text, optional), carrier (dropdown {air|sea|road|courier}), actualDeliveryDate (date, mandatory, default today), boeNumber (text, optional, import only), clearanceBy (text, optional). [SCOR S2.4 Receive Product | ISO 8.6 | source: AB inbound + RA block model]"
+    },
+    {
+      "id": "End",
+      "type": "endEvent",
+      "name": "Line fully received, ready for match",
+      "lane": "Platform / System",
+      "documentation": "PO line fully received within tolerance, all partial GRNs raised, GR/IR accrued per receipt, commitment relieved, audit + SSE emitted. Hands to e12 (two-way vs three-way match) and 09 invoice/match. [SCOR S2.6 | source: build-new]"
+    },
+    {
+      "id": "AwaitNext",
+      "type": "intermediateCatchEvent",
+      "name": "Await next partial shipment",
+      "lane": "Receiving / Warehouse",
+      "documentation": "Line remains open at PARTIAL_DELIVERY; system holds the PO open and waits (message/timer) for the next inbound shipment against the same PO line. Each subsequent shipment repeats count -> tolerance -> GRN. Overdue derivation: if actualDeliveryDate gap exceeds need-date, derived status flips to overdue and an ETA-approaching / overdue alarm fires to the buyer. [SCOR S2.4 | source: RA derived overdue + AB ETA alarm]"
+    }
+  ],
+  "flows": [
+    {
+      "id": "f1",
+      "from": "Start",
+      "to": "CountReceived",
+      "guard": ""
+    },
+    {
+      "id": "f2",
+      "from": "CountReceived",
+      "to": "GwToleranceItem",
+      "guard": ""
+    },
+    {
+      "id": "f3",
+      "from": "GwToleranceItem",
+      "to": "GwWithinTolerance",
+      "guard": "tolerance line (qtyPercent > 0)"
+    },
+    {
+      "id": "f4",
+      "from": "GwToleranceItem",
+      "to": "GwPartialOrFull",
+      "guard": "no-tolerance item -> skip"
+    },
+    {
+      "id": "f5",
+      "from": "GwWithinTolerance",
+      "to": "AmendPO",
+      "guard": "within band: amend to actual count"
+    },
+    {
+      "id": "f6",
+      "from": "GwWithinTolerance",
+      "to": "GwToleranceBreach",
+      "guard": "outside band"
+    },
+    {
+      "id": "f7",
+      "from": "GwToleranceBreach",
+      "to": "NotifyBuyerBreach",
+      "guard": "over or under tolerance"
+    },
+    {
+      "id": "f8",
+      "from": "NotifyBuyerBreach",
+      "to": "BuyerDisposition",
+      "guard": ""
+    },
+    {
+      "id": "f9",
+      "from": "BuyerDisposition",
+      "to": "AmendPO",
+      "guard": "accept (amend qty)"
+    },
+    {
+      "id": "f10",
+      "from": "AmendPO",
+      "to": "AuditAmend",
+      "guard": ""
+    },
+    {
+      "id": "f11",
+      "from": "AuditAmend",
+      "to": "GwPartialOrFull",
+      "guard": ""
+    },
+    {
+      "id": "f12",
+      "from": "GwPartialOrFull",
+      "to": "QcGate",
+      "guard": "full line or accepted partial block"
+    },
+    {
+      "id": "f14",
+      "from": "QcGate",
+      "to": "RaiseGRN",
+      "guard": "QC pass / no COA needed"
+    },
+    {
+      "id": "f15",
+      "from": "RaiseGRN",
+      "to": "GwLineComplete",
+      "guard": ""
+    },
+    {
+      "id": "f16",
+      "from": "GwLineComplete",
+      "to": "End",
+      "guard": "cumulative >= ordered"
+    },
+    {
+      "id": "f17",
+      "from": "GwLineComplete",
+      "to": "AwaitNext",
+      "guard": "cumulative < ordered"
+    },
+    {
+      "id": "f18",
+      "from": "AwaitNext",
+      "to": "Start",
+      "guard": "next shipment arrives"
+    }
+  ]
+}

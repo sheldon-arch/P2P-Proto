@@ -1,0 +1,274 @@
+{
+  "id": "e12-match-condition",
+  "file": "e12-match-condition.bpmn",
+  "name": "e12 - Two-way vs Three-way Match Condition",
+  "lanes": [
+    {
+      "id": "L_finmaker",
+      "name": "Finance - Maker",
+      "role": "Finance - Maker"
+    },
+    {
+      "id": "L_buyer",
+      "name": "Procurement / Buyer",
+      "role": "Procurement / Buyer"
+    },
+    {
+      "id": "L_recv",
+      "name": "Receiving / Warehouse",
+      "role": "Receiving / Warehouse"
+    },
+    {
+      "id": "L_tax",
+      "name": "Tax / Compliance",
+      "role": "Tax / Compliance"
+    },
+    {
+      "id": "L_sys",
+      "name": "Platform / System",
+      "role": "Platform / System"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "ResolveBuyer",
+      "type": "userTask",
+      "name": "Buyer resolves price-variance",
+      "lane": "Procurement / Buyer",
+      "documentation": "Price-variance routed to Buyer. Resolution dropdown {accept | adjust | credit-note | debit-note | reject}. Buyer accepts the new price (amend), raises a debit note for the overcharge, requests a supplier credit note, or rejects. permission match.resolveException (price). [SCOR S2.7 | source: data-model resolution set]"
+    },
+    {
+      "id": "ResolveRecv",
+      "type": "userTask",
+      "name": "Receiving resolves qty / missing-GR",
+      "lane": "Receiving / Warehouse",
+      "documentation": "qty-over / qty-under / missing-GR routed to Receiving. Resolution: raise/correct the GRN (missing-GR), confirm short/over receipt, accept within revised tolerance, or reject. permission match.resolveException (qty). A missing-GR on a three-way line cannot clear until a GRN is raised. [SCOR S2.7 | ISO 8.6 | source: data-model qty/GR resolver]"
+    },
+    {
+      "id": "ResolveTax",
+      "type": "userTask",
+      "name": "Tax/Compliance resolves tax-mismatch",
+      "lane": "Tax / Compliance",
+      "documentation": "tax-mismatch routed to Tax/Compliance. Verify taxCodeId, rate, taxableAmount, reverse-charge flag for imports, recoverable input credit; correct the line tax or raise a debit/credit note. permission match.resolveException (tax). [SCOR S2.7 | source: data-model tax resolver]"
+    },
+    {
+      "id": "ResolveFin",
+      "type": "userTask",
+      "name": "Finance resolves duplicate-invoice",
+      "lane": "Finance - Maker",
+      "documentation": "duplicate-invoice routed to Finance. Confirm it is a true duplicate (same supplier + invoice# + amount) -> reject/void it; or, if a legitimate distinct invoice with a coincidental signature, override with reason and proceed. permission match.resolveException. [SCOR S2.7 | source: build-new duplicate resolver]"
+    },
+    {
+      "id": "ThreeWay",
+      "type": "serviceTask",
+      "name": "Three-way match (PO + GRN + invoice)",
+      "lane": "Platform / System",
+      "documentation": "Match invoice line against PO line AND GRN: compare unitPrice to agreedPrice, invoice quantity to received (GRN) quantity, and amounts including tax. Sets up the tolerance evaluation. [SCOR S2.7 | ISO 8.6 | source: build-new three-way]"
+    },
+    {
+      "id": "TwoWay",
+      "type": "serviceTask",
+      "name": "Two-way match (PO + invoice) + milestone acceptance",
+      "lane": "Platform / System",
+      "documentation": "Match invoice line against PO line only (no GRN), gated by milestone acceptance for service POs: the milestone must be acceptanceStatus = accepted before payment releases (paymentReleaseOnAcceptance). Compare unitPrice and amounts incl. tax; quantity check is the milestone/acceptance, not a GRN. [SCOR S2.7 | source: data-model two-way + milestone acceptance]"
+    },
+    {
+      "id": "Clear",
+      "type": "serviceTask",
+      "name": "Mark matched; relieve GR/IR; commitment to actual",
+      "lane": "Platform / System",
+      "documentation": "matchStatus = matched. Relieve the GR/IR clearing entry (status cleared) for the matched amount; move the budget commitment to actual (committed -= , actual += ). Post the payable to the creditor ledger. Audit + SSE. Hands to 10 payments. [SCOR S2.7/OE11 | ISO 8.6 | source: build-new GR/IR clearing + commitment relief]"
+    },
+    {
+      "id": "Tolerance",
+      "type": "businessRuleTask",
+      "name": "Tolerance check (price%, qty%, absolute, tax-incl)",
+      "lane": "Platform / System",
+      "documentation": "Apply MatchTolerance config: pricePercent, qtyPercent, absolute, evaluated TAX-INCLUSIVE. Within tolerance on ALL of: abs(invoiceUnitPrice - agreedPrice) <= agreedPrice * pricePercent/100; abs(invoiceQty - matchedQty) <= matchedQty * qtyPercent/100; abs(invoiceTotalIncTax - expectedTotalIncTax) <= absolute. matchedQty = GRN received qty (three-way) or PO/milestone qty (two-way). All within -> auto-clear. Any outside -> exception with a type. [SCOR S2.7 | ISO 8.6 | source: data-model MatchTolerance]"
+    },
+    {
+      "id": "GwDuplicate",
+      "type": "exclusiveGateway",
+      "name": "Duplicate invoice?",
+      "lane": "Platform / System",
+      "documentation": "Standard AP control BEFORE matching. Expression: exists another invoice with same supplierId AND same invoiceNumber AND same totalIncTax (the three-key duplicate signature). True -> duplicate-invoice exception, route to resolver, do NOT post. False -> proceed to match-type selection. [SCOR S2.7 | source: build-new duplicate detection supplier + invoice# + amount]"
+    },
+    {
+      "id": "GwGrnExists",
+      "type": "exclusiveGateway",
+      "name": "GRN exists for the line / category?",
+      "lane": "Platform / System",
+      "documentation": "Determines match type. Expression: a GRN exists for the invoice line's PO line (goods-receipt category, i.e. materials). True -> THREE-WAY match (PO + GRN + invoice). False (service / freight / no-GRN category, e.g. spares received by Engineering with no GRN) -> TWO-WAY match (PO + invoice) plus milestone acceptance. Rule: three-way iff a GRN exists, else two-way. [SCOR S2.7 | ISO 8.6 | source: data-model matchType rule]"
+    },
+    {
+      "id": "GwWithinTol",
+      "type": "exclusiveGateway",
+      "name": "Within tolerance on all checks?",
+      "lane": "Platform / System",
+      "documentation": "Expression: priceWithin AND qtyWithin AND amountWithin (all true). True -> auto-clear: matchStatus = matched, relieve GR/IR (cleared), move commitment to actual. False -> classify the exception type. [SCOR S2.7 | source: build-new auto-clear vs exception]"
+    },
+    {
+      "id": "ClassifyException",
+      "type": "exclusiveGateway",
+      "name": "Exception type?",
+      "lane": "Platform / System",
+      "documentation": "Classify into one type and route to the right resolver. Types: price-variance (unitPrice out of band) -> Buyer; qty-over (invoiceQty > matchedQty + tol) -> Receiving; qty-under (invoiceQty < matchedQty - tol) -> Receiving; missing-GR (three-way expected but GRN absent/short) -> Receiving; duplicate-invoice (from the pre-check) -> Finance; tax-mismatch (taxAmount/taxCode wrong) -> Tax/Compliance. [SCOR S2.7 | ISO 8.6 | source: data-model MatchException type + routedTo]"
+    },
+    {
+      "id": "GwResolved",
+      "type": "exclusiveGateway",
+      "name": "Exception resolved to a match?",
+      "lane": "Platform / System",
+      "documentation": "Expression: resolution in {accept, adjust, credit-note, debit-note} AND the adjusted figures now fall within tolerance. True -> matched (clear GR/IR, commitment to actual). False (reject) -> rejected; invoice returned to supplier / parked; no payment. [SCOR S2.7 | source: data-model match resolution outcome]"
+    },
+    {
+      "id": "Start",
+      "type": "startEvent",
+      "name": "Invoice captured against PO",
+      "lane": "Finance - Maker",
+      "documentation": "Trigger: Finance-Maker captures a supplier invoice (with documents) linked to a PO. Fields: supplierId, poId, invoiceNumber, invoiceDate, lines [{poLineId, quantity, unitPrice, taxableAmount, taxCodeId, taxAmount}], totalIncTax, attachments. The match engine runs next. [SCOR S2.7 | ISO 8.6 | source: build-new match + AB invoice package]"
+    },
+    {
+      "id": "Reject",
+      "type": "endEvent",
+      "name": "Rejected; no payment posted",
+      "lane": "Platform / System",
+      "documentation": "Terminal reject: duplicate confirmed or exception not resolvable. No payable posted; invoice voided/returned; GR/IR remains accrued (goods-received-not-invoiced) until a corrected invoice arrives. [SCOR S2.7 | source: build-new]"
+    },
+    {
+      "id": "End",
+      "type": "endEvent",
+      "name": "Matched; ready for payment",
+      "lane": "Platform / System",
+      "documentation": "Invoice matched (two-way or three-way), within tolerance or resolved; GR/IR relieved, commitment actualised, payable on the creditor ledger. Hands to 10 payments (schedule, maker/checker release). [SCOR S2.7 | source: build-new]"
+    }
+  ],
+  "flows": [
+    {
+      "id": "f1",
+      "from": "Start",
+      "to": "GwDuplicate",
+      "guard": ""
+    },
+    {
+      "id": "f2",
+      "from": "GwDuplicate",
+      "to": "GwGrnExists",
+      "guard": "not a duplicate"
+    },
+    {
+      "id": "f3",
+      "from": "GwDuplicate",
+      "to": "ResolveFin",
+      "guard": "duplicate signature -> exception"
+    },
+    {
+      "id": "f4",
+      "from": "GwGrnExists",
+      "to": "ThreeWay",
+      "guard": "GRN exists (materials)"
+    },
+    {
+      "id": "f5",
+      "from": "GwGrnExists",
+      "to": "TwoWay",
+      "guard": "no GRN (service / freight)"
+    },
+    {
+      "id": "f6",
+      "from": "ThreeWay",
+      "to": "Tolerance",
+      "guard": ""
+    },
+    {
+      "id": "f7",
+      "from": "TwoWay",
+      "to": "Tolerance",
+      "guard": ""
+    },
+    {
+      "id": "f8",
+      "from": "Tolerance",
+      "to": "GwWithinTol",
+      "guard": ""
+    },
+    {
+      "id": "f9",
+      "from": "GwWithinTol",
+      "to": "Clear",
+      "guard": "within tolerance -> auto-clear"
+    },
+    {
+      "id": "f10",
+      "from": "GwWithinTol",
+      "to": "ClassifyException",
+      "guard": "outside tolerance"
+    },
+    {
+      "id": "f11",
+      "from": "ClassifyException",
+      "to": "ResolveBuyer",
+      "guard": "price-variance -> Buyer"
+    },
+    {
+      "id": "f12",
+      "from": "ClassifyException",
+      "to": "ResolveRecv",
+      "guard": "qty-over / qty-under / missing-GR -> Receiving"
+    },
+    {
+      "id": "f13",
+      "from": "ClassifyException",
+      "to": "ResolveTax",
+      "guard": "tax-mismatch -> Tax/Compliance"
+    },
+    {
+      "id": "f14",
+      "from": "ClassifyException",
+      "to": "ResolveFin",
+      "guard": "duplicate-invoice -> Finance"
+    },
+    {
+      "id": "f15",
+      "from": "ResolveBuyer",
+      "to": "GwResolved",
+      "guard": ""
+    },
+    {
+      "id": "f16",
+      "from": "ResolveRecv",
+      "to": "GwResolved",
+      "guard": ""
+    },
+    {
+      "id": "f17",
+      "from": "ResolveTax",
+      "to": "GwResolved",
+      "guard": ""
+    },
+    {
+      "id": "f18",
+      "from": "ResolveFin",
+      "to": "GwResolved",
+      "guard": ""
+    },
+    {
+      "id": "f19",
+      "from": "GwResolved",
+      "to": "Clear",
+      "guard": "resolved within tolerance"
+    },
+    {
+      "id": "f20",
+      "from": "GwResolved",
+      "to": "Reject",
+      "guard": "reject"
+    },
+    {
+      "id": "f21",
+      "from": "Clear",
+      "to": "End",
+      "guard": ""
+    }
+  ]
+}

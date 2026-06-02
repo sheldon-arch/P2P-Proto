@@ -1,0 +1,5004 @@
+{
+  "nodes": [
+    {
+      "diagram": "00-system-overview",
+      "id": "Requisition",
+      "type": "userTask",
+      "name": "Raise requisition (lines, budget soft-check)",
+      "lane": "Requester"
+    },
+    {
+      "diagram": "00-system-overview",
+      "id": "Approve",
+      "type": "userTask",
+      "name": "Approve through stages (auto or manual)",
+      "lane": "Approver"
+    },
+    {
+      "diagram": "00-system-overview",
+      "id": "Revise",
+      "type": "userTask",
+      "name": "Revise and resubmit",
+      "lane": "Requester"
+    },
+    {
+      "diagram": "00-system-overview",
+      "id": "Source",
+      "type": "userTask",
+      "name": "Source: RFQ, compare landed cost, select, award",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "00-system-overview",
+      "id": "Onboard",
+      "type": "userTask",
+      "name": "Onboard / qualify supplier (if new)",
+      "lane": "Supplier / Vendor"
+    },
+    {
+      "diagram": "00-system-overview",
+      "id": "PO",
+      "type": "userTask",
+      "name": "Issue PO (budget commit, terms, PDF)",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "00-system-overview",
+      "id": "Ack",
+      "type": "userTask",
+      "name": "Acknowledge PO",
+      "lane": "Supplier / Vendor"
+    },
+    {
+      "diagram": "00-system-overview",
+      "id": "Receive",
+      "type": "userTask",
+      "name": "Receive, inspect (GRN), QC gate",
+      "lane": "Receiving / Warehouse"
+    },
+    {
+      "diagram": "00-system-overview",
+      "id": "Ncr",
+      "type": "userTask",
+      "name": "Raise NCR -> RMA / CAPA loop",
+      "lane": "Quality"
+    },
+    {
+      "diagram": "00-system-overview",
+      "id": "Invoice",
+      "type": "userTask",
+      "name": "Capture invoice, two/three-way match",
+      "lane": "Finance - Maker"
+    },
+    {
+      "diagram": "00-system-overview",
+      "id": "Pay",
+      "type": "userTask",
+      "name": "Schedule and process payment (installments)",
+      "lane": "Finance - Maker"
+    },
+    {
+      "diagram": "00-system-overview",
+      "id": "Check",
+      "type": "userTask",
+      "name": "Approve payment release (checker)",
+      "lane": "Finance - Checker"
+    },
+    {
+      "diagram": "00-system-overview",
+      "id": "MgmtApprove",
+      "type": "userTask",
+      "name": "Management final approval (terminal vertical)",
+      "lane": "Management"
+    },
+    {
+      "diagram": "00-system-overview",
+      "id": "Seed",
+      "type": "serviceTask",
+      "name": "Configure masters, roles, approval chain, budgets, tax",
+      "lane": "Administrator"
+    },
+    {
+      "diagram": "00-system-overview",
+      "id": "Route",
+      "type": "serviceTask",
+      "name": "Route into configurable approval chain",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "00-system-overview",
+      "id": "Ship",
+      "type": "serviceTask",
+      "name": "Manufacture, ship, share documents",
+      "lane": "Supplier / Vendor"
+    },
+    {
+      "diagram": "00-system-overview",
+      "id": "Complete",
+      "type": "serviceTask",
+      "name": "Close out, update analytics + audit",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "00-system-overview",
+      "id": "BudgetCheck",
+      "type": "exclusiveGateway",
+      "name": "Within budget or override?",
+      "lane": "Budget Owner"
+    },
+    {
+      "diagram": "00-system-overview",
+      "id": "GwApproved",
+      "type": "exclusiveGateway",
+      "name": "Approved?",
+      "lane": "Approver"
+    },
+    {
+      "diagram": "00-system-overview",
+      "id": "QcGate",
+      "type": "exclusiveGateway",
+      "name": "QC pass?",
+      "lane": "Quality"
+    },
+    {
+      "diagram": "00-system-overview",
+      "id": "AdminStart",
+      "type": "startEvent",
+      "name": "Setup begins",
+      "lane": "Administrator"
+    },
+    {
+      "diagram": "00-system-overview",
+      "id": "Start",
+      "type": "startEvent",
+      "name": "Need identified",
+      "lane": "Requester"
+    },
+    {
+      "diagram": "00-system-overview",
+      "id": "End",
+      "type": "endEvent",
+      "name": "Source-to-pay complete",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "01-configuration",
+      "id": "ChooseBase",
+      "type": "userTask",
+      "name": "Set base/reporting currency and FX source",
+      "lane": "Administrator"
+    },
+    {
+      "diagram": "01-configuration",
+      "id": "SeedMasters",
+      "type": "userTask",
+      "name": "Create master data individually",
+      "lane": "Administrator"
+    },
+    {
+      "diagram": "01-configuration",
+      "id": "BulkUpload",
+      "type": "userTask",
+      "name": "Upload bulk import file (CSV/XLSX) for a master",
+      "lane": "Administrator"
+    },
+    {
+      "diagram": "01-configuration",
+      "id": "FixFile",
+      "type": "userTask",
+      "name": "Correct file and re-upload",
+      "lane": "Administrator"
+    },
+    {
+      "diagram": "01-configuration",
+      "id": "Users",
+      "type": "userTask",
+      "name": "Create users, designations, business units",
+      "lane": "Administrator"
+    },
+    {
+      "diagram": "01-configuration",
+      "id": "Roles",
+      "type": "userTask",
+      "name": "Define roles and assign permissions (RBAC)",
+      "lane": "Administrator"
+    },
+    {
+      "diagram": "01-configuration",
+      "id": "Chain",
+      "type": "userTask",
+      "name": "Configure approval chain and routing rules",
+      "lane": "Administrator"
+    },
+    {
+      "diagram": "01-configuration",
+      "id": "Budgets",
+      "type": "userTask",
+      "name": "Set budgets per cost-center x period",
+      "lane": "Administrator"
+    },
+    {
+      "diagram": "01-configuration",
+      "id": "Fields",
+      "type": "userTask",
+      "name": "Configure dynamic fields (stage x scope x purchaseType)",
+      "lane": "Administrator"
+    },
+    {
+      "diagram": "01-configuration",
+      "id": "Validate",
+      "type": "serviceTask",
+      "name": "Validate masters, generate codes, resolve refs",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "01-configuration",
+      "id": "ImportError",
+      "type": "serviceTask",
+      "name": "Reject import, report all row errors",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "01-configuration",
+      "id": "Commit",
+      "type": "serviceTask",
+      "name": "Upsert masters in one transaction (all-or-nothing)",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "01-configuration",
+      "id": "ResolvePerms",
+      "type": "serviceTask",
+      "name": "Resolve effective permissions (union + super-admin)",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "01-configuration",
+      "id": "Activate",
+      "type": "serviceTask",
+      "name": "Mark config complete, enable transactions",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "01-configuration",
+      "id": "GwMode",
+      "type": "exclusiveGateway",
+      "name": "Create masters individually or bulk import?",
+      "lane": "Administrator"
+    },
+    {
+      "diagram": "01-configuration",
+      "id": "GwImportValid",
+      "type": "exclusiveGateway",
+      "name": "Bulk file: all rows valid?",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "01-configuration",
+      "id": "Start",
+      "type": "startEvent",
+      "name": "Tenant provisioned, setup begins",
+      "lane": "Administrator"
+    },
+    {
+      "diagram": "01-configuration",
+      "id": "End",
+      "type": "endEvent",
+      "name": "Tenant configured, ready for intake",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "02-requisition",
+      "id": "OpenForm",
+      "type": "userTask",
+      "name": "Open requisition, fill header",
+      "lane": "Requester"
+    },
+    {
+      "diagram": "02-requisition",
+      "id": "AddLines",
+      "type": "userTask",
+      "name": "Add line items (search master or free-text)",
+      "lane": "Requester"
+    },
+    {
+      "diagram": "02-requisition",
+      "id": "NewItem",
+      "type": "userTask",
+      "name": "Request new item (free-text entered)",
+      "lane": "Requester"
+    },
+    {
+      "diagram": "02-requisition",
+      "id": "ApproveItem",
+      "type": "userTask",
+      "name": "Approve / create new item in master",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "02-requisition",
+      "id": "Draft",
+      "type": "userTask",
+      "name": "Save as draft",
+      "lane": "Requester"
+    },
+    {
+      "diagram": "02-requisition",
+      "id": "Submit",
+      "type": "userTask",
+      "name": "Submit requisition",
+      "lane": "Requester"
+    },
+    {
+      "diagram": "02-requisition",
+      "id": "Override",
+      "type": "userTask",
+      "name": "Approve budget override (logged) or send back",
+      "lane": "Budget Owner"
+    },
+    {
+      "diagram": "02-requisition",
+      "id": "Revise",
+      "type": "userTask",
+      "name": "Revise requisition (same identifier)",
+      "lane": "Requester"
+    },
+    {
+      "diagram": "02-requisition",
+      "id": "LinkItem",
+      "type": "serviceTask",
+      "name": "Link new item, resolve references",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "02-requisition",
+      "id": "Compute",
+      "type": "serviceTask",
+      "name": "Validate, compute total, convert to base",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "02-requisition",
+      "id": "BudgetCheck",
+      "type": "serviceTask",
+      "name": "Soft budget check against cost-center",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "02-requisition",
+      "id": "Route",
+      "type": "serviceTask",
+      "name": "Route into configurable approval chain",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "02-requisition",
+      "id": "GwSaveOrSubmit",
+      "type": "exclusiveGateway",
+      "name": "Save draft or submit?",
+      "lane": "Requester"
+    },
+    {
+      "diagram": "02-requisition",
+      "id": "GwBudget",
+      "type": "exclusiveGateway",
+      "name": "Within available budget?",
+      "lane": "Budget Owner"
+    },
+    {
+      "diagram": "02-requisition",
+      "id": "Start",
+      "type": "startEvent",
+      "name": "Need identified",
+      "lane": "Requester"
+    },
+    {
+      "diagram": "02-requisition",
+      "id": "End",
+      "type": "endEvent",
+      "name": "Requisition submitted, in approval",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "03-approval",
+      "id": "BudgetReview",
+      "type": "userTask",
+      "name": "Budget Owner reviews commitment vs available budget",
+      "lane": "Budget Owner"
+    },
+    {
+      "diagram": "03-approval",
+      "id": "ManualReview",
+      "type": "userTask",
+      "name": "Approver reviews requisition",
+      "lane": "Approver"
+    },
+    {
+      "diagram": "03-approval",
+      "id": "ReturnForRevision",
+      "type": "userTask",
+      "name": "Revise and resubmit (same record, identifier unchanged)",
+      "lane": "Requester"
+    },
+    {
+      "diagram": "03-approval",
+      "id": "ResolveChain",
+      "type": "serviceTask",
+      "name": "Resolve approval chain (routing rule by department / category / value)",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "03-approval",
+      "id": "CreateCompletions",
+      "type": "serviceTask",
+      "name": "Create per-stage completions (NOT_STARTED)",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "03-approval",
+      "id": "AssignStage",
+      "type": "serviceTask",
+      "name": "Assign current stage (least-loaded eligible approver)",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "03-approval",
+      "id": "AutoApprove",
+      "type": "serviceTask",
+      "name": "Auto-approve (nearest-bucket minimum-sufficient approver, logged)",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "03-approval",
+      "id": "RecordStageApproved",
+      "type": "serviceTask",
+      "name": "Record stage APPROVED (manual or auto), update stats",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "03-approval",
+      "id": "AdvanceStage",
+      "type": "serviceTask",
+      "name": "Advance to next stage (handleRouting)",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "03-approval",
+      "id": "FullyApproved",
+      "type": "serviceTask",
+      "name": "Record fully approved, release to next domain",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "03-approval",
+      "id": "FinancialEditRevert",
+      "type": "serviceTask",
+      "name": "Revert auto-approved Finance / Management completions",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "03-approval",
+      "id": "BudgetStageGate",
+      "type": "exclusiveGateway",
+      "name": "Is current stage the Budget stage (configured)?",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "03-approval",
+      "id": "BudgetDecisionGate",
+      "type": "exclusiveGateway",
+      "name": "Budget approved or override approved?",
+      "lane": "Budget Owner"
+    },
+    {
+      "diagram": "03-approval",
+      "id": "AutoApprovalGate",
+      "type": "exclusiveGateway",
+      "name": "Within auto-approval threshold?",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "03-approval",
+      "id": "ApproveDecision",
+      "type": "exclusiveGateway",
+      "name": "Approve or return for revision?",
+      "lane": "Approver"
+    },
+    {
+      "diagram": "03-approval",
+      "id": "MoreStagesGate",
+      "type": "exclusiveGateway",
+      "name": "More stages remaining in chain?",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "03-approval",
+      "id": "Start",
+      "type": "startEvent",
+      "name": "Requisition submitted for approval",
+      "lane": "Requester"
+    },
+    {
+      "diagram": "03-approval",
+      "id": "End",
+      "type": "endEvent",
+      "name": "Approval chain complete",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "03-approval",
+      "id": "FinancialEditEvent",
+      "type": "boundaryEvent",
+      "name": "Financial info changed",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "04-sourcing",
+      "id": "DefineNeed",
+      "type": "userTask",
+      "name": "S1.1 Define business need (specs, qty, target, criticality)",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "04-sourcing",
+      "id": "MarketAnalysis",
+      "type": "userTask",
+      "name": "S1.2 Supply market analysis / new-supplier discovery",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "04-sourcing",
+      "id": "FrameworkCallOff",
+      "type": "userTask",
+      "name": "Release call-off against framework / preferred supplier",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "04-sourcing",
+      "id": "Prequalify",
+      "type": "userTask",
+      "name": "S1.6 Prequalify suppliers (AVL, certs, risk)",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "04-sourcing",
+      "id": "FloatRfq",
+      "type": "userTask",
+      "name": "S1.8 Invite to tender / float RFQ to >= 3 suppliers",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "04-sourcing",
+      "id": "SubmitQuote",
+      "type": "userTask",
+      "name": "S1.8 Supplier submits quotation (form)",
+      "lane": "Supplier / Vendor"
+    },
+    {
+      "diagram": "04-sourcing",
+      "id": "Negotiate",
+      "type": "userTask",
+      "name": "Negotiation: supplier re-opens same form, resubmits price",
+      "lane": "Supplier / Vendor"
+    },
+    {
+      "diagram": "04-sourcing",
+      "id": "QualityCoaGate",
+      "type": "userTask",
+      "name": "Quality reviews COA / MSDS (regulated gate)",
+      "lane": "Quality"
+    },
+    {
+      "diagram": "04-sourcing",
+      "id": "SelectSupplier",
+      "type": "userTask",
+      "name": "S1.9 Select supplier (justify non-top pick)",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "04-sourcing",
+      "id": "Award",
+      "type": "userTask",
+      "name": "S1.10 Award and capture contract terms (+ renewal date)",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "04-sourcing",
+      "id": "LandedCost",
+      "type": "serviceTask",
+      "name": "S1.9 Compute normalized landed cost per quote",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "04-sourcing",
+      "id": "RankScore",
+      "type": "serviceTask",
+      "name": "S1.9 Rank suppliers, scorecard-weighted, colour-code, flag spikes",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "04-sourcing",
+      "id": "ReadyForPo",
+      "type": "serviceTask",
+      "name": "Ready for PO (award released to ordering)",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "04-sourcing",
+      "id": "SendInvite",
+      "type": "sendTask",
+      "name": "Send unique-link RFQ invitations (email + OTP)",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "04-sourcing",
+      "id": "SourcingStrategyGate",
+      "type": "exclusiveGateway",
+      "name": "S1.3 Repeat / preferred / framework, or competitive event?",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "04-sourcing",
+      "id": "IncotermValidGate",
+      "type": "exclusiveGateway",
+      "name": "Incoterm valid for transport mode?",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "04-sourcing",
+      "id": "NegotiateGate",
+      "type": "exclusiveGateway",
+      "name": "Negotiate this quote?",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "04-sourcing",
+      "id": "RegulatedGate",
+      "type": "exclusiveGateway",
+      "name": "Regulated item requiring COA / MSDS review?",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "04-sourcing",
+      "id": "AwardApprovalGate",
+      "type": "exclusiveGateway",
+      "name": "Award selection approved?",
+      "lane": "Approver"
+    },
+    {
+      "diagram": "04-sourcing",
+      "id": "Start",
+      "type": "startEvent",
+      "name": "Approved requisition ready for sourcing",
+      "lane": "Requester"
+    },
+    {
+      "diagram": "04-sourcing",
+      "id": "End",
+      "type": "endEvent",
+      "name": "Sourcing complete, ready for purchase order",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "05-purchase-order",
+      "id": "DraftPO",
+      "type": "userTask",
+      "name": "Draft PO from requisition + awarded quote",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "05-purchase-order",
+      "id": "DraftLines",
+      "type": "userTask",
+      "name": "Enter PO lines, tax, tolerance",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "05-purchase-order",
+      "id": "BudgetOverride",
+      "type": "userTask",
+      "name": "Budget Owner approves over-budget override",
+      "lane": "Budget Owner"
+    },
+    {
+      "diagram": "05-purchase-order",
+      "id": "RequestPOApproval",
+      "type": "userTask",
+      "name": "Submit PO for approval (SoD)",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "05-purchase-order",
+      "id": "ApprovePO",
+      "type": "userTask",
+      "name": "Approve or reject PO",
+      "lane": "Approver"
+    },
+    {
+      "diagram": "05-purchase-order",
+      "id": "AckPO",
+      "type": "userTask",
+      "name": "Supplier acknowledges PO",
+      "lane": "Supplier / Vendor"
+    },
+    {
+      "diagram": "05-purchase-order",
+      "id": "AmendPO",
+      "type": "userTask",
+      "name": "Amend PO (audited, re-commit delta)",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "05-purchase-order",
+      "id": "DraftCallOff",
+      "type": "userTask",
+      "name": "Draft call-off release against framework",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "05-purchase-order",
+      "id": "Encumber",
+      "type": "serviceTask",
+      "name": "Create commitment, encumber budget",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "05-purchase-order",
+      "id": "IssuePO",
+      "type": "serviceTask",
+      "name": "Issue PO, generate number, render PDF",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "05-purchase-order",
+      "id": "TriggerAdvance",
+      "type": "serviceTask",
+      "name": "Trigger advance payment per schedule",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "05-purchase-order",
+      "id": "Fulfil",
+      "type": "serviceTask",
+      "name": "Hand off to fulfilment / receiving",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "05-purchase-order",
+      "id": "CommitCallOff",
+      "type": "serviceTask",
+      "name": "Draw down ceiling, encumber, emit release",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "05-purchase-order",
+      "id": "SendPO",
+      "type": "sendTask",
+      "name": "Email PO PDF to supplier",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "05-purchase-order",
+      "id": "GwOrderMode",
+      "type": "exclusiveGateway",
+      "name": "Standard PO or framework call-off?",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "05-purchase-order",
+      "id": "BudgetCommit",
+      "type": "exclusiveGateway",
+      "name": "Budget available for hard commit?",
+      "lane": "Budget Owner"
+    },
+    {
+      "diagram": "05-purchase-order",
+      "id": "GwApproved",
+      "type": "exclusiveGateway",
+      "name": "PO approved?",
+      "lane": "Approver"
+    },
+    {
+      "diagram": "05-purchase-order",
+      "id": "GwAdvance",
+      "type": "exclusiveGateway",
+      "name": "Advance payment due on acknowledgement?",
+      "lane": "Supplier / Vendor"
+    },
+    {
+      "diagram": "05-purchase-order",
+      "id": "GwAmend",
+      "type": "exclusiveGateway",
+      "name": "Pre-receipt amendment needed?",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "05-purchase-order",
+      "id": "Start",
+      "type": "startEvent",
+      "name": "Award approved, ready to order",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "05-purchase-order",
+      "id": "End",
+      "type": "endEvent",
+      "name": "PO live, fulfilment underway",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "06-supplier-onboarding",
+      "id": "CreateSupplier",
+      "type": "userTask",
+      "name": "Create supplier profile (PENDING_ONBOARDING)",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "06-supplier-onboarding",
+      "id": "TaxDetails",
+      "type": "userTask",
+      "name": "Capture tax + registration details",
+      "lane": "Tax / Compliance"
+    },
+    {
+      "diagram": "06-supplier-onboarding",
+      "id": "QualDocs",
+      "type": "userTask",
+      "name": "Upload qualification documents + certifications",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "06-supplier-onboarding",
+      "id": "AVL",
+      "type": "userTask",
+      "name": "Set AVL scope-of-approval + grade",
+      "lane": "Quality"
+    },
+    {
+      "diagram": "06-supplier-onboarding",
+      "id": "IsoAttributes",
+      "type": "userTask",
+      "name": "Set ISO risk/security/continuity/ESG/infosec/anti-bribery attributes",
+      "lane": "Tax / Compliance"
+    },
+    {
+      "diagram": "06-supplier-onboarding",
+      "id": "RequestApproval",
+      "type": "userTask",
+      "name": "Request approval (PENDING_ONBOARDING -> PENDING_APPROVAL)",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "06-supplier-onboarding",
+      "id": "ReviewQualify",
+      "type": "userTask",
+      "name": "Review qualification (Quality + Tax/Compliance)",
+      "lane": "Quality"
+    },
+    {
+      "diagram": "06-supplier-onboarding",
+      "id": "ApproveSupplier",
+      "type": "userTask",
+      "name": "Approve supplier (PENDING_APPROVAL -> ONBOARDED)",
+      "lane": "Approver"
+    },
+    {
+      "diagram": "06-supplier-onboarding",
+      "id": "EditSupplier",
+      "type": "userTask",
+      "name": "Edit supplier (reverts to PENDING_APPROVAL)",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "06-supplier-onboarding",
+      "id": "Suspend",
+      "type": "userTask",
+      "name": "Suspend supplier (ONBOARDED -> SUSPENDED)",
+      "lane": "Quality"
+    },
+    {
+      "diagram": "06-supplier-onboarding",
+      "id": "Offboard",
+      "type": "userTask",
+      "name": "Offboard supplier (-> OFFBOARDED, terminal)",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "06-supplier-onboarding",
+      "id": "UploadFile",
+      "type": "userTask",
+      "name": "Upload supplier import file",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "06-supplier-onboarding",
+      "id": "SyncErp",
+      "type": "serviceTask",
+      "name": "Mark onboarded, optional ERP sync",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "06-supplier-onboarding",
+      "id": "Restore",
+      "type": "serviceTask",
+      "name": "Restore to ONBOARDED",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "06-supplier-onboarding",
+      "id": "ValidateImport",
+      "type": "serviceTask",
+      "name": "Validate header + rows (accumulate all errors)",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "06-supplier-onboarding",
+      "id": "CommitImport",
+      "type": "serviceTask",
+      "name": "Upsert by code in one transaction (PENDING_ONBOARDING)",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "06-supplier-onboarding",
+      "id": "GwPath",
+      "type": "exclusiveGateway",
+      "name": "Single record or bulk import?",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "06-supplier-onboarding",
+      "id": "ApproveGw",
+      "type": "exclusiveGateway",
+      "name": "Qualification complete + approved?",
+      "lane": "Approver"
+    },
+    {
+      "diagram": "06-supplier-onboarding",
+      "id": "OnboardedGw",
+      "type": "exclusiveGateway",
+      "name": "Post-onboarding lifecycle event",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "06-supplier-onboarding",
+      "id": "ResolveSuspend",
+      "type": "exclusiveGateway",
+      "name": "Suspension resolved?",
+      "lane": "Quality"
+    },
+    {
+      "diagram": "06-supplier-onboarding",
+      "id": "ImportGw",
+      "type": "exclusiveGateway",
+      "name": "All rows valid?",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "06-supplier-onboarding",
+      "id": "JoinImport",
+      "type": "exclusiveGateway",
+      "name": "Imported records join lifecycle",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "06-supplier-onboarding",
+      "id": "Start",
+      "type": "startEvent",
+      "name": "New supplier needed",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "06-supplier-onboarding",
+      "id": "Active",
+      "type": "endEvent",
+      "name": "Supplier ONBOARDED / OFFBOARDED",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "07-item-onboarding",
+      "id": "CreateItem",
+      "type": "userTask",
+      "name": "Create item (form, PENDING_ONBOARDING)",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "07-item-onboarding",
+      "id": "SourcePriority",
+      "type": "userTask",
+      "name": "Set source priority (unique per item)",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "07-item-onboarding",
+      "id": "RequestApproval",
+      "type": "userTask",
+      "name": "Request approval (PENDING_ONBOARDING -> PENDING_APPROVAL)",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "07-item-onboarding",
+      "id": "ApproveItem",
+      "type": "userTask",
+      "name": "Approve item (PENDING_APPROVAL -> ONBOARDED)",
+      "lane": "Approver"
+    },
+    {
+      "diagram": "07-item-onboarding",
+      "id": "EditItem",
+      "type": "userTask",
+      "name": "Edit item (reverts to PENDING_APPROVAL)",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "07-item-onboarding",
+      "id": "Offboard",
+      "type": "userTask",
+      "name": "Offboard / suspend item",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "07-item-onboarding",
+      "id": "UploadFile",
+      "type": "userTask",
+      "name": "Upload item import file",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "07-item-onboarding",
+      "id": "OnboardItem",
+      "type": "serviceTask",
+      "name": "Mark onboarded, optional ERP sync",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "07-item-onboarding",
+      "id": "ImplicitDetect",
+      "type": "serviceTask",
+      "name": "Detect non-UUID requisition line itemId",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "07-item-onboarding",
+      "id": "ImplicitCreate",
+      "type": "serviceTask",
+      "name": "Auto-create item from line (PENDING_ONBOARDING)",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "07-item-onboarding",
+      "id": "ValidateImport",
+      "type": "serviceTask",
+      "name": "Validate header + rows (accumulate all errors)",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "07-item-onboarding",
+      "id": "CommitImport",
+      "type": "serviceTask",
+      "name": "Upsert by code in one transaction (PENDING_ONBOARDING)",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "07-item-onboarding",
+      "id": "GwPath",
+      "type": "exclusiveGateway",
+      "name": "Single, implicit, or bulk?",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "07-item-onboarding",
+      "id": "ApproveGw",
+      "type": "exclusiveGateway",
+      "name": "Approve item?",
+      "lane": "Approver"
+    },
+    {
+      "diagram": "07-item-onboarding",
+      "id": "OnboardedGw",
+      "type": "exclusiveGateway",
+      "name": "Post-onboarding lifecycle event",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "07-item-onboarding",
+      "id": "ImportGw",
+      "type": "exclusiveGateway",
+      "name": "All rows valid?",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "07-item-onboarding",
+      "id": "JoinCreate",
+      "type": "exclusiveGateway",
+      "name": "New items join lifecycle",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "07-item-onboarding",
+      "id": "Start",
+      "type": "startEvent",
+      "name": "New item needed",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "07-item-onboarding",
+      "id": "Active",
+      "type": "endEvent",
+      "name": "Item ONBOARDED / OFFBOARDED",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "08-delivery-grn",
+      "id": "Dispatch",
+      "type": "userTask",
+      "name": "Dispatch goods, share shipment documents",
+      "lane": "Supplier / Vendor"
+    },
+    {
+      "diagram": "08-delivery-grn",
+      "id": "TrackAir",
+      "type": "userTask",
+      "name": "Track by air (AWB)",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "08-delivery-grn",
+      "id": "TrackSea",
+      "type": "userTask",
+      "name": "Track by sea (Bill of Lading)",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "08-delivery-grn",
+      "id": "TrackRoad",
+      "type": "userTask",
+      "name": "Track by road (consignment note)",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "08-delivery-grn",
+      "id": "TrackCourier",
+      "type": "userTask",
+      "name": "Track by courier (tracking number)",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "08-delivery-grn",
+      "id": "Customs",
+      "type": "userTask",
+      "name": "Customs clearance (Bayan / bill of entry)",
+      "lane": "Tax / Compliance"
+    },
+    {
+      "diagram": "08-delivery-grn",
+      "id": "ConfirmArrival",
+      "type": "userTask",
+      "name": "Confirm arrival at site",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "08-delivery-grn",
+      "id": "RecordBlock",
+      "type": "userTask",
+      "name": "Record partial-delivery block",
+      "lane": "Receiving / Warehouse"
+    },
+    {
+      "diagram": "08-delivery-grn",
+      "id": "StoreReceive",
+      "type": "userTask",
+      "name": "Store receives, send COA + sample to QC",
+      "lane": "Receiving / Warehouse"
+    },
+    {
+      "diagram": "08-delivery-grn",
+      "id": "QcInspect",
+      "type": "userTask",
+      "name": "QC inspect and test sample",
+      "lane": "Quality"
+    },
+    {
+      "diagram": "08-delivery-grn",
+      "id": "Ncr",
+      "type": "userTask",
+      "name": "Raise NCR -> RMA / CAPA (diagram 11)",
+      "lane": "Quality"
+    },
+    {
+      "diagram": "08-delivery-grn",
+      "id": "AmendPo",
+      "type": "userTask",
+      "name": "Amend PO quantity to actual (within tolerance)",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "08-delivery-grn",
+      "id": "RaiseGrn",
+      "type": "userTask",
+      "name": "Raise GRN (links requisition + PO)",
+      "lane": "Receiving / Warehouse"
+    },
+    {
+      "diagram": "08-delivery-grn",
+      "id": "EngReceive",
+      "type": "userTask",
+      "name": "Engineering receives spares/services directly",
+      "lane": "Engineering"
+    },
+    {
+      "diagram": "08-delivery-grn",
+      "id": "CloseRequisition",
+      "type": "userTask",
+      "name": "Close requisition 'received as per order' (no GRN)",
+      "lane": "Engineering"
+    },
+    {
+      "diagram": "08-delivery-grn",
+      "id": "GrIr",
+      "type": "serviceTask",
+      "name": "Accrue GR/IR, relieve commitment to actual",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "08-delivery-grn",
+      "id": "DeliveryStatus",
+      "type": "serviceTask",
+      "name": "Derive delivery status, advance stage",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "08-delivery-grn",
+      "id": "OverdueReminder",
+      "type": "sendTask",
+      "name": "Send overdue reminder, dock supplier score",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "08-delivery-grn",
+      "id": "ChaseCoa",
+      "type": "sendTask",
+      "name": "Chase supplier for COA",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "08-delivery-grn",
+      "id": "GwMode",
+      "type": "exclusiveGateway",
+      "name": "Transport mode?",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "08-delivery-grn",
+      "id": "GwRoadBorder",
+      "type": "exclusiveGateway",
+      "name": "International road (border Bayan)?",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "08-delivery-grn",
+      "id": "GwOverdue",
+      "type": "exclusiveGateway",
+      "name": "Committed delivery date passed without receipt?",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "08-delivery-grn",
+      "id": "GwPartial",
+      "type": "exclusiveGateway",
+      "name": "Full or partial consignment?",
+      "lane": "Receiving / Warehouse"
+    },
+    {
+      "diagram": "08-delivery-grn",
+      "id": "GwCategory",
+      "type": "exclusiveGateway",
+      "name": "Materials or spares/services?",
+      "lane": "Receiving / Warehouse"
+    },
+    {
+      "diagram": "08-delivery-grn",
+      "id": "GwCoa",
+      "type": "exclusiveGateway",
+      "name": "COA received?",
+      "lane": "Receiving / Warehouse"
+    },
+    {
+      "diagram": "08-delivery-grn",
+      "id": "GwQc",
+      "type": "exclusiveGateway",
+      "name": "QC approved?",
+      "lane": "Quality"
+    },
+    {
+      "diagram": "08-delivery-grn",
+      "id": "GwTolerance",
+      "type": "exclusiveGateway",
+      "name": "Quantity variance to PO?",
+      "lane": "Receiving / Warehouse"
+    },
+    {
+      "diagram": "08-delivery-grn",
+      "id": "GwEngOk",
+      "type": "exclusiveGateway",
+      "name": "Received as per order?",
+      "lane": "Engineering"
+    },
+    {
+      "diagram": "08-delivery-grn",
+      "id": "GwMore",
+      "type": "exclusiveGateway",
+      "name": "More partial deliveries expected on this PO?",
+      "lane": "Receiving / Warehouse"
+    },
+    {
+      "diagram": "08-delivery-grn",
+      "id": "Start",
+      "type": "startEvent",
+      "name": "PO acknowledged, goods ready to dispatch",
+      "lane": "Supplier / Vendor"
+    },
+    {
+      "diagram": "08-delivery-grn",
+      "id": "End",
+      "type": "endEvent",
+      "name": "Received and inspected -> invoicing (diagram 09)",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "08-delivery-grn",
+      "id": "EtaAlarm",
+      "type": "intermediateCatchEvent",
+      "name": "ETA-approaching alarm",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "09-invoice-match",
+      "id": "SubmitInvoice",
+      "type": "userTask",
+      "name": "Submit invoice + supporting documents",
+      "lane": "Supplier / Vendor"
+    },
+    {
+      "diagram": "09-invoice-match",
+      "id": "CaptureInvoice",
+      "type": "userTask",
+      "name": "Capture invoice in AP, normalize to base currency",
+      "lane": "Finance - Maker"
+    },
+    {
+      "diagram": "09-invoice-match",
+      "id": "MilestoneCheck",
+      "type": "userTask",
+      "name": "Confirm service milestone acceptance",
+      "lane": "Engineering"
+    },
+    {
+      "diagram": "09-invoice-match",
+      "id": "ResolvePrice",
+      "type": "userTask",
+      "name": "Buyer resolves price variance",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "09-invoice-match",
+      "id": "ResolveQty",
+      "type": "userTask",
+      "name": "Receiving resolves quantity / missing-GR",
+      "lane": "Receiving / Warehouse"
+    },
+    {
+      "diagram": "09-invoice-match",
+      "id": "ResolveTax",
+      "type": "userTask",
+      "name": "Tax/Compliance resolves tax mismatch",
+      "lane": "Tax / Compliance"
+    },
+    {
+      "diagram": "09-invoice-match",
+      "id": "HoldDuplicate",
+      "type": "userTask",
+      "name": "Hold / reject duplicate invoice",
+      "lane": "Finance - Maker"
+    },
+    {
+      "diagram": "09-invoice-match",
+      "id": "ApproveInvoice",
+      "type": "userTask",
+      "name": "Approve invoice before accounts (SoD)",
+      "lane": "Approver"
+    },
+    {
+      "diagram": "09-invoice-match",
+      "id": "TwoWayMatch",
+      "type": "serviceTask",
+      "name": "Two-way match (PO + invoice, incl. tax)",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "09-invoice-match",
+      "id": "ThreeWayMatch",
+      "type": "serviceTask",
+      "name": "Three-way match (PO + GRN + invoice, incl. tax)",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "09-invoice-match",
+      "id": "ClearMatch",
+      "type": "serviceTask",
+      "name": "Auto-clear, relieve GR/IR",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "09-invoice-match",
+      "id": "PostNote",
+      "type": "serviceTask",
+      "name": "Post credit / debit note to creditor ledger",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "09-invoice-match",
+      "id": "ToPayment",
+      "type": "serviceTask",
+      "name": "Release approved payable to payment (diagram 10)",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "09-invoice-match",
+      "id": "RejectInvoice",
+      "type": "sendTask",
+      "name": "Return invoice to supplier (rejected)",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "09-invoice-match",
+      "id": "GwDuplicate",
+      "type": "exclusiveGateway",
+      "name": "Duplicate invoice?",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "09-invoice-match",
+      "id": "GwMatchType",
+      "type": "exclusiveGateway",
+      "name": "GRN exists for this PO/category?",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "09-invoice-match",
+      "id": "GwMatched",
+      "type": "exclusiveGateway",
+      "name": "Within tolerance?",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "09-invoice-match",
+      "id": "GwException",
+      "type": "exclusiveGateway",
+      "name": "Exception type -> route to resolver",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "09-invoice-match",
+      "id": "GwResolution",
+      "type": "exclusiveGateway",
+      "name": "Resolution outcome?",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "09-invoice-match",
+      "id": "Start",
+      "type": "startEvent",
+      "name": "Goods received / service accepted",
+      "lane": "Supplier / Vendor"
+    },
+    {
+      "diagram": "09-invoice-match",
+      "id": "End",
+      "type": "endEvent",
+      "name": "Matched and approved -> payment (diagram 10)",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "10-payments",
+      "id": "BuildSchedule",
+      "type": "userTask",
+      "name": "Build payment schedule (entries + terms)",
+      "lane": "Finance - Maker"
+    },
+    {
+      "diagram": "10-payments",
+      "id": "CashFloat",
+      "type": "userTask",
+      "name": "Cash buy on float, log receipt (no PO)",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "10-payments",
+      "id": "ReimburseFloat",
+      "type": "userTask",
+      "name": "Request float reimbursement",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "10-payments",
+      "id": "MakerPrepare",
+      "type": "userTask",
+      "name": "Maker prepares payment for release",
+      "lane": "Finance - Maker"
+    },
+    {
+      "diagram": "10-payments",
+      "id": "CheckerReview",
+      "type": "userTask",
+      "name": "Checker (Chief Accountant) reviews release",
+      "lane": "Finance - Checker"
+    },
+    {
+      "diagram": "10-payments",
+      "id": "ProcessPayment",
+      "type": "userTask",
+      "name": "Process payment + upload receipt",
+      "lane": "Finance - Maker"
+    },
+    {
+      "diagram": "10-payments",
+      "id": "Reschedule",
+      "type": "userTask",
+      "name": "Reschedule with reason (capture originalDate)",
+      "lane": "Finance - Maker"
+    },
+    {
+      "diagram": "10-payments",
+      "id": "MgmtRelease",
+      "type": "userTask",
+      "name": "Management approves release (terminal vertical)",
+      "lane": "Management"
+    },
+    {
+      "diagram": "10-payments",
+      "id": "SetApproved",
+      "type": "serviceTask",
+      "name": "Status = APPROVED (full)",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "10-payments",
+      "id": "SetPartial",
+      "type": "serviceTask",
+      "name": "Status = PARTIAL_APPROVAL + create ONE remainder",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "10-payments",
+      "id": "Withholding",
+      "type": "serviceTask",
+      "name": "Apply withholding tax (TDS/WHT)",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "10-payments",
+      "id": "Recoup",
+      "type": "serviceTask",
+      "name": "Recoup advance, withhold retention",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "10-payments",
+      "id": "PostPayment",
+      "type": "serviceTask",
+      "name": "Recompute totals, update ledgers + completions",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "10-payments",
+      "id": "TopUpFloat",
+      "type": "serviceTask",
+      "name": "Top up cash float to ceiling",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "10-payments",
+      "id": "ConfirmSupplier",
+      "type": "sendTask",
+      "name": "Email payment confirmation to supplier",
+      "lane": "Supplier / Vendor"
+    },
+    {
+      "diagram": "10-payments",
+      "id": "RemindOverdue",
+      "type": "sendTask",
+      "name": "Send overdue payment reminder to Accounts",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "10-payments",
+      "id": "GwLocked",
+      "type": "exclusiveGateway",
+      "name": "Schedule locked?",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "10-payments",
+      "id": "GwCash",
+      "type": "exclusiveGateway",
+      "name": "Cash float buy (no PO) or credit/advance?",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "10-payments",
+      "id": "GwFloatLow",
+      "type": "exclusiveGateway",
+      "name": "Float nearing limit?",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "10-payments",
+      "id": "GwApproveAmt",
+      "type": "exclusiveGateway",
+      "name": "Approve installment: amount vs agreed?",
+      "lane": "Finance - Maker"
+    },
+    {
+      "diagram": "10-payments",
+      "id": "GwReleaseOk",
+      "type": "exclusiveGateway",
+      "name": "Approved to pay?",
+      "lane": "Finance - Checker"
+    },
+    {
+      "diagram": "10-payments",
+      "id": "GwProcessable",
+      "type": "exclusiveGateway",
+      "name": "Processable status?",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "10-payments",
+      "id": "GwDest",
+      "type": "exclusiveGateway",
+      "name": "Destination?",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "10-payments",
+      "id": "GwMoreEntries",
+      "type": "exclusiveGateway",
+      "name": "More schedule entries due?",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "10-payments",
+      "id": "Start",
+      "type": "startEvent",
+      "name": "Approved payable / acknowledged PO",
+      "lane": "Finance - Maker"
+    },
+    {
+      "diagram": "10-payments",
+      "id": "End",
+      "type": "endEvent",
+      "name": "Payments settled, ledger updated",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "10-payments",
+      "id": "OverdueTimer",
+      "type": "boundaryEvent",
+      "name": "Overdue reminder timer (~28d before due)",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "11-returns-rma",
+      "id": "Initiate",
+      "type": "userTask",
+      "name": "S4.1 Initiate source return",
+      "lane": "Quality"
+    },
+    {
+      "diagram": "11-returns-rma",
+      "id": "Authorize",
+      "type": "userTask",
+      "name": "S4.2 Request / authorize product return",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "11-returns-rma",
+      "id": "Declined",
+      "type": "userTask",
+      "name": "Escalate declined return (re-disposition)",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "11-returns-rma",
+      "id": "Identify",
+      "type": "userTask",
+      "name": "S4.3 Identify product condition / return reason",
+      "lane": "Quality"
+    },
+    {
+      "diagram": "11-returns-rma",
+      "id": "Schedule",
+      "type": "userTask",
+      "name": "S4.4 Schedule product shipment",
+      "lane": "Receiving / Warehouse"
+    },
+    {
+      "diagram": "11-returns-rma",
+      "id": "CreditNote",
+      "type": "userTask",
+      "name": "Apply supplier credit note",
+      "lane": "Finance - Maker"
+    },
+    {
+      "diagram": "11-returns-rma",
+      "id": "DebitNote",
+      "type": "userTask",
+      "name": "Raise buyer debit note",
+      "lane": "Finance - Maker"
+    },
+    {
+      "diagram": "11-returns-rma",
+      "id": "Close",
+      "type": "serviceTask",
+      "name": "S4.5 Close or adjust return order",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "11-returns-rma",
+      "id": "FeedNcr",
+      "type": "serviceTask",
+      "name": "Update NCR + feed CAPA / scorecard",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "11-returns-rma",
+      "id": "Receipt",
+      "type": "receiveTask",
+      "name": "Supplier confirms receipt of returned goods",
+      "lane": "Supplier / Vendor"
+    },
+    {
+      "diagram": "11-returns-rma",
+      "id": "GwAuth",
+      "type": "exclusiveGateway",
+      "name": "authorizationStatus == authorized?",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "11-returns-rma",
+      "id": "GwAdjust",
+      "type": "exclusiveGateway",
+      "name": "financial adjustment direction?",
+      "lane": "Finance - Maker"
+    },
+    {
+      "diagram": "11-returns-rma",
+      "id": "Start",
+      "type": "startEvent",
+      "name": "Return trigger raised",
+      "lane": "Quality"
+    },
+    {
+      "diagram": "11-returns-rma",
+      "id": "End",
+      "type": "endEvent",
+      "name": "Return closed and adjusted",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "12-analytics",
+      "id": "BuyerView",
+      "type": "userTask",
+      "name": "Buyer reviews scorecard, spend, savings, forecast",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "12-analytics",
+      "id": "MgmtView",
+      "type": "userTask",
+      "name": "Approver / Management performance view",
+      "lane": "Approver"
+    },
+    {
+      "diagram": "12-analytics",
+      "id": "QcView",
+      "type": "userTask",
+      "name": "Quality reviews quality KPIs",
+      "lane": "Quality"
+    },
+    {
+      "diagram": "12-analytics",
+      "id": "FinView",
+      "type": "userTask",
+      "name": "Finance reviews AP / match KPIs",
+      "lane": "Finance - Maker"
+    },
+    {
+      "diagram": "12-analytics",
+      "id": "Ingest",
+      "type": "serviceTask",
+      "name": "Ingest + cleanse facts (dedup, classify)",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "12-analytics",
+      "id": "WriteScorecard",
+      "type": "serviceTask",
+      "name": "Persist scorecard + AVL status + streak counters",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "12-analytics",
+      "id": "Dashboards",
+      "type": "serviceTask",
+      "name": "Publish dashboards + alerts (RBAC-scoped)",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "12-analytics",
+      "id": "Normalize",
+      "type": "businessRuleTask",
+      "name": "Stage 1: normalize each metric to 0-100",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "12-analytics",
+      "id": "Delivery2v4",
+      "type": "businessRuleTask",
+      "name": "Compute OTIF (2-factor) AND perfect-order (4-factor) distinctly",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "12-analytics",
+      "id": "Composite",
+      "type": "businessRuleTask",
+      "name": "Stage 2: weighted composite per supplier per period",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "12-analytics",
+      "id": "ComplianceGate",
+      "type": "businessRuleTask",
+      "name": "Compliance GATE (cert validity, doc completeness)",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "12-analytics",
+      "id": "CycleKpis",
+      "type": "businessRuleTask",
+      "name": "Compute cycle / process KPIs",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "12-analytics",
+      "id": "SpendCuts",
+      "type": "businessRuleTask",
+      "name": "Compute spend cuts + savings + price-spike",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "12-analytics",
+      "id": "GwGrade",
+      "type": "exclusiveGateway",
+      "name": "grade band? (composite vs A/B/C + gate)",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "12-analytics",
+      "id": "Start",
+      "type": "startEvent",
+      "name": "Period close / on-commit event",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "12-analytics",
+      "id": "End",
+      "type": "endEvent",
+      "name": "Analytics published",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e01-approval-routing",
+      "id": "ManualDecide",
+      "type": "userTask",
+      "name": "Approver approves or returns for revision",
+      "lane": "Approver"
+    },
+    {
+      "diagram": "e01-approval-routing",
+      "id": "Resolve",
+      "type": "serviceTask",
+      "name": "Resolve approval chain (dept/category/value)",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e01-approval-routing",
+      "id": "NearestBucket",
+      "type": "serviceTask",
+      "name": "Nearest-bucket approver selection",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e01-approval-routing",
+      "id": "AutoApprove",
+      "type": "serviceTask",
+      "name": "Auto-approve (logged, no second person)",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e01-approval-routing",
+      "id": "AssignManual",
+      "type": "serviceTask",
+      "name": "Assign to selected approver (AWAITING_APPROVAL)",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e01-approval-routing",
+      "id": "Reassign",
+      "type": "serviceTask",
+      "name": "Reassign / delegate to qualified approver",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e01-approval-routing",
+      "id": "PostValueSync",
+      "type": "serviceTask",
+      "name": "postValueSync - revert auto-approval on financial change",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e01-approval-routing",
+      "id": "Route",
+      "type": "serviceTask",
+      "name": "Route to next vertical / complete",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e01-approval-routing",
+      "id": "GwEligible",
+      "type": "exclusiveGateway",
+      "name": "eligible approver found?",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e01-approval-routing",
+      "id": "GwThreshold",
+      "type": "exclusiveGateway",
+      "name": "within auto-approval threshold?",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e01-approval-routing",
+      "id": "GwAvailable",
+      "type": "exclusiveGateway",
+      "name": "approver available? (on leave / overloaded)",
+      "lane": "Approver"
+    },
+    {
+      "diagram": "e01-approval-routing",
+      "id": "Start",
+      "type": "startEvent",
+      "name": "Stage reached (request approval)",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e01-approval-routing",
+      "id": "Blocked",
+      "type": "endEvent",
+      "name": "BadRequest - stage blocked",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e01-approval-routing",
+      "id": "End",
+      "type": "endEvent",
+      "name": "Approvals resolved for requisition",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e02-budget-commitment",
+      "id": "Revise",
+      "type": "userTask",
+      "name": "Revise requisition (reduce scope)",
+      "lane": "Requester"
+    },
+    {
+      "diagram": "e02-budget-commitment",
+      "id": "POIssue",
+      "type": "userTask",
+      "name": "Buyer issues PO",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "e02-budget-commitment",
+      "id": "SoftCheck",
+      "type": "serviceTask",
+      "name": "Soft budget check (warn if over)",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e02-budget-commitment",
+      "id": "Proceed",
+      "type": "serviceTask",
+      "name": "Proceed to sourcing / PO (carry override flag)",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e02-budget-commitment",
+      "id": "HoldCommit",
+      "type": "serviceTask",
+      "name": "Block commit - request override / reduce PO",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e02-budget-commitment",
+      "id": "HardCommit",
+      "type": "serviceTask",
+      "name": "Hard commit (encumber budget, create Commitment)",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e02-budget-commitment",
+      "id": "GrInvoice",
+      "type": "serviceTask",
+      "name": "GR / invoice posted",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e02-budget-commitment",
+      "id": "Relieve",
+      "type": "serviceTask",
+      "name": "Relieve commitment to actual",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e02-budget-commitment",
+      "id": "Report",
+      "type": "serviceTask",
+      "name": "Commitment-vs-actual reporting",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e02-budget-commitment",
+      "id": "GwSoft",
+      "type": "exclusiveGateway",
+      "name": "value <= availableAmount?",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e02-budget-commitment",
+      "id": "GwOverride",
+      "type": "exclusiveGateway",
+      "name": "Budget Owner override approved?",
+      "lane": "Budget Owner"
+    },
+    {
+      "diagram": "e02-budget-commitment",
+      "id": "GwHard",
+      "type": "exclusiveGateway",
+      "name": "availableAmount >= poValue OR override approved?",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e02-budget-commitment",
+      "id": "Start",
+      "type": "startEvent",
+      "name": "Requisition submitted",
+      "lane": "Requester"
+    },
+    {
+      "diagram": "e02-budget-commitment",
+      "id": "End",
+      "type": "endEvent",
+      "name": "Budget reconciled to actual",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e03-qty-tolerance",
+      "id": "CountReceived",
+      "type": "userTask",
+      "name": "Count and record received quantity per line",
+      "lane": "Receiving / Warehouse"
+    },
+    {
+      "diagram": "e03-qty-tolerance",
+      "id": "BuyerDisposition",
+      "type": "userTask",
+      "name": "Buyer dispositions breach",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "e03-qty-tolerance",
+      "id": "AmendPO",
+      "type": "userTask",
+      "name": "Amend PO line to actual received quantity",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "e03-qty-tolerance",
+      "id": "RaiseGRN",
+      "type": "userTask",
+      "name": "Raise GRN for this shipment against amended PO",
+      "lane": "Receiving / Warehouse"
+    },
+    {
+      "diagram": "e03-qty-tolerance",
+      "id": "AuditAmend",
+      "type": "serviceTask",
+      "name": "Write immutable amend audit + commitment delta",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e03-qty-tolerance",
+      "id": "NotifyBuyerBreach",
+      "type": "sendTask",
+      "name": "Raise tolerance-breach exception to buyer",
+      "lane": "Receiving / Warehouse"
+    },
+    {
+      "diagram": "e03-qty-tolerance",
+      "id": "GwToleranceItem",
+      "type": "exclusiveGateway",
+      "name": "Line carries a quantity tolerance?",
+      "lane": "Receiving / Warehouse"
+    },
+    {
+      "diagram": "e03-qty-tolerance",
+      "id": "GwWithinTolerance",
+      "type": "exclusiveGateway",
+      "name": "Received within tolerance band?",
+      "lane": "Receiving / Warehouse"
+    },
+    {
+      "diagram": "e03-qty-tolerance",
+      "id": "GwToleranceBreach",
+      "type": "exclusiveGateway",
+      "name": "Over or under the band?",
+      "lane": "Receiving / Warehouse"
+    },
+    {
+      "diagram": "e03-qty-tolerance",
+      "id": "GwPartialOrFull",
+      "type": "exclusiveGateway",
+      "name": "Shipment satisfies the full PO line?",
+      "lane": "Receiving / Warehouse"
+    },
+    {
+      "diagram": "e03-qty-tolerance",
+      "id": "QcGate",
+      "type": "exclusiveGateway",
+      "name": "Material requires QC and COA?",
+      "lane": "Quality"
+    },
+    {
+      "diagram": "e03-qty-tolerance",
+      "id": "GwLineComplete",
+      "type": "exclusiveGateway",
+      "name": "Cumulative received >= PO line quantity?",
+      "lane": "Receiving / Warehouse"
+    },
+    {
+      "diagram": "e03-qty-tolerance",
+      "id": "Start",
+      "type": "startEvent",
+      "name": "Shipment arrives against open PO",
+      "lane": "Receiving / Warehouse"
+    },
+    {
+      "diagram": "e03-qty-tolerance",
+      "id": "End",
+      "type": "endEvent",
+      "name": "Line fully received, ready for match",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e03-qty-tolerance",
+      "id": "AwaitNext",
+      "type": "intermediateCatchEvent",
+      "name": "Await next partial shipment",
+      "lane": "Receiving / Warehouse"
+    },
+    {
+      "diagram": "e04-ncr-capa",
+      "id": "Inspect",
+      "type": "userTask",
+      "name": "8.6 Receiving inspection / verification",
+      "lane": "Quality"
+    },
+    {
+      "diagram": "e04-ncr-capa",
+      "id": "RaiseNcr",
+      "type": "userTask",
+      "name": "8.7 Raise NCR (identify + segregate)",
+      "lane": "Quality"
+    },
+    {
+      "diagram": "e04-ncr-capa",
+      "id": "Scar",
+      "type": "userTask",
+      "name": "Handler resolves with supplier (SCAR)",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "e04-ncr-capa",
+      "id": "RootCause",
+      "type": "userTask",
+      "name": "10.2 Supplier root cause + corrective action",
+      "lane": "Supplier / Vendor"
+    },
+    {
+      "diagram": "e04-ncr-capa",
+      "id": "Effectiveness",
+      "type": "userTask",
+      "name": "Effectiveness review",
+      "lane": "Quality"
+    },
+    {
+      "diagram": "e04-ncr-capa",
+      "id": "Release",
+      "type": "serviceTask",
+      "name": "Release - GRN raised (no NCR)",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e04-ncr-capa",
+      "id": "ReturnPath",
+      "type": "serviceTask",
+      "name": "Return -> RMA (diagram 11)",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e04-ncr-capa",
+      "id": "ReworkScrap",
+      "type": "serviceTask",
+      "name": "Rework / concession / scrap (retain record)",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e04-ncr-capa",
+      "id": "ReEval",
+      "type": "serviceTask",
+      "name": "8.4.1 Feed supplier re-evaluation (scorecard)",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e04-ncr-capa",
+      "id": "Suspend",
+      "type": "serviceTask",
+      "name": "Suspend supplier (SUSPENDED, block new POs)",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e04-ncr-capa",
+      "id": "Monitor",
+      "type": "serviceTask",
+      "name": "Continue monitoring (remain ONBOARDED)",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e04-ncr-capa",
+      "id": "GwConform",
+      "type": "exclusiveGateway",
+      "name": "conforming?",
+      "lane": "Quality"
+    },
+    {
+      "diagram": "e04-ncr-capa",
+      "id": "GwDisposition",
+      "type": "exclusiveGateway",
+      "name": "disposition?",
+      "lane": "Quality"
+    },
+    {
+      "diagram": "e04-ncr-capa",
+      "id": "GwEffective",
+      "type": "exclusiveGateway",
+      "name": "effective?",
+      "lane": "Quality"
+    },
+    {
+      "diagram": "e04-ncr-capa",
+      "id": "GwSuspend",
+      "type": "exclusiveGateway",
+      "name": "suspend supplier?",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e04-ncr-capa",
+      "id": "Start",
+      "type": "startEvent",
+      "name": "Goods received for inspection",
+      "lane": "Receiving / Warehouse"
+    },
+    {
+      "diagram": "e04-ncr-capa",
+      "id": "End",
+      "type": "endEvent",
+      "name": "NCR/CAPA closed, supplier re-evaluated",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e05-auto-create",
+      "id": "ParseRefs",
+      "type": "serviceTask",
+      "name": "Classify each reference: UUID vs free-text",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e05-auto-create",
+      "id": "LookupSupplier",
+      "type": "serviceTask",
+      "name": "Look up supplier by id",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e05-auto-create",
+      "id": "CreateSupplier",
+      "type": "serviceTask",
+      "name": "Auto-create supplier (S/##### , PENDING_ONBOARDING)",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e05-auto-create",
+      "id": "LookupItem",
+      "type": "serviceTask",
+      "name": "Look up item(s) by id",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e05-auto-create",
+      "id": "CreateItem",
+      "type": "serviceTask",
+      "name": "Auto-create item(s) (DEP/SG/SSG/000001, PENDING_ONBOARDING)",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e05-auto-create",
+      "id": "LinkAndPersist",
+      "type": "serviceTask",
+      "name": "Link refs and persist requisition / PO in one transaction",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e05-auto-create",
+      "id": "AuditEmit",
+      "type": "serviceTask",
+      "name": "Audit auto-creates + emit SSE + notify",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e05-auto-create",
+      "id": "GwSupplierKind",
+      "type": "exclusiveGateway",
+      "name": "Supplier ref: UUID, free-text, or null?",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e05-auto-create",
+      "id": "GwSupplierFound",
+      "type": "exclusiveGateway",
+      "name": "Supplier id resolves?",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e05-auto-create",
+      "id": "GwItemKind",
+      "type": "exclusiveGateway",
+      "name": "Each item ref: UUID or free-text?",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e05-auto-create",
+      "id": "GwItemFound",
+      "type": "exclusiveGateway",
+      "name": "All item ids resolve?",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e05-auto-create",
+      "id": "Fork",
+      "type": "parallelGateway",
+      "name": "Resolve supplier and items in parallel",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e05-auto-create",
+      "id": "Join",
+      "type": "parallelGateway",
+      "name": "Join: both branches resolved",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e05-auto-create",
+      "id": "Start",
+      "type": "startEvent",
+      "name": "Submit requisition / PO with references",
+      "lane": "Requester"
+    },
+    {
+      "diagram": "e05-auto-create",
+      "id": "Reject",
+      "type": "endEvent",
+      "name": "Reject whole operation (404 dangling id)",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e05-auto-create",
+      "id": "End",
+      "type": "endEvent",
+      "name": "Document persisted; new masters PENDING_ONBOARDING",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e06-bulk-import",
+      "id": "Parse",
+      "type": "serviceTask",
+      "name": "Parse workbook",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e06-bulk-import",
+      "id": "ValidateRows",
+      "type": "serviceTask",
+      "name": "Validate every row + resolve refs, ACCUMULATE errors",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e06-bulk-import",
+      "id": "RejectAll",
+      "type": "serviceTask",
+      "name": "Return one BadRequest listing all {row, reason}; write nothing",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e06-bulk-import",
+      "id": "UpsertTxn",
+      "type": "serviceTask",
+      "name": "Single transaction: upsert by natural key",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e06-bulk-import",
+      "id": "Rollback",
+      "type": "serviceTask",
+      "name": "Rollback all; report failure",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e06-bulk-import",
+      "id": "Audit",
+      "type": "serviceTask",
+      "name": "Commit, audit, emit SSE",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e06-bulk-import",
+      "id": "Result",
+      "type": "serviceTask",
+      "name": "Return {created, updated}",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e06-bulk-import",
+      "id": "GwReadable",
+      "type": "exclusiveGateway",
+      "name": "File readable?",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e06-bulk-import",
+      "id": "GwSheet",
+      "type": "exclusiveGateway",
+      "name": "Expected sheet present?",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e06-bulk-import",
+      "id": "GwDataRows",
+      "type": "exclusiveGateway",
+      "name": "At least one data row?",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e06-bulk-import",
+      "id": "GwHeaders",
+      "type": "exclusiveGateway",
+      "name": "Headers exactly match schema?",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e06-bulk-import",
+      "id": "GwAnyErrors",
+      "type": "exclusiveGateway",
+      "name": "Any row errors accumulated?",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e06-bulk-import",
+      "id": "GwCommit",
+      "type": "exclusiveGateway",
+      "name": "All rows persisted without error?",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e06-bulk-import",
+      "id": "Start",
+      "type": "startEvent",
+      "name": "Upload XLSX / CSV for a master",
+      "lane": "Administrator"
+    },
+    {
+      "diagram": "e06-bulk-import",
+      "id": "EndOk",
+      "type": "endEvent",
+      "name": "Import committed",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e06-bulk-import",
+      "id": "EndReject",
+      "type": "endEvent",
+      "name": "Import rejected; nothing written",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e07-currency",
+      "id": "ApplyOverride",
+      "type": "serviceTask",
+      "name": "Apply manual rate; record date + source = manual",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e07-currency",
+      "id": "FetchRate",
+      "type": "serviceTask",
+      "name": "Fetch live rate (Frankfurter)",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e07-currency",
+      "id": "Convert",
+      "type": "serviceTask",
+      "name": "baseAmount = round(amount * rate, 2)",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e07-currency",
+      "id": "Degrade",
+      "type": "serviceTask",
+      "name": "Log + return original amount unconverted",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e07-currency",
+      "id": "Persist",
+      "type": "serviceTask",
+      "name": "Persist base amount + FX context (rate, date, source)",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e07-currency",
+      "id": "RealizedFx",
+      "type": "serviceTask",
+      "name": "Compute realized FX gain/loss at payment",
+      "lane": "Finance - Maker"
+    },
+    {
+      "diagram": "e07-currency",
+      "id": "GwOverride",
+      "type": "exclusiveGateway",
+      "name": "Per-PO manual exchange rate set?",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "e07-currency",
+      "id": "GwBaseOrNull",
+      "type": "exclusiveGateway",
+      "name": "currency is base or null?",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e07-currency",
+      "id": "GwFetchOk",
+      "type": "exclusiveGateway",
+      "name": "Fetch succeeded?",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e07-currency",
+      "id": "GwRateValid",
+      "type": "exclusiveGateway",
+      "name": "Rate finite and > 0?",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e07-currency",
+      "id": "Start",
+      "type": "startEvent",
+      "name": "Amount needs base-currency value",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e07-currency",
+      "id": "End",
+      "type": "endEvent",
+      "name": "Base value available (or original, flagged)",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e08-cash-float",
+      "id": "BuyOnFloat",
+      "type": "userTask",
+      "name": "Buy on cash float",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "e08-cash-float",
+      "id": "CashGRN",
+      "type": "userTask",
+      "name": "Raise cash GRN (NO PO ref)",
+      "lane": "Receiving / Warehouse"
+    },
+    {
+      "diagram": "e08-cash-float",
+      "id": "RequestReimb",
+      "type": "userTask",
+      "name": "Request float reimbursement",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "e08-cash-float",
+      "id": "FinPrepare",
+      "type": "userTask",
+      "name": "Finance prepares reimbursement (maker)",
+      "lane": "Finance - Maker"
+    },
+    {
+      "diagram": "e08-cash-float",
+      "id": "FinApprove",
+      "type": "userTask",
+      "name": "Finance approves reimbursement (checker)",
+      "lane": "Finance - Checker"
+    },
+    {
+      "diagram": "e08-cash-float",
+      "id": "LogDeduct",
+      "type": "serviceTask",
+      "name": "Log receipt + deduct from float balance",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e08-cash-float",
+      "id": "TopUp",
+      "type": "serviceTask",
+      "name": "Top up float to allotment",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e08-cash-float",
+      "id": "InquireAvailability",
+      "type": "sendTask",
+      "name": "Inquire showroom availability",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "e08-cash-float",
+      "id": "ConfirmStock",
+      "type": "receiveTask",
+      "name": "Confirm stock + price",
+      "lane": "Supplier / Vendor"
+    },
+    {
+      "diagram": "e08-cash-float",
+      "id": "GwCashCredit",
+      "type": "exclusiveGateway",
+      "name": "Head assigns cash or credit?",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "e08-cash-float",
+      "id": "GwFloatSufficient",
+      "type": "exclusiveGateway",
+      "name": "Cash price <= available float balance?",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "e08-cash-float",
+      "id": "GwFloatLow",
+      "type": "exclusiveGateway",
+      "name": "Float low (<= ~1/3 of allotment)?",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "e08-cash-float",
+      "id": "Start",
+      "type": "startEvent",
+      "name": "Approved local need to fulfil",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "e08-cash-float",
+      "id": "End",
+      "type": "endEvent",
+      "name": "Goods in stock; float maintained; spend reported",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e08-cash-float",
+      "id": "CreditExit",
+      "type": "endEvent",
+      "name": "Route to credit / PO branch (out of scope here)",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "e09-contract-supply",
+      "id": "ReceiveForward",
+      "type": "userTask",
+      "name": "Stores receive + forward invoice",
+      "lane": "Receiving / Warehouse"
+    },
+    {
+      "diagram": "e09-contract-supply",
+      "id": "LogInvoicePoFormat",
+      "type": "userTask",
+      "name": "Handler logs invoice in PO-format (reduced fields)",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "e09-contract-supply",
+      "id": "Settle",
+      "type": "userTask",
+      "name": "Finance settles invoice",
+      "lane": "Finance - Maker"
+    },
+    {
+      "diagram": "e09-contract-supply",
+      "id": "SetDelivered",
+      "type": "serviceTask",
+      "name": "Set DELIVERED flag (skip delivery tracking)",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e09-contract-supply",
+      "id": "HandToAccounts",
+      "type": "serviceTask",
+      "name": "Hand to accounts for settlement",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e09-contract-supply",
+      "id": "Close",
+      "type": "serviceTask",
+      "name": "Close cycle; update ledger + analytics",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e09-contract-supply",
+      "id": "FloatLoad",
+      "type": "sendTask",
+      "name": "Factory floats load / quantity to supplier",
+      "lane": "Approver"
+    },
+    {
+      "diagram": "e09-contract-supply",
+      "id": "DeliverInvoice",
+      "type": "sendTask",
+      "name": "Supplier delivers + sends invoice",
+      "lane": "Supplier / Vendor"
+    },
+    {
+      "diagram": "e09-contract-supply",
+      "id": "SupplyDue",
+      "type": "exclusiveGateway",
+      "name": "Supply due for this cycle?",
+      "lane": "Approver"
+    },
+    {
+      "diagram": "e09-contract-supply",
+      "id": "Start",
+      "type": "startEvent",
+      "name": "Constant-supply contract active",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e09-contract-supply",
+      "id": "End",
+      "type": "endEvent",
+      "name": "Cycle settled; await next supply",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e09-contract-supply",
+      "id": "RenewalReminder",
+      "type": "intermediateCatchEvent",
+      "name": "Renewal reminder 15 days before expiry",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e10-artwork-npd",
+      "id": "ReviewSamples",
+      "type": "userTask",
+      "name": "Factory + marketing review samples",
+      "lane": "Approver"
+    },
+    {
+      "diagram": "e10-artwork-npd",
+      "id": "ReviewFactoryMkt",
+      "type": "userTask",
+      "name": "Factory + marketing review",
+      "lane": "Approver"
+    },
+    {
+      "diagram": "e10-artwork-npd",
+      "id": "ReviewQuality",
+      "type": "userTask",
+      "name": "Quality review (English + structure)",
+      "lane": "Quality"
+    },
+    {
+      "diagram": "e10-artwork-npd",
+      "id": "ReviewLanguage",
+      "type": "userTask",
+      "name": "Language reviewer (Arabic text)",
+      "lane": "Reviewer (Language)"
+    },
+    {
+      "diagram": "e10-artwork-npd",
+      "id": "Corrections",
+      "type": "userTask",
+      "name": "Collate corrections; request revised proof",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "e10-artwork-npd",
+      "id": "Print",
+      "type": "serviceTask",
+      "name": "Release to print; store last-approved artwork",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e10-artwork-npd",
+      "id": "RequestSamples",
+      "type": "sendTask",
+      "name": "Factory requests RM + artwork samples",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "e10-artwork-npd",
+      "id": "SupplierSamples",
+      "type": "sendTask",
+      "name": "Supplier sends samples",
+      "lane": "Supplier / Vendor"
+    },
+    {
+      "diagram": "e10-artwork-npd",
+      "id": "ForwardToPrint",
+      "type": "sendTask",
+      "name": "Forward customer artwork to supplier to print",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "e10-artwork-npd",
+      "id": "SubmitProof",
+      "type": "sendTask",
+      "name": "Supplier submits proof (1-up / 2-up / 10-up)",
+      "lane": "Supplier / Vendor"
+    },
+    {
+      "diagram": "e10-artwork-npd",
+      "id": "GwNpd",
+      "type": "exclusiveGateway",
+      "name": "New product development needed?",
+      "lane": "Requester"
+    },
+    {
+      "diagram": "e10-artwork-npd",
+      "id": "GwSampleOk",
+      "type": "exclusiveGateway",
+      "name": "Samples approved?",
+      "lane": "Approver"
+    },
+    {
+      "diagram": "e10-artwork-npd",
+      "id": "GwPrinted",
+      "type": "exclusiveGateway",
+      "name": "Item is printed?",
+      "lane": "Requester"
+    },
+    {
+      "diagram": "e10-artwork-npd",
+      "id": "GwReorder",
+      "type": "exclusiveGateway",
+      "name": "Reorder of last-approved artwork?",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "e10-artwork-npd",
+      "id": "GwArtworkOrigin",
+      "type": "exclusiveGateway",
+      "name": "Customer-supplied or own-brand artwork?",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "e10-artwork-npd",
+      "id": "GwAllApproved",
+      "type": "exclusiveGateway",
+      "name": "All reviewers approved?",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e10-artwork-npd",
+      "id": "ForkReview",
+      "type": "parallelGateway",
+      "name": "Parallel proof review",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e10-artwork-npd",
+      "id": "JoinReview",
+      "type": "parallelGateway",
+      "name": "Join: all reviews returned",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e10-artwork-npd",
+      "id": "Start",
+      "type": "startEvent",
+      "name": "New product / printed item need",
+      "lane": "Requester"
+    },
+    {
+      "diagram": "e10-artwork-npd",
+      "id": "End",
+      "type": "endEvent",
+      "name": "Artwork approved / printed; into normal flow",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e11-permit-expiry",
+      "id": "BlockPo",
+      "type": "userTask",
+      "name": "Block PO; require valid ministry permit",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "e11-permit-expiry",
+      "id": "AttachPermit",
+      "type": "userTask",
+      "name": "Attach ministry permit to PO; reserve quantity",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "e11-permit-expiry",
+      "id": "SuspendSupplier",
+      "type": "userTask",
+      "name": "Suspend supplier (expired cert)",
+      "lane": "Tax / Compliance"
+    },
+    {
+      "diagram": "e11-permit-expiry",
+      "id": "SurfaceStatus",
+      "type": "serviceTask",
+      "name": "Surface permit / cert status on selection",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e11-permit-expiry",
+      "id": "Audit",
+      "type": "serviceTask",
+      "name": "Audit + notify (handler + head)",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e11-permit-expiry",
+      "id": "GwRegulated",
+      "type": "exclusiveGateway",
+      "name": "Regulated chemical (solvent / pesticide)?",
+      "lane": "Quality"
+    },
+    {
+      "diagram": "e11-permit-expiry",
+      "id": "GwPermitValid",
+      "type": "exclusiveGateway",
+      "name": "Permit valid by date AND quantity?",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e11-permit-expiry",
+      "id": "GwCertExpiry",
+      "type": "exclusiveGateway",
+      "name": "Supplier cert expired?",
+      "lane": "Tax / Compliance"
+    },
+    {
+      "diagram": "e11-permit-expiry",
+      "id": "Start",
+      "type": "startEvent",
+      "name": "Item selected on requisition / PO",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "e11-permit-expiry",
+      "id": "End",
+      "type": "endEvent",
+      "name": "Compliant item proceeds; alerts armed",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e11-permit-expiry",
+      "id": "ExpiryTimer",
+      "type": "intermediateCatchEvent",
+      "name": "Expiry alert >= 1 week before",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e12-match-condition",
+      "id": "ResolveBuyer",
+      "type": "userTask",
+      "name": "Buyer resolves price-variance",
+      "lane": "Procurement / Buyer"
+    },
+    {
+      "diagram": "e12-match-condition",
+      "id": "ResolveRecv",
+      "type": "userTask",
+      "name": "Receiving resolves qty / missing-GR",
+      "lane": "Receiving / Warehouse"
+    },
+    {
+      "diagram": "e12-match-condition",
+      "id": "ResolveTax",
+      "type": "userTask",
+      "name": "Tax/Compliance resolves tax-mismatch",
+      "lane": "Tax / Compliance"
+    },
+    {
+      "diagram": "e12-match-condition",
+      "id": "ResolveFin",
+      "type": "userTask",
+      "name": "Finance resolves duplicate-invoice",
+      "lane": "Finance - Maker"
+    },
+    {
+      "diagram": "e12-match-condition",
+      "id": "ThreeWay",
+      "type": "serviceTask",
+      "name": "Three-way match (PO + GRN + invoice)",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e12-match-condition",
+      "id": "TwoWay",
+      "type": "serviceTask",
+      "name": "Two-way match (PO + invoice) + milestone acceptance",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e12-match-condition",
+      "id": "Clear",
+      "type": "serviceTask",
+      "name": "Mark matched; relieve GR/IR; commitment to actual",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e12-match-condition",
+      "id": "Tolerance",
+      "type": "businessRuleTask",
+      "name": "Tolerance check (price%, qty%, absolute, tax-incl)",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e12-match-condition",
+      "id": "GwDuplicate",
+      "type": "exclusiveGateway",
+      "name": "Duplicate invoice?",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e12-match-condition",
+      "id": "GwGrnExists",
+      "type": "exclusiveGateway",
+      "name": "GRN exists for the line / category?",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e12-match-condition",
+      "id": "GwWithinTol",
+      "type": "exclusiveGateway",
+      "name": "Within tolerance on all checks?",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e12-match-condition",
+      "id": "ClassifyException",
+      "type": "exclusiveGateway",
+      "name": "Exception type?",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e12-match-condition",
+      "id": "GwResolved",
+      "type": "exclusiveGateway",
+      "name": "Exception resolved to a match?",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e12-match-condition",
+      "id": "Start",
+      "type": "startEvent",
+      "name": "Invoice captured against PO",
+      "lane": "Finance - Maker"
+    },
+    {
+      "diagram": "e12-match-condition",
+      "id": "Reject",
+      "type": "endEvent",
+      "name": "Rejected; no payment posted",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "e12-match-condition",
+      "id": "End",
+      "type": "endEvent",
+      "name": "Matched; ready for payment",
+      "lane": "Platform / System"
+    }
+  ],
+  "guards": [
+    {
+      "diagram": "00-system-overview",
+      "id": "f0",
+      "from": "Seed",
+      "to": "Start",
+      "guard": "config ready"
+    },
+    {
+      "diagram": "00-system-overview",
+      "id": "f3",
+      "from": "BudgetCheck",
+      "to": "Route",
+      "guard": "within budget / override approved"
+    },
+    {
+      "diagram": "00-system-overview",
+      "id": "f3b",
+      "from": "BudgetCheck",
+      "to": "Revise",
+      "guard": "over budget, no override"
+    },
+    {
+      "diagram": "00-system-overview",
+      "id": "f6",
+      "from": "GwApproved",
+      "to": "Source",
+      "guard": "Approved"
+    },
+    {
+      "diagram": "00-system-overview",
+      "id": "f7",
+      "from": "GwApproved",
+      "to": "Revise",
+      "guard": "Rejected"
+    },
+    {
+      "diagram": "00-system-overview",
+      "id": "f15",
+      "from": "QcGate",
+      "to": "Invoice",
+      "guard": "QC pass"
+    },
+    {
+      "diagram": "00-system-overview",
+      "id": "f16",
+      "from": "QcGate",
+      "to": "Ncr",
+      "guard": "QC fail"
+    },
+    {
+      "diagram": "00-system-overview",
+      "id": "f17",
+      "from": "Ncr",
+      "to": "Invoice",
+      "guard": "resolved / accepted"
+    },
+    {
+      "diagram": "01-configuration",
+      "id": "f3",
+      "from": "GwMode",
+      "to": "SeedMasters",
+      "guard": "importMode == INDIVIDUAL"
+    },
+    {
+      "diagram": "01-configuration",
+      "id": "f4",
+      "from": "GwMode",
+      "to": "BulkUpload",
+      "guard": "importMode == BULK"
+    },
+    {
+      "diagram": "01-configuration",
+      "id": "f8",
+      "from": "GwImportValid",
+      "to": "Commit",
+      "guard": "rowErrors.length == 0"
+    },
+    {
+      "diagram": "01-configuration",
+      "id": "f9",
+      "from": "GwImportValid",
+      "to": "ImportError",
+      "guard": "rowErrors.length > 0"
+    },
+    {
+      "diagram": "02-requisition",
+      "id": "f3",
+      "from": "AddLines",
+      "to": "NewItem",
+      "guard": "item is free-text (not in master)"
+    },
+    {
+      "diagram": "02-requisition",
+      "id": "f4",
+      "from": "AddLines",
+      "to": "GwSaveOrSubmit",
+      "guard": "item found in master"
+    },
+    {
+      "diagram": "02-requisition",
+      "id": "f7",
+      "from": "LinkItem",
+      "to": "GwSaveOrSubmit",
+      "guard": "non-blocking, requisition continues"
+    },
+    {
+      "diagram": "02-requisition",
+      "id": "f8",
+      "from": "GwSaveOrSubmit",
+      "to": "Draft",
+      "guard": "action == SAVE_DRAFT"
+    },
+    {
+      "diagram": "02-requisition",
+      "id": "f9",
+      "from": "GwSaveOrSubmit",
+      "to": "Submit",
+      "guard": "action == SUBMIT"
+    },
+    {
+      "diagram": "02-requisition",
+      "id": "f10",
+      "from": "Draft",
+      "to": "AddLines",
+      "guard": "reopen and edit"
+    },
+    {
+      "diagram": "02-requisition",
+      "id": "f14",
+      "from": "GwBudget",
+      "to": "Route",
+      "guard": "totalAmountInBase <= availableAmount"
+    },
+    {
+      "diagram": "02-requisition",
+      "id": "f15",
+      "from": "GwBudget",
+      "to": "Override",
+      "guard": "totalAmountInBase > availableAmount"
+    },
+    {
+      "diagram": "02-requisition",
+      "id": "f16",
+      "from": "Override",
+      "to": "Route",
+      "guard": "override approved (logged)"
+    },
+    {
+      "diagram": "02-requisition",
+      "id": "f17",
+      "from": "Override",
+      "to": "Revise",
+      "guard": "sent back for revision"
+    },
+    {
+      "diagram": "02-requisition",
+      "id": "f18",
+      "from": "Revise",
+      "to": "Submit",
+      "guard": "resubmit, same identifier"
+    },
+    {
+      "diagram": "03-approval",
+      "id": "f5",
+      "from": "BudgetStageGate",
+      "to": "BudgetReview",
+      "guard": "currentStage == BUDGET && budgetStageEnabled"
+    },
+    {
+      "diagram": "03-approval",
+      "id": "f6",
+      "from": "BudgetStageGate",
+      "to": "AutoApprovalGate",
+      "guard": "not a budget stage"
+    },
+    {
+      "diagram": "03-approval",
+      "id": "f8",
+      "from": "BudgetDecisionGate",
+      "to": "RecordStageApproved",
+      "guard": "budgetDecision in {APPROVE, OVERRIDE}"
+    },
+    {
+      "diagram": "03-approval",
+      "id": "f9",
+      "from": "BudgetDecisionGate",
+      "to": "ReturnForRevision",
+      "guard": "returned, no override"
+    },
+    {
+      "diagram": "03-approval",
+      "id": "f10",
+      "from": "AutoApprovalGate",
+      "to": "AutoApprove",
+      "guard": "allowAutoApproval && totalAmountInBase <= effectiveApproverLimit"
+    },
+    {
+      "diagram": "03-approval",
+      "id": "f11",
+      "from": "AutoApprovalGate",
+      "to": "ManualReview",
+      "guard": "manual review required"
+    },
+    {
+      "diagram": "03-approval",
+      "id": "f14",
+      "from": "ApproveDecision",
+      "to": "RecordStageApproved",
+      "guard": "approverDecision == APPROVE (SoD: not own record)"
+    },
+    {
+      "diagram": "03-approval",
+      "id": "f15",
+      "from": "ApproveDecision",
+      "to": "ReturnForRevision",
+      "guard": "approverDecision == RETURN (note mandatory)"
+    },
+    {
+      "diagram": "03-approval",
+      "id": "f16",
+      "from": "ReturnForRevision",
+      "to": "AssignStage",
+      "guard": "resubmit, re-enter at first stage"
+    },
+    {
+      "diagram": "03-approval",
+      "id": "f18",
+      "from": "MoreStagesGate",
+      "to": "AdvanceStage",
+      "guard": "exists completion status != APPROVED"
+    },
+    {
+      "diagram": "03-approval",
+      "id": "f19",
+      "from": "MoreStagesGate",
+      "to": "FullyApproved",
+      "guard": "all completions APPROVED"
+    },
+    {
+      "diagram": "03-approval",
+      "id": "f20",
+      "from": "AdvanceStage",
+      "to": "AssignStage",
+      "guard": "next stage current"
+    },
+    {
+      "diagram": "03-approval",
+      "id": "f22",
+      "from": "FinancialEditEvent",
+      "to": "FinancialEditRevert",
+      "guard": "payTerms or paymentSchedules changed"
+    },
+    {
+      "diagram": "03-approval",
+      "id": "f23",
+      "from": "FinancialEditRevert",
+      "to": "AutoApprovalGate",
+      "guard": "reverted stage re-evaluated"
+    },
+    {
+      "diagram": "04-sourcing",
+      "id": "f4",
+      "from": "SourcingStrategyGate",
+      "to": "FrameworkCallOff",
+      "guard": "framework call-off / preferred bypass"
+    },
+    {
+      "diagram": "04-sourcing",
+      "id": "f5",
+      "from": "SourcingStrategyGate",
+      "to": "Prequalify",
+      "guard": "competitive event"
+    },
+    {
+      "diagram": "04-sourcing",
+      "id": "f6",
+      "from": "FrameworkCallOff",
+      "to": "ReadyForPo",
+      "guard": "no re-sourcing, straight to PO-ready"
+    },
+    {
+      "diagram": "04-sourcing",
+      "id": "f9",
+      "from": "SendInvite",
+      "to": "SubmitQuote",
+      "guard": "unique link per supplier"
+    },
+    {
+      "diagram": "04-sourcing",
+      "id": "f11",
+      "from": "IncotermValidGate",
+      "to": "NegotiateGate",
+      "guard": "incoterm valid for mode"
+    },
+    {
+      "diagram": "04-sourcing",
+      "id": "f12",
+      "from": "IncotermValidGate",
+      "to": "SubmitQuote",
+      "guard": "invalid (FOB/CIF/CFR not sea), correct"
+    },
+    {
+      "diagram": "04-sourcing",
+      "id": "f13",
+      "from": "NegotiateGate",
+      "to": "Negotiate",
+      "guard": "buyer negotiates"
+    },
+    {
+      "diagram": "04-sourcing",
+      "id": "f14",
+      "from": "NegotiateGate",
+      "to": "LandedCost",
+      "guard": "quote final"
+    },
+    {
+      "diagram": "04-sourcing",
+      "id": "f15",
+      "from": "Negotiate",
+      "to": "NegotiateGate",
+      "guard": "revised price resubmitted, same form"
+    },
+    {
+      "diagram": "04-sourcing",
+      "id": "f18",
+      "from": "RegulatedGate",
+      "to": "QualityCoaGate",
+      "guard": "regulatedItem == true"
+    },
+    {
+      "diagram": "04-sourcing",
+      "id": "f19",
+      "from": "RegulatedGate",
+      "to": "SelectSupplier",
+      "guard": "not regulated"
+    },
+    {
+      "diagram": "04-sourcing",
+      "id": "f20",
+      "from": "QualityCoaGate",
+      "to": "SelectSupplier",
+      "guard": "COA/MSDS approved"
+    },
+    {
+      "diagram": "04-sourcing",
+      "id": "f21",
+      "from": "QualityCoaGate",
+      "to": "FloatRfq",
+      "guard": "COA/MSDS rejected, re-source"
+    },
+    {
+      "diagram": "04-sourcing",
+      "id": "f23",
+      "from": "AwardApprovalGate",
+      "to": "Award",
+      "guard": "awardDecision == APPROVE"
+    },
+    {
+      "diagram": "04-sourcing",
+      "id": "f24",
+      "from": "AwardApprovalGate",
+      "to": "RankScore",
+      "guard": "awardDecision == RECOMPARE"
+    },
+    {
+      "diagram": "05-purchase-order",
+      "id": "f2",
+      "from": "GwOrderMode",
+      "to": "DraftPO",
+      "guard": "standard PO"
+    },
+    {
+      "diagram": "05-purchase-order",
+      "id": "f3",
+      "from": "GwOrderMode",
+      "to": "DraftCallOff",
+      "guard": "framework call-off"
+    },
+    {
+      "diagram": "05-purchase-order",
+      "id": "f6",
+      "from": "BudgetCommit",
+      "to": "Encumber",
+      "guard": "available >= poValueInBase"
+    },
+    {
+      "diagram": "05-purchase-order",
+      "id": "f7",
+      "from": "BudgetCommit",
+      "to": "BudgetOverride",
+      "guard": "over budget"
+    },
+    {
+      "diagram": "05-purchase-order",
+      "id": "f8",
+      "from": "BudgetOverride",
+      "to": "Encumber",
+      "guard": "override approved"
+    },
+    {
+      "diagram": "05-purchase-order",
+      "id": "f9",
+      "from": "BudgetOverride",
+      "to": "DraftLines",
+      "guard": "rejected, revise"
+    },
+    {
+      "diagram": "05-purchase-order",
+      "id": "f13",
+      "from": "GwApproved",
+      "to": "IssuePO",
+      "guard": "approved"
+    },
+    {
+      "diagram": "05-purchase-order",
+      "id": "f14",
+      "from": "GwApproved",
+      "to": "DraftLines",
+      "guard": "rejected, revise"
+    },
+    {
+      "diagram": "05-purchase-order",
+      "id": "f18",
+      "from": "GwAdvance",
+      "to": "TriggerAdvance",
+      "guard": "advance due"
+    },
+    {
+      "diagram": "05-purchase-order",
+      "id": "f19",
+      "from": "GwAdvance",
+      "to": "GwAmend",
+      "guard": "no advance"
+    },
+    {
+      "diagram": "05-purchase-order",
+      "id": "f21",
+      "from": "GwAmend",
+      "to": "AmendPO",
+      "guard": "amend (pre-receipt)"
+    },
+    {
+      "diagram": "05-purchase-order",
+      "id": "f22",
+      "from": "GwAmend",
+      "to": "Fulfil",
+      "guard": "no amendment"
+    },
+    {
+      "diagram": "05-purchase-order",
+      "id": "f23",
+      "from": "AmendPO",
+      "to": "SendPO",
+      "guard": "re-issue + re-ack"
+    },
+    {
+      "diagram": "06-supplier-onboarding",
+      "id": "f2",
+      "from": "GwPath",
+      "to": "CreateSupplier",
+      "guard": "single record"
+    },
+    {
+      "diagram": "06-supplier-onboarding",
+      "id": "f3",
+      "from": "GwPath",
+      "to": "UploadFile",
+      "guard": "bulk import"
+    },
+    {
+      "diagram": "06-supplier-onboarding",
+      "id": "f11",
+      "from": "ApproveGw",
+      "to": "ApproveSupplier",
+      "guard": "complete + approve"
+    },
+    {
+      "diagram": "06-supplier-onboarding",
+      "id": "f12",
+      "from": "ApproveGw",
+      "to": "QualDocs",
+      "guard": "incomplete, return"
+    },
+    {
+      "diagram": "06-supplier-onboarding",
+      "id": "f15",
+      "from": "OnboardedGw",
+      "to": "EditSupplier",
+      "guard": "edit"
+    },
+    {
+      "diagram": "06-supplier-onboarding",
+      "id": "f16",
+      "from": "OnboardedGw",
+      "to": "Suspend",
+      "guard": "suspend"
+    },
+    {
+      "diagram": "06-supplier-onboarding",
+      "id": "f17",
+      "from": "OnboardedGw",
+      "to": "Offboard",
+      "guard": "offboard"
+    },
+    {
+      "diagram": "06-supplier-onboarding",
+      "id": "f18",
+      "from": "OnboardedGw",
+      "to": "Active",
+      "guard": "stay onboarded"
+    },
+    {
+      "diagram": "06-supplier-onboarding",
+      "id": "f19",
+      "from": "EditSupplier",
+      "to": "RequestApproval",
+      "guard": "reverts to PENDING_APPROVAL"
+    },
+    {
+      "diagram": "06-supplier-onboarding",
+      "id": "f21",
+      "from": "ResolveSuspend",
+      "to": "Restore",
+      "guard": "resolved"
+    },
+    {
+      "diagram": "06-supplier-onboarding",
+      "id": "f22",
+      "from": "ResolveSuspend",
+      "to": "Offboard",
+      "guard": "terminate"
+    },
+    {
+      "diagram": "06-supplier-onboarding",
+      "id": "f27",
+      "from": "ImportGw",
+      "to": "CommitImport",
+      "guard": "all rows valid"
+    },
+    {
+      "diagram": "06-supplier-onboarding",
+      "id": "f28",
+      "from": "ImportGw",
+      "to": "UploadFile",
+      "guard": "errors, fix + re-upload"
+    },
+    {
+      "diagram": "07-item-onboarding",
+      "id": "f2",
+      "from": "GwPath",
+      "to": "CreateItem",
+      "guard": "single (form)"
+    },
+    {
+      "diagram": "07-item-onboarding",
+      "id": "f3",
+      "from": "GwPath",
+      "to": "ImplicitDetect",
+      "guard": "implicit (requisition line)"
+    },
+    {
+      "diagram": "07-item-onboarding",
+      "id": "f4",
+      "from": "GwPath",
+      "to": "UploadFile",
+      "guard": "bulk import"
+    },
+    {
+      "diagram": "07-item-onboarding",
+      "id": "f8",
+      "from": "ApproveGw",
+      "to": "ApproveItem",
+      "guard": "complete + approve"
+    },
+    {
+      "diagram": "07-item-onboarding",
+      "id": "f9",
+      "from": "ApproveGw",
+      "to": "CreateItem",
+      "guard": "incomplete, return"
+    },
+    {
+      "diagram": "07-item-onboarding",
+      "id": "f12",
+      "from": "OnboardedGw",
+      "to": "EditItem",
+      "guard": "edit"
+    },
+    {
+      "diagram": "07-item-onboarding",
+      "id": "f13",
+      "from": "OnboardedGw",
+      "to": "Offboard",
+      "guard": "suspend / offboard"
+    },
+    {
+      "diagram": "07-item-onboarding",
+      "id": "f14",
+      "from": "OnboardedGw",
+      "to": "Active",
+      "guard": "stay onboarded"
+    },
+    {
+      "diagram": "07-item-onboarding",
+      "id": "f15",
+      "from": "EditItem",
+      "to": "RequestApproval",
+      "guard": "reverts to PENDING_APPROVAL"
+    },
+    {
+      "diagram": "07-item-onboarding",
+      "id": "f21",
+      "from": "ImportGw",
+      "to": "CommitImport",
+      "guard": "all rows valid"
+    },
+    {
+      "diagram": "07-item-onboarding",
+      "id": "f22",
+      "from": "ImportGw",
+      "to": "UploadFile",
+      "guard": "errors, fix + re-upload"
+    },
+    {
+      "diagram": "08-delivery-grn",
+      "id": "f3",
+      "from": "GwMode",
+      "to": "TrackAir",
+      "guard": "Air"
+    },
+    {
+      "diagram": "08-delivery-grn",
+      "id": "f4",
+      "from": "GwMode",
+      "to": "TrackSea",
+      "guard": "Sea"
+    },
+    {
+      "diagram": "08-delivery-grn",
+      "id": "f5",
+      "from": "GwMode",
+      "to": "TrackRoad",
+      "guard": "Road"
+    },
+    {
+      "diagram": "08-delivery-grn",
+      "id": "f6",
+      "from": "GwMode",
+      "to": "TrackCourier",
+      "guard": "Courier"
+    },
+    {
+      "diagram": "08-delivery-grn",
+      "id": "f7",
+      "from": "TrackAir",
+      "to": "Customs",
+      "guard": "import clearance"
+    },
+    {
+      "diagram": "08-delivery-grn",
+      "id": "f8",
+      "from": "TrackSea",
+      "to": "Customs",
+      "guard": "import clearance"
+    },
+    {
+      "diagram": "08-delivery-grn",
+      "id": "f10",
+      "from": "GwRoadBorder",
+      "to": "Customs",
+      "guard": "cross-border (Saudi/UAE)"
+    },
+    {
+      "diagram": "08-delivery-grn",
+      "id": "f11",
+      "from": "GwRoadBorder",
+      "to": "EtaAlarm",
+      "guard": "domestic"
+    },
+    {
+      "diagram": "08-delivery-grn",
+      "id": "f12",
+      "from": "TrackCourier",
+      "to": "EtaAlarm",
+      "guard": "no customs node"
+    },
+    {
+      "diagram": "08-delivery-grn",
+      "id": "f15",
+      "from": "GwOverdue",
+      "to": "OverdueReminder",
+      "guard": "committed date passed, not received"
+    },
+    {
+      "diagram": "08-delivery-grn",
+      "id": "f16",
+      "from": "GwOverdue",
+      "to": "ConfirmArrival",
+      "guard": "on/within commit, arrived"
+    },
+    {
+      "diagram": "08-delivery-grn",
+      "id": "f17",
+      "from": "OverdueReminder",
+      "to": "GwOverdue",
+      "guard": "await arrival (re-check)"
+    },
+    {
+      "diagram": "08-delivery-grn",
+      "id": "f19",
+      "from": "GwPartial",
+      "to": "GwCategory",
+      "guard": "full receipt"
+    },
+    {
+      "diagram": "08-delivery-grn",
+      "id": "f20",
+      "from": "GwPartial",
+      "to": "RecordBlock",
+      "guard": "partial consignment"
+    },
+    {
+      "diagram": "08-delivery-grn",
+      "id": "f22",
+      "from": "GwCategory",
+      "to": "StoreReceive",
+      "guard": "materials (RM/PM, S2 direct)"
+    },
+    {
+      "diagram": "08-delivery-grn",
+      "id": "f23",
+      "from": "GwCategory",
+      "to": "EngReceive",
+      "guard": "spares/services (S3/T2/T3)"
+    },
+    {
+      "diagram": "08-delivery-grn",
+      "id": "f25",
+      "from": "GwCoa",
+      "to": "QcInspect",
+      "guard": "COA on file"
+    },
+    {
+      "diagram": "08-delivery-grn",
+      "id": "f26",
+      "from": "GwCoa",
+      "to": "ChaseCoa",
+      "guard": "no COA (HARD BLOCK)"
+    },
+    {
+      "diagram": "08-delivery-grn",
+      "id": "f27",
+      "from": "ChaseCoa",
+      "to": "GwCoa",
+      "guard": "COA chased (loop)"
+    },
+    {
+      "diagram": "08-delivery-grn",
+      "id": "f29",
+      "from": "GwQc",
+      "to": "GwTolerance",
+      "guard": "approved"
+    },
+    {
+      "diagram": "08-delivery-grn",
+      "id": "f30",
+      "from": "GwQc",
+      "to": "Ncr",
+      "guard": "rejected / quarantine"
+    },
+    {
+      "diagram": "08-delivery-grn",
+      "id": "f31",
+      "from": "Ncr",
+      "to": "RaiseGrn",
+      "guard": "resolved / accepted qty"
+    },
+    {
+      "diagram": "08-delivery-grn",
+      "id": "f32",
+      "from": "GwTolerance",
+      "to": "AmendPo",
+      "guard": "within tolerance, qty != ordered"
+    },
+    {
+      "diagram": "08-delivery-grn",
+      "id": "f33",
+      "from": "GwTolerance",
+      "to": "RaiseGrn",
+      "guard": "no variance / no-tolerance item"
+    },
+    {
+      "diagram": "08-delivery-grn",
+      "id": "f38",
+      "from": "GwEngOk",
+      "to": "CloseRequisition",
+      "guard": "as per order"
+    },
+    {
+      "diagram": "08-delivery-grn",
+      "id": "f39",
+      "from": "GwEngOk",
+      "to": "Ncr",
+      "guard": "not as per order"
+    },
+    {
+      "diagram": "08-delivery-grn",
+      "id": "f42",
+      "from": "GwMore",
+      "to": "GwCategory",
+      "guard": "more batches expected (re-enter)"
+    },
+    {
+      "diagram": "08-delivery-grn",
+      "id": "f43",
+      "from": "GwMore",
+      "to": "End",
+      "guard": "all lines received"
+    },
+    {
+      "diagram": "09-invoice-match",
+      "id": "f4",
+      "from": "GwDuplicate",
+      "to": "HoldDuplicate",
+      "guard": "duplicate (supplier+invoice#+amount)"
+    },
+    {
+      "diagram": "09-invoice-match",
+      "id": "f5",
+      "from": "GwDuplicate",
+      "to": "GwMatchType",
+      "guard": "not duplicate"
+    },
+    {
+      "diagram": "09-invoice-match",
+      "id": "f6",
+      "from": "GwMatchType",
+      "to": "ThreeWayMatch",
+      "guard": "GRN exists -> three-way"
+    },
+    {
+      "diagram": "09-invoice-match",
+      "id": "f7",
+      "from": "GwMatchType",
+      "to": "MilestoneCheck",
+      "guard": "no GRN -> two-way"
+    },
+    {
+      "diagram": "09-invoice-match",
+      "id": "f11",
+      "from": "GwMatched",
+      "to": "ClearMatch",
+      "guard": "within tolerance"
+    },
+    {
+      "diagram": "09-invoice-match",
+      "id": "f12",
+      "from": "GwMatched",
+      "to": "GwException",
+      "guard": "outside tolerance (exception)"
+    },
+    {
+      "diagram": "09-invoice-match",
+      "id": "f13",
+      "from": "GwException",
+      "to": "ResolvePrice",
+      "guard": "price-variance"
+    },
+    {
+      "diagram": "09-invoice-match",
+      "id": "f14",
+      "from": "GwException",
+      "to": "ResolveQty",
+      "guard": "qty-over / qty-under / missing-GR"
+    },
+    {
+      "diagram": "09-invoice-match",
+      "id": "f15",
+      "from": "GwException",
+      "to": "ResolveTax",
+      "guard": "tax-mismatch"
+    },
+    {
+      "diagram": "09-invoice-match",
+      "id": "f20",
+      "from": "GwResolution",
+      "to": "GwMatchType",
+      "guard": "accept / adjust -> re-match"
+    },
+    {
+      "diagram": "09-invoice-match",
+      "id": "f21",
+      "from": "GwResolution",
+      "to": "PostNote",
+      "guard": "credit-note / debit-note"
+    },
+    {
+      "diagram": "09-invoice-match",
+      "id": "f22",
+      "from": "GwResolution",
+      "to": "RejectInvoice",
+      "guard": "reject"
+    },
+    {
+      "diagram": "09-invoice-match",
+      "id": "f27",
+      "from": "RejectInvoice",
+      "to": "End",
+      "guard": "no payable"
+    },
+    {
+      "diagram": "10-payments",
+      "id": "f3",
+      "from": "GwLocked",
+      "to": "GwCash",
+      "guard": "editable / committed entries skipped"
+    },
+    {
+      "diagram": "10-payments",
+      "id": "f4",
+      "from": "GwCash",
+      "to": "CashFloat",
+      "guard": "cash buy (no PO)"
+    },
+    {
+      "diagram": "10-payments",
+      "id": "f5",
+      "from": "GwCash",
+      "to": "GwApproveAmt",
+      "guard": "credit / advance (against PO)"
+    },
+    {
+      "diagram": "10-payments",
+      "id": "f7",
+      "from": "GwFloatLow",
+      "to": "ReimburseFloat",
+      "guard": "float low (<= threshold)"
+    },
+    {
+      "diagram": "10-payments",
+      "id": "f8",
+      "from": "GwFloatLow",
+      "to": "End",
+      "guard": "float ok, cash buy closed"
+    },
+    {
+      "diagram": "10-payments",
+      "id": "f10",
+      "from": "GwApproveAmt",
+      "to": "SetApproved",
+      "guard": "amount == agreed"
+    },
+    {
+      "diagram": "10-payments",
+      "id": "f11",
+      "from": "GwApproveAmt",
+      "to": "SetPartial",
+      "guard": "0 < amount < agreed"
+    },
+    {
+      "diagram": "10-payments",
+      "id": "f18",
+      "from": "GwReleaseOk",
+      "to": "MgmtRelease",
+      "guard": "approved to pay"
+    },
+    {
+      "diagram": "10-payments",
+      "id": "f19",
+      "from": "GwReleaseOk",
+      "to": "Reschedule",
+      "guard": "hold (signatory / cash flow)"
+    },
+    {
+      "diagram": "10-payments",
+      "id": "f20",
+      "from": "GwProcessable",
+      "to": "ProcessPayment",
+      "guard": "status in {APPROVED, PARTIAL_APPROVAL}"
+    },
+    {
+      "diagram": "10-payments",
+      "id": "f21",
+      "from": "GwProcessable",
+      "to": "Reschedule",
+      "guard": "not processable"
+    },
+    {
+      "diagram": "10-payments",
+      "id": "f23",
+      "from": "Reschedule",
+      "to": "MakerPrepare",
+      "guard": "re-enter when due"
+    },
+    {
+      "diagram": "10-payments",
+      "id": "f25",
+      "from": "GwDest",
+      "to": "ConfirmSupplier",
+      "guard": "supplier"
+    },
+    {
+      "diagram": "10-payments",
+      "id": "f26",
+      "from": "GwDest",
+      "to": "TopUpFloat",
+      "guard": "cash handler"
+    },
+    {
+      "diagram": "10-payments",
+      "id": "f29",
+      "from": "GwMoreEntries",
+      "to": "GwApproveAmt",
+      "guard": "next entry due (loop)"
+    },
+    {
+      "diagram": "10-payments",
+      "id": "f30",
+      "from": "GwMoreEntries",
+      "to": "End",
+      "guard": "all settled"
+    },
+    {
+      "diagram": "10-payments",
+      "id": "f31",
+      "from": "OverdueTimer",
+      "to": "RemindOverdue",
+      "guard": "term due in ~28d (non-interrupting)"
+    },
+    {
+      "diagram": "10-payments",
+      "id": "f32",
+      "from": "RemindOverdue",
+      "to": "MakerPrepare",
+      "guard": "prepare due credit installment"
+    },
+    {
+      "diagram": "10-payments",
+      "id": "fmgmt",
+      "from": "MgmtRelease",
+      "to": "GwProcessable",
+      "guard": "released"
+    },
+    {
+      "diagram": "11-returns-rma",
+      "id": "f4",
+      "from": "GwAuth",
+      "to": "Identify",
+      "guard": "authorized + rmaNumber set"
+    },
+    {
+      "diagram": "11-returns-rma",
+      "id": "f5",
+      "from": "GwAuth",
+      "to": "Declined",
+      "guard": "declined / no-response"
+    },
+    {
+      "diagram": "11-returns-rma",
+      "id": "f6",
+      "from": "Declined",
+      "to": "End",
+      "guard": "re-dispositioned in e04"
+    },
+    {
+      "diagram": "11-returns-rma",
+      "id": "f10",
+      "from": "GwAdjust",
+      "to": "CreditNote",
+      "guard": "credit expected (defective/damaged/expired/quality-fail)"
+    },
+    {
+      "diagram": "11-returns-rma",
+      "id": "f11",
+      "from": "GwAdjust",
+      "to": "DebitNote",
+      "guard": "debit raised (over-delivery/wrong-item/dispute)"
+    },
+    {
+      "diagram": "11-returns-rma",
+      "id": "f12",
+      "from": "GwAdjust",
+      "to": "Close",
+      "guard": "not invoiced - reverse accrual only"
+    },
+    {
+      "diagram": "12-analytics",
+      "id": "f7",
+      "from": "GwGrade",
+      "to": "WriteScorecard",
+      "guard": "grade A/B/C assigned + AVL gate applied"
+    },
+    {
+      "diagram": "e01-approval-routing",
+      "id": "f3",
+      "from": "GwEligible",
+      "to": "Blocked",
+      "guard": "no eligible approver -> BadRequest"
+    },
+    {
+      "diagram": "e01-approval-routing",
+      "id": "f4",
+      "from": "GwEligible",
+      "to": "GwThreshold",
+      "guard": "eligible pool found"
+    },
+    {
+      "diagram": "e01-approval-routing",
+      "id": "f5",
+      "from": "GwThreshold",
+      "to": "AutoApprove",
+      "guard": "FINANCE and totalAmountInBase <= approvalLimit"
+    },
+    {
+      "diagram": "e01-approval-routing",
+      "id": "f6",
+      "from": "GwThreshold",
+      "to": "NearestBucket",
+      "guard": "over threshold or non-finance"
+    },
+    {
+      "diagram": "e01-approval-routing",
+      "id": "f11",
+      "from": "GwAvailable",
+      "to": "Route",
+      "guard": "available - approved/returned"
+    },
+    {
+      "diagram": "e01-approval-routing",
+      "id": "f12",
+      "from": "GwAvailable",
+      "to": "Reassign",
+      "guard": "on leave / inactive / overloaded"
+    },
+    {
+      "diagram": "e01-approval-routing",
+      "id": "f14",
+      "from": "Route",
+      "to": "PostValueSync",
+      "guard": "financial field later edited"
+    },
+    {
+      "diagram": "e01-approval-routing",
+      "id": "f15",
+      "from": "PostValueSync",
+      "to": "GwThreshold",
+      "guard": "reverted auto-approval re-enters"
+    },
+    {
+      "diagram": "e01-approval-routing",
+      "id": "f16",
+      "from": "Route",
+      "to": "End",
+      "guard": "all completions APPROVED"
+    },
+    {
+      "diagram": "e02-budget-commitment",
+      "id": "f3",
+      "from": "GwSoft",
+      "to": "Proceed",
+      "guard": "value <= availableAmount (within budget)"
+    },
+    {
+      "diagram": "e02-budget-commitment",
+      "id": "f4",
+      "from": "GwSoft",
+      "to": "GwOverride",
+      "guard": "value > availableAmount (warn, over budget)"
+    },
+    {
+      "diagram": "e02-budget-commitment",
+      "id": "f5",
+      "from": "GwOverride",
+      "to": "Proceed",
+      "guard": "override approved (logged)"
+    },
+    {
+      "diagram": "e02-budget-commitment",
+      "id": "f6",
+      "from": "GwOverride",
+      "to": "Revise",
+      "guard": "override rejected"
+    },
+    {
+      "diagram": "e02-budget-commitment",
+      "id": "f10",
+      "from": "GwHard",
+      "to": "HardCommit",
+      "guard": "available >= poValue OR override approved"
+    },
+    {
+      "diagram": "e02-budget-commitment",
+      "id": "f11",
+      "from": "GwHard",
+      "to": "HoldCommit",
+      "guard": "available < poValue AND no override"
+    },
+    {
+      "diagram": "e02-budget-commitment",
+      "id": "f12",
+      "from": "HoldCommit",
+      "to": "GwOverride",
+      "guard": "request override or reduce PO"
+    },
+    {
+      "diagram": "e03-qty-tolerance",
+      "id": "f3",
+      "from": "GwToleranceItem",
+      "to": "GwWithinTolerance",
+      "guard": "tolerance line (qtyPercent > 0)"
+    },
+    {
+      "diagram": "e03-qty-tolerance",
+      "id": "f4",
+      "from": "GwToleranceItem",
+      "to": "GwPartialOrFull",
+      "guard": "no-tolerance item -> skip"
+    },
+    {
+      "diagram": "e03-qty-tolerance",
+      "id": "f5",
+      "from": "GwWithinTolerance",
+      "to": "AmendPO",
+      "guard": "within band: amend to actual count"
+    },
+    {
+      "diagram": "e03-qty-tolerance",
+      "id": "f6",
+      "from": "GwWithinTolerance",
+      "to": "GwToleranceBreach",
+      "guard": "outside band"
+    },
+    {
+      "diagram": "e03-qty-tolerance",
+      "id": "f7",
+      "from": "GwToleranceBreach",
+      "to": "NotifyBuyerBreach",
+      "guard": "over or under tolerance"
+    },
+    {
+      "diagram": "e03-qty-tolerance",
+      "id": "f9",
+      "from": "BuyerDisposition",
+      "to": "AmendPO",
+      "guard": "accept (amend qty)"
+    },
+    {
+      "diagram": "e03-qty-tolerance",
+      "id": "f12",
+      "from": "GwPartialOrFull",
+      "to": "QcGate",
+      "guard": "full line or accepted partial block"
+    },
+    {
+      "diagram": "e03-qty-tolerance",
+      "id": "f14",
+      "from": "QcGate",
+      "to": "RaiseGRN",
+      "guard": "QC pass / no COA needed"
+    },
+    {
+      "diagram": "e03-qty-tolerance",
+      "id": "f16",
+      "from": "GwLineComplete",
+      "to": "End",
+      "guard": "cumulative >= ordered"
+    },
+    {
+      "diagram": "e03-qty-tolerance",
+      "id": "f17",
+      "from": "GwLineComplete",
+      "to": "AwaitNext",
+      "guard": "cumulative < ordered"
+    },
+    {
+      "diagram": "e03-qty-tolerance",
+      "id": "f18",
+      "from": "AwaitNext",
+      "to": "Start",
+      "guard": "next shipment arrives"
+    },
+    {
+      "diagram": "e04-ncr-capa",
+      "id": "f3",
+      "from": "GwConform",
+      "to": "Release",
+      "guard": "conforming (pass)"
+    },
+    {
+      "diagram": "e04-ncr-capa",
+      "id": "f4",
+      "from": "GwConform",
+      "to": "RaiseNcr",
+      "guard": "nonconforming (fail / quarantine / post-GRN)"
+    },
+    {
+      "diagram": "e04-ncr-capa",
+      "id": "f7",
+      "from": "GwDisposition",
+      "to": "ReturnPath",
+      "guard": "return"
+    },
+    {
+      "diagram": "e04-ncr-capa",
+      "id": "f8",
+      "from": "GwDisposition",
+      "to": "ReworkScrap",
+      "guard": "rework / concession / scrap"
+    },
+    {
+      "diagram": "e04-ncr-capa",
+      "id": "f14",
+      "from": "GwEffective",
+      "to": "Scar",
+      "guard": "not-effective (re-open SCAR)"
+    },
+    {
+      "diagram": "e04-ncr-capa",
+      "id": "f15",
+      "from": "GwEffective",
+      "to": "ReEval",
+      "guard": "effective (close CAPA + NCR)"
+    },
+    {
+      "diagram": "e04-ncr-capa",
+      "id": "f17",
+      "from": "GwSuspend",
+      "to": "Suspend",
+      "guard": "critical NCR / 2 consecutive below / failed audit / expired cert / sanctions / active CAPA"
+    },
+    {
+      "diagram": "e04-ncr-capa",
+      "id": "f18",
+      "from": "GwSuspend",
+      "to": "Monitor",
+      "guard": "no trigger - continue"
+    },
+    {
+      "diagram": "e05-auto-create",
+      "id": "f3",
+      "from": "Fork",
+      "to": "GwSupplierKind",
+      "guard": "Branch A: supplier"
+    },
+    {
+      "diagram": "e05-auto-create",
+      "id": "f4",
+      "from": "Fork",
+      "to": "GwItemKind",
+      "guard": "Branch B: items"
+    },
+    {
+      "diagram": "e05-auto-create",
+      "id": "f5",
+      "from": "GwSupplierKind",
+      "to": "LookupSupplier",
+      "guard": "UUID"
+    },
+    {
+      "diagram": "e05-auto-create",
+      "id": "f6",
+      "from": "GwSupplierKind",
+      "to": "CreateSupplier",
+      "guard": "free-text name"
+    },
+    {
+      "diagram": "e05-auto-create",
+      "id": "f7",
+      "from": "GwSupplierKind",
+      "to": "Join",
+      "guard": "null (optional link skipped)"
+    },
+    {
+      "diagram": "e05-auto-create",
+      "id": "f9",
+      "from": "GwSupplierFound",
+      "to": "Join",
+      "guard": "found: existing supplierId"
+    },
+    {
+      "diagram": "e05-auto-create",
+      "id": "f10",
+      "from": "GwSupplierFound",
+      "to": "Reject",
+      "guard": "404 -> abort whole op"
+    },
+    {
+      "diagram": "e05-auto-create",
+      "id": "f12",
+      "from": "GwItemKind",
+      "to": "LookupItem",
+      "guard": "UUID"
+    },
+    {
+      "diagram": "e05-auto-create",
+      "id": "f13",
+      "from": "GwItemKind",
+      "to": "CreateItem",
+      "guard": "free-text name"
+    },
+    {
+      "diagram": "e05-auto-create",
+      "id": "f15",
+      "from": "GwItemFound",
+      "to": "Join",
+      "guard": "all resolve: existing itemIds"
+    },
+    {
+      "diagram": "e05-auto-create",
+      "id": "f16",
+      "from": "GwItemFound",
+      "to": "Reject",
+      "guard": "404 -> abort whole op"
+    },
+    {
+      "diagram": "e06-bulk-import",
+      "id": "f3",
+      "from": "GwReadable",
+      "to": "GwSheet",
+      "guard": "readable"
+    },
+    {
+      "diagram": "e06-bulk-import",
+      "id": "f4",
+      "from": "GwReadable",
+      "to": "EndReject",
+      "guard": "not readable -> BadRequest"
+    },
+    {
+      "diagram": "e06-bulk-import",
+      "id": "f5",
+      "from": "GwSheet",
+      "to": "GwDataRows",
+      "guard": "sheet present"
+    },
+    {
+      "diagram": "e06-bulk-import",
+      "id": "f6",
+      "from": "GwSheet",
+      "to": "EndReject",
+      "guard": "sheet missing -> BadRequest"
+    },
+    {
+      "diagram": "e06-bulk-import",
+      "id": "f7",
+      "from": "GwDataRows",
+      "to": "GwHeaders",
+      "guard": "rows > 1"
+    },
+    {
+      "diagram": "e06-bulk-import",
+      "id": "f8",
+      "from": "GwDataRows",
+      "to": "EndReject",
+      "guard": "no data rows -> BadRequest"
+    },
+    {
+      "diagram": "e06-bulk-import",
+      "id": "f9",
+      "from": "GwHeaders",
+      "to": "ValidateRows",
+      "guard": "headers exact"
+    },
+    {
+      "diagram": "e06-bulk-import",
+      "id": "f10",
+      "from": "GwHeaders",
+      "to": "EndReject",
+      "guard": "missing/extra header -> BadRequest"
+    },
+    {
+      "diagram": "e06-bulk-import",
+      "id": "f12",
+      "from": "GwAnyErrors",
+      "to": "RejectAll",
+      "guard": "errorList.length > 0"
+    },
+    {
+      "diagram": "e06-bulk-import",
+      "id": "f13",
+      "from": "GwAnyErrors",
+      "to": "UpsertTxn",
+      "guard": "no errors"
+    },
+    {
+      "diagram": "e06-bulk-import",
+      "id": "f16",
+      "from": "GwCommit",
+      "to": "Audit",
+      "guard": "all rows persisted -> COMMIT"
+    },
+    {
+      "diagram": "e06-bulk-import",
+      "id": "f17",
+      "from": "GwCommit",
+      "to": "Rollback",
+      "guard": "any failure -> ROLLBACK"
+    },
+    {
+      "diagram": "e07-currency",
+      "id": "f2",
+      "from": "GwOverride",
+      "to": "ApplyOverride",
+      "guard": "PO.exchangeRate != null"
+    },
+    {
+      "diagram": "e07-currency",
+      "id": "f3",
+      "from": "GwOverride",
+      "to": "GwBaseOrNull",
+      "guard": "no override -> convertToBase"
+    },
+    {
+      "diagram": "e07-currency",
+      "id": "f5",
+      "from": "GwBaseOrNull",
+      "to": "Persist",
+      "guard": "base or null: return unchanged, no call"
+    },
+    {
+      "diagram": "e07-currency",
+      "id": "f6",
+      "from": "GwBaseOrNull",
+      "to": "FetchRate",
+      "guard": "foreign currency"
+    },
+    {
+      "diagram": "e07-currency",
+      "id": "f8",
+      "from": "GwFetchOk",
+      "to": "GwRateValid",
+      "guard": "fetch ok"
+    },
+    {
+      "diagram": "e07-currency",
+      "id": "f9",
+      "from": "GwFetchOk",
+      "to": "Degrade",
+      "guard": "fetch failed -> log, return original"
+    },
+    {
+      "diagram": "e07-currency",
+      "id": "f10",
+      "from": "GwRateValid",
+      "to": "Convert",
+      "guard": "isFinite(rate) AND rate > 0"
+    },
+    {
+      "diagram": "e07-currency",
+      "id": "f11",
+      "from": "GwRateValid",
+      "to": "Degrade",
+      "guard": "0 / NaN / Inf / negative -> log, return original"
+    },
+    {
+      "diagram": "e08-cash-float",
+      "id": "f2",
+      "from": "GwCashCredit",
+      "to": "InquireAvailability",
+      "guard": "CASH (local)"
+    },
+    {
+      "diagram": "e08-cash-float",
+      "id": "f2b",
+      "from": "GwCashCredit",
+      "to": "CreditExit",
+      "guard": "CREDIT -> PO branch"
+    },
+    {
+      "diagram": "e08-cash-float",
+      "id": "f5",
+      "from": "GwFloatSufficient",
+      "to": "BuyOnFloat",
+      "guard": "cashPrice <= float balance"
+    },
+    {
+      "diagram": "e08-cash-float",
+      "id": "f6",
+      "from": "GwFloatSufficient",
+      "to": "RequestReimb",
+      "guard": "insufficient: top up first"
+    },
+    {
+      "diagram": "e08-cash-float",
+      "id": "f10",
+      "from": "GwFloatLow",
+      "to": "RequestReimb",
+      "guard": "balance <= allotment/3"
+    },
+    {
+      "diagram": "e08-cash-float",
+      "id": "f11",
+      "from": "GwFloatLow",
+      "to": "End",
+      "guard": "float adequate"
+    },
+    {
+      "diagram": "e09-contract-supply",
+      "id": "f3",
+      "from": "SupplyDue",
+      "to": "FloatLoad",
+      "guard": "due + contract active"
+    },
+    {
+      "diagram": "e09-contract-supply",
+      "id": "f12",
+      "from": "SupplyDue",
+      "to": "End",
+      "guard": "expired / not renewed -> stop"
+    },
+    {
+      "diagram": "e10-artwork-npd",
+      "id": "f2",
+      "from": "GwNpd",
+      "to": "RequestSamples",
+      "guard": "new product"
+    },
+    {
+      "diagram": "e10-artwork-npd",
+      "id": "f3",
+      "from": "GwNpd",
+      "to": "GwPrinted",
+      "guard": "existing product"
+    },
+    {
+      "diagram": "e10-artwork-npd",
+      "id": "f7",
+      "from": "GwSampleOk",
+      "to": "GwPrinted",
+      "guard": "approve into flow"
+    },
+    {
+      "diagram": "e10-artwork-npd",
+      "id": "f8",
+      "from": "GwSampleOk",
+      "to": "RequestSamples",
+      "guard": "rework -> revised samples"
+    },
+    {
+      "diagram": "e10-artwork-npd",
+      "id": "f9",
+      "from": "GwPrinted",
+      "to": "GwReorder",
+      "guard": "printed item"
+    },
+    {
+      "diagram": "e10-artwork-npd",
+      "id": "f10",
+      "from": "GwPrinted",
+      "to": "End",
+      "guard": "not printed -> normal flow"
+    },
+    {
+      "diagram": "e10-artwork-npd",
+      "id": "f11",
+      "from": "GwReorder",
+      "to": "Print",
+      "guard": "reorder: reuse last-approved artwork"
+    },
+    {
+      "diagram": "e10-artwork-npd",
+      "id": "f12",
+      "from": "GwReorder",
+      "to": "GwArtworkOrigin",
+      "guard": "new/changed artwork"
+    },
+    {
+      "diagram": "e10-artwork-npd",
+      "id": "f13",
+      "from": "GwArtworkOrigin",
+      "to": "ForwardToPrint",
+      "guard": "customer-supplied"
+    },
+    {
+      "diagram": "e10-artwork-npd",
+      "id": "f14",
+      "from": "GwArtworkOrigin",
+      "to": "SubmitProof",
+      "guard": "own-brand"
+    },
+    {
+      "diagram": "e10-artwork-npd",
+      "id": "f17",
+      "from": "ForkReview",
+      "to": "ReviewFactoryMkt",
+      "guard": "A: factory + marketing (mkt if new)"
+    },
+    {
+      "diagram": "e10-artwork-npd",
+      "id": "f18",
+      "from": "ForkReview",
+      "to": "ReviewQuality",
+      "guard": "B: quality (English + structure)"
+    },
+    {
+      "diagram": "e10-artwork-npd",
+      "id": "f19",
+      "from": "ForkReview",
+      "to": "ReviewLanguage",
+      "guard": "C: language (Arabic)"
+    },
+    {
+      "diagram": "e10-artwork-npd",
+      "id": "f24",
+      "from": "GwAllApproved",
+      "to": "Print",
+      "guard": "all approved"
+    },
+    {
+      "diagram": "e10-artwork-npd",
+      "id": "f25",
+      "from": "GwAllApproved",
+      "to": "Corrections",
+      "guard": "any corrections"
+    },
+    {
+      "diagram": "e10-artwork-npd",
+      "id": "f26",
+      "from": "Corrections",
+      "to": "SubmitProof",
+      "guard": "revised proof loop"
+    },
+    {
+      "diagram": "e11-permit-expiry",
+      "id": "f3",
+      "from": "GwRegulated",
+      "to": "GwPermitValid",
+      "guard": "regulated: needs ministry permit"
+    },
+    {
+      "diagram": "e11-permit-expiry",
+      "id": "f4",
+      "from": "GwRegulated",
+      "to": "GwCertExpiry",
+      "guard": "not regulated"
+    },
+    {
+      "diagram": "e11-permit-expiry",
+      "id": "f5",
+      "from": "GwPermitValid",
+      "to": "AttachPermit",
+      "guard": "valid by date AND quantity"
+    },
+    {
+      "diagram": "e11-permit-expiry",
+      "id": "f6",
+      "from": "GwPermitValid",
+      "to": "BlockPo",
+      "guard": "expired OR quantity exhausted"
+    },
+    {
+      "diagram": "e11-permit-expiry",
+      "id": "f7",
+      "from": "BlockPo",
+      "to": "AttachPermit",
+      "guard": "renewed permit obtained"
+    },
+    {
+      "diagram": "e11-permit-expiry",
+      "id": "f10",
+      "from": "GwCertExpiry",
+      "to": "SuspendSupplier",
+      "guard": "cert expired -> suspend"
+    },
+    {
+      "diagram": "e11-permit-expiry",
+      "id": "f11",
+      "from": "GwCertExpiry",
+      "to": "Audit",
+      "guard": "cert valid"
+    },
+    {
+      "diagram": "e12-match-condition",
+      "id": "f2",
+      "from": "GwDuplicate",
+      "to": "GwGrnExists",
+      "guard": "not a duplicate"
+    },
+    {
+      "diagram": "e12-match-condition",
+      "id": "f3",
+      "from": "GwDuplicate",
+      "to": "ResolveFin",
+      "guard": "duplicate signature -> exception"
+    },
+    {
+      "diagram": "e12-match-condition",
+      "id": "f4",
+      "from": "GwGrnExists",
+      "to": "ThreeWay",
+      "guard": "GRN exists (materials)"
+    },
+    {
+      "diagram": "e12-match-condition",
+      "id": "f5",
+      "from": "GwGrnExists",
+      "to": "TwoWay",
+      "guard": "no GRN (service / freight)"
+    },
+    {
+      "diagram": "e12-match-condition",
+      "id": "f9",
+      "from": "GwWithinTol",
+      "to": "Clear",
+      "guard": "within tolerance -> auto-clear"
+    },
+    {
+      "diagram": "e12-match-condition",
+      "id": "f10",
+      "from": "GwWithinTol",
+      "to": "ClassifyException",
+      "guard": "outside tolerance"
+    },
+    {
+      "diagram": "e12-match-condition",
+      "id": "f11",
+      "from": "ClassifyException",
+      "to": "ResolveBuyer",
+      "guard": "price-variance -> Buyer"
+    },
+    {
+      "diagram": "e12-match-condition",
+      "id": "f12",
+      "from": "ClassifyException",
+      "to": "ResolveRecv",
+      "guard": "qty-over / qty-under / missing-GR -> Receiving"
+    },
+    {
+      "diagram": "e12-match-condition",
+      "id": "f13",
+      "from": "ClassifyException",
+      "to": "ResolveTax",
+      "guard": "tax-mismatch -> Tax/Compliance"
+    },
+    {
+      "diagram": "e12-match-condition",
+      "id": "f14",
+      "from": "ClassifyException",
+      "to": "ResolveFin",
+      "guard": "duplicate-invoice -> Finance"
+    },
+    {
+      "diagram": "e12-match-condition",
+      "id": "f19",
+      "from": "GwResolved",
+      "to": "Clear",
+      "guard": "resolved within tolerance"
+    },
+    {
+      "diagram": "e12-match-condition",
+      "id": "f20",
+      "from": "GwResolved",
+      "to": "Reject",
+      "guard": "reject"
+    }
+  ]
+}

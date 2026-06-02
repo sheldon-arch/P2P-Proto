@@ -1,0 +1,72 @@
+[
+  {
+    "code": "GST18",
+    "type": "GST",
+    "rate": 18.0,
+    "jurisdiction": "IN",
+    "recoverable": true
+  },
+  {
+    "code": "GST12",
+    "type": "GST",
+    "rate": 12.0,
+    "jurisdiction": "IN",
+    "recoverable": true
+  },
+  {
+    "code": "GST5",
+    "type": "GST",
+    "rate": 5.0,
+    "jurisdiction": "IN",
+    "recoverable": true
+  },
+  {
+    "code": "VAT20",
+    "type": "VAT",
+    "rate": 20.0,
+    "jurisdiction": "EU",
+    "recoverable": true
+  },
+  {
+    "code": "VAT5UAE",
+    "type": "VAT",
+    "rate": 5.0,
+    "jurisdiction": "AE",
+    "recoverable": true
+  },
+  {
+    "code": "UST0",
+    "type": "VAT",
+    "rate": 0.0,
+    "jurisdiction": "US",
+    "recoverable": false
+  },
+  {
+    "code": "DUTY10",
+    "type": "duty",
+    "rate": 10.0,
+    "jurisdiction": "IMPORT",
+    "recoverable": false
+  },
+  {
+    "code": "DUTY7.5",
+    "type": "duty",
+    "rate": 7.5,
+    "jurisdiction": "IMPORT",
+    "recoverable": false
+  },
+  {
+    "code": "RCM",
+    "type": "reverse-charge",
+    "rate": 18.0,
+    "jurisdiction": "IN",
+    "recoverable": true
+  },
+  {
+    "code": "TDS2",
+    "type": "withholding",
+    "rate": 2.0,
+    "jurisdiction": "IN",
+    "recoverable": false
+  }
+]

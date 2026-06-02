@@ -1,0 +1,344 @@
+{
+  "id": "04-sourcing",
+  "file": "04-sourcing.bpmn",
+  "name": "Unified Procure-to-Pay - Sourcing and RFQ to Award and Contract (Diagram 04)",
+  "lanes": [
+    {
+      "id": "L_req",
+      "name": "Requester",
+      "role": "Requester"
+    },
+    {
+      "id": "L_buyer",
+      "name": "Procurement / Buyer",
+      "role": "Procurement / Buyer"
+    },
+    {
+      "id": "L_supplier",
+      "name": "Supplier / Vendor",
+      "role": "Supplier / Vendor"
+    },
+    {
+      "id": "L_appr",
+      "name": "Approver",
+      "role": "Approver"
+    },
+    {
+      "id": "L_qc",
+      "name": "Quality",
+      "role": "Quality"
+    },
+    {
+      "id": "L_sys",
+      "name": "Platform / System",
+      "role": "Platform / System"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "DefineNeed",
+      "type": "userTask",
+      "name": "S1.1 Define business need (specs, qty, target, criticality)",
+      "lane": "Procurement / Buyer",
+      "documentation": "Buyer confirms and structures the business need from the requisition: specification per line, quantity and UoM, required delivery date, internalTargetPrice (number, optional, owning role Buyer; NEVER sent to a supplier - internal benchmark only), item criticality / regulated flag (drives the Quality COA/MSDS gate later), single-source vs competitive intent. Fields: needSpec (text, mandatory), targetQuantity (number > 0, mandatory), internalTargetPrice (number >= 0, optional, hidden from supplier), regulatedItem (boolean, default false, set true for OTC/pharma-grade RM and PM and regulated chemicals), criticalityTier {Low|Medium|High|Critical} (default Medium). Owning role: Procurement/Buyer (rfq.create precursor). [SCOR S1.1 Define Business Need | ISO 8.4.1 | source: AB internal target price + RA structure]"
+    },
+    {
+      "id": "MarketAnalysis",
+      "type": "userTask",
+      "name": "S1.2 Supply market analysis / new-supplier discovery",
+      "lane": "Procurement / Buyer",
+      "documentation": "Buyer analyses the supply market and discovers candidate suppliers (S1.2/S1.4 (incl. pre-procurement market testing) Conduct Supply Market Analysis; S1.5 Source the Supply Market). Sources scanned: existing approved-vendor list (AVL), unsolicited supplier inquiries on record, external market references (Go Forward, Global Source Products, Alibaba, IndiaMART) for price context, market-price watch. Captures: candidateSupplierIds[] (from master), newSupplierLeads[] (name + contact for discovery), marketPriceContext (last-purchase price + reference quotes, used later for the abnormal-price-spike flag and savings baseline). Owning role: Procurement/Buyer (suppliers.view, rfq.create). [SCOR S1.2 Conduct Supply Market Analysis + S1.5 Source the Supply Market | source: AB market references + RA AVL]"
+    },
+    {
+      "id": "FrameworkCallOff",
+      "type": "userTask",
+      "name": "Release call-off against framework / preferred supplier",
+      "lane": "Procurement / Buyer",
+      "documentation": "Buyer releases a CallOffRelease against an active FrameworkAgreement (no re-sourcing). Fields: frameworkAgreementId (mandatory, reference), requisitionId, quantity (number > 0, must keep cumulative draw-down <= framework ceiling), value (auto = quantity x agreedPrice from framework), agreedPrice (read-only from framework), paymentTerms / deliveryTerms / incoterm (read-only from framework). Effect: draws down the framework's remaining quantity/value ceiling; skips RFQ, quote, negotiation, and comparison; produces an award-equivalent record that flows straight to the award-readiness step. Permission: calloff.release (Buyer, Requester against framework, or Administrator). Guard: framework status == ACTIVE and within validity dates and remaining ceiling >= this draw. Owning role: Procurement/Buyer. [SCOR S1.3/OE6 | source: data-model FrameworkAgreement + CallOffRelease | platform-services]"
+    },
+    {
+      "id": "Prequalify",
+      "type": "userTask",
+      "name": "S1.6 Prequalify suppliers (AVL, certs, risk)",
+      "lane": "Procurement / Buyer",
+      "documentation": "Buyer prequalifies the candidate suppliers before inviting them (S1.6 Prequalify Suppliers). Checks against the supplier master: status == ONBOARDED (not PENDING/SUSPENDED/OFFBOARDED), valid certifications for the category (ISO 9001 plus sector certs; binary 100% gate), risk tier within tolerance (ISO 31000), security / ESG / continuity attributes where required (ISO 28000/20400/22301). A new supplier lead that is not yet onboarded is routed to supplier onboarding (Diagram 06) and cannot be invited until ONBOARDED with qualification complete (for OTC/pharma-grade RM and PM this includes three-batch COAs plus samples). Output: invitableSupplierIds[] (prequalified pool). Permission: supplier.qualify (Buyer), with Quality conditional on quality criteria and Tax/Compliance conditional on risk/compliance. Owning role: Procurement/Buyer. [SCOR S1.6 Prequalify Suppliers | ISO 8.4.1 + 28000/31000/20400 | source: AB one-time qualification + RA lifecycle gate]"
+    },
+    {
+      "id": "FloatRfq",
+      "type": "userTask",
+      "name": "S1.8 Invite to tender / float RFQ to >= 3 suppliers",
+      "lane": "Procurement / Buyer",
+      "documentation": "Buyer floats the RFQ (S1.8 Invite to Tender/Request for Quotation) to at least three prequalified suppliers (services excepted: only 1-2 capable contractors is normal, and a single-provider service requisition is allowed). The system creates one RFQ with an auto reference that links all responses back to the requisition. RFQ fields SENT to suppliers: requisition reference (auto), line items (description, quantity, UoM, HS code, need date), payment-terms request, delivery-terms request, response deadline (date-time, mandatory), template variant {Import | Local | Service}. RFQ field NOT sent: internalTargetPrice (internal benchmark only, never transmitted). Delivery channel: a unique-link form per supplier, opened on mobile, authenticated by email + OTP, with email plus manual-entry as fallback. Selecting a regulated chemical item surfaces permit expiry / quantity alerts (about one week before expiry) to the head and handler. Permission: rfq.create, rfq.invite (Buyer / Administrator). Owning role: Procurement/Buyer. [SCOR S1.8 Invite to Tender/RFQ | source: AB >=3 suppliers + unique-link email+OTP form, internal target never sent]"
+    },
+    {
+      "id": "SubmitQuote",
+      "type": "userTask",
+      "name": "S1.8 Supplier submits quotation (form)",
+      "lane": "Supplier / Vendor",
+      "documentation": "Each invited supplier submits a quotation on its unique form (supplier is the sole editor of its own quote; handler enters manually only as fallback, usual for services). Item-RFQ quote fields: price (number > 0, mandatory, in quote currency); paymentTerms (dropdown, mandatory, exact value set {100% advance | part-advance + against documents | part-advance + against shipment | 30/70 | net 30 | net 60 | net 90}); deliveryTerms (text, mandatory); incoterm (dropdown, mandatory, exact value set {EXW | FOB | CIF | CFR | FCA | CPT | CIP | DAP}); die/cylinder charges (number >= 0, optional, default 0); documentation charges (number >= 0, optional, default 0); notes (text, optional); attachments (files, optional). Service-quote fields differ: contract period {yearly|quarterly|monthly} + start/duration/end, number of days, hours/labour, completion period, site, area (sq ft / m2), precise item description, no freight fields. The incoterm is validated against transport mode at submit (see IncotermValidGate). Permission: quote.capture (Supplier own quote). Owning role: Supplier/Vendor. [SCOR S1.8/S1.9 | source: AB quote fields + payment-terms and incoterm value sets]"
+    },
+    {
+      "id": "Negotiate",
+      "type": "userTask",
+      "name": "Negotiation: supplier re-opens same form, resubmits price",
+      "lane": "Supplier / Vendor",
+      "documentation": "If a revised price is agreed off-system, the SUPPLIER re-opens the SAME RFQ form (same unique link, email + OTP) and submits the new price and any changed terms; the quote record is versioned with revisedAt while keeping the same quotationId (supplier is sole editor; handler enters manually only as a fallback, usual for services). Each revision re-runs the incoterm validation. Loops back to NegotiateGate so multiple rounds are possible until the buyer marks the quote final. Permission: quote.capture (Supplier own quote). Owning role: Supplier/Vendor. [SCOR S1.10 | source: AB negotiation re-open same form + revisedAt]"
+    },
+    {
+      "id": "QualityCoaGate",
+      "type": "userTask",
+      "name": "Quality reviews COA / MSDS (regulated gate)",
+      "lane": "Quality",
+      "documentation": "Quality reviews the Certificate of Analysis (COA) and Material Safety Data Sheet (MSDS) for the regulated item before the supplier can be selected. Actions: 'Approve COA/MSDS' (effect: clears the gate, proceed to SelectSupplier; records qcApprovedBy + qcApprovedAt) or 'Reject' (effect: the supplier/quote is disqualified for this regulated item; mandatory field rejectReason; the buyer must source an alternative or obtain compliant documentation, looping back to FloatRfq). This is a HARD gate: no selection of a regulated item without QC approval of COA/MSDS. Permission: qc.approve / qc.reject (Quality). Owning role: Quality. [SCOR S1.9 | ISO 8.6 release verification + 8.4.1 | source: AB QC gate for regulated chemicals]"
+    },
+    {
+      "id": "SelectSupplier",
+      "type": "userTask",
+      "name": "S1.9 Select supplier (justify non-top pick)",
+      "lane": "Procurement / Buyer",
+      "documentation": "Buyer selects one supplier/quote from the ranked, colour-coded comparison. Fields: selectedQuotationId (mandatory, reference), selectionRationale (text, optional unless non-top pick), justificationForNonTopPick (text, MANDATORY when selectedQuotationId is not the rank-1 quote - the buyer must justify any non-top pick). The selection is the buyer's recommendation; it does not bind until the award is approved (next gate). Permission: supplier.select, quote.compare (Buyer; Approver conditional review; Administrator). Owning role: Procurement/Buyer. [SCOR S1.9 Analyze Offers and Select Suppliers | source: AB select + justify non-top pick]"
+    },
+    {
+      "id": "Award",
+      "type": "userTask",
+      "name": "S1.10 Award and capture contract terms (+ renewal date)",
+      "lane": "Procurement / Buyer",
+      "documentation": "Buyer awards the business to the approved supplier and captures the contract/agreement (S1.10 Negotiate and Award Contract; OE6 Contracts and Agreements). Contract fields: contractId (auto), supplierId, requisitionId, awardedQuotationId, terms (text, the agreed payment/delivery/incoterm/scope), validityStart / validityEnd (dates), renewalDate (date, drives a 15-day-before renewal reminder), priceList / agreedPrices, scopeOfWork. For repeat/indirect categories the award may create or extend a FrameworkAgreement (ceiling quantity/value). Effect: supplier/quote locked as the source of truth for the PO; emits NOTIFY_AWARD + audit; schedules the contract-renewal reminder. Permission: contract.manage, award.approve precursor (Buyer / Administrator). Owning role: Procurement/Buyer. [SCOR S1.10 Negotiate and Award Contract + OE6 | source: AB contract capture + 15-day renewal reminder | data-model Contract/Agreement]"
+    },
+    {
+      "id": "LandedCost",
+      "type": "serviceTask",
+      "name": "S1.9 Compute normalized landed cost per quote",
+      "lane": "Platform / System",
+      "documentation": "System computes a normalized landed cost so quotes compare like-for-like (S1.9 Analyze Offers). Formula: landedCost = quote price + freight + insurance + duty - exemption + local POD (port-of-discharge charges) + local POL (port-of-loading charges) + customs clearance + demurrage/storage + miscellaneous + documentation. Insurance is the I in CIF; insurance and demurrage were added after review. Damage is tracked SEPARATELY (not added into the landed-cost comparison number). Actual charges are entered at invoice time; any missing value falls back to the AVERAGE of that charge from past orders (averaging fallback) so a comparison is never blocked by a missing input. Always-present local charges per AB: port storage, Bayan, VAT and duty, courier, sample, bank; miscellaneous includes health/normal inspection, detention, CHA/agency, artwork, die/cylinder. Output: landedCostInBase per quote (FX-normalized via the FX service for cross-currency quotes). Owning role: Platform/System. [SCOR S1.9 Analyze Offers and Select Suppliers | source: AB landed-cost formula + averaging fallback | data-model LandedCost | platform-services 3]"
+    },
+    {
+      "id": "RankScore",
+      "type": "serviceTask",
+      "name": "S1.9 Rank suppliers, scorecard-weighted, colour-code, flag spikes",
+      "lane": "Platform / System",
+      "documentation": "System ranks the three-or-more quotes best to worst (S1.9). Ranking inputs: normalized landedCostInBase, plus delivery time, quality, price, responsiveness, weighted by the supplier scorecard composite (two-stage scoring: normalize each metric to 0-100 vs configurable bands, then weighted roll-up; default weights 40 delivery / 30 quality / 20 cost / 10 service, pharma raises quality; compliance is a GATE not a weighted input; grade A >= 90 / B 70-89 / C < 70). Colour-coding: green / amber / red per quote against the bands. Abnormal-price-spike flag: raise a flag when a quote price > 105% of the last purchase price for the item (spike threshold > 5%, comparison against marketPriceContext). Savings are REPORTED not gated: worst-best spread across quotes plus negotiation savings vs the baseline (baseline = last purchase price); negative if the result is an extra expense. A preferred-supplier recommendation is surfaced. Owning role: Platform/System. [SCOR S1.9 | source: AB ranking + colour-code + >5% spike flag + savings reported | procurement-metrics-kpis scorecard | platform-services 9]"
+    },
+    {
+      "id": "ReadyForPo",
+      "type": "serviceTask",
+      "name": "Ready for PO (award released to ordering)",
+      "lane": "Platform / System",
+      "documentation": "System marks the award ready for purchase-order creation: links awardedQuotationId, supplierId, contractId, and the requisition lines into a PO-ready package (agreed price, payment terms, delivery terms, incoterm, contract reference). Emits SSE {requisitionId} + audit 'READY_FOR_PO'. Handover to Diagram 05 (Issue PO): budget is HARD-committed at PO issue, not here. Owning role: Platform/System. [SCOR S1.10 -> S2.1 | source: build-new handover to PO]"
+    },
+    {
+      "id": "SendInvite",
+      "type": "sendTask",
+      "name": "Send unique-link RFQ invitations (email + OTP)",
+      "lane": "Platform / System",
+      "documentation": "System sends each invited supplier a templated email carrying a unique authenticated link to the RFQ form, secured by email + OTP (pre-validation on send and on sign-in). One link per supplier scopes the supplier to its own quote only. Emits NOTIFY_RFQ_INVITE per supplier + audit. Delivery failures are logged, not retried (fire-and-forget post-commit). Owning role: Platform/System. [SCOR S1.8 | source: AB unique-link + RA email-OTP identity | platform-services 5/10]"
+    },
+    {
+      "id": "SourcingStrategyGate",
+      "type": "exclusiveGateway",
+      "name": "S1.3 Repeat / preferred / framework, or competitive event?",
+      "lane": "Procurement / Buyer",
+      "documentation": "Branch expression (S1.3 Develop Sourcing Strategy): isFrameworkCallOff == true OR (hasPreferredSupplier == true AND withinFrameworkCeiling). TRUE -> bypass the competitive event and release against the framework / preferred supplier (FrameworkCallOff). FALSE -> run a competitive RFQ event (Prequalify). isFrameworkCallOff is true when an active FrameworkAgreement covers the item and quantity is within its remaining ceiling. hasPreferredSupplier is true when a supplier holds sustained Grade A (preferred) status for the category and the buy is repeat. Services note: often only 1-2 capable contractors exist, so a sub-three-supplier or single-provider event is normal and is taken on this branch when a preferred/sole provider applies. Owning role: Procurement/Buyer. [SCOR S1.3 Develop Sourcing Strategy + S1.7 Determine Level of Collaboration | source: AB repeat/preferred + data-model FrameworkAgreement/CallOffRelease]"
+    },
+    {
+      "id": "IncotermValidGate",
+      "type": "exclusiveGateway",
+      "name": "Incoterm valid for transport mode?",
+      "lane": "Platform / System",
+      "documentation": "Branch expression (Incoterms 2020 validation): incoterm is consistent with transportMode. Rule: FOB, CIF, CFR are SEA / inland-waterway only; for air, road, courier, or multimodal use FCA, CPT, CIP, or DAP; EXW is mode-agnostic. Concretely: if transportMode != SEA AND incoterm IN {FOB, CIF, CFR} -> INVALID. TRUE (valid) -> accept the quote and proceed to the negotiation decision. FALSE (invalid) -> reject the submission with a validation message, return the supplier to the form to correct the incoterm (loops back to SubmitQuote). Owning role: Platform/System. [SCOR S1.8 | source: data-model Incoterms 2020 validate-vs-mode | AB incoterm set]"
+    },
+    {
+      "id": "NegotiateGate",
+      "type": "exclusiveGateway",
+      "name": "Negotiate this quote?",
+      "lane": "Procurement / Buyer",
+      "documentation": "Branch expression: buyerWantsNegotiation == true. Negotiation happens off-system (call / WhatsApp / meeting); the gateway records the buyer's decision. TRUE -> Negotiate (supplier re-opens the SAME form to submit the revised price). FALSE -> the quote is final for this supplier and joins the comparison set. Response timing (submit and revise timestamps) is tracked for the supplier scorecard responsiveness dimension. Owning role: Procurement/Buyer. [SCOR S1.10 Negotiate | source: AB negotiation loop, supplier sole editor]"
+    },
+    {
+      "id": "RegulatedGate",
+      "type": "exclusiveGateway",
+      "name": "Regulated item requiring COA / MSDS review?",
+      "lane": "Platform / System",
+      "documentation": "Branch expression: regulatedItem == true (set at DefineNeed for OTC / pharma-grade RM and PM and regulated chemicals). TRUE -> QualityCoaGate (Quality must approve COA / MSDS before selection can proceed). FALSE -> SelectSupplier directly. The Quality gate sits between the final quote and the comparison/selection for regulated items. Owning role: Platform/System. [SCOR S1.9 | ISO 8.4.1 / 8.6 | source: AB QC COA/MSDS gate for regulated items]"
+    },
+    {
+      "id": "AwardApprovalGate",
+      "type": "exclusiveGateway",
+      "name": "Award selection approved?",
+      "lane": "Approver",
+      "documentation": "Branch expression: awardDecision == 'APPROVE'. The Procurement Head (or the award-approval stage approver) reviews the selected supplier/quote and the justification. TRUE -> Award (capture contract terms). FALSE (awardDecision == 'RECOMPARE', mandatory field recompareNote) -> loop back to RankScore for re-comparison (the buyer may re-rank, re-negotiate, or re-select). SoD: the award approver is not the buyer who made the selection. This award approval is itself routed through the configurable approval engine (Diagram 03) when configured as an award stage. Permission: award.approve (Approver / Head / Management conditional; Administrator). Owning role: Approver. [SCOR S1.10 | source: AB head-approves-selection or send-back + Diagram 03 engine]"
+    },
+    {
+      "id": "Start",
+      "type": "startEvent",
+      "name": "Approved requisition ready for sourcing",
+      "lane": "Requester",
+      "documentation": "Trigger: a requisition has reached FULLY_APPROVED in Diagram 03 and is released to sourcing. Carries: requisitionId (immutable identifier), departmentId, category {Items|Spares|Services|ProductDesign}, purchaseType {Local|Import}, lines (itemId or free-text, quantity, UoM, needDate, productUsedFor, HS code, line note, attachments), currency, totalAmountInBase, projectId/costCenterId. The Procurement Head assigns a Procurement Handler (buyer) to the requisition (auto-assignment rules by category/store may apply; Head can override; handler notified, assignment date stamped for SLA). The requester is not told local vs import; the handler decides. [SCOR S1.1 Define Business Need | source: AB requisition-to-handler + RA released-on-approval]"
+    },
+    {
+      "id": "End",
+      "type": "endEvent",
+      "name": "Sourcing complete, ready for purchase order",
+      "lane": "Platform / System",
+      "documentation": "Terminal node. The awarded supplier, quote, and contract proceed to Diagram 05 (purchase order). [SCOR S1.10 | source: build-new]"
+    }
+  ],
+  "flows": [
+    {
+      "id": "f1",
+      "from": "Start",
+      "to": "DefineNeed",
+      "guard": ""
+    },
+    {
+      "id": "f2",
+      "from": "DefineNeed",
+      "to": "MarketAnalysis",
+      "guard": ""
+    },
+    {
+      "id": "f3",
+      "from": "MarketAnalysis",
+      "to": "SourcingStrategyGate",
+      "guard": ""
+    },
+    {
+      "id": "f4",
+      "from": "SourcingStrategyGate",
+      "to": "FrameworkCallOff",
+      "guard": "framework call-off / preferred bypass"
+    },
+    {
+      "id": "f5",
+      "from": "SourcingStrategyGate",
+      "to": "Prequalify",
+      "guard": "competitive event"
+    },
+    {
+      "id": "f6",
+      "from": "FrameworkCallOff",
+      "to": "ReadyForPo",
+      "guard": "no re-sourcing, straight to PO-ready"
+    },
+    {
+      "id": "f7",
+      "from": "Prequalify",
+      "to": "FloatRfq",
+      "guard": ""
+    },
+    {
+      "id": "f8",
+      "from": "FloatRfq",
+      "to": "SendInvite",
+      "guard": ""
+    },
+    {
+      "id": "f9",
+      "from": "SendInvite",
+      "to": "SubmitQuote",
+      "guard": "unique link per supplier"
+    },
+    {
+      "id": "f10",
+      "from": "SubmitQuote",
+      "to": "IncotermValidGate",
+      "guard": ""
+    },
+    {
+      "id": "f11",
+      "from": "IncotermValidGate",
+      "to": "NegotiateGate",
+      "guard": "incoterm valid for mode"
+    },
+    {
+      "id": "f12",
+      "from": "IncotermValidGate",
+      "to": "SubmitQuote",
+      "guard": "invalid (FOB/CIF/CFR not sea), correct"
+    },
+    {
+      "id": "f13",
+      "from": "NegotiateGate",
+      "to": "Negotiate",
+      "guard": "buyer negotiates"
+    },
+    {
+      "id": "f14",
+      "from": "NegotiateGate",
+      "to": "LandedCost",
+      "guard": "quote final"
+    },
+    {
+      "id": "f15",
+      "from": "Negotiate",
+      "to": "NegotiateGate",
+      "guard": "revised price resubmitted, same form"
+    },
+    {
+      "id": "f16",
+      "from": "LandedCost",
+      "to": "RankScore",
+      "guard": ""
+    },
+    {
+      "id": "f17",
+      "from": "RankScore",
+      "to": "RegulatedGate",
+      "guard": ""
+    },
+    {
+      "id": "f18",
+      "from": "RegulatedGate",
+      "to": "QualityCoaGate",
+      "guard": "regulatedItem == true"
+    },
+    {
+      "id": "f19",
+      "from": "RegulatedGate",
+      "to": "SelectSupplier",
+      "guard": "not regulated"
+    },
+    {
+      "id": "f20",
+      "from": "QualityCoaGate",
+      "to": "SelectSupplier",
+      "guard": "COA/MSDS approved"
+    },
+    {
+      "id": "f21",
+      "from": "QualityCoaGate",
+      "to": "FloatRfq",
+      "guard": "COA/MSDS rejected, re-source"
+    },
+    {
+      "id": "f22",
+      "from": "SelectSupplier",
+      "to": "AwardApprovalGate",
+      "guard": ""
+    },
+    {
+      "id": "f23",
+      "from": "AwardApprovalGate",
+      "to": "Award",
+      "guard": "awardDecision == APPROVE"
+    },
+    {
+      "id": "f24",
+      "from": "AwardApprovalGate",
+      "to": "RankScore",
+      "guard": "awardDecision == RECOMPARE"
+    },
+    {
+      "id": "f25",
+      "from": "Award",
+      "to": "ReadyForPo",
+      "guard": ""
+    },
+    {
+      "id": "f26",
+      "from": "ReadyForPo",
+      "to": "End",
+      "guard": ""
+    }
+  ]
+}

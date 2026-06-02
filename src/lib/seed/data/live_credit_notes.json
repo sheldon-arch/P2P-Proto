@@ -1,0 +1,12 @@
+[
+  {
+    "id": "CN-LV-1",
+    "type": "credit",
+    "linkedReturnId": "RMA-LV-1",
+    "supplierId": "SUP-0009",
+    "amount": 66.0,
+    "taxAmount": 11.88,
+    "reason": "Return of defective goods - credit",
+    "postedToLedger": true
+  }
+]

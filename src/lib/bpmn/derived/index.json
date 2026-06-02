@@ -1,0 +1,352 @@
+[
+  {
+    "id": "00-system-overview",
+    "name": "Unified Procure-to-Pay / Source-to-Pay - End-to-End Overview",
+    "lanes": [
+      "Administrator",
+      "Requester",
+      "Budget Owner",
+      "Approver",
+      "Procurement / Buyer",
+      "Supplier / Vendor",
+      "Receiving / Warehouse",
+      "Quality",
+      "Finance - Maker",
+      "Finance - Checker",
+      "Management",
+      "Platform / System"
+    ],
+    "nodeCount": 23,
+    "flowCount": 25,
+    "guardCount": 8
+  },
+  {
+    "id": "01-configuration",
+    "name": "01 - Configuration and Master Data Setup (Administrator-led)",
+    "lanes": [
+      "Administrator",
+      "Platform / System"
+    ],
+    "nodeCount": 18,
+    "flowCount": 19,
+    "guardCount": 4
+  },
+  {
+    "id": "02-requisition",
+    "name": "02 - Requisition and Intake (Requester-led)",
+    "lanes": [
+      "Requester",
+      "Procurement / Buyer",
+      "Budget Owner",
+      "Platform / System"
+    ],
+    "nodeCount": 16,
+    "flowCount": 19,
+    "guardCount": 11
+  },
+  {
+    "id": "03-approval",
+    "name": "Unified Procure-to-Pay - Configurable Approval Workflow (Diagram 03)",
+    "lanes": [
+      "Requester",
+      "Approver",
+      "Budget Owner",
+      "Platform / System"
+    ],
+    "nodeCount": 19,
+    "flowCount": 23,
+    "guardCount": 14
+  },
+  {
+    "id": "04-sourcing",
+    "name": "Unified Procure-to-Pay - Sourcing and RFQ to Award and Contract (Diagram 04)",
+    "lanes": [
+      "Requester",
+      "Procurement / Buyer",
+      "Supplier / Vendor",
+      "Approver",
+      "Quality",
+      "Platform / System"
+    ],
+    "nodeCount": 21,
+    "flowCount": 26,
+    "guardCount": 15
+  },
+  {
+    "id": "05-purchase-order",
+    "name": "Unified P2P - 05 Purchase Order (Issue, Commit, Acknowledge, Amend, Call-off)",
+    "lanes": [
+      "Procurement / Buyer",
+      "Approver",
+      "Budget Owner",
+      "Supplier / Vendor",
+      "Platform / System"
+    ],
+    "nodeCount": 21,
+    "flowCount": 26,
+    "guardCount": 13
+  },
+  {
+    "id": "06-supplier-onboarding",
+    "name": "Unified P2P - 06 Supplier Onboarding and Qualification (Single, Bulk, Qualify, Approve, Suspend, Offboard)",
+    "lanes": [
+      "Procurement / Buyer",
+      "Supplier / Vendor",
+      "Approver",
+      "Quality",
+      "Tax / Compliance",
+      "Platform / System"
+    ],
+    "nodeCount": 24,
+    "flowCount": 30,
+    "guardCount": 13
+  },
+  {
+    "id": "07-item-onboarding",
+    "name": "Unified P2P - 07 Item and Catalog Onboarding (Single, Implicit Auto-create, Bulk, Approve, Lifecycle)",
+    "lanes": [
+      "Procurement / Buyer",
+      "Approver",
+      "Platform / System"
+    ],
+    "nodeCount": 19,
+    "flowCount": 24,
+    "guardCount": 11
+  },
+  {
+    "id": "08-delivery-grn",
+    "name": "08 - Delivery, Goods Receipt and Inspection",
+    "lanes": [
+      "Supplier / Vendor",
+      "Procurement / Buyer",
+      "Tax / Compliance",
+      "Receiving / Warehouse",
+      "Quality",
+      "Engineering",
+      "Platform / System"
+    ],
+    "nodeCount": 32,
+    "flowCount": 43,
+    "guardCount": 28
+  },
+  {
+    "id": "09-invoice-match",
+    "name": "09 - Invoice Capture and Matching",
+    "lanes": [
+      "Supplier / Vendor",
+      "Finance - Maker",
+      "Procurement / Buyer",
+      "Receiving / Warehouse",
+      "Tax / Compliance",
+      "Engineering",
+      "Approver",
+      "Platform / System"
+    ],
+    "nodeCount": 21,
+    "flowCount": 27,
+    "guardCount": 13
+  },
+  {
+    "id": "10-payments",
+    "name": "10 - Payments and Installments",
+    "lanes": [
+      "Procurement / Buyer",
+      "Finance - Maker",
+      "Finance - Checker",
+      "Management",
+      "Supplier / Vendor",
+      "Platform / System"
+    ],
+    "nodeCount": 27,
+    "flowCount": 33,
+    "guardCount": 19
+  },
+  {
+    "id": "11-returns-rma",
+    "name": "Returns and RMA (SCOR S4 Source Return)",
+    "lanes": [
+      "Quality",
+      "Procurement / Buyer",
+      "Supplier / Vendor",
+      "Receiving / Warehouse",
+      "Finance - Maker",
+      "Platform / System"
+    ],
+    "nodeCount": 14,
+    "flowCount": 16,
+    "guardCount": 6
+  },
+  {
+    "id": "12-analytics",
+    "name": "Spend Analytics, Supplier Scorecard and KPIs",
+    "lanes": [
+      "Platform / System",
+      "Procurement / Buyer",
+      "Approver",
+      "Quality",
+      "Finance - Maker"
+    ],
+    "nodeCount": 16,
+    "flowCount": 18,
+    "guardCount": 1
+  },
+  {
+    "id": "e01-approval-routing",
+    "name": "Edge Case e01 - Approval Routing, Nearest-Bucket Selection and Auto-Approval",
+    "lanes": [
+      "Approver",
+      "Platform / System"
+    ],
+    "nodeCount": 14,
+    "flowCount": 16,
+    "guardCount": 9
+  },
+  {
+    "id": "e02-budget-commitment",
+    "name": "Edge Case e02 - Budget Check and Commitment (Encumbrance Accounting)",
+    "lanes": [
+      "Requester",
+      "Budget Owner",
+      "Procurement / Buyer",
+      "Platform / System"
+    ],
+    "nodeCount": 14,
+    "flowCount": 16,
+    "guardCount": 7
+  },
+  {
+    "id": "e03-qty-tolerance",
+    "name": "e03 - Quantity Tolerance and Partial Deliveries",
+    "lanes": [
+      "Procurement / Buyer",
+      "Receiving / Warehouse",
+      "Quality",
+      "Platform / System"
+    ],
+    "nodeCount": 15,
+    "flowCount": 17,
+    "guardCount": 11
+  },
+  {
+    "id": "e04-ncr-capa",
+    "name": "Edge Case e04 - Nonconformance to CAPA to Supplier Re-evaluation Loop",
+    "lanes": [
+      "Receiving / Warehouse",
+      "Quality",
+      "Procurement / Buyer",
+      "Supplier / Vendor",
+      "Platform / System"
+    ],
+    "nodeCount": 17,
+    "flowCount": 20,
+    "guardCount": 8
+  },
+  {
+    "id": "e05-auto-create",
+    "name": "e05 - Auto-create Supplier or Item from Free-text Reference",
+    "lanes": [
+      "Requester",
+      "Procurement / Buyer",
+      "Platform / System"
+    ],
+    "nodeCount": 16,
+    "flowCount": 20,
+    "guardCount": 11
+  },
+  {
+    "id": "e06-bulk-import",
+    "name": "e06 - Bulk Import All-or-Nothing",
+    "lanes": [
+      "Administrator",
+      "Platform / System"
+    ],
+    "nodeCount": 16,
+    "flowCount": 20,
+    "guardCount": 12
+  },
+  {
+    "id": "e07-currency",
+    "name": "e07 - Currency Conversion and Graceful Degradation",
+    "lanes": [
+      "Procurement / Buyer",
+      "Finance - Maker",
+      "Platform / System"
+    ],
+    "nodeCount": 12,
+    "flowCount": 15,
+    "guardCount": 8
+  },
+  {
+    "id": "e08-cash-float",
+    "name": "e08 - Cash Purchase and Float Reimbursement",
+    "lanes": [
+      "Procurement / Buyer",
+      "Supplier / Vendor",
+      "Receiving / Warehouse",
+      "Finance - Maker",
+      "Finance - Checker",
+      "Platform / System"
+    ],
+    "nodeCount": 15,
+    "flowCount": 16,
+    "guardCount": 6
+  },
+  {
+    "id": "e09-contract-supply",
+    "name": "e09 - Contract and Constant Supply",
+    "lanes": [
+      "Approver",
+      "Supplier / Vendor",
+      "Receiving / Warehouse",
+      "Procurement / Buyer",
+      "Finance - Maker",
+      "Platform / System"
+    ],
+    "nodeCount": 12,
+    "flowCount": 12,
+    "guardCount": 2
+  },
+  {
+    "id": "e10-artwork-npd",
+    "name": "e10 - Artwork and New-Product-Development Approval",
+    "lanes": [
+      "Requester",
+      "Procurement / Buyer",
+      "Supplier / Vendor",
+      "Approver",
+      "Quality",
+      "Reviewer (Language)",
+      "Platform / System"
+    ],
+    "nodeCount": 20,
+    "flowCount": 27,
+    "guardCount": 16
+  },
+  {
+    "id": "e11-permit-expiry",
+    "name": "e11 - Permit and Document Expiry Tracking",
+    "lanes": [
+      "Procurement / Buyer",
+      "Quality",
+      "Tax / Compliance",
+      "Platform / System"
+    ],
+    "nodeCount": 11,
+    "flowCount": 13,
+    "guardCount": 7
+  },
+  {
+    "id": "e12-match-condition",
+    "name": "e12 - Two-way vs Three-way Match Condition",
+    "lanes": [
+      "Finance - Maker",
+      "Procurement / Buyer",
+      "Receiving / Warehouse",
+      "Tax / Compliance",
+      "Platform / System"
+    ],
+    "nodeCount": 16,
+    "flowCount": 21,
+    "guardCount": 12
+  }
+]

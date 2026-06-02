@@ -1,0 +1,335 @@
+[
+  {
+    "id": "QUAL-0001",
+    "supplierId": "SUP-0001",
+    "materialType": "api-raw",
+    "supplierType": "Contract Manufacturer",
+    "requiredCerts": ["GMP", "FDAReg", "FCC-FOODGRADE", "COA-3Batch", "ICH-Compliance", "RetentionSamples"],
+    "status": "QUALIFIED",
+    "matrixVersion": "v1.0"
+  },
+  {
+    "id": "QUAL-0002",
+    "supplierId": "SUP-0002",
+    "materialType": "api-raw",
+    "supplierType": "Contract Manufacturer",
+    "requiredCerts": ["GMP", "FDAReg", "FCC-FOODGRADE", "COA-3Batch", "ICH-Compliance", "RetentionSamples"],
+    "status": "QUALIFIED",
+    "matrixVersion": "v1.0"
+  },
+  {
+    "id": "QUAL-0003",
+    "supplierId": "SUP-0003",
+    "materialType": "api-raw",
+    "supplierType": "Distributor",
+    "requiredCerts": ["GMP", "FDAReg", "FCC-FOODGRADE", "COA-3Batch", "ICH-Compliance", "RetentionSamples"],
+    "status": "QUALIFIED",
+    "matrixVersion": "v1.0"
+  },
+  {
+    "id": "QUAL-0004",
+    "supplierId": "SUP-0004",
+    "materialType": "api-raw",
+    "supplierType": "Trader",
+    "requiredCerts": ["GMP", "FDAReg", "FCC-FOODGRADE", "COA-3Batch", "ICH-Compliance", "RetentionSamples"],
+    "status": "PRE_QUALIFIED",
+    "matrixVersion": "v1.0"
+  },
+  {
+    "id": "QUAL-0005",
+    "supplierId": "SUP-0005",
+    "materialType": "packing-material",
+    "supplierType": "Manufacturer",
+    "requiredCerts": ["FoodGradeDecl", "MigrationFreeInk", "ChildResistPkg", "BSE-TSE-Decl"],
+    "status": "QUALIFIED",
+    "matrixVersion": "v1.0"
+  },
+  {
+    "id": "QUAL-0006",
+    "supplierId": "SUP-0006",
+    "materialType": "packing-material",
+    "supplierType": "Manufacturer",
+    "requiredCerts": ["FoodGradeDecl", "MigrationFreeInk", "ChildResistPkg", "BSE-TSE-Decl"],
+    "status": "QUALIFIED",
+    "matrixVersion": "v1.0"
+  },
+  {
+    "id": "QUAL-0007",
+    "supplierId": "SUP-0007",
+    "materialType": "packing-material",
+    "supplierType": "Manufacturer",
+    "requiredCerts": ["FoodGradeDecl", "MigrationFreeInk", "ChildResistPkg", "BSE-TSE-Decl"],
+    "status": "QUALIFIED",
+    "matrixVersion": "v1.0"
+  },
+  {
+    "id": "QUAL-0008",
+    "supplierId": "SUP-0009",
+    "materialType": "packing-material",
+    "supplierType": "Manufacturer",
+    "requiredCerts": ["FoodGradeDecl", "MigrationFreeInk", "ChildResistPkg", "BSE-TSE-Decl"],
+    "status": "QUALIFIED",
+    "matrixVersion": "v1.0"
+  },
+  {
+    "id": "QUAL-0009",
+    "supplierId": "SUP-0010",
+    "materialType": "food-agro",
+    "supplierType": "Distributor",
+    "requiredCerts": ["FSMS", "HACCP", "ISO22000"],
+    "status": "QUALIFIED",
+    "matrixVersion": "v1.0"
+  },
+  {
+    "id": "QUAL-0010",
+    "supplierId": "SUP-0011",
+    "materialType": "food-agro",
+    "supplierType": "Manufacturer",
+    "requiredCerts": ["FSMS", "HACCP", "ISO22000"],
+    "status": "QUALIFIED",
+    "matrixVersion": "v1.0"
+  },
+  {
+    "id": "QUAL-0011",
+    "supplierId": "SUP-0013",
+    "materialType": "packing-material",
+    "supplierType": "Manufacturer",
+    "requiredCerts": ["FoodGradeDecl", "MigrationFreeInk", "ChildResistPkg", "BSE-TSE-Decl"],
+    "status": "QUALIFIED",
+    "matrixVersion": "v1.0"
+  },
+  {
+    "id": "QUAL-0012",
+    "supplierId": "SUP-0014",
+    "materialType": "packing-material",
+    "supplierType": "Printer",
+    "requiredCerts": ["FoodGradeDecl", "MigrationFreeInk", "ChildResistPkg", "BSE-TSE-Decl"],
+    "status": "QUALIFIED",
+    "matrixVersion": "v1.0"
+  },
+  {
+    "id": "QUAL-0013",
+    "supplierId": "SUP-0015",
+    "materialType": "api-raw",
+    "supplierType": "Manufacturer",
+    "requiredCerts": ["GMP", "FDAReg", "FCC-FOODGRADE", "COA-3Batch", "ICH-Compliance", "RetentionSamples"],
+    "status": "QUALIFIED",
+    "matrixVersion": "v1.0"
+  },
+  {
+    "id": "QUAL-0014",
+    "supplierId": "SUP-0016",
+    "materialType": "packing-material",
+    "supplierType": "Printer",
+    "requiredCerts": ["FoodGradeDecl", "MigrationFreeInk", "ChildResistPkg", "BSE-TSE-Decl"],
+    "status": "QUALIFIED",
+    "matrixVersion": "v1.0"
+  },
+  {
+    "id": "QUAL-0015",
+    "supplierId": "SUP-0017",
+    "materialType": "food-agro",
+    "supplierType": "Distributor",
+    "requiredCerts": ["FSMS", "HACCP", "ISO22000"],
+    "status": "QUALIFIED",
+    "matrixVersion": "v1.0"
+  },
+  {
+    "id": "QUAL-0016",
+    "supplierId": "SUP-0018",
+    "materialType": "food-agro",
+    "supplierType": "Manufacturer",
+    "requiredCerts": ["FSMS", "HACCP", "ISO22000"],
+    "status": "QUALIFIED",
+    "matrixVersion": "v1.0"
+  },
+  {
+    "id": "QUAL-0017",
+    "supplierId": "SUP-0019",
+    "materialType": "packing-material",
+    "supplierType": "Manufacturer",
+    "requiredCerts": ["FoodGradeDecl", "MigrationFreeInk", "ChildResistPkg", "BSE-TSE-Decl"],
+    "status": "QUALIFIED",
+    "matrixVersion": "v1.0"
+  },
+  {
+    "id": "QUAL-0018",
+    "supplierId": "SUP-0020",
+    "materialType": "packing-material",
+    "supplierType": "Manufacturer",
+    "requiredCerts": ["FoodGradeDecl", "MigrationFreeInk", "ChildResistPkg", "BSE-TSE-Decl"],
+    "status": "QUALIFIED",
+    "matrixVersion": "v1.0"
+  },
+  {
+    "id": "QUAL-0019",
+    "supplierId": "SUP-0021",
+    "materialType": "api-raw",
+    "supplierType": "Distributor",
+    "requiredCerts": ["GMP", "FDAReg", "FCC-FOODGRADE", "COA-3Batch", "ICH-Compliance", "RetentionSamples"],
+    "status": "QUALIFIED",
+    "matrixVersion": "v1.0"
+  },
+  {
+    "id": "QUAL-0020",
+    "supplierId": "SUP-0022",
+    "materialType": "packing-material",
+    "supplierType": "Manufacturer",
+    "requiredCerts": ["FoodGradeDecl", "MigrationFreeInk", "ChildResistPkg", "BSE-TSE-Decl"],
+    "status": "QUALIFIED",
+    "matrixVersion": "v1.0"
+  },
+  {
+    "id": "QUAL-0021",
+    "supplierId": "SUP-0023",
+    "materialType": "food-agro",
+    "supplierType": "Distributor",
+    "requiredCerts": ["FSMS", "HACCP", "ISO22000"],
+    "status": "PRE_QUALIFIED",
+    "matrixVersion": "v1.0"
+  },
+  {
+    "id": "QUAL-0022",
+    "supplierId": "SUP-0024",
+    "materialType": "packing-material",
+    "supplierType": "Manufacturer",
+    "requiredCerts": ["FoodGradeDecl", "MigrationFreeInk", "ChildResistPkg", "BSE-TSE-Decl"],
+    "status": "QUALIFIED",
+    "matrixVersion": "v1.0"
+  },
+  {
+    "id": "QUAL-0023",
+    "supplierId": "SUP-0025",
+    "materialType": "packing-material",
+    "supplierType": "Manufacturer",
+    "requiredCerts": ["FoodGradeDecl", "MigrationFreeInk", "ChildResistPkg", "BSE-TSE-Decl"],
+    "status": "QUALIFIED",
+    "matrixVersion": "v1.0"
+  },
+  {
+    "id": "QUAL-0024",
+    "supplierId": "SUP-0026",
+    "materialType": "food-agro",
+    "supplierType": "Manufacturer",
+    "requiredCerts": ["FSMS", "HACCP", "ISO22000"],
+    "status": "QUALIFIED",
+    "matrixVersion": "v1.0"
+  },
+  {
+    "id": "QUAL-0025",
+    "supplierId": "SUP-0027",
+    "materialType": "packing-material",
+    "supplierType": "Manufacturer",
+    "requiredCerts": ["FoodGradeDecl", "MigrationFreeInk", "ChildResistPkg", "BSE-TSE-Decl"],
+    "status": "QUALIFIED",
+    "matrixVersion": "v1.0"
+  },
+  {
+    "id": "QUAL-0026",
+    "supplierId": "SUP-0029",
+    "materialType": "packing-material",
+    "supplierType": "Printer",
+    "requiredCerts": ["FoodGradeDecl", "MigrationFreeInk", "ChildResistPkg", "BSE-TSE-Decl"],
+    "status": "QUALIFIED",
+    "matrixVersion": "v1.0"
+  },
+  {
+    "id": "QUAL-0027",
+    "supplierId": "SUP-0030",
+    "materialType": "packing-material",
+    "supplierType": "Manufacturer",
+    "requiredCerts": ["FoodGradeDecl", "MigrationFreeInk", "ChildResistPkg", "BSE-TSE-Decl"],
+    "status": "QUALIFIED",
+    "matrixVersion": "v1.0"
+  },
+  {
+    "id": "QUAL-0028",
+    "supplierId": "SUP-0031",
+    "materialType": "food-agro",
+    "supplierType": "Distributor",
+    "requiredCerts": ["FSMS", "HACCP", "ISO22000"],
+    "status": "QUALIFIED",
+    "matrixVersion": "v1.0"
+  },
+  {
+    "id": "QUAL-0029",
+    "supplierId": "SUP-0032",
+    "materialType": "api-raw",
+    "supplierType": "Manufacturer",
+    "requiredCerts": ["GMP", "FDAReg", "FCC-FOODGRADE", "COA-3Batch", "ICH-Compliance", "RetentionSamples"],
+    "status": "QUALIFIED",
+    "matrixVersion": "v1.0"
+  },
+  {
+    "id": "QUAL-0030",
+    "supplierId": "SUP-0033",
+    "materialType": "food-agro",
+    "supplierType": "Manufacturer",
+    "requiredCerts": ["FSMS", "HACCP", "ISO22000"],
+    "status": "QUALIFIED",
+    "matrixVersion": "v1.0"
+  },
+  {
+    "id": "QUAL-0031",
+    "supplierId": "SUP-0035",
+    "materialType": "packing-material",
+    "supplierType": "Manufacturer",
+    "requiredCerts": ["FoodGradeDecl", "MigrationFreeInk", "ChildResistPkg", "BSE-TSE-Decl"],
+    "status": "QUALIFIED",
+    "matrixVersion": "v1.0"
+  },
+  {
+    "id": "QUAL-0032",
+    "supplierId": "SUP-0036",
+    "materialType": "food-agro",
+    "supplierType": "Distributor",
+    "requiredCerts": ["FSMS", "HACCP", "ISO22000"],
+    "status": "QUALIFIED",
+    "matrixVersion": "v1.0"
+  },
+  {
+    "id": "QUAL-0033",
+    "supplierId": "SUP-0037",
+    "materialType": "food-agro",
+    "supplierType": "Distributor",
+    "requiredCerts": ["FSMS", "HACCP", "ISO22000"],
+    "status": "REJECTED",
+    "matrixVersion": "v1.0"
+  },
+  {
+    "id": "QUAL-0034",
+    "supplierId": "SUP-0038",
+    "materialType": "api-raw",
+    "supplierType": "Manufacturer",
+    "requiredCerts": ["GMP", "FDAReg", "FCC-FOODGRADE", "COA-3Batch", "ICH-Compliance", "RetentionSamples"],
+    "status": "QUALIFIED",
+    "matrixVersion": "v1.0"
+  },
+  {
+    "id": "QUAL-0035",
+    "supplierId": "SUP-0040",
+    "materialType": "food-agro",
+    "supplierType": "Manufacturer",
+    "requiredCerts": ["FSMS", "HACCP", "ISO22000"],
+    "status": "QUALIFIED",
+    "matrixVersion": "v1.0"
+  },
+  {
+    "id": "QUAL-0036",
+    "supplierId": "SUP-0043",
+    "materialType": "api-raw",
+    "supplierType": "Manufacturer",
+    "requiredCerts": ["GMP", "FDAReg", "FCC-FOODGRADE", "COA-3Batch", "ICH-Compliance", "RetentionSamples"],
+    "status": "QUALIFIED",
+    "matrixVersion": "v1.0"
+  },
+  {
+    "id": "QUAL-0037",
+    "supplierId": "SUP-0047",
+    "materialType": "packing-material",
+    "supplierType": "Printer",
+    "requiredCerts": ["FoodGradeDecl", "MigrationFreeInk", "ChildResistPkg", "BSE-TSE-Decl"],
+    "status": "QUALIFIED",
+    "matrixVersion": "v1.0"
+  }
+]

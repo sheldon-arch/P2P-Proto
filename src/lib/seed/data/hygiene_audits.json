@@ -1,0 +1,218 @@
+[
+  {
+    "id": "AUD-0001",
+    "supplierId": "SUP-0001",
+    "auditDate": "2026-03-15",
+    "auditorId": "U-ADMIN",
+    "areaScores": {
+      "housekeeping": 3,
+      "pest_control": 3,
+      "water_sanitation": 2,
+      "personnel_hygiene": 3,
+      "equipment_cleaning": 3,
+      "waste_management": 2,
+      "documentation": 3
+    },
+    "averageScore": 2.71,
+    "outcome": "APPROVED",
+    "status": "SUBMITTED"
+  },
+  {
+    "id": "AUD-0002",
+    "supplierId": "SUP-0002",
+    "auditDate": "2026-02-20",
+    "auditorId": "U-ADMIN",
+    "areaScores": {
+      "housekeeping": 2,
+      "pest_control": 2,
+      "water_sanitation": 2,
+      "personnel_hygiene": 2,
+      "equipment_cleaning": 3,
+      "waste_management": 2,
+      "documentation": 2
+    },
+    "averageScore": 2.14,
+    "outcome": "APPROVED",
+    "status": "SUBMITTED"
+  },
+  {
+    "id": "AUD-0003",
+    "supplierId": "SUP-0003",
+    "auditDate": "2026-01-10",
+    "auditorId": "U-ADMIN",
+    "areaScores": {
+      "housekeeping": 3,
+      "pest_control": 2,
+      "water_sanitation": 2,
+      "personnel_hygiene": 3,
+      "equipment_cleaning": 2,
+      "waste_management": 2,
+      "documentation": 3
+    },
+    "averageScore": 2.43,
+    "outcome": "APPROVED",
+    "status": "SUBMITTED"
+  },
+  {
+    "id": "AUD-0004",
+    "supplierId": "SUP-0004",
+    "auditDate": "2025-12-05",
+    "auditorId": "U-ADMIN",
+    "areaScores": {
+      "housekeeping": 1,
+      "pest_control": 1,
+      "water_sanitation": 2,
+      "personnel_hygiene": 1,
+      "equipment_cleaning": 1,
+      "waste_management": 1,
+      "documentation": 2
+    },
+    "averageScore": 1.29,
+    "outcome": "PRE_QUALIFIED",
+    "status": "SUBMITTED"
+  },
+  {
+    "id": "AUD-0005",
+    "supplierId": "SUP-0015",
+    "auditDate": "2026-04-01",
+    "auditorId": "U-ADMIN",
+    "areaScores": {
+      "housekeeping": 3,
+      "pest_control": 2,
+      "water_sanitation": 3,
+      "personnel_hygiene": 2,
+      "equipment_cleaning": 3,
+      "waste_management": 2,
+      "documentation": 3
+    },
+    "averageScore": 2.57,
+    "outcome": "APPROVED",
+    "status": "SUBMITTED"
+  },
+  {
+    "id": "AUD-0006",
+    "supplierId": "SUP-0021",
+    "auditDate": "2025-11-22",
+    "auditorId": "U-ADMIN",
+    "areaScores": {
+      "housekeeping": 2,
+      "pest_control": 2,
+      "water_sanitation": 2,
+      "personnel_hygiene": 2,
+      "equipment_cleaning": 2,
+      "waste_management": 2,
+      "documentation": 2
+    },
+    "averageScore": 2.00,
+    "outcome": "APPROVED",
+    "status": "SUBMITTED"
+  },
+  {
+    "id": "AUD-0007",
+    "supplierId": "SUP-0032",
+    "auditDate": "2026-03-28",
+    "auditorId": "U-ADMIN",
+    "areaScores": {
+      "housekeeping": 1,
+      "pest_control": 1,
+      "water_sanitation": 1,
+      "personnel_hygiene": 1,
+      "equipment_cleaning": 1,
+      "waste_management": 0,
+      "documentation": 0
+    },
+    "averageScore": 0.71,
+    "outcome": "REJECTED",
+    "status": "SUBMITTED"
+  },
+  {
+    "id": "AUD-0008",
+    "supplierId": "SUP-0005",
+    "auditDate": "2026-02-14",
+    "auditorId": "U-ADMIN",
+    "areaScores": {
+      "housekeeping": 3,
+      "pest_control": 2,
+      "water_sanitation": 3,
+      "personnel_hygiene": 3,
+      "equipment_cleaning": 2,
+      "waste_management": 3,
+      "documentation": 3
+    },
+    "averageScore": 2.71,
+    "outcome": "APPROVED",
+    "status": "SUBMITTED"
+  },
+  {
+    "id": "AUD-0009",
+    "supplierId": "SUP-0010",
+    "auditDate": "2026-01-30",
+    "auditorId": "U-ADMIN",
+    "areaScores": {
+      "housekeeping": 2,
+      "pest_control": 2,
+      "water_sanitation": 2,
+      "personnel_hygiene": 2,
+      "equipment_cleaning": 2,
+      "waste_management": 2,
+      "documentation": 2
+    },
+    "averageScore": 2.00,
+    "outcome": "APPROVED",
+    "status": "SUBMITTED"
+  },
+  {
+    "id": "AUD-0010",
+    "supplierId": "SUP-0038",
+    "auditDate": "2026-04-10",
+    "auditorId": "U-ADMIN",
+    "areaScores": {
+      "housekeeping": 3,
+      "pest_control": 3,
+      "water_sanitation": 2,
+      "personnel_hygiene": 3,
+      "equipment_cleaning": 3,
+      "waste_management": 3,
+      "documentation": 3
+    },
+    "averageScore": 2.86,
+    "outcome": "APPROVED",
+    "status": "SUBMITTED"
+  },
+  {
+    "id": "AUD-0011",
+    "supplierId": "SUP-0043",
+    "auditDate": "2026-03-05",
+    "auditorId": "U-ADMIN",
+    "areaScores": {
+      "housekeeping": 2,
+      "pest_control": 2,
+      "water_sanitation": 3,
+      "personnel_hygiene": 2,
+      "equipment_cleaning": 2,
+      "waste_management": 2,
+      "documentation": 3
+    },
+    "averageScore": 2.29,
+    "outcome": "APPROVED",
+    "status": "SUBMITTED"
+  },
+  {
+    "id": "AUD-0012",
+    "supplierId": "SUP-0037",
+    "auditDate": "2025-10-15",
+    "auditorId": "U-ADMIN",
+    "areaScores": {
+      "housekeeping": 0,
+      "pest_control": 1,
+      "water_sanitation": 1,
+      "personnel_hygiene": 0,
+      "equipment_cleaning": 1,
+      "waste_management": 0,
+      "documentation": 1
+    },
+    "averageScore": 0.57,
+    "outcome": "REJECTED",
+    "status": "SUBMITTED"
+  }
+]

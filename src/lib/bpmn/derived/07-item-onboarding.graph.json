@@ -1,0 +1,303 @@
+{
+  "id": "07-item-onboarding",
+  "file": "07-item-onboarding.bpmn",
+  "name": "Unified P2P - 07 Item and Catalog Onboarding (Single, Implicit Auto-create, Bulk, Approve, Lifecycle)",
+  "lanes": [
+    {
+      "id": "L_buyer",
+      "name": "Procurement / Buyer",
+      "role": "Procurement / Buyer"
+    },
+    {
+      "id": "L_appr",
+      "name": "Approver",
+      "role": "Approver"
+    },
+    {
+      "id": "L_sys",
+      "name": "Platform / System",
+      "role": "Platform / System"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "CreateItem",
+      "type": "userTask",
+      "name": "Create item (form, PENDING_ONBOARDING)",
+      "lane": "Procurement / Buyer",
+      "documentation": "Buyer/Engineer (permission items.create; Engineering conditional for eng items) creates the item via the module form. FIELDS: code (string, AUTO-generated, pattern DEPARTMENT/SEGMENT_CODE/SUB_SEGMENT_CODE/RUNNING_NUMBER e.g. ME/SG/SSG/000001; runningNumber = 6-digit zero-padded, max+1 parsed from existing codes (0 if none), generated in a transaction race-safe; uniqueness on (runningNumber, code); dept codes {ME|EL|AD|CP|SR|IT}, fallback DEP; segment/sub-segment default SG/SSG; configurable); shortDescription (text, mandatory); description (text, AUTO-populated = segmentDesc + subSegmentDesc + shortDescription, fallback to item code); segment (reference to Segment master, default SG); subSegment (reference, default SSG); stockUom (dropdown from UoM master, mandatory); purchaseUom (dropdown from UoM master, mandatory); hsCode (string, optional, HS tariff code - AB, for import classification/duty); category / finishedProductCategory (reference, optional, for spend reporting); standardSupplierId (reference to Supplier, optional, NULLABLE - need NOT be ONBOARDED, any existing id or null accepted); status = PENDING_ONBOARDING (default). [SCOR OE4 | source: RA item code/description + AB HS code + data-model Item]"
+    },
+    {
+      "id": "SourcePriority",
+      "type": "userTask",
+      "name": "Set source priority (unique per item)",
+      "lane": "Procurement / Buyer",
+      "documentation": "Buyer sets the item's ItemSourcePriority set. FIELDS per entry: priority (number, ordering); sourceType (dropdown, value set {MANUFACTURED | PURCHASED | SUBCONTRACTED | STOCK_TRANSFER}). CONSTRAINTS: unique (itemId, priority) AND unique (itemId, sourceType) - each source type appears at most once per item; the set is REPLACED wholesale on update (not merged). Defines how the item is normally obtained, driving downstream make-vs-buy and PO type. [SCOR OE4 | source: RA ItemSourcePriority unique constraints + data-model]"
+    },
+    {
+      "id": "RequestApproval",
+      "type": "userTask",
+      "name": "Request approval (PENDING_ONBOARDING -> PENDING_APPROVAL)",
+      "lane": "Procurement / Buyer",
+      "documentation": "Buyer submits the item for approval (permission items.update). GUARD: status MUST be PENDING_ONBOARDING (wrong status -> BadRequestException, record unchanged). On success: status PENDING_ONBOARDING -> PENDING_APPROVAL; ITEM_APPROVAL_REQUESTED notification emitted (ONLY here, carries getItemCode(code, runningNumber)); audit category ADMIN (no dedicated item audit category). [SCOR OE4 | source: RA item request-approval guard]"
+    },
+    {
+      "id": "ApproveItem",
+      "type": "userTask",
+      "name": "Approve item (PENDING_APPROVAL -> ONBOARDED)",
+      "lane": "Approver",
+      "documentation": "Approver (permission item.approve; Admin always; Engineering conditional for eng items) approves. GUARD: status MUST be PENDING_APPROVAL (else BadRequestException). On success: status PENDING_APPROVAL -> ONBOARDED. No notification at approve (only at request-approval). The item is now orderable and selectable on requisitions/POs. [SCOR OE4 | source: RA item.approve guard]"
+    },
+    {
+      "id": "EditItem",
+      "type": "userTask",
+      "name": "Edit item (reverts to PENDING_APPROVAL)",
+      "lane": "Procurement / Buyer",
+      "documentation": "Buyer/Engineer edits an ONBOARDED item (permission items.update). RULE: ONBOARDED or PENDING_APPROVAL -> recomputed to PENDING_APPROVAL; PENDING_ONBOARDING stays. isErpSynced reset to false. The ItemSourcePriority set is replaced wholesale if changed. Re-enters the approval path (back to RequestApproval). [source: RA edit-reverts-to-pending]"
+    },
+    {
+      "id": "Offboard",
+      "type": "userTask",
+      "name": "Offboard / suspend item",
+      "lane": "Procurement / Buyer",
+      "documentation": "Buyer/Admin offboards (permission item.offboard) or suspends the item. GUARD: offboard requires status = ONBOARDED. EFFECT: OFFBOARDED is TERMINAL (soft-delete; retained for history + referencing requisition lines/POs; no documented reactivation); SUSPENDED blocks new ordering but is reversible on resolution. No notification at offboard/suspend. Audit category ADMIN. [SCOR OE4 | ISO 7.5 retention | source: RA item.offboard guard + review SUSPENDED]"
+    },
+    {
+      "id": "UploadFile",
+      "type": "userTask",
+      "name": "Upload item import file",
+      "lane": "Procurement / Buyer",
+      "documentation": "BULK branch. Buyer/Admin uploads an XLSX/CSV of items (permission items.import). Same generic import pipeline as all masters. Parsed: file readable? sheet present? has data rows? [source: RA bulk import + platform-services 7]"
+    },
+    {
+      "id": "OnboardItem",
+      "type": "serviceTask",
+      "name": "Mark onboarded, optional ERP sync",
+      "lane": "Platform / System",
+      "documentation": "System finalizes the ONBOARDED item. ERP-sync toggle (isErpSynced) allowed ONLY when ONBOARDED; toggling pushes the item master to the external system of record (boundary integration). Any later edit reverts status to PENDING_APPROVAL and resets isErpSynced = false. Audit (category ADMIN) + SSE emitted. [SCOR OE4 integration boundary | source: RA lifecycle + platform-services 13]"
+    },
+    {
+      "id": "ImplicitDetect",
+      "type": "serviceTask",
+      "name": "Detect non-UUID requisition line itemId",
+      "lane": "Platform / System",
+      "documentation": "IMPLICIT branch. When a requisition is saved (Diagram 02), the System inspects each line itemId: if it is a UUID -> lookup the existing item (404 rejects the whole op); if it is a free-typed string (non-UUID) -> AUTO-CREATE with NO lookup. Supplier and item auto-create paths run in parallel and join before linking + postValueSync. [source: RA e05 auto-create from non-UUID + raphe-edge-cases]"
+    },
+    {
+      "id": "ImplicitCreate",
+      "type": "serviceTask",
+      "name": "Auto-create item from line (PENDING_ONBOARDING)",
+      "lane": "Platform / System",
+      "documentation": "System auto-creates the item from the requisition line: description = the free-typed string; stockUom + purchaseUom = the line UoM; code generated DEP/SG/SSG/000001-style (6-digit running, race-safe in transaction); status = PENDING_ONBOARDING (unapproved); no source priority required at creation. The unapproved item is usable on the requisition immediately but flows through the standard approval path to become ONBOARDED. [source: RA e05 + raphe-supplier-item-onboarding]"
+    },
+    {
+      "id": "ValidateImport",
+      "type": "serviceTask",
+      "name": "Validate header + rows (accumulate all errors)",
+      "lane": "Platform / System",
+      "documentation": "System validates: exact header (no missing/extra columns, order-insensitive); iterate rows (header = row 1, first data = row 2); per row validate fields/types/enums + resolve foreign refs by natural key; ITEM IMPORT validates every standardSupplierCode resolves (else whole import fails); ACCUMULATE ALL row errors (never fail-fast). Natural key for upsert = code (new items get incremented runningNumber + generated code). [source: RA bulk import e06 + raphe-bulk-import]"
+    },
+    {
+      "id": "CommitImport",
+      "type": "serviceTask",
+      "name": "Upsert by code in one transaction (PENDING_ONBOARDING)",
+      "lane": "Platform / System",
+      "documentation": "System opens ONE transaction, upserts each row by natural key code (match -> update; else create with generated code + incremented runningNumber). Duplicate keys within one file resolve last-wins. Commit-all or roll-back-all (late DB failure rolls back fully, audit NOT emitted). Imported items default PENDING_ONBOARDING, isErpSynced false. On success: audit (category ADMIN), returns {created, updated}. [source: RA e06 + raphe-bulk-import]"
+    },
+    {
+      "id": "GwPath",
+      "type": "exclusiveGateway",
+      "name": "Single, implicit, or bulk?",
+      "lane": "Procurement / Buyer",
+      "documentation": "Three creation paths. Expression: SINGLE = items module form (permission items.create); IMPLICIT = auto-create triggered when a requisition line itemId is a non-UUID free-typed string (no lookup, Diagram 02; permission inherited from requisition.create); BULK = file upload (permission items.import, POST /api/items/import). All converge on the lifecycle; all default status PENDING_ONBOARDING. [source: RA two creation entries (form OR implicit) + bulk]"
+    },
+    {
+      "id": "ApproveGw",
+      "type": "exclusiveGateway",
+      "name": "Approve item?",
+      "lane": "Approver",
+      "documentation": "Expression: APPROVE iff status = PENDING_APPROVAL AND mandatory fields complete (code, description, stockUom, purchaseUom, at least one source priority). Else -> RETURN branch to complete (back to CreateItem), record stays PENDING_APPROVAL. [source: RA item.approve guard]"
+    },
+    {
+      "id": "OnboardedGw",
+      "type": "exclusiveGateway",
+      "name": "Post-onboarding lifecycle event",
+      "lane": "Platform / System",
+      "documentation": "Expression: EDIT (any field update) -> revert to PENDING_APPROVAL (isErpSynced reset); SUSPEND (quality stop / obsolescence / supersession) -> SUSPENDED (blocks new ordering of the item without offboarding); OFFBOARD (item retired) -> OFFBOARDED (terminal, soft-delete, retained for history + referencing tickets); otherwise stay ONBOARDED. [source: RA lifecycle + review SUSPENDED state]"
+    },
+    {
+      "id": "ImportGw",
+      "type": "exclusiveGateway",
+      "name": "All rows valid?",
+      "lane": "Platform / System",
+      "documentation": "Expression: zero accumulated errors -> COMMIT; any error -> throw ONE BadRequestException listing every {rowNumber, reason}, write NOTHING (all-or-nothing); operator fixes the file and re-uploads. [source: RA e06]"
+    },
+    {
+      "id": "JoinCreate",
+      "type": "exclusiveGateway",
+      "name": "New items join lifecycle",
+      "lane": "Procurement / Buyer",
+      "documentation": "Implicitly auto-created and bulk-imported items (PENDING_ONBOARDING) merge into the standard lifecycle: each still requires (if not already) source priority + request-approval -> approve to reach ONBOARDED. Convenience routing node joining the happy path. [source: convergence of implicit + bulk into lifecycle]"
+    },
+    {
+      "id": "Start",
+      "type": "startEvent",
+      "name": "New item needed",
+      "lane": "Procurement / Buyer",
+      "documentation": "Trigger: a buyer/engineer adds a catalog item, a requisition line references an item not yet in the master (implicit auto-create), or a file of items is bulk-loaded. An item follows the same lifecycle as a supplier (PENDING_ONBOARDING -> PENDING_APPROVAL -> ONBOARDED -> OFFBOARDED, plus SUSPENDED). [SCOR OE4 Data/Information | source: RA item onboarding (08) + data-model Item]"
+    },
+    {
+      "id": "Active",
+      "type": "endEvent",
+      "name": "Item ONBOARDED / OFFBOARDED",
+      "lane": "Platform / System",
+      "documentation": "Terminal: item is ONBOARDED (orderable), SUSPENDED (blocked, reversible), or OFFBOARDED (terminal). ONBOARDED items feed requisition lines (Diagram 02), PO lines (Diagram 05), and GRN (Diagram 08). [source: build-new]"
+    }
+  ],
+  "flows": [
+    {
+      "id": "f1",
+      "from": "Start",
+      "to": "GwPath",
+      "guard": ""
+    },
+    {
+      "id": "f2",
+      "from": "GwPath",
+      "to": "CreateItem",
+      "guard": "single (form)"
+    },
+    {
+      "id": "f3",
+      "from": "GwPath",
+      "to": "ImplicitDetect",
+      "guard": "implicit (requisition line)"
+    },
+    {
+      "id": "f4",
+      "from": "GwPath",
+      "to": "UploadFile",
+      "guard": "bulk import"
+    },
+    {
+      "id": "f5",
+      "from": "CreateItem",
+      "to": "SourcePriority",
+      "guard": ""
+    },
+    {
+      "id": "f6",
+      "from": "SourcePriority",
+      "to": "RequestApproval",
+      "guard": ""
+    },
+    {
+      "id": "f7",
+      "from": "RequestApproval",
+      "to": "ApproveGw",
+      "guard": ""
+    },
+    {
+      "id": "f8",
+      "from": "ApproveGw",
+      "to": "ApproveItem",
+      "guard": "complete + approve"
+    },
+    {
+      "id": "f9",
+      "from": "ApproveGw",
+      "to": "CreateItem",
+      "guard": "incomplete, return"
+    },
+    {
+      "id": "f10",
+      "from": "ApproveItem",
+      "to": "OnboardItem",
+      "guard": ""
+    },
+    {
+      "id": "f11",
+      "from": "OnboardItem",
+      "to": "OnboardedGw",
+      "guard": ""
+    },
+    {
+      "id": "f12",
+      "from": "OnboardedGw",
+      "to": "EditItem",
+      "guard": "edit"
+    },
+    {
+      "id": "f13",
+      "from": "OnboardedGw",
+      "to": "Offboard",
+      "guard": "suspend / offboard"
+    },
+    {
+      "id": "f14",
+      "from": "OnboardedGw",
+      "to": "Active",
+      "guard": "stay onboarded"
+    },
+    {
+      "id": "f15",
+      "from": "EditItem",
+      "to": "RequestApproval",
+      "guard": "reverts to PENDING_APPROVAL"
+    },
+    {
+      "id": "f16",
+      "from": "Offboard",
+      "to": "Active",
+      "guard": ""
+    },
+    {
+      "id": "f17",
+      "from": "ImplicitDetect",
+      "to": "ImplicitCreate",
+      "guard": ""
+    },
+    {
+      "id": "f18",
+      "from": "ImplicitCreate",
+      "to": "JoinCreate",
+      "guard": ""
+    },
+    {
+      "id": "f19",
+      "from": "UploadFile",
+      "to": "ValidateImport",
+      "guard": ""
+    },
+    {
+      "id": "f20",
+      "from": "ValidateImport",
+      "to": "ImportGw",
+      "guard": ""
+    },
+    {
+      "id": "f21",
+      "from": "ImportGw",
+      "to": "CommitImport",
+      "guard": "all rows valid"
+    },
+    {
+      "id": "f22",
+      "from": "ImportGw",
+      "to": "UploadFile",
+      "guard": "errors, fix + re-upload"
+    },
+    {
+      "id": "f23",
+      "from": "CommitImport",
+      "to": "JoinCreate",
+      "guard": ""
+    },
+    {
+      "id": "f24",
+      "from": "JoinCreate",
+      "to": "RequestApproval",
+      "guard": ""
+    }
+  ]
+}

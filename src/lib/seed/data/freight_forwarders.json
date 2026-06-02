@@ -1,0 +1,20 @@
+[
+  {
+    "id": "FF-001",
+    "name": "Apex Global Logistics",
+    "country": "Singapore",
+    "services": ["ocean-fcl", "ocean-lcl", "air", "customs-brokerage"]
+  },
+  {
+    "id": "FF-002",
+    "name": "Harvest Freight Partners",
+    "country": "India",
+    "services": ["ocean-fcl", "air", "customs-brokerage", "last-mile"]
+  },
+  {
+    "id": "FF-003",
+    "name": "NordCargo Express",
+    "country": "Netherlands",
+    "services": ["ocean-fcl", "ocean-lcl", "air", "customs-brokerage", "bonded-warehouse"]
+  }
+]

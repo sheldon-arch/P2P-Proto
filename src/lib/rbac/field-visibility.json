@@ -1,0 +1,23 @@
+{
+  "PurchaseOrder.value":              { "hiddenFor": ["quality"] },
+  "PurchaseOrder.valueInBase":        { "hiddenFor": ["quality"] },
+  "PurchaseOrder.exchangeRate":       { "hiddenFor": ["quality"] },
+  "PurchaseOrder.paymentTerms":       { "hiddenFor": ["quality"] },
+  "POLine.agreedPrice":               { "hiddenFor": ["quality"] },
+  "POLine.taxableAmount":             { "hiddenFor": ["quality"] },
+  "POLine.taxAmount":                 { "hiddenFor": ["quality"] },
+  "POLine.lineValue":                 { "hiddenFor": ["quality"] },
+  "Quotation.unitPrice":              { "hiddenFor": ["quality"] },
+  "Quotation.price":                  { "hiddenFor": ["quality"] },
+  "Quotation.paymentTerms":           { "hiddenFor": ["quality"] },
+  "Quotation.freightPerUnit":         { "hiddenFor": ["quality"] },
+  "Quotation.dutyPerUnit":            { "hiddenFor": ["quality"] },
+  "Quotation.landedCostPerUnit":      { "hiddenFor": ["quality"] },
+  "Quotation.dieCylinderCharges":     { "hiddenFor": ["quality"] },
+  "Quotation.documentationCharges":   { "hiddenFor": ["quality"] },
+  "RFQ.internalTargetPrice":          { "hiddenFor": ["quality", "supplier"] },
+  "Invoice.amount":                   { "hiddenFor": ["quality"] },
+  "Invoice.taxAmount":                { "hiddenFor": ["quality"] },
+  "Invoice.totalInclTax":             { "hiddenFor": ["quality"] },
+  "Invoice.totalInclTaxInBase":       { "hiddenFor": ["quality"] }
+}

@@ -1,0 +1,253 @@
+{
+  "id": "e06-bulk-import",
+  "file": "e06-bulk-import.bpmn",
+  "name": "e06 - Bulk Import All-or-Nothing",
+  "lanes": [
+    {
+      "id": "L_admin",
+      "name": "Administrator",
+      "role": "Administrator"
+    },
+    {
+      "id": "L_sys",
+      "name": "Platform / System",
+      "role": "Platform / System"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "Parse",
+      "type": "serviceTask",
+      "name": "Parse workbook",
+      "lane": "Platform / System",
+      "documentation": "System parses the uploaded file into rows. Row numbering convention: header row = 1, first data row = 2 (used in every error message so the admin can find the cell). No data is written during parse. [SCOR OE4 | source: RA parse + row-number convention]"
+    },
+    {
+      "id": "ValidateRows",
+      "type": "serviceTask",
+      "name": "Validate every row + resolve refs, ACCUMULATE errors",
+      "lane": "Platform / System",
+      "documentation": "Iterate every data row (NEVER fail-fast). Per row: type/format/required-field checks against the masterType schema, then resolve foreign references (e.g. a supplier's group, an item's UoM/segment) via the entity normalizer. Each failure is appended to an error list as {row, header/field, reason} using the header=1/first-data=2 numbering. The loop continues to the last row so the admin sees ALL problems in one pass, not just the first. No write occurs in this step. [SCOR OE4 | ISO 7.5 | source: RA accumulate-all-errors, never fail-fast]"
+    },
+    {
+      "id": "RejectAll",
+      "type": "serviceTask",
+      "name": "Return one BadRequest listing all {row, reason}; write nothing",
+      "lane": "Platform / System",
+      "documentation": "Single 400 response with the full error list (every failing row and reason). No partial import: zero rows are written. The admin fixes the file and re-uploads. Audit logs the rejected import attempt with the error count. [SCOR OE4 | ISO 7.5 records | source: RA reject-all]"
+    },
+    {
+      "id": "UpsertTxn",
+      "type": "serviceTask",
+      "name": "Single transaction: upsert by natural key",
+      "lane": "Platform / System",
+      "documentation": "Open ONE database transaction. For each row, upsert by the master's NATURAL KEY (e.g. supplier code S/#####, item code DEP/SG/SSG/######, UoM code, currency code, tax code): existing key -> UPDATE (count as updated), new key -> INSERT (count as created; imported records default PENDING_ONBOARDING for supplier/item). All rows share the one transaction. [SCOR OE4 | source: RA natural-key upsert, single transaction]"
+    },
+    {
+      "id": "Rollback",
+      "type": "serviceTask",
+      "name": "Rollback all; report failure",
+      "lane": "Platform / System",
+      "documentation": "Roll the single transaction back so no rows persist, and report the failure. The pre-write validation already caught content errors; a rollback here is for an integrity/DB error during write. Audit logs the failed transaction. [SCOR OE4 | ISO 7.5 | source: RA rollback-all]"
+    },
+    {
+      "id": "Audit",
+      "type": "serviceTask",
+      "name": "Commit, audit, emit SSE",
+      "lane": "Platform / System",
+      "documentation": "On commit: write an append-only audit entry (category admin) recording masterType, created count, updated count, and the actor; emit SSE so master lists refresh. Imported supplier/item rows that were inserted are PENDING_ONBOARDING and enter the onboarding queue (06/07). [SCOR OE4 | ISO 7.5 records | source: platform-services audit + RA]"
+    },
+    {
+      "id": "Result",
+      "type": "serviceTask",
+      "name": "Return {created, updated}",
+      "lane": "Platform / System",
+      "documentation": "Respond with the summary {created: n, updated: m}. This is the success contract of the pipeline; combined with the all-or-nothing rule it guarantees the import either fully applied or not at all. [SCOR OE4 | source: RA result contract]"
+    },
+    {
+      "id": "GwReadable",
+      "type": "exclusiveGateway",
+      "name": "File readable?",
+      "lane": "Platform / System",
+      "documentation": "Expression: parser opened the file AND format in {XLSX, CSV} AND not corrupt/empty-bytes. False -> BadRequest 'file not readable / unsupported format', abort (nothing written). True -> check the sheet. [SCOR OE4 | source: RA pipeline guard 1]"
+    },
+    {
+      "id": "GwSheet",
+      "type": "exclusiveGateway",
+      "name": "Expected sheet present?",
+      "lane": "Platform / System",
+      "documentation": "Expression: the workbook contains the expected sheet for masterType (XLSX) or the CSV has a content block. False -> BadRequest 'expected sheet missing', abort. True -> check for data rows. [SCOR OE4 | source: RA pipeline guard 2]"
+    },
+    {
+      "id": "GwDataRows",
+      "type": "exclusiveGateway",
+      "name": "At least one data row?",
+      "lane": "Platform / System",
+      "documentation": "Expression: rowCount > 1 (more than the header row). False -> BadRequest 'no data rows', abort. True -> validate headers. [SCOR OE4 | source: RA pipeline guard 3]"
+    },
+    {
+      "id": "GwHeaders",
+      "type": "exclusiveGateway",
+      "name": "Headers exactly match schema?",
+      "lane": "Platform / System",
+      "documentation": "Exact header validation. Expression: set(actualHeaders) == set(expectedHeaders for masterType): NO missing columns AND NO extra columns AND no duplicates. A mismatch is a STRUCTURAL failure reported before any row work. False -> BadRequest listing the missing and the extra headers, abort. True -> per-row validation. [SCOR OE4 | source: RA exact-header validation, no missing/extra]"
+    },
+    {
+      "id": "GwAnyErrors",
+      "type": "exclusiveGateway",
+      "name": "Any row errors accumulated?",
+      "lane": "Platform / System",
+      "documentation": "Expression: errorList.length > 0. True -> emit ONE BadRequest whose body lists every {row, reason}; NOTHING is written (the whole file is rejected together). False -> proceed to the single-transaction upsert. [SCOR OE4 | source: RA one-error-response, all-or-nothing]"
+    },
+    {
+      "id": "GwCommit",
+      "type": "exclusiveGateway",
+      "name": "All rows persisted without error?",
+      "lane": "Platform / System",
+      "documentation": "Expression: every upsert in the transaction succeeded (no DB constraint violation, no late integrity error). True -> COMMIT all. False -> ROLLBACK all (commit-all-or-rollback-all); return a 500/409 with the failure; nothing persists. There is no partial commit. [SCOR OE4 | source: RA commit-or-rollback-all]"
+    },
+    {
+      "id": "Start",
+      "type": "startEvent",
+      "name": "Upload XLSX / CSV for a master",
+      "lane": "Administrator",
+      "documentation": "Trigger: an administrator uploads a workbook (XLSX or CSV) for one master entity. One generic pipeline serves every master: suppliers, items, UoM, currency, segments, payment terms, warehouses, asset proposals, supplier groups, tax codes. Field masterType (dropdown, mandatory) selects the schema and the natural key. File picked via the import action (permission *.import, e.g. suppliers.import / items.import; Admin always). [SCOR OE4 | source: RA bulk import e06]"
+    },
+    {
+      "id": "EndOk",
+      "type": "endEvent",
+      "name": "Import committed",
+      "lane": "Platform / System",
+      "documentation": "Master data updated atomically; counts returned; audit + SSE emitted. [SCOR OE4 | source: RA]"
+    },
+    {
+      "id": "EndReject",
+      "type": "endEvent",
+      "name": "Import rejected; nothing written",
+      "lane": "Platform / System",
+      "documentation": "Terminal reject path for a structural failure (unreadable / no sheet / no rows / header mismatch) or accumulated row errors. The whole file is rejected; the admin corrects and re-uploads. [SCOR OE4 | source: RA all-or-nothing]"
+    }
+  ],
+  "flows": [
+    {
+      "id": "f1",
+      "from": "Start",
+      "to": "Parse",
+      "guard": ""
+    },
+    {
+      "id": "f2",
+      "from": "Parse",
+      "to": "GwReadable",
+      "guard": ""
+    },
+    {
+      "id": "f3",
+      "from": "GwReadable",
+      "to": "GwSheet",
+      "guard": "readable"
+    },
+    {
+      "id": "f4",
+      "from": "GwReadable",
+      "to": "EndReject",
+      "guard": "not readable -> BadRequest"
+    },
+    {
+      "id": "f5",
+      "from": "GwSheet",
+      "to": "GwDataRows",
+      "guard": "sheet present"
+    },
+    {
+      "id": "f6",
+      "from": "GwSheet",
+      "to": "EndReject",
+      "guard": "sheet missing -> BadRequest"
+    },
+    {
+      "id": "f7",
+      "from": "GwDataRows",
+      "to": "GwHeaders",
+      "guard": "rows > 1"
+    },
+    {
+      "id": "f8",
+      "from": "GwDataRows",
+      "to": "EndReject",
+      "guard": "no data rows -> BadRequest"
+    },
+    {
+      "id": "f9",
+      "from": "GwHeaders",
+      "to": "ValidateRows",
+      "guard": "headers exact"
+    },
+    {
+      "id": "f10",
+      "from": "GwHeaders",
+      "to": "EndReject",
+      "guard": "missing/extra header -> BadRequest"
+    },
+    {
+      "id": "f11",
+      "from": "ValidateRows",
+      "to": "GwAnyErrors",
+      "guard": ""
+    },
+    {
+      "id": "f12",
+      "from": "GwAnyErrors",
+      "to": "RejectAll",
+      "guard": "errorList.length > 0"
+    },
+    {
+      "id": "f13",
+      "from": "GwAnyErrors",
+      "to": "UpsertTxn",
+      "guard": "no errors"
+    },
+    {
+      "id": "f14",
+      "from": "RejectAll",
+      "to": "EndReject",
+      "guard": ""
+    },
+    {
+      "id": "f15",
+      "from": "UpsertTxn",
+      "to": "GwCommit",
+      "guard": ""
+    },
+    {
+      "id": "f16",
+      "from": "GwCommit",
+      "to": "Audit",
+      "guard": "all rows persisted -> COMMIT"
+    },
+    {
+      "id": "f17",
+      "from": "GwCommit",
+      "to": "Rollback",
+      "guard": "any failure -> ROLLBACK"
+    },
+    {
+      "id": "f18",
+      "from": "Rollback",
+      "to": "EndReject",
+      "guard": ""
+    },
+    {
+      "id": "f19",
+      "from": "Audit",
+      "to": "Result",
+      "guard": ""
+    },
+    {
+      "id": "f20",
+      "from": "Result",
+      "to": "EndOk",
+      "guard": ""
+    }
+  ]
+}

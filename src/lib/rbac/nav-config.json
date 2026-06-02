@@ -1,0 +1,634 @@
+{
+  "modules": [
+    {
+      "id": "dashboard",
+      "label": "Dashboard",
+      "route": "/dashboard"
+    },
+    {
+      "id": "requisitions",
+      "label": "Requisitions",
+      "route": "/requisitions"
+    },
+    {
+      "id": "approvals",
+      "label": "Approvals",
+      "route": "/approvals"
+    },
+    {
+      "id": "sourcing",
+      "label": "Sourcing",
+      "route": "/sourcing"
+    },
+    {
+      "id": "purchase_orders",
+      "label": "Purchase Orders",
+      "route": "/purchase-orders"
+    },
+    {
+      "id": "suppliers",
+      "label": "Suppliers",
+      "route": "/suppliers"
+    },
+    {
+      "id": "items",
+      "label": "Items",
+      "route": "/items"
+    },
+    {
+      "id": "deliveries",
+      "label": "Deliveries & GRN",
+      "route": "/deliveries"
+    },
+    {
+      "id": "quality",
+      "label": "Quality",
+      "route": "/quality"
+    },
+    {
+      "id": "invoices",
+      "label": "Invoices & Match",
+      "route": "/invoices"
+    },
+    {
+      "id": "payments",
+      "label": "Payments",
+      "route": "/payments"
+    },
+    {
+      "id": "cashflow",
+      "label": "Cashflow",
+      "route": "/cashflow"
+    },
+    {
+      "id": "returns",
+      "label": "Returns / RMA",
+      "route": "/returns"
+    },
+    {
+      "id": "budgets",
+      "label": "Budgets",
+      "route": "/budgets"
+    },
+    {
+      "id": "analytics",
+      "label": "Analytics",
+      "route": "/analytics"
+    },
+    {
+      "id": "admin",
+      "label": "Administration",
+      "route": "/admin"
+    }
+  ],
+  "navByRole": {
+    "requester": [
+      {
+        "id": "dashboard",
+        "label": "Dashboard",
+        "route": "/dashboard"
+      },
+      {
+        "id": "requisitions",
+        "label": "Requisitions",
+        "route": "/requisitions"
+      },
+      {
+        "id": "purchase_orders",
+        "label": "Purchase Orders",
+        "route": "/purchase-orders"
+      },
+      {
+        "id": "budgets",
+        "label": "Budgets",
+        "route": "/budgets"
+      },
+      {
+        "id": "analytics",
+        "label": "Analytics",
+        "route": "/analytics"
+      }
+    ],
+    "approver": [
+      {
+        "id": "dashboard",
+        "label": "Dashboard",
+        "route": "/dashboard"
+      },
+      {
+        "id": "requisitions",
+        "label": "Requisitions",
+        "route": "/requisitions"
+      },
+      {
+        "id": "approvals",
+        "label": "Approvals",
+        "route": "/approvals"
+      },
+      {
+        "id": "sourcing",
+        "label": "Sourcing",
+        "route": "/sourcing"
+      },
+      {
+        "id": "quality",
+        "label": "Quality",
+        "route": "/quality"
+      },
+      {
+        "id": "budgets",
+        "label": "Budgets",
+        "route": "/budgets"
+      },
+      {
+        "id": "analytics",
+        "label": "Analytics",
+        "route": "/analytics"
+      }
+    ],
+    "buyer": [
+      {
+        "id": "dashboard",
+        "label": "Dashboard",
+        "route": "/dashboard"
+      },
+      {
+        "id": "requisitions",
+        "label": "Requisitions",
+        "route": "/requisitions"
+      },
+      {
+        "id": "approvals",
+        "label": "Approvals",
+        "route": "/approvals"
+      },
+      {
+        "id": "sourcing",
+        "label": "Sourcing",
+        "route": "/sourcing"
+      },
+      {
+        "id": "purchase_orders",
+        "label": "Purchase Orders",
+        "route": "/purchase-orders"
+      },
+      {
+        "id": "suppliers",
+        "label": "Suppliers",
+        "route": "/suppliers"
+      },
+      {
+        "id": "items",
+        "label": "Items",
+        "route": "/items"
+      },
+      {
+        "id": "deliveries",
+        "label": "Deliveries & GRN",
+        "route": "/deliveries"
+      },
+      {
+        "id": "quality",
+        "label": "Quality",
+        "route": "/quality"
+      },
+      {
+        "id": "invoices",
+        "label": "Invoices & Match",
+        "route": "/invoices"
+      },
+      {
+        "id": "payments",
+        "label": "Payments",
+        "route": "/payments"
+      },
+      {
+        "id": "cashflow",
+        "label": "Cashflow",
+        "route": "/cashflow"
+      },
+      {
+        "id": "returns",
+        "label": "Returns / RMA",
+        "route": "/returns"
+      },
+      {
+        "id": "budgets",
+        "label": "Budgets",
+        "route": "/budgets"
+      },
+      {
+        "id": "analytics",
+        "label": "Analytics",
+        "route": "/analytics"
+      }
+    ],
+    "finance_maker": [
+      {
+        "id": "dashboard",
+        "label": "Dashboard",
+        "route": "/dashboard"
+      },
+      {
+        "id": "requisitions",
+        "label": "Requisitions",
+        "route": "/requisitions"
+      },
+      {
+        "id": "invoices",
+        "label": "Invoices & Match",
+        "route": "/invoices"
+      },
+      {
+        "id": "payments",
+        "label": "Payments",
+        "route": "/payments"
+      },
+      {
+        "id": "cashflow",
+        "label": "Cashflow",
+        "route": "/cashflow"
+      },
+      {
+        "id": "budgets",
+        "label": "Budgets",
+        "route": "/budgets"
+      },
+      {
+        "id": "analytics",
+        "label": "Analytics",
+        "route": "/analytics"
+      }
+    ],
+    "finance_checker": [
+      {
+        "id": "dashboard",
+        "label": "Dashboard",
+        "route": "/dashboard"
+      },
+      {
+        "id": "requisitions",
+        "label": "Requisitions",
+        "route": "/requisitions"
+      },
+      {
+        "id": "invoices",
+        "label": "Invoices & Match",
+        "route": "/invoices"
+      },
+      {
+        "id": "payments",
+        "label": "Payments",
+        "route": "/payments"
+      },
+      {
+        "id": "cashflow",
+        "label": "Cashflow",
+        "route": "/cashflow"
+      },
+      {
+        "id": "budgets",
+        "label": "Budgets",
+        "route": "/budgets"
+      },
+      {
+        "id": "analytics",
+        "label": "Analytics",
+        "route": "/analytics"
+      }
+    ],
+    "management": [
+      {
+        "id": "dashboard",
+        "label": "Dashboard",
+        "route": "/dashboard"
+      },
+      {
+        "id": "requisitions",
+        "label": "Requisitions",
+        "route": "/requisitions"
+      },
+      {
+        "id": "approvals",
+        "label": "Approvals",
+        "route": "/approvals"
+      },
+      {
+        "id": "payments",
+        "label": "Payments",
+        "route": "/payments"
+      },
+      {
+        "id": "cashflow",
+        "label": "Cashflow",
+        "route": "/cashflow"
+      },
+      {
+        "id": "budgets",
+        "label": "Budgets",
+        "route": "/budgets"
+      },
+      {
+        "id": "analytics",
+        "label": "Analytics",
+        "route": "/analytics"
+      }
+    ],
+    "supplier": [
+      {
+        "id": "dashboard",
+        "label": "Dashboard",
+        "route": "/dashboard"
+      },
+      {
+        "id": "sourcing",
+        "label": "Sourcing",
+        "route": "/sourcing"
+      },
+      {
+        "id": "suppliers",
+        "label": "Suppliers",
+        "route": "/suppliers"
+      },
+      {
+        "id": "deliveries",
+        "label": "Deliveries & GRN",
+        "route": "/deliveries"
+      },
+      {
+        "id": "quality",
+        "label": "Quality",
+        "route": "/quality"
+      },
+      {
+        "id": "invoices",
+        "label": "Invoices & Match",
+        "route": "/invoices"
+      },
+      {
+        "id": "payments",
+        "label": "Payments",
+        "route": "/payments"
+      },
+      {
+        "id": "cashflow",
+        "label": "Cashflow",
+        "route": "/cashflow"
+      },
+      {
+        "id": "returns",
+        "label": "Returns / RMA",
+        "route": "/returns"
+      },
+      {
+        "id": "analytics",
+        "label": "Analytics",
+        "route": "/analytics"
+      }
+    ],
+    "receiving": [
+      {
+        "id": "requisitions",
+        "label": "Requisitions",
+        "route": "/requisitions"
+      },
+      {
+        "id": "deliveries",
+        "label": "Deliveries & GRN",
+        "route": "/deliveries"
+      },
+      {
+        "id": "invoices",
+        "label": "Invoices & Match",
+        "route": "/invoices"
+      },
+      {
+        "id": "returns",
+        "label": "Returns / RMA",
+        "route": "/returns"
+      }
+    ],
+    "quality": [
+      {
+        "id": "dashboard",
+        "label": "Dashboard",
+        "route": "/dashboard"
+      },
+      {
+        "id": "requisitions",
+        "label": "Requisitions",
+        "route": "/requisitions"
+      },
+      {
+        "id": "suppliers",
+        "label": "Suppliers",
+        "route": "/suppliers"
+      },
+      {
+        "id": "deliveries",
+        "label": "Deliveries & GRN",
+        "route": "/deliveries"
+      },
+      {
+        "id": "quality",
+        "label": "Quality",
+        "route": "/quality"
+      },
+      {
+        "id": "returns",
+        "label": "Returns / RMA",
+        "route": "/returns"
+      },
+      {
+        "id": "analytics",
+        "label": "Analytics",
+        "route": "/analytics"
+      }
+    ],
+    "engineering": [
+      {
+        "id": "requisitions",
+        "label": "Requisitions",
+        "route": "/requisitions"
+      },
+      {
+        "id": "purchase_orders",
+        "label": "Purchase Orders",
+        "route": "/purchase-orders"
+      },
+      {
+        "id": "items",
+        "label": "Items",
+        "route": "/items"
+      },
+      {
+        "id": "deliveries",
+        "label": "Deliveries & GRN",
+        "route": "/deliveries"
+      },
+      {
+        "id": "quality",
+        "label": "Quality",
+        "route": "/quality"
+      },
+      {
+        "id": "returns",
+        "label": "Returns / RMA",
+        "route": "/returns"
+      }
+    ],
+    "budget_owner": [
+      {
+        "id": "dashboard",
+        "label": "Dashboard",
+        "route": "/dashboard"
+      },
+      {
+        "id": "requisitions",
+        "label": "Requisitions",
+        "route": "/requisitions"
+      },
+      {
+        "id": "budgets",
+        "label": "Budgets",
+        "route": "/budgets"
+      },
+      {
+        "id": "analytics",
+        "label": "Analytics",
+        "route": "/analytics"
+      }
+    ],
+    "tax_compliance": [
+      {
+        "id": "dashboard",
+        "label": "Dashboard",
+        "route": "/dashboard"
+      },
+      {
+        "id": "suppliers",
+        "label": "Suppliers",
+        "route": "/suppliers"
+      },
+      {
+        "id": "deliveries",
+        "label": "Deliveries & GRN",
+        "route": "/deliveries"
+      },
+      {
+        "id": "invoices",
+        "label": "Invoices & Match",
+        "route": "/invoices"
+      },
+      {
+        "id": "analytics",
+        "label": "Analytics",
+        "route": "/analytics"
+      }
+    ],
+    "inventory_manager": [
+      {
+        "id": "dashboard",
+        "label": "Dashboard",
+        "route": "/dashboard"
+      },
+      {
+        "id": "inventory",
+        "label": "Inventory",
+        "route": "/inventory"
+      },
+      {
+        "id": "requisitions",
+        "label": "Requisitions",
+        "route": "/requisitions"
+      },
+      {
+        "id": "items",
+        "label": "Items",
+        "route": "/items"
+      }
+    ],
+    "administrator": [
+      {
+        "id": "dashboard",
+        "label": "Dashboard",
+        "route": "/dashboard"
+      },
+      {
+        "id": "requisitions",
+        "label": "Requisitions",
+        "route": "/requisitions"
+      },
+      {
+        "id": "approvals",
+        "label": "Approvals",
+        "route": "/approvals"
+      },
+      {
+        "id": "sourcing",
+        "label": "Sourcing",
+        "route": "/sourcing"
+      },
+      {
+        "id": "purchase_orders",
+        "label": "Purchase Orders",
+        "route": "/purchase-orders"
+      },
+      {
+        "id": "suppliers",
+        "label": "Suppliers",
+        "route": "/suppliers"
+      },
+      {
+        "id": "items",
+        "label": "Items",
+        "route": "/items"
+      },
+      {
+        "id": "deliveries",
+        "label": "Deliveries & GRN",
+        "route": "/deliveries"
+      },
+      {
+        "id": "quality",
+        "label": "Quality",
+        "route": "/quality"
+      },
+      {
+        "id": "invoices",
+        "label": "Invoices & Match",
+        "route": "/invoices"
+      },
+      {
+        "id": "payments",
+        "label": "Payments",
+        "route": "/payments"
+      },
+      {
+        "id": "cashflow",
+        "label": "Cashflow",
+        "route": "/cashflow"
+      },
+      {
+        "id": "returns",
+        "label": "Returns / RMA",
+        "route": "/returns"
+      },
+      {
+        "id": "budgets",
+        "label": "Budgets",
+        "route": "/budgets"
+      },
+      {
+        "id": "analytics",
+        "label": "Analytics",
+        "route": "/analytics"
+      },
+      {
+        "id": "admin",
+        "label": "Administration",
+        "route": "/admin"
+      }
+    ]
+  }
+}

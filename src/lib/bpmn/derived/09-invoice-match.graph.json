@@ -1,0 +1,360 @@
+{
+  "id": "09-invoice-match",
+  "file": "09-invoice-match.bpmn",
+  "name": "09 - Invoice Capture and Matching",
+  "lanes": [
+    {
+      "id": "L_supplier",
+      "name": "Supplier / Vendor",
+      "role": "Supplier / Vendor"
+    },
+    {
+      "id": "L_finmaker",
+      "name": "Finance - Maker",
+      "role": "Finance - Maker"
+    },
+    {
+      "id": "L_buyer",
+      "name": "Procurement / Buyer",
+      "role": "Procurement / Buyer"
+    },
+    {
+      "id": "L_recv",
+      "name": "Receiving / Warehouse",
+      "role": "Receiving / Warehouse"
+    },
+    {
+      "id": "L_tax",
+      "name": "Tax / Compliance",
+      "role": "Tax / Compliance"
+    },
+    {
+      "id": "L_eng",
+      "name": "Engineering",
+      "role": "Engineering"
+    },
+    {
+      "id": "L_appr",
+      "name": "Approver",
+      "role": "Approver"
+    },
+    {
+      "id": "L_sys",
+      "name": "Platform / System",
+      "role": "Platform / System"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "SubmitInvoice",
+      "type": "userTask",
+      "name": "Submit invoice + supporting documents",
+      "lane": "Supplier / Vendor",
+      "documentation": "Supplier submits the invoice via the authenticated external form (email + OTP), scoped to own records. Fields: invoiceNumber (text, mandatory), invoiceDate (date, mandatory), poReference (ref PO, mandatory), currency (dropdown of configured currencies, default = PO currency), lines [{poLineId (ref), description (text), quantity (number>0), unitPrice (number>=0), taxCodeId (ref TaxCode), taxableAmount (number), taxAmount (number)}], invoiceTotalInclTax (number>0, mandatory). Documents (AB package): invoice (mandatory), packingList, certificateOfOrigin, awbBl, bayan, healthCert, dgDeclaration (per import). Owning role: Supplier (invoice.capture submit). The buyer may assemble the package on the supplier's behalf (invoice.capture conditional). [SCOR S2.7 | ISO 7.5 records | source: AB invoice package + data-model Invoice]"
+    },
+    {
+      "id": "CaptureInvoice",
+      "type": "userTask",
+      "name": "Capture invoice in AP, normalize to base currency",
+      "lane": "Finance - Maker",
+      "documentation": "Finance-Maker captures/validates the invoice into accounts payable. The FX service normalizes invoiceTotalInclTax to base currency (convertToBase: base/null -> unchanged; else live rate rounded 2dp; on failure return original unconverted, never throws). Tax is a first-class line attribute so the match reconciles amounts INCLUDING tax; reverse-charge / import VAT flagged for imports; input-VAT/GST credit tracked on recoverable tax. Owning role: Finance-Maker (invoice.capture). Captures realized-FX basis (PO date rate vs payment date rate computed later). [SCOR S2.7 | source: build-new + platform-services FX/tax]"
+    },
+    {
+      "id": "MilestoneCheck",
+      "type": "userTask",
+      "name": "Confirm service milestone acceptance",
+      "lane": "Engineering",
+      "documentation": "Two-way path only. For service/contract POs, the PaymentMilestone acceptance replaces the GRN as the third leg's proxy: confirm milestoneId acceptanceStatus == accepted before clearing, so payment releases on acceptance. Fields: milestoneId (ref), acceptanceStatus (dropdown {pending|accepted|rejected}), paymentReleaseOnAcceptance (boolean). Owning role: Engineering / requester acceptance. If no milestone (simple service), proceeds straight to two-way match. [SCOR S2.7 | source: data-model PaymentMilestone + AB engineering completion]"
+    },
+    {
+      "id": "ResolvePrice",
+      "type": "userTask",
+      "name": "Buyer resolves price variance",
+      "lane": "Procurement / Buyer",
+      "documentation": "Buyer reviews a price-variance exception (invoice unit price differs from PO agreed price beyond tolerance). Resolution (dropdown, mandatory): accept (price valid, e.g. agreed change) | adjust (correct PO/invoice price within editable window) | credit-note (supplier reduces payable) | debit-note (buyer raises against supplier) | reject (send back to supplier). Owning role: Buyer (match.resolveException price; creditNote/debitNote.manage conditional). [SCOR S2.7 | ISO 8.6 | source: data-model resolution set]"
+    },
+    {
+      "id": "ResolveQty",
+      "type": "userTask",
+      "name": "Receiving resolves quantity / missing-GR",
+      "lane": "Receiving / Warehouse",
+      "documentation": "Receiving reviews qty-over (invoice qty > GRN accepted), qty-under (invoice qty < GRN), or missing-GR (no GRN found for a goods invoice). Resolution (dropdown, mandatory): accept (e.g. raise/correct a GRN, then re-match) | adjust (correct received qty) | credit-note (over-billed qty) | debit-note | reject. missing-GR is resolved by raising the GRN (diagram 08) or confirming the line is two-way (service). Owning role: Receiving (match.resolveException qty). [SCOR S2.7 | ISO 8.6 | source: data-model qty routing]"
+    },
+    {
+      "id": "ResolveTax",
+      "type": "userTask",
+      "name": "Tax/Compliance resolves tax mismatch",
+      "lane": "Tax / Compliance",
+      "documentation": "Tax/Compliance reviews a tax-mismatch (invoice tax code / rate / amount does not reconcile with the PO line tax or jurisdiction rule, including reverse-charge on imports). Resolution (dropdown, mandatory): accept (tax correct) | adjust (correct taxCodeId / taxAmount) | credit-note | debit-note | reject. Confirms recoverable input-VAT/GST credit eligibility. Owning role: Tax/Compliance (match.resolveException tax). [SCOR S2.7 | ISO 8.6 | source: data-model tax routing + tax service]"
+    },
+    {
+      "id": "HoldDuplicate",
+      "type": "userTask",
+      "name": "Hold / reject duplicate invoice",
+      "lane": "Finance - Maker",
+      "documentation": "Finance-Maker holds a DUPLICATE-INVOICE: no payable is created. Resolution (dropdown): reject (confirmed duplicate -> closed, supplier notified) | accept (false positive: distinct invoice with coincidental key -> override with note, re-route to match). No payment can be scheduled while a duplicate hold is open. Owning role: Finance-Maker. [SCOR S2.7 | ISO 8.6 | source: data-model DUPLICATE-INVOICE control]"
+    },
+    {
+      "id": "ApproveInvoice",
+      "type": "userTask",
+      "name": "Approve invoice before accounts (SoD)",
+      "lane": "Approver",
+      "documentation": "Invoice approval before it flows to accounts/payment. The matched (or note-adjusted) invoice/package is approved by the configured approver (AB: Procurement Head / PO-head approves the invoice package). SoD: the approver must NOT be the receiver of the same goods (receiver != invoice approver); buyer approval is conditional and not allowed if the buyer was the receiver. Owning role: Approver (invoice.approve; conditional PO-head/buyer). Sets Invoice.approvedBy. [SCOR S2.7 | ISO 8.4 | source: AB invoice-package approval + role-matrix SoD]"
+    },
+    {
+      "id": "TwoWayMatch",
+      "type": "serviceTask",
+      "name": "Two-way match (PO + invoice, incl. tax)",
+      "lane": "Platform / System",
+      "documentation": "Match the invoice against the PO only (no GRN). Checks within configurable MatchTolerance: pricePercent = abs(invoiceUnitPrice - poAgreedPrice)/poAgreedPrice; qtyPercent = abs(invoiceQty - poQty)/poQty; absolute amount band on invoiceTotalInclTax vs PO value incl. tax. Within all bands -> matched; outside any -> exception. Defaults configurable per tenant. [SCOR S2.7 | ISO 8.6 | source: data-model MatchTolerance]"
+    },
+    {
+      "id": "ThreeWayMatch",
+      "type": "serviceTask",
+      "name": "Three-way match (PO + GRN + invoice, incl. tax)",
+      "lane": "Platform / System",
+      "documentation": "Match the invoice against PO AND GRN. Checks within configurable MatchTolerance: price variance pricePercent (invoice vs PO agreed price), quantity qtyPercent (invoice qty vs GRN accepted qty, NOT ordered qty), absolute amount band on invoiceTotalInclTax vs (GRN accepted qty x agreed price + tax). Within all bands -> matched; outside any -> exception. Tax amounts must reconcile (amounts INCLUDING tax). [SCOR S2.7 | ISO 8.6 | source: data-model MatchResult THREE_WAY]"
+    },
+    {
+      "id": "ClearMatch",
+      "type": "serviceTask",
+      "name": "Auto-clear, relieve GR/IR",
+      "lane": "Platform / System",
+      "documentation": "On matched: set MatchResult.matchStatus = matched. For three-way, clear the GrIrEntry: GrIrEntry.invoiceId set, clearedAmount = matched amount, status -> cleared (or partially-cleared for partial invoice), relieving the goods-received-not-invoiced liability. Posts the payable to the creditor ledger. For two-way there is no GR/IR to relieve; the payable posts directly. Emits audit + SSE. [SCOR S2.7 | ISO 8.6 | source: build-new GR/IR clearing]"
+    },
+    {
+      "id": "PostNote",
+      "type": "serviceTask",
+      "name": "Post credit / debit note to creditor ledger",
+      "lane": "Platform / System",
+      "documentation": "Posts a CreditNote (supplier-issued, reduces payable) or DebitNote (buyer-raised) against the creditor ledger: fields linkedInvoiceId, linkedMatchExceptionId, amount, taxAmount, reason. The adjusted net payable then clears the GR/IR (three-way) or posts directly (two-way) and proceeds to approval. [SCOR S2.7 | ISO 8.6 | source: build-new credit/debit note]"
+    },
+    {
+      "id": "ToPayment",
+      "type": "serviceTask",
+      "name": "Release approved payable to payment (diagram 10)",
+      "lane": "Platform / System",
+      "documentation": "Approved, matched payable is released to the payment schedule (diagram 10). The creditor ledger reflects the net amount (after any credit/debit note and withholding). GR/IR is cleared for three-way lines. Emits audit + SSE. [SCOR S2.7 | source: build-new -> diagram 10]"
+    },
+    {
+      "id": "RejectInvoice",
+      "type": "sendTask",
+      "name": "Return invoice to supplier (rejected)",
+      "lane": "Platform / System",
+      "documentation": "Rejected invoice is returned to the supplier with the reason (notification on the order thread); no payable, no payment. Supplier may resubmit a corrected invoice, which re-enters at submit. Terminal for the current invoice. [SCOR S2.7 | source: data-model resolution reject]"
+    },
+    {
+      "id": "GwDuplicate",
+      "type": "exclusiveGateway",
+      "name": "Duplicate invoice?",
+      "lane": "Platform / System",
+      "documentation": "Standard AP duplicate control. Branch expression: EXISTS another invoice with same (supplierId AND invoiceNumber AND amount) -> DUPLICATE-INVOICE exception; else -> proceed to match-type gateway. Detection key = supplier + invoice number + amount. [SCOR S2.7 | ISO 8.6 | source: data-model MatchException DUPLICATE-INVOICE]"
+    },
+    {
+      "id": "GwMatchType",
+      "type": "exclusiveGateway",
+      "name": "GRN exists for this PO/category?",
+      "lane": "Platform / System",
+      "documentation": "Match-type selector. Branch expression: a GRN exists for the PO/category (goods-receipt materials, S2 direct) -> THREE_WAY (PO + GRN + Invoice); no GRN exists (services / freight / spares received by Engineering, S3/T2/T3) -> TWO_WAY (PO + Invoice) plus milestone acceptance for service POs. Rule: three-way iff a GRN exists for the category, else two-way. [SCOR S2.7 | ISO 8.6 | source: data-model match logic two-way vs three-way]"
+    },
+    {
+      "id": "GwMatched",
+      "type": "exclusiveGateway",
+      "name": "Within tolerance?",
+      "lane": "Platform / System",
+      "documentation": "Branch expression: pricePercent <= tolerance.pricePercent AND qtyPercent <= tolerance.qtyPercent AND abs(amountVariance) <= tolerance.absolute (all incl. tax) -> matchStatus = matched (auto-clear); else -> matchStatus = exception with an exceptionReason. First-time-match rate and three-way-match exception rate are tracked KPIs. [SCOR S2.7 | ISO 8.6 | source: data-model Match state machine]"
+    },
+    {
+      "id": "GwException",
+      "type": "exclusiveGateway",
+      "name": "Exception type -> route to resolver",
+      "lane": "Platform / System",
+      "documentation": "Routes by MatchException.type. Branch expression: type == 'price-variance' -> Buyer (price exceptions); type in {'qty-over','qty-under','missing-GR'} -> Receiving (qty exceptions); type == 'tax-mismatch' -> Tax/Compliance (tax exceptions); type == 'DUPLICATE-INVOICE' -> Finance-Maker (hold/reject, no payable created). routedTo per data-model: buyer for price, receiving for qty, finance for tax. [SCOR S2.7 | ISO 8.6 | source: data-model MatchException routing]"
+    },
+    {
+      "id": "GwResolution",
+      "type": "exclusiveGateway",
+      "name": "Resolution outcome?",
+      "lane": "Platform / System",
+      "documentation": "Branch expression on resolution: resolution in {accept, adjust} -> re-run match (the corrected invoice/PO/GRN/tax re-enters matching); resolution in {credit-note, debit-note} -> post the note to the creditor ledger then clear the adjusted payable; resolution == reject -> return invoice to supplier (terminal for this invoice). credit-note reduces payable (supplier-issued, linkedInvoiceId/linkedMatchExceptionId); debit-note is buyer-raised. [SCOR S2.7 | ISO 8.6 | source: data-model resolution + credit/debit note]"
+    },
+    {
+      "id": "Start",
+      "type": "startEvent",
+      "name": "Goods received / service accepted",
+      "lane": "Supplier / Vendor",
+      "documentation": "Entry trigger: a GRN was raised (materials, diagram 08) or a service/spares requisition was closed 'received as per order' (no GRN) or a service milestone was accepted. The supplier submits the invoice against the PO. [SCOR S2.7 Authorize Supplier Payment | source: build-new + AB invoice package]"
+    },
+    {
+      "id": "End",
+      "type": "endEvent",
+      "name": "Matched and approved -> payment (diagram 10)",
+      "lane": "Platform / System",
+      "documentation": "Outcome: the invoice is matched (auto-cleared or resolved), approved, GR/IR relieved where applicable, payable posted to the creditor ledger, and handed to diagram 10 payments and installments. Rejected/duplicate invoices exit without a payable. [SCOR S2.7 | source: build-new]"
+    }
+  ],
+  "flows": [
+    {
+      "id": "f1",
+      "from": "Start",
+      "to": "SubmitInvoice",
+      "guard": ""
+    },
+    {
+      "id": "f2",
+      "from": "SubmitInvoice",
+      "to": "CaptureInvoice",
+      "guard": ""
+    },
+    {
+      "id": "f3",
+      "from": "CaptureInvoice",
+      "to": "GwDuplicate",
+      "guard": ""
+    },
+    {
+      "id": "f4",
+      "from": "GwDuplicate",
+      "to": "HoldDuplicate",
+      "guard": "duplicate (supplier+invoice#+amount)"
+    },
+    {
+      "id": "f5",
+      "from": "GwDuplicate",
+      "to": "GwMatchType",
+      "guard": "not duplicate"
+    },
+    {
+      "id": "f6",
+      "from": "GwMatchType",
+      "to": "ThreeWayMatch",
+      "guard": "GRN exists -> three-way"
+    },
+    {
+      "id": "f7",
+      "from": "GwMatchType",
+      "to": "MilestoneCheck",
+      "guard": "no GRN -> two-way"
+    },
+    {
+      "id": "f8",
+      "from": "MilestoneCheck",
+      "to": "TwoWayMatch",
+      "guard": ""
+    },
+    {
+      "id": "f9",
+      "from": "TwoWayMatch",
+      "to": "GwMatched",
+      "guard": ""
+    },
+    {
+      "id": "f10",
+      "from": "ThreeWayMatch",
+      "to": "GwMatched",
+      "guard": ""
+    },
+    {
+      "id": "f11",
+      "from": "GwMatched",
+      "to": "ClearMatch",
+      "guard": "within tolerance"
+    },
+    {
+      "id": "f12",
+      "from": "GwMatched",
+      "to": "GwException",
+      "guard": "outside tolerance (exception)"
+    },
+    {
+      "id": "f13",
+      "from": "GwException",
+      "to": "ResolvePrice",
+      "guard": "price-variance"
+    },
+    {
+      "id": "f14",
+      "from": "GwException",
+      "to": "ResolveQty",
+      "guard": "qty-over / qty-under / missing-GR"
+    },
+    {
+      "id": "f15",
+      "from": "GwException",
+      "to": "ResolveTax",
+      "guard": "tax-mismatch"
+    },
+    {
+      "id": "f16",
+      "from": "ResolvePrice",
+      "to": "GwResolution",
+      "guard": ""
+    },
+    {
+      "id": "f17",
+      "from": "ResolveQty",
+      "to": "GwResolution",
+      "guard": ""
+    },
+    {
+      "id": "f18",
+      "from": "ResolveTax",
+      "to": "GwResolution",
+      "guard": ""
+    },
+    {
+      "id": "f19",
+      "from": "HoldDuplicate",
+      "to": "GwResolution",
+      "guard": ""
+    },
+    {
+      "id": "f20",
+      "from": "GwResolution",
+      "to": "GwMatchType",
+      "guard": "accept / adjust -> re-match"
+    },
+    {
+      "id": "f21",
+      "from": "GwResolution",
+      "to": "PostNote",
+      "guard": "credit-note / debit-note"
+    },
+    {
+      "id": "f22",
+      "from": "GwResolution",
+      "to": "RejectInvoice",
+      "guard": "reject"
+    },
+    {
+      "id": "f23",
+      "from": "PostNote",
+      "to": "ClearMatch",
+      "guard": ""
+    },
+    {
+      "id": "f24",
+      "from": "ClearMatch",
+      "to": "ApproveInvoice",
+      "guard": ""
+    },
+    {
+      "id": "f25",
+      "from": "ApproveInvoice",
+      "to": "ToPayment",
+      "guard": ""
+    },
+    {
+      "id": "f26",
+      "from": "ToPayment",
+      "to": "End",
+      "guard": ""
+    },
+    {
+      "id": "f27",
+      "from": "RejectInvoice",
+      "to": "End",
+      "guard": "no payable"
+    }
+  ]
+}

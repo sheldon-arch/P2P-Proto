@@ -1,0 +1,275 @@
+{
+  "id": "e04-ncr-capa",
+  "file": "e04-ncr-capa.bpmn",
+  "name": "Edge Case e04 - Nonconformance to CAPA to Supplier Re-evaluation Loop",
+  "lanes": [
+    {
+      "id": "L_recv",
+      "name": "Receiving / Warehouse",
+      "role": "Receiving / Warehouse"
+    },
+    {
+      "id": "L_qc",
+      "name": "Quality",
+      "role": "Quality"
+    },
+    {
+      "id": "L_buyer",
+      "name": "Procurement / Buyer",
+      "role": "Procurement / Buyer"
+    },
+    {
+      "id": "L_supplier",
+      "name": "Supplier / Vendor",
+      "role": "Supplier / Vendor"
+    },
+    {
+      "id": "L_sys",
+      "name": "Platform / System",
+      "role": "Platform / System"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "Inspect",
+      "type": "userTask",
+      "name": "8.6 Receiving inspection / verification",
+      "lane": "Quality",
+      "documentation": "Quality performs receiving verification (qc.inspect). Materials path: store sends COA + sample to QC; QC inspects/tests against spec (skip-lot / sampling / 100% / source inspection / CoC-only per the risk-based inspection level set by ISO 8.4.2 item criticality). Hard block: no COA -> cannot release (AB rule). Retain conformity evidence + traceability to the authorizing person (ISO 8.6). Spares/services bypass QC (received by Engineering against the requisition, no GRN) - an NCR there is raised by Engineering. [SCOR S2.5 | ISO 8.6 | source: albahja-receiving-inspection-grn + iso 8.4.2/8.6]"
+    },
+    {
+      "id": "RaiseNcr",
+      "type": "userTask",
+      "name": "8.7 Raise NCR (identify + segregate)",
+      "lane": "Quality",
+      "documentation": "Raise the NCR (ncr.raise). Fields (AB + ISO 8.7): item (name/itemId), deliveryNote# (mandatory), date (delivery date), description of non-compliance (mandatory), percentNonConformance (0-100), image (>=1 attachment). raisedBy = QC, Finance-Maker (C: FM raise), or requester / Engineering (C: eng raise). Goods are physically identified and SEGREGATED (quarantine bin) per ISO 8.7 so nonconforming product cannot be used unintentionally. NCR status = raised; SSE + audit (category: ticket/quality). [SCOR S2.5 | ISO 8.7 control of nonconforming outputs | source: albahja-receiving-inspection-grn NCR fields + iso 8.7 identify/segregate]"
+    },
+    {
+      "id": "Scar",
+      "type": "userTask",
+      "name": "Handler resolves with supplier (SCAR)",
+      "lane": "Procurement / Buyer",
+      "documentation": "Procurement handler (capa.manage, with supplier) issues a Supplier Corrective Action Request (SCAR) for any systemic nonconformance. The handler resolves with the supplier: replace / credit / corrective action. The SCAR opens the CAPA record {ncrId, supplierId, ...} and sets a response SLA. CAPA responsiveness (avg days to close) feeds the scorecard responsiveness dimension. [ISO 10.2 / 8.4 | source: albahja-receiving-inspection-grn handler resolves with supplier + role-permission-matrix capa.manage]"
+    },
+    {
+      "id": "RootCause",
+      "type": "userTask",
+      "name": "10.2 Supplier root cause + corrective action",
+      "lane": "Supplier / Vendor",
+      "documentation": "Supplier (capa.manage C: respond) submits the corrective action via the external form (email + OTP): rootCause (mandatory, e.g. 5-why), correctiveAction (immediate correction), preventiveAction (systemic, prevent recurrence), targetDate, evidence attachments. CAPA status = action-proposed. ISO 10.2 requires root cause, action, and a later effectiveness review, all retained. [ISO 10.2 nonconformity and corrective action | source: data-model CorrectiveAction/CAPA rootCause/action + iso 10.2]"
+    },
+    {
+      "id": "Effectiveness",
+      "type": "userTask",
+      "name": "Effectiveness review",
+      "lane": "Quality",
+      "documentation": "Quality reviews effectiveness (capa.manage): verify the corrective action actually prevented recurrence (e.g. next N lots conforming, no repeat NCR within a window). effectivenessReview field {pending | effective | not-effective}. not-effective -> re-open the SCAR (loop back to root cause). effective -> CAPA closed, NCR closed (NCR closes when disposition done AND, if CAPA opened, effectiveness verified). [ISO 10.2 effectiveness review | source: data-model effectivenessReview + iso 10.2]"
+    },
+    {
+      "id": "Release",
+      "type": "serviceTask",
+      "name": "Release - GRN raised (no NCR)",
+      "lane": "Platform / System",
+      "documentation": "Conforming outcome. GRN raised (links requisition + PO reference), GR/IR liability accrued, commitment relieved to actual (e02), delivery counts toward OTD/OTIF and the four-factor perfect-order metric (diagram 12). Quantity tolerance: labels/cartons/printed packaging routinely +/-5-10% from ordered -> handler adjusts PO qty to actual before GRN (audited); no-tolerance items skip adjustment. This branch terminates the loop with no nonconformance. [SCOR S2.6 | ISO 8.6 | source: albahja-receiving-inspection-grn GRN + e02 relief]"
+    },
+    {
+      "id": "ReturnPath",
+      "type": "serviceTask",
+      "name": "Return -> RMA (diagram 11)",
+      "lane": "Platform / System",
+      "documentation": "disposition == return: control passes to the Returns/RMA flow (diagram 11, SCOR S4.1-S4.5) carrying linkedNcrId. The physical return (authorize -> identify condition -> schedule shipment -> close/adjust with credit/debit note) runs there; this loop continues in parallel with the systemic CAPA. [SCOR S4 | ISO 8.7 | source: data-model NCR/Return loop + diagram 11 cross-link]"
+    },
+    {
+      "id": "ReworkScrap",
+      "type": "serviceTask",
+      "name": "Rework / concession / scrap (retain record)",
+      "lane": "Platform / System",
+      "documentation": "disposition IN {rework, use-as-is-concession, scrap}: rework -> correction + re-inspection (loops to 8.6 on re-presentation); use-as-is-concession -> documented acceptance, concession authority retained, supplier may issue a credit for the concession discount; scrap -> write-off, buyer may raise a debit note for the scrapped value. Each retains the ISO 8.7 record (nature, action taken, concession, deciding authority). [ISO 8.7 | source: iso 8.7 disposition records + data-model credit/debit note]"
+    },
+    {
+      "id": "ReEval",
+      "type": "serviceTask",
+      "name": "8.4.1 Feed supplier re-evaluation (scorecard)",
+      "lane": "Platform / System",
+      "documentation": "The closed NCR/CAPA feeds supplier monitoring + re-evaluation (ISO 8.4.1). The NCR counts against the quality dimension (PPM/defect/NCR rate) and, if late/wrong/damaged, against the four-factor perfect-order RL.1.2; CAPA responsiveness feeds the responsiveness dimension; recurring NCRs auto-affect the composite (the platform CHAINS 8.6->8.7->10.2->8.4.1 so the score reflects the loop). Re-computes the period scorecard (diagram 12) and updates the consecutive-below streak counter. [ISO 8.4.1 monitoring/re-evaluation | source: iso central feedback loop 'recurring NCRs auto-affect supplier score' + diagram 12]"
+    },
+    {
+      "id": "Suspend",
+      "type": "serviceTask",
+      "name": "Suspend supplier (SUSPENDED, block new POs)",
+      "lane": "Platform / System",
+      "documentation": "Set supplier.status = SUSPENDED with suspendReason + suspendedBy + suspendedAt. SUSPENDED blocks new PO issue (PO guard requires supplier ONBOARDED) but does not offboard; existing open POs are handled per policy. AVL status set to Suspended (diagram 12). On resolution (effective CAPA, renewed cert, lifted sanction) SUSPENDED -> ONBOARDED. Notifications to buyer, QC, management; audit logged. [ISO 8.4.1 | source: data-model 'ONBOARDED -> SUSPENDED ... SUSPENDED blocks new POs; SUSPENDED -> ONBOARDED on resolution']"
+    },
+    {
+      "id": "Monitor",
+      "type": "serviceTask",
+      "name": "Continue monitoring (remain ONBOARDED)",
+      "lane": "Platform / System",
+      "documentation": "No suspend trigger met. Supplier remains ONBOARDED; the scorecard, streak counters, and risk-based re-evaluation cadence (monthly KPI / quarterly review / annual re-approval, sooner for critical/high-risk) continue. The closed NCR/CAPA stays on the supplier's corrective-action log. [ISO 8.4.1 | source: iso re-eval cadence + data-model monitoring]"
+    },
+    {
+      "id": "GwConform",
+      "type": "exclusiveGateway",
+      "name": "conforming?",
+      "lane": "Quality",
+      "documentation": "Gate. QC result == pass (within spec, COA valid, quantity within PO tolerance) -> conforming: release, GRN raised, GR/IR accrued, onward to invoicing (diagram 08/09); no NCR. QC result == fail / quarantine (off-spec, damage, missing/invalid COA, expired, wrong item) -> nonconforming: raise NCR. NCRs can also be raised AFTER GRN when QC finds damage/off-spec later (post-GRN NCR re-enters here). [SCOR S2.5 | ISO 8.6/8.7 | source: albahja-receiving-inspection-grn QC approved? + post-GRN NCR]"
+    },
+    {
+      "id": "GwDisposition",
+      "type": "exclusiveGateway",
+      "name": "disposition?",
+      "lane": "Quality",
+      "documentation": "Disposition decision (ISO 8.7 correction/return/concession). Exact set: {return | rework | use-as-is-concession | scrap}. return -> hands to the RMA flow (diagram 11, S4) with linkedNcrId set. rework -> supplier or in-house correction then re-inspect. use-as-is-concession -> accept off-spec under a documented concession (deciding authority recorded). scrap -> write off (no return, debit note may be raised). The deciding authority and the disposition are retained on the NCR (ISO 8.7 record requirement). All four dispositions still proceed to SCAR/CAPA when the cause is systemic. [SCOR S2.5 | ISO 8.7 | source: data-model disposition {return|rework|use-as-is-concession|scrap} + iso 8.7]"
+    },
+    {
+      "id": "GwEffective",
+      "type": "exclusiveGateway",
+      "name": "effective?",
+      "lane": "Quality",
+      "documentation": "Gate. effectivenessReview == 'effective' -> close CAPA + NCR, feed re-evaluation. effectivenessReview == 'not-effective' -> re-open SCAR, supplier resubmits root cause/action (loop). Repeated not-effective outcomes contribute to the consecutive-below counter and weigh toward suspension. [ISO 10.2 | source: data-model NCR closed when effectiveness verified]"
+    },
+    {
+      "id": "GwSuspend",
+      "type": "exclusiveGateway",
+      "name": "suspend supplier?",
+      "lane": "Platform / System",
+      "documentation": "Suspend gate (event-driven, ISO 8.4.1 re-evaluation -> AVL status). Trigger conditions (configurable): a critical NCR, two consecutive periods below target (consecutive-below counter), a failed audit, an expired mandatory ISO cert, a sanctions hit, or an unresolved/not-effective active CAPA. If any trigger holds -> set supplier ONBOARDED -> SUSPENDED (blocks new POs without offboarding). Suspend is split by permission: Quality (suppliers.suspend C: quality stop), Tax/Compliance (C: compliance/sanctions hit), Admin (always). Else -> remain ONBOARDED, monitoring continues. [ISO 8.4.1 | source: data-model supplier SUSPENDED state + role-permission-matrix split suspend + iso event triggers]"
+    },
+    {
+      "id": "Start",
+      "type": "startEvent",
+      "name": "Goods received for inspection",
+      "lane": "Receiving / Warehouse",
+      "documentation": "Entry. Goods are received against the requisition/PO and presented for receiving verification. This edge case isolates the ISO feedback loop 8.6 -> 8.7 -> 10.2 -> 8.4.1. [SCOR S2.5 Inspect and Verify | ISO 8.6 release/receiving verification | source: albahja-receiving-inspection-grn + iso-supply-chain-standards central feedback loop]"
+    },
+    {
+      "id": "End",
+      "type": "endEvent",
+      "name": "NCR/CAPA closed, supplier re-evaluated",
+      "lane": "Platform / System",
+      "documentation": "Terminal. NCR dispositioned + (if systemic) CAPA closed with verified effectiveness; supplier re-evaluated; AVL status updated; supplier suspended or continuing under monitoring. The full ISO 8.6 -> 8.7 -> 10.2 -> 8.4.1 loop is closed and recorded. [ISO 8.6->8.7->10.2->8.4.1 / SCOR OE3 | source: build-new + iso loop]"
+    }
+  ],
+  "flows": [
+    {
+      "id": "f1",
+      "from": "Start",
+      "to": "Inspect",
+      "guard": ""
+    },
+    {
+      "id": "f2",
+      "from": "Inspect",
+      "to": "GwConform",
+      "guard": ""
+    },
+    {
+      "id": "f3",
+      "from": "GwConform",
+      "to": "Release",
+      "guard": "conforming (pass)"
+    },
+    {
+      "id": "f4",
+      "from": "GwConform",
+      "to": "RaiseNcr",
+      "guard": "nonconforming (fail / quarantine / post-GRN)"
+    },
+    {
+      "id": "f5",
+      "from": "Release",
+      "to": "End",
+      "guard": ""
+    },
+    {
+      "id": "f6",
+      "from": "RaiseNcr",
+      "to": "GwDisposition",
+      "guard": ""
+    },
+    {
+      "id": "f7",
+      "from": "GwDisposition",
+      "to": "ReturnPath",
+      "guard": "return"
+    },
+    {
+      "id": "f8",
+      "from": "GwDisposition",
+      "to": "ReworkScrap",
+      "guard": "rework / concession / scrap"
+    },
+    {
+      "id": "f9",
+      "from": "ReturnPath",
+      "to": "Scar",
+      "guard": ""
+    },
+    {
+      "id": "f10",
+      "from": "ReworkScrap",
+      "to": "Scar",
+      "guard": ""
+    },
+    {
+      "id": "f11",
+      "from": "Scar",
+      "to": "RootCause",
+      "guard": ""
+    },
+    {
+      "id": "f12",
+      "from": "RootCause",
+      "to": "Effectiveness",
+      "guard": ""
+    },
+    {
+      "id": "f13",
+      "from": "Effectiveness",
+      "to": "GwEffective",
+      "guard": ""
+    },
+    {
+      "id": "f14",
+      "from": "GwEffective",
+      "to": "Scar",
+      "guard": "not-effective (re-open SCAR)"
+    },
+    {
+      "id": "f15",
+      "from": "GwEffective",
+      "to": "ReEval",
+      "guard": "effective (close CAPA + NCR)"
+    },
+    {
+      "id": "f16",
+      "from": "ReEval",
+      "to": "GwSuspend",
+      "guard": ""
+    },
+    {
+      "id": "f17",
+      "from": "GwSuspend",
+      "to": "Suspend",
+      "guard": "critical NCR / 2 consecutive below / failed audit / expired cert / sanctions / active CAPA"
+    },
+    {
+      "id": "f18",
+      "from": "GwSuspend",
+      "to": "Monitor",
+      "guard": "no trigger - continue"
+    },
+    {
+      "id": "f19",
+      "from": "Suspend",
+      "to": "End",
+      "guard": ""
+    },
+    {
+      "id": "f20",
+      "from": "Monitor",
+      "to": "End",
+      "guard": ""
+    }
+  ]
+}

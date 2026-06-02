@@ -1,0 +1,51 @@
+[
+  {
+    "code": "ADV100",
+    "label": "100% Advance",
+    "description": "Full payment in advance",
+    "effectiveFrom": "2025-01-01",
+    "effectiveTo": null
+  },
+  {
+    "code": "PA-DOC",
+    "label": "Part Advance + Against Documents",
+    "description": "Part advance, balance against shipping documents",
+    "effectiveFrom": "2025-01-01",
+    "effectiveTo": null
+  },
+  {
+    "code": "PA-SHIP",
+    "label": "Part Advance + Against Shipment",
+    "description": "Part advance, balance against shipment received",
+    "effectiveFrom": "2025-01-01",
+    "effectiveTo": null
+  },
+  {
+    "code": "30-70",
+    "label": "30/70",
+    "description": "30% advance, 70% on delivery",
+    "effectiveFrom": "2025-01-01",
+    "effectiveTo": null
+  },
+  {
+    "code": "NET30",
+    "label": "Net 30",
+    "description": "Net 30 days",
+    "effectiveFrom": "2025-01-01",
+    "effectiveTo": null
+  },
+  {
+    "code": "NET60",
+    "label": "Net 60",
+    "description": "Net 60 days",
+    "effectiveFrom": "2025-01-01",
+    "effectiveTo": null
+  },
+  {
+    "code": "NET90",
+    "label": "Net 90",
+    "description": "Net 90 days",
+    "effectiveFrom": "2025-01-01",
+    "effectiveTo": null
+  }
+]

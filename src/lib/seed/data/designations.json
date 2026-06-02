@@ -1,0 +1,37 @@
+[
+  {
+    "id": "D1",
+    "label": "Associate",
+    "level": 1
+  },
+  {
+    "id": "D2",
+    "label": "Senior Associate",
+    "level": 2
+  },
+  {
+    "id": "D3",
+    "label": "Lead",
+    "level": 3
+  },
+  {
+    "id": "D4",
+    "label": "Manager",
+    "level": 4
+  },
+  {
+    "id": "D5",
+    "label": "Senior Manager",
+    "level": 5
+  },
+  {
+    "id": "D6",
+    "label": "Director",
+    "level": 6
+  },
+  {
+    "id": "D7",
+    "label": "VP",
+    "level": 7
+  }
+]

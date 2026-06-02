@@ -1,0 +1,52 @@
+[
+  {
+    "id": "RFQ-HERO",
+    "ticketId": "TKT-HERO",
+    "reference": "RFQ-2026-0042",
+    "requisitionId": "TKT-HERO",
+    "lineItems": [
+      {
+        "lineId": "TL-HERO-FIN",
+        "itemId": "ITM-0006",
+        "quantity": 5000,
+        "uom": "DRUM",
+        "needDate": "2026-08-06"
+      }
+    ],
+    "invitedSupplierIds": [
+      "SUP-0001",
+      "SUP-0002",
+      "SUP-0003"
+    ],
+    "internalTargetPrice": 140.74894,
+    "sentDate": "2026-05-26",
+    "deadline": "2026-05-31",
+    "status": "RESPONDED",
+    "internalTargetPriceNote": "NEVER sent to supplier"
+  },
+  {
+    "id": "RFQ-HERO-CTN",
+    "ticketId": "TKT-HERO",
+    "reference": "RFQ-2026-0043",
+    "requisitionId": "TKT-HERO",
+    "lineItems": [
+      {
+        "lineId": "TL-HERO-CTN",
+        "itemId": "ITM-0063",
+        "quantity": 200000,
+        "uom": "CTN",
+        "needDate": "2026-06-10"
+      }
+    ],
+    "invitedSupplierIds": [
+      "SUP-0005",
+      "SUP-0006",
+      "SUP-0007"
+    ],
+    "internalTargetPrice": 0.082,
+    "sentDate": "2026-05-26",
+    "deadline": "2026-05-31",
+    "status": "RESPONDED",
+    "internalTargetPriceNote": "NEVER sent to supplier"
+  }
+]

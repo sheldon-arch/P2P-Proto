@@ -1,0 +1,179 @@
+/**
+ * Seed loader. Imports the deterministic FMCG seed JSON (relabeled from the
+ * reference set by scripts/reseed-fmcg.mjs; RNG 20260601, demo-today 2026-06-01,
+ * company "Harvest Foods") and assembles a store snapshot.
+ *
+ * History (closed, 12-month) and live (in-flight) records of the same entity are
+ * merged into ONE collection per entity, distinguished by their state fields —
+ * so a requisition is the same `tickets` record whether closed or in-flight, and
+ * every screen queries one collection per its role's lens.
+ *
+ * Do not hand-edit the JSON; regenerate via `pnpm exec node scripts/reseed-fmcg.mjs`.
+ */
+import _index from "./data/_index.json";
+
+// masters
+import currencies from "./data/currencies.json";
+import uoms from "./data/uoms.json";
+import payment_terms from "./data/payment_terms.json";
+import tax_codes from "./data/tax_codes.json";
+import warehouses from "./data/warehouses.json";
+import segments from "./data/segments.json";
+import projects from "./data/projects.json";
+import budgets from "./data/budgets.json";
+import verticals from "./data/verticals.json";
+import designations from "./data/designations.json";
+import roles from "./data/roles.json";
+import users from "./data/users.json";
+// suppliers / items
+import suppliers from "./data/suppliers.json";
+import supplier_scorecards from "./data/supplier_scorecards.json";
+import items from "./data/items.json";
+// history (closed)
+import history_tickets from "./data/history_tickets.json";
+import history_lines from "./data/history_lines.json";
+import history_grns from "./data/history_grns.json";
+import history_invoices from "./data/history_invoices.json";
+import history_payments from "./data/history_payments.json";
+import ncrs from "./data/ncrs.json";
+// inventory
+import inventory from "./data/inventory.json";
+import stock_movements from "./data/stock_movements.json";
+// live (in-flight)
+import live_tickets from "./data/live_tickets.json";
+import live_requisition_lines from "./data/live_requisition_lines.json";
+import live_rfqs from "./data/live_rfqs.json";
+import live_quotes from "./data/live_quotes.json";
+import live_pos from "./data/live_pos.json";
+import live_grns from "./data/live_grns.json";
+import live_invoices from "./data/live_invoices.json";
+import live_installments from "./data/live_installments.json";
+import live_returns from "./data/live_returns.json";
+import live_credit_notes from "./data/live_credit_notes.json";
+import live_capas from "./data/live_capas.json";
+// qualification spine
+import qualifications from "./data/qualifications.json";
+import hygiene_audits from "./data/hygiene_audits.json";
+import retention_samples from "./data/retention_samples.json";
+import quality_agreements from "./data/quality_agreements.json";
+import qualification_matrix from "./data/qualification_matrix.json";
+// discovery / freight
+import freight_forwarders from "./data/freight_forwarders.json";
+import discovery_candidates from "./data/discovery_candidates.json";
+
+export const DEMO_PARAMS = _index as {
+  company: string;
+  baseCurrency: string;
+  demoToday: string;
+  seed: number;
+  historyWindowMonths: number;
+  counts: Record<string, number>;
+  hero: { requisition: string; rfq: string; note: string };
+  kpiNote: string;
+};
+
+type Row = Record<string, unknown>;
+const arr = (x: unknown): Row[] => (Array.isArray(x) ? (x as Row[]) : []);
+
+import { DEFAULT_APPROVER_LIMIT } from "@/lib/domain/constants";
+
+// Approver limits per vertical for the demo (matches personas: Finance approver
+// ~150k, Management ~1M). Used to seed each requisition's approval chain so the
+// approve/route/auto-approve behavior is real and engine-driven.
+const STAGE_LIMITS: Record<string, number> = {
+  REQ_DEPARTMENT: 75000,
+  PROCUREMENT: 200000,
+  FINANCE: 150000,
+  MANAGEMENT: 1_000_000,
+};
+
+/**
+ * Derive per-stage approval completion records for every requisition still at
+ * INITIATION. The first stage is IN_PROGRESS (the current step); later stages
+ * are NOT_STARTED. The engine then drives approve/route/auto-approve against
+ * these — no hand-faked statuses. Stage order: Req Dept -> Procurement ->
+ * Finance -> Management.
+ */
+function deriveApprovalCompletions(tickets: Row[]): Row[] {
+  const STAGES = ["REQ_DEPARTMENT", "PROCUREMENT", "FINANCE", "MANAGEMENT"];
+  const out: Row[] = [];
+  for (const t of tickets) {
+    if (t.stage !== "INITIATION") continue;
+    const recordId = (t.id ?? t.identifier) as string;
+    const amount = Number(t.totalAmountInBase ?? 0);
+    STAGES.forEach((stage, i) => {
+      out.push({
+        completionId: `${recordId}-${stage}`,
+        recordId,
+        stage,
+        vertical: stage === "FINANCE" ? "FINANCE" : stage === "MANAGEMENT" ? "MANAGEMENT" : stage,
+        stageOrder: i + 1,
+        completionStatus: i === 0 ? "IN_PROGRESS" : "NOT_STARTED",
+        approverLimit: STAGE_LIMITS[stage] ?? DEFAULT_APPROVER_LIMIT,
+        totalAmountInBase: amount,
+        isAutoApproved: false,
+        revertedCount: 0,
+      });
+    });
+  }
+  return out;
+}
+
+/**
+ * Build the store snapshot: a map of collection name -> rows. History and live
+ * collections of the same entity are concatenated into one collection.
+ */
+export function buildSeedSnapshot(): Record<string, Row[]> {
+  const allTickets = [...arr(history_tickets), ...arr(live_tickets)];
+  return {
+    approvalCompletions: deriveApprovalCompletions(allTickets),
+    // masters
+    currencies: arr(currencies),
+    uoms: arr(uoms),
+    paymentTerms: arr(payment_terms),
+    taxCodes: arr(tax_codes),
+    warehouses: arr(warehouses),
+    segments: arr(segments),
+    projects: arr(projects),
+    budgets: arr(budgets),
+    verticals: arr(verticals),
+    designations: arr(designations),
+    roles: arr(roles),
+    users: arr(users),
+    // suppliers / items
+    suppliers: arr(suppliers),
+    scorecards: arr(supplier_scorecards),
+    items: arr(items),
+    // requisitions: history + live merged
+    tickets: [...arr(history_tickets), ...arr(live_tickets)],
+    requisitionLines: [...arr(history_lines), ...arr(live_requisition_lines)],
+    // sourcing
+    rfqs: arr(live_rfqs),
+    quotes: arr(live_quotes),
+    // POs / GRNs / invoices / payments: history + live merged
+    purchaseOrders: arr(live_pos),
+    grns: [...arr(history_grns), ...arr(live_grns)],
+    invoices: [...arr(history_invoices), ...arr(live_invoices)],
+    payments: arr(history_payments),
+    installments: arr(live_installments),
+    creditNotes: arr(live_credit_notes),
+    // quality
+    ncrs: arr(ncrs),
+    capas: arr(live_capas),
+    returns: arr(live_returns),
+    qualifications: arr(qualifications),
+    hygieneAudits: arr(hygiene_audits),
+    retentionSamples: arr(retention_samples),
+    qualityAgreements: arr(quality_agreements),
+    qualificationMatrix: arr(qualification_matrix),
+    // inventory
+    inventory: arr(inventory),
+    stockMovements: arr(stock_movements),
+    // discovery / freight
+    freightForwarders: arr(freight_forwarders),
+    discoveryCandidates: arr(discovery_candidates),
+  };
+}
+
+export const DEMO_TODAY = DEMO_PARAMS.demoToday;
+export const BASE_CURRENCY = DEMO_PARAMS.baseCurrency;

@@ -1,0 +1,339 @@
+{
+  "id": "05-purchase-order",
+  "file": "05-purchase-order.bpmn",
+  "name": "Unified P2P - 05 Purchase Order (Issue, Commit, Acknowledge, Amend, Call-off)",
+  "lanes": [
+    {
+      "id": "L_buyer",
+      "name": "Procurement / Buyer",
+      "role": "Procurement / Buyer"
+    },
+    {
+      "id": "L_appr",
+      "name": "Approver",
+      "role": "Approver"
+    },
+    {
+      "id": "L_budget",
+      "name": "Budget Owner",
+      "role": "Budget Owner"
+    },
+    {
+      "id": "L_supplier",
+      "name": "Supplier / Vendor",
+      "role": "Supplier / Vendor"
+    },
+    {
+      "id": "L_sys",
+      "name": "Platform / System",
+      "role": "Platform / System"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "DraftPO",
+      "type": "userTask",
+      "name": "Draft PO from requisition + awarded quote",
+      "lane": "Procurement / Buyer",
+      "documentation": "Buyer (permission po.create) opens the in-system PO form, pre-filled from the requisition header and the awarded Quotation. HEADER FIELDS: poNumber (string, auto-generated, configurable pattern - see annotation, immutable once issued); poType (dropdown, mandatory, one of {item | service | maintenance | freight-forwarder}, default derived from requisition.category: Items->item, Services->service, factory-maintenance->maintenance, freight engagement->freight-forwarder); requisitionRef (reference to Requisition, mandatory, read-only, immutable); quotationRef (reference to Quotation, mandatory, read-only); supplierName + supplierCode (reference to Supplier, mandatory, read-only, code format S/##### from Diagram 06); currency (dropdown, mandatory, default = quotation.currency, value set {USD|OMR|SAR|AED|EUR|CHF|INR} configurable per tenant); exchangeRate (decimal, optional, MANUAL OVERRIDE of the FX service rate - AB; default = live convertToBase rate for currency on PO date, editable; if blank the FX service rate is used; carries rateDate + source); incoterm (dropdown, mandatory, Incoterms 2020 {EXW|FCA|FOB|CFR|CIF|CPT|CIP|DAP|DPU|DDP}, default = quotation.incoterm, validated against transport mode: FOB/CFR/CIF are sea-only, air/multimodal must use FCA/CPT/CIP/DAP); scopeOfWork (long text, mandatory for poType in {service,maintenance}, optional for item, default from quotation/requisition); termsAndConditions (long text, mandatory, EDITABLE, default = tenant standard T&C template, buyer may edit per PO - AB); deliveryPlace (text/reference to warehouse or site address, mandatory); deliveryDate (date, mandatory, default = needDate from requisition, must be >= today); contactPerson (text, mandatory, default = buyer name + phone); isoDocRef (text, optional, the ISO 8.4.3 document reference tag for records traceability); notes (long text, optional); attachments (file[], optional). The form is dynamic: the field engine shows/hides and sets mandatory by poType (service/maintenance hide qty-tolerance + show scopeOfWork + milestone schedule; freight-forwarder shows carrier-ranking ref + AWB/BL placeholder). [SCOR S2.1 | ISO 8.4.3 a-f | source: AB PO form + RA field engine + data-model PurchaseOrder]"
+    },
+    {
+      "id": "DraftLines",
+      "type": "userTask",
+      "name": "Enter PO lines, tax, tolerance",
+      "lane": "Procurement / Buyer",
+      "documentation": "Buyer enters one or more PO LINES, defaulted from requisition lines + awarded quote prices. LINE FIELDS: itemRef (reference to Item, mandatory for poType=item, must be an ONBOARDED item or auto-created per Diagram 07; for service/maintenance a free-text service description is allowed); description (text, auto-populated from item, editable); quantity (decimal >0, mandatory); unitOfMeasure (dropdown from UoM master, mandatory, default from item.purchaseUom); agreedPrice (decimal >=0, mandatory, default = quotation line price in PO currency); tolerancePercent (decimal, optional, default 0; for labels/cartons/printed PM set +/-5 to 10 percent so receiving may amend the PO qty to actual delivered before GRN - AB; applies to qty, not price); taxCodeRef (reference to TaxCode master, mandatory where jurisdiction requires, dropdown of codes by type {GST|VAT|duty|reverse-charge}); taxableAmount (decimal, computed = quantity x agreedPrice); taxAmount (decimal, computed = taxableAmount x TaxCode.rate; reverse-charge flag for imports); lineValue (decimal, computed = taxableAmount + taxAmount). HEADER TOTALS computed: poValue = sum(lineValue) in PO currency; poValueInBase = convertToBase(poValue, currency) using exchangeRate override if set else FX service (graceful degradation: on FX failure the original amount is used unconverted, logged - e08). Tax is a first-class LINE attribute so the later three-way match reconciles amounts INCLUDING tax. [SCOR S2.1 | ISO 8.4.3 | source: AB tolerance + data-model POLine/TaxCode + platform-services FX/tax]"
+    },
+    {
+      "id": "BudgetOverride",
+      "type": "userTask",
+      "name": "Budget Owner approves over-budget override",
+      "lane": "Budget Owner",
+      "documentation": "Over-budget path. Budget Owner (permission budget.approve) reviews the over-commitment and either APPROVES an override (overrideReason mandatory text, logged to audit; allows the encumbrance to exceed availableAmount) or REJECTS (PO cannot be issued; returns to buyer to revise lines or cancel). FIELDS: decision (dropdown {approve-override | reject}, mandatory); overrideReason (text, mandatory when approve-override); overrideAmount (decimal, read-only = poValueInBase - availableAmount). On reject, the buyer revises the PO (back to DraftLines). [SCOR OE11 | source: build-new]"
+    },
+    {
+      "id": "RequestPOApproval",
+      "type": "userTask",
+      "name": "Submit PO for approval (SoD)",
+      "lane": "Procurement / Buyer",
+      "documentation": "Buyer submits the drafted, budget-committed PO for approval (permission po.create + approval.requestApproval). The System routes to a PO approver via the configurable approval engine (by department/category/value). SEGREGATION OF DUTIES INVARIANT: the buyer who created the PO cannot be its approver (po.issue is gated so approverUserId != createdByUserId on this PO); the engine excludes the creator from the eligible approver pool, selecting the nearest-bucket, least-loaded qualified approver. PO state: draft -> awaiting-approval. [SCOR S2.1 / OE2 | ISO 8.4 | source: role-permission-matrix SoD + RA approval engine + build-new]"
+    },
+    {
+      "id": "ApprovePO",
+      "type": "userTask",
+      "name": "Approve or reject PO",
+      "lane": "Approver",
+      "documentation": "PO approver (permission po.issue/award.approve, never the creator) reviews lines, value, terms, incoterm, supplier, budget impact. ACTIONS: Approve (decision dropdown {approve | reject}, mandatory) -> PO eligible to issue; Reject -> returns to buyer with mandatory rejectionNote (text) for revision (back to DraftLines, same poNumber retained as draft). Auto-approval may apply within the approver's configured limit (poValueInBase <= approverLimit -> system auto-approves, logged, isAutoApproved = true), reserving manual approval for larger orders (nearest-bucket). [SCOR OE2 | ISO 8.4 | source: RA auto-approval + role-permission-matrix]"
+    },
+    {
+      "id": "AckPO",
+      "type": "userTask",
+      "name": "Supplier acknowledges PO",
+      "lane": "Supplier / Vendor",
+      "documentation": "Supplier (permission po.acknowledge, scoped to own PO via email+OTP form) reviews and acknowledges the PO before production. ACTION: Acknowledge (sets PO state issued -> acknowledged, records acknowledgedAt + acknowledgedBy); or raise a discrepancy note (free text) which returns the PO to the buyer for amendment (pre-receipt amend path). Acknowledgement is the supplier's acceptance of price, quantity, terms, incoterm, and delivery date. [SCOR S2.1 | ISO 8.4.3(d) provider interaction | source: AB ack + RA supplier portal]"
+    },
+    {
+      "id": "AmendPO",
+      "type": "userTask",
+      "name": "Amend PO (audited, re-commit delta)",
+      "lane": "Procurement / Buyer",
+      "documentation": "Buyer (permission po.amend, never approves own amendment under SoD) edits the PO pre-receipt: quantity (within tolerance or with re-approval), agreedPrice, terms, deliveryDate, incoterm. Every amendment is audited (field-level diff). If poValueInBase changes, the System adjusts the Commitment (delta encumbered or released) and re-checks budget; a material increase re-enters the budget/approval gates. A revised PDF is re-issued and re-sent to the supplier for re-acknowledgement. [SCOR S2.1 | ISO 7.5 records | source: AB amend + build-new commitment delta]"
+    },
+    {
+      "id": "DraftCallOff",
+      "type": "userTask",
+      "name": "Draft call-off release against framework",
+      "lane": "Procurement / Buyer",
+      "documentation": "CALL-OFF branch (framework/blanket order). Buyer (permission calloff.release; Requester may also release against a framework per the matrix) creates a CallOffRelease without re-sourcing: FIELDS frameworkAgreementId (reference, mandatory, must be active and in-validity); requisitionId (reference, mandatory); item + quantity (from requisition, mandatory); price + terms (READ-ONLY, inherited from the FrameworkAgreement agreed prices/terms); value (computed = quantity x agreed price). VALIDATION: drawdown <= FrameworkAgreement remaining ceiling (totalValue/quantity ceiling - already-released); else the release is blocked and a new framework or standard PO is required. [SCOR S3.1 / OE6 | source: data-model FrameworkAgreement/CallOffRelease, build-new]"
+    },
+    {
+      "id": "Encumber",
+      "type": "serviceTask",
+      "name": "Create commitment, encumber budget",
+      "lane": "Platform / System",
+      "documentation": "System creates a Commitment record (budgetId, poId, amount = poValueInBase, status = committed) and updates the Budget: availableAmount -= poValueInBase, committedAmount += poValueInBase. This encumbrance reserves funds against the cost-center/project for the period and prevents double-spend. The commitment is later relieved to actual at GR/invoice (Diagram 08/09: committedAmount -= amount, actualAmount += amount). Audit entry emitted (category ticket/budget). [SCOR OE11 | source: build-new, data-model Commitment, platform-services 11]"
+    },
+    {
+      "id": "IssuePO",
+      "type": "serviceTask",
+      "name": "Issue PO, generate number, render PDF",
+      "lane": "Platform / System",
+      "documentation": "On approval the System issues the PO: PO state draft -> issued; poNumber finalized from the configurable pattern (default PO-{YYYY}-{#####}, zero-padded sequential per tenant/year; pattern fields {prefix, year, running-counter width} configurable in Admin - see annotation); poNumber becomes immutable. Renders the PO as a PDF document (header + lines + tax + terms + incoterm + delivery + ISO doc ref + contact) and stores it (document storage service). Emits audit entry + SSE (payload {poId}). [SCOR S2.1 | ISO 8.4.3 records, 7.5 | source: AB PDF emit + RA SSE/audit + platform-services 8]"
+    },
+    {
+      "id": "TriggerAdvance",
+      "type": "serviceTask",
+      "name": "Trigger advance payment per schedule",
+      "lane": "Platform / System",
+      "documentation": "System raises the advance installment defined on the PO payment schedule and hands it to Finance (Diagram 10 Payments): creates an AdvancePayment (poId, amount = scheduled advance e.g. 100% or 30%, status = requested), to be paid and later recouped against subsequent invoices (recoupedAgainstInvoiceIds). The installment enters the maker/checker payment flow. Does not block fulfilment in this diagram; cross-reference to Diagram 10. [SCOR S2.7 | source: AB advance terms + data-model AdvancePayment, platform-services]"
+    },
+    {
+      "id": "Fulfil",
+      "type": "serviceTask",
+      "name": "Hand off to fulfilment / receiving",
+      "lane": "Platform / System",
+      "documentation": "System advances the requisition stage INITIATION -> ORDERED and hands the acknowledged PO to the supplier fulfilment + receiving domain (Diagram 08 Delivery/GRN): supplier manufactures and ships, shares dispatch documents, receiving records delivery and raises GRN, QC gate, GR/IR accrual, qty-tolerance amend at receipt. The PO remains open until all lines are received, matched, and paid, then PO state -> closed. [SCOR S2.2-S2.6 | source: data-model PO state + cross-ref Diagram 08]"
+    },
+    {
+      "id": "CommitCallOff",
+      "type": "serviceTask",
+      "name": "Draw down ceiling, encumber, emit release",
+      "lane": "Platform / System",
+      "documentation": "System records the CallOffRelease, draws down the FrameworkAgreement ceiling (remaining -= value/quantity), creates a Commitment against the budget (encumbers like a PO), generates a release reference (configurable pattern), and emits the release document to the supplier (PDF + notification). No separate competitive approval is needed because the framework was pre-approved; SoD still applies to any value-changing edit. Joins the standard flow at the supplier acknowledgement step. Audit + SSE emitted. [SCOR S3.1 / OE6 | source: build-new, data-model CallOffRelease]"
+    },
+    {
+      "id": "SendPO",
+      "type": "sendTask",
+      "name": "Email PO PDF to supplier",
+      "lane": "Platform / System",
+      "documentation": "System sends the PO PDF to the supplier's registered contact via the notification service (templated email; system-generated identity, humans CC'd for audit context - AB). Fire-and-forget post-commit; delivery failure logged, not retried. The supplier accesses acknowledgement via an authenticated external form (email + OTP). Legacy fallback only: a manual MS-Word PO, recorded as an attachment, is permitted where a supplier cannot use the portal. [SCOR S2.1 | source: AB PDF send + platform-services 5 notifications]"
+    },
+    {
+      "id": "GwOrderMode",
+      "type": "exclusiveGateway",
+      "name": "Standard PO or framework call-off?",
+      "lane": "Procurement / Buyer",
+      "documentation": "Routing gate on how the order is placed. Expression: if requisition.frameworkAgreementId is set AND FrameworkAgreement.status = active AND needDate within FrameworkAgreement.validity AND requested item+quantity is within the agreement's remaining ceiling -> CALL-OFF branch (no re-draft of terms). Else -> STANDARD PO branch (full PO draft from requisition + quote). Framework/blanket orders are the repeat/indirect-buy bypass; a call-off draws down the agreed prices/terms without re-sourcing. [SCOR S3.1 / OE6 | source: data-model FrameworkAgreement + CallOffRelease, build-new]"
+    },
+    {
+      "id": "BudgetCommit",
+      "type": "exclusiveGateway",
+      "name": "Budget available for hard commit?",
+      "lane": "Budget Owner",
+      "documentation": "HARD budget gate (encumbrance), distinct from the soft check at requisition. Expression: if Budget(costCenterId/projectId, period).availableAmount >= poValueInBase -> COMMIT branch (the System will encumber). Else -> OVER-BUDGET branch requiring a Budget Owner override. Approval limits are NOT budget control; this is a funds check. [SCOR OE11 Enterprise Business Planning | source: build-new finance control, data-model Budget/Commitment, platform-services budget service]"
+    },
+    {
+      "id": "GwApproved",
+      "type": "exclusiveGateway",
+      "name": "PO approved?",
+      "lane": "Approver",
+      "documentation": "Expression: if ApprovePO.decision = approve (or auto-approved within limit) -> ISSUE branch. Else -> REVISE branch back to DraftLines (buyer edits per rejectionNote, resubmits; commitment held or recalculated on re-submit). [source: build-new]"
+    },
+    {
+      "id": "GwAdvance",
+      "type": "exclusiveGateway",
+      "name": "Advance payment due on acknowledgement?",
+      "lane": "Supplier / Vendor",
+      "documentation": "Expression: if the payment term on the PO/quote is in {100% advance | part-advance + balance against documents | part-advance + balance against shipment received} AND an advance installment is scheduled at the acknowledgement event -> trigger advance. Else (net 30/60/90, 30/70 against later events) -> no advance now, proceed to fulfilment. The advance trigger fires at acknowledgement per the payment schedule. [SCOR S2.7 | source: AB payment terms + RA installments + data-model AdvancePayment]"
+    },
+    {
+      "id": "GwAmend",
+      "type": "exclusiveGateway",
+      "name": "Pre-receipt amendment needed?",
+      "lane": "Procurement / Buyer",
+      "documentation": "PO is EDITABLE only until the first goods receipt against it. Expression: if a change is needed (supplier discrepancy, qty tolerance adjustment for labels/cartons, price/term correction) AND no GRN exists yet for the PO (PO state in {issued, acknowledged}, not closed) -> AMEND branch. Else -> no amendment, proceed to fulfilment handoff. After first receipt the PO is locked from edits (only qty-tolerance amend at receiving per Diagram 08 is allowed). [SCOR S2.1 | source: AB editable-until-receipt + data-model PO state machine]"
+    },
+    {
+      "id": "Start",
+      "type": "startEvent",
+      "name": "Award approved, ready to order",
+      "lane": "Procurement / Buyer",
+      "documentation": "Trigger: Diagram 04 (Sourcing) has produced an APPROVED award - a selected Quotation linked to an approved Requisition, with the supplier ONBOARDED (Diagram 06). PO drafting begins from this state. Pre-conditions checked by the System before the form opens: requisition.status = approved (all completions APPROVED), quotation exists and is the selected one, supplier.status = ONBOARDED (not PENDING/SUSPENDED/OFFBOARDED), and budget available for the requisition cost-center/project. [SCOR S2.1 Establish Order Signal | ISO 8.4.3 | source: AB + RA award handoff]"
+    },
+    {
+      "id": "End",
+      "type": "endEvent",
+      "name": "PO live, fulfilment underway",
+      "lane": "Platform / System",
+      "documentation": "Terminal for this diagram: PO (or call-off release) is issued, acknowledged, budget-committed, any advance triggered, and handed to fulfilment. Downstream receipt, matching, payment, and closure are Diagrams 08, 09, 10, 12. [source: build-new]"
+    }
+  ],
+  "flows": [
+    {
+      "id": "f1",
+      "from": "Start",
+      "to": "GwOrderMode",
+      "guard": ""
+    },
+    {
+      "id": "f2",
+      "from": "GwOrderMode",
+      "to": "DraftPO",
+      "guard": "standard PO"
+    },
+    {
+      "id": "f3",
+      "from": "GwOrderMode",
+      "to": "DraftCallOff",
+      "guard": "framework call-off"
+    },
+    {
+      "id": "f4",
+      "from": "DraftPO",
+      "to": "DraftLines",
+      "guard": ""
+    },
+    {
+      "id": "f5",
+      "from": "DraftLines",
+      "to": "BudgetCommit",
+      "guard": ""
+    },
+    {
+      "id": "f6",
+      "from": "BudgetCommit",
+      "to": "Encumber",
+      "guard": "available >= poValueInBase"
+    },
+    {
+      "id": "f7",
+      "from": "BudgetCommit",
+      "to": "BudgetOverride",
+      "guard": "over budget"
+    },
+    {
+      "id": "f8",
+      "from": "BudgetOverride",
+      "to": "Encumber",
+      "guard": "override approved"
+    },
+    {
+      "id": "f9",
+      "from": "BudgetOverride",
+      "to": "DraftLines",
+      "guard": "rejected, revise"
+    },
+    {
+      "id": "f10",
+      "from": "Encumber",
+      "to": "RequestPOApproval",
+      "guard": ""
+    },
+    {
+      "id": "f11",
+      "from": "RequestPOApproval",
+      "to": "ApprovePO",
+      "guard": ""
+    },
+    {
+      "id": "f12",
+      "from": "ApprovePO",
+      "to": "GwApproved",
+      "guard": ""
+    },
+    {
+      "id": "f13",
+      "from": "GwApproved",
+      "to": "IssuePO",
+      "guard": "approved"
+    },
+    {
+      "id": "f14",
+      "from": "GwApproved",
+      "to": "DraftLines",
+      "guard": "rejected, revise"
+    },
+    {
+      "id": "f15",
+      "from": "IssuePO",
+      "to": "SendPO",
+      "guard": ""
+    },
+    {
+      "id": "f16",
+      "from": "SendPO",
+      "to": "AckPO",
+      "guard": ""
+    },
+    {
+      "id": "f17",
+      "from": "AckPO",
+      "to": "GwAdvance",
+      "guard": ""
+    },
+    {
+      "id": "f18",
+      "from": "GwAdvance",
+      "to": "TriggerAdvance",
+      "guard": "advance due"
+    },
+    {
+      "id": "f19",
+      "from": "GwAdvance",
+      "to": "GwAmend",
+      "guard": "no advance"
+    },
+    {
+      "id": "f20",
+      "from": "TriggerAdvance",
+      "to": "GwAmend",
+      "guard": ""
+    },
+    {
+      "id": "f21",
+      "from": "GwAmend",
+      "to": "AmendPO",
+      "guard": "amend (pre-receipt)"
+    },
+    {
+      "id": "f22",
+      "from": "GwAmend",
+      "to": "Fulfil",
+      "guard": "no amendment"
+    },
+    {
+      "id": "f23",
+      "from": "AmendPO",
+      "to": "SendPO",
+      "guard": "re-issue + re-ack"
+    },
+    {
+      "id": "f24",
+      "from": "Fulfil",
+      "to": "End",
+      "guard": ""
+    },
+    {
+      "id": "f25",
+      "from": "DraftCallOff",
+      "to": "CommitCallOff",
+      "guard": ""
+    },
+    {
+      "id": "f26",
+      "from": "CommitCallOff",
+      "to": "AckPO",
+      "guard": ""
+    }
+  ]
+}

@@ -1,0 +1,258 @@
+{
+  "id": "e05-auto-create",
+  "file": "e05-auto-create.bpmn",
+  "name": "e05 - Auto-create Supplier or Item from Free-text Reference",
+  "lanes": [
+    {
+      "id": "L_req",
+      "name": "Requester",
+      "role": "Requester"
+    },
+    {
+      "id": "L_buyer",
+      "name": "Procurement / Buyer",
+      "role": "Procurement / Buyer"
+    },
+    {
+      "id": "L_sys",
+      "name": "Platform / System",
+      "role": "Platform / System"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "ParseRefs",
+      "type": "serviceTask",
+      "name": "Classify each reference: UUID vs free-text",
+      "lane": "Platform / System",
+      "documentation": "For each reference the normalizer tests the format. Expression: value matches UUID regex (8-4-4-4-12 hex) -> treat as an existing-record id (LOOKUP path). Else value is a non-empty string -> treat as a new free-text name (AUTO-CREATE path, NO lookup is attempted). isEmpty rule: null/blank/[]/{} is empty (rejected as a missing required field for items; allowed-null for the optional supplier). The supplier reference and the item references are resolved on two PARALLEL branches that join before linking. [SCOR OE2 | ISO 7.5 | source: RA field engine normalizer + e09 resolver]"
+    },
+    {
+      "id": "LookupSupplier",
+      "type": "serviceTask",
+      "name": "Look up supplier by id",
+      "lane": "Platform / System",
+      "documentation": "GET supplier by UUID. Found -> use the existing supplierId (any status). NOT found -> 404; this is a dangling id (400/404 class), not an auto-create, and it REJECTS THE WHOLE OPERATION (no partial write). Distinction (RA e09): a missing resolver = 500 config defect; a dangling id supplied by the client = 4xx reject. [SCOR S1.6 | source: RA e09 dangling-id reject]"
+    },
+    {
+      "id": "CreateSupplier",
+      "type": "serviceTask",
+      "name": "Auto-create supplier (S/##### , PENDING_ONBOARDING)",
+      "lane": "Platform / System",
+      "documentation": "Free-text supplier name -> create a new Supplier with code from the configurable sequence S/##### (first ever is S/00001, then S/00002, monotonically; pattern configurable per tenant). Fields seeded: name = the typed text, status = PENDING_ONBOARDING (default), currency = document currency, all qualification fields empty (certs/COA/AVL/risk to be completed at onboarding 06). NO lookup is performed for a free-text name. Carries the new supplierId to the join. [SCOR S1.6 | ISO 8.4.1 | source: RA auto-create + S/##### code]"
+    },
+    {
+      "id": "LookupItem",
+      "type": "serviceTask",
+      "name": "Look up item(s) by id",
+      "lane": "Platform / System",
+      "documentation": "GET item by UUID for each UUID line. Found -> use existing itemId and auto-populated description (RA description auto-populate). NOT found -> 404 dangling id -> REJECT THE WHOLE OPERATION. [SCOR OE4 | source: RA e09 dangling-id reject]"
+    },
+    {
+      "id": "CreateItem",
+      "type": "serviceTask",
+      "name": "Auto-create item(s) (DEP/SG/SSG/000001, PENDING_ONBOARDING)",
+      "lane": "Platform / System",
+      "documentation": "Each free-text item name -> create a new Item with code from the configurable segmented sequence DEP/SG/SSG/000001 (department / segment / sub-segment / 6-digit running number; first in a sub-segment is ...000001). Fields seeded: description = typed text, status = PENDING_ONBOARDING (default), stockUom/purchaseUom default, segment/subSegment from the chosen path, sourcePriority default PURCHASED. NO lookup for a free-text name. Carries new itemIds to the join. [SCOR OE4 | source: RA item code + auto-create]"
+    },
+    {
+      "id": "LinkAndPersist",
+      "type": "serviceTask",
+      "name": "Link refs and persist requisition / PO in one transaction",
+      "lane": "Platform / System",
+      "documentation": "In a single transaction: write the requisition/PO with the resolved supplierId (or null) on the header and the resolved itemIds on the lines. Any newly created supplier/item rows are committed in the SAME transaction as the document (all-or-nothing). [SCOR S1.1/S2.1 | ISO 7.5 | source: RA transactional link]"
+    },
+    {
+      "id": "AuditEmit",
+      "type": "serviceTask",
+      "name": "Audit auto-creates + emit SSE + notify",
+      "lane": "Platform / System",
+      "documentation": "Write append-only audit entries (category supplier / item / requisition): each auto-create logged with its new code and PENDING_ONBOARDING status; emit SSE {supplierId}/{itemId}/{requisitionId}; fire supplier-approval-requested / item-approval-requested notifications so the new masters enter the onboarding queue (06/07). [SCOR OE4 | ISO 7.5 | source: platform-services audit + notifications]"
+    },
+    {
+      "id": "GwSupplierKind",
+      "type": "exclusiveGateway",
+      "name": "Supplier ref: UUID, free-text, or null?",
+      "lane": "Platform / System",
+      "documentation": "Branch A. Expression: supplierRef == null -> no supplier on this requisition (allowed; skip). supplierRef matches UUID -> lookup existing supplier. supplierRef is free-text -> auto-create. The supplier link is OPTIONAL, so a null is a valid join input. [SCOR S1.6 | source: RA optional supplier link]"
+    },
+    {
+      "id": "GwSupplierFound",
+      "type": "exclusiveGateway",
+      "name": "Supplier id resolves?",
+      "lane": "Platform / System",
+      "documentation": "Expression: lookup returned a record. True -> carry existing supplierId to the join. False -> raise 404 and abort the entire submission (atomic). A UUID is asserted to exist; it is never auto-created. [SCOR S1.6 | source: RA atomic reject]"
+    },
+    {
+      "id": "GwItemKind",
+      "type": "exclusiveGateway",
+      "name": "Each item ref: UUID or free-text?",
+      "lane": "Platform / System",
+      "documentation": "Branch B, per line. Expression: itemRef is required (non-empty) else 400 missing-field on that line. itemRef matches UUID -> lookup existing item. itemRef is free-text -> auto-create. Lines are required, so unlike the supplier there is no null-skip path here. [SCOR OE4 | source: RA required item lines]"
+    },
+    {
+      "id": "GwItemFound",
+      "type": "exclusiveGateway",
+      "name": "All item ids resolve?",
+      "lane": "Platform / System",
+      "documentation": "Expression: every UUID line returned a record. True -> carry itemIds to the join. False -> 404 and abort the whole submission (atomic). [SCOR OE4 | source: RA atomic reject]"
+    },
+    {
+      "id": "Fork",
+      "type": "parallelGateway",
+      "name": "Resolve supplier and items in parallel",
+      "lane": "Platform / System",
+      "documentation": "Parallel split. Branch A resolves the optional supplier reference; Branch B resolves the required item references on the lines. Both must complete (and any lookup must succeed) before linking. A 404 on ANY UUID lookup on EITHER branch rejects the WHOLE operation (atomic; nothing is written). [SCOR OE2 | source: RA parallel resolve + atomic reject]"
+    },
+    {
+      "id": "Join",
+      "type": "parallelGateway",
+      "name": "Join: both branches resolved",
+      "lane": "Platform / System",
+      "documentation": "Parallel join. Proceeds only when Branch A (supplier: existing id, new id, or null) AND Branch B (all item ids: existing or new) have BOTH completed with no 404. If either branch raised a dangling-id 404, the operation has already aborted and the join is never reached (nothing written). [SCOR OE2 | source: RA join-before-link]"
+    },
+    {
+      "id": "Start",
+      "type": "startEvent",
+      "name": "Submit requisition / PO with references",
+      "lane": "Requester",
+      "documentation": "Trigger: a requester (or buyer on a PO) submits a document whose supplier reference and each line item reference may be EITHER an existing record's UUID OR a free-text name typed into the search box. The entity normalizer must resolve every reference before the document is written. Supplier reference is optional on a requisition (a requester may not know the supplier); item references on the lines are required (a line must name a thing). [SCOR S1.1 | ISO 7.5 | source: RA entity normalizer e09 + auto-create]"
+    },
+    {
+      "id": "Reject",
+      "type": "endEvent",
+      "name": "Reject whole operation (404 dangling id)",
+      "lane": "Platform / System",
+      "documentation": "Terminal error path. A UUID reference that does not resolve raises 404 and aborts the entire submission with no partial write (atomic). The requester/buyer sees the failing reference and corrects it. Distinct from a missing resolver (500 config defect). [SCOR OE2 | source: RA e09 atomic reject]"
+    },
+    {
+      "id": "End",
+      "type": "endEvent",
+      "name": "Document persisted; new masters PENDING_ONBOARDING",
+      "lane": "Platform / System",
+      "documentation": "Requisition/PO persisted with resolved links; any auto-created supplier/item awaits onboarding/approval (PENDING_ONBOARDING -> PENDING_APPROVAL -> ONBOARDED). Ordering against a PENDING_ONBOARDING supplier is gated downstream (06). [SCOR S1.1 | source: RA lifecycle]"
+    }
+  ],
+  "flows": [
+    {
+      "id": "f1",
+      "from": "Start",
+      "to": "ParseRefs",
+      "guard": ""
+    },
+    {
+      "id": "f2",
+      "from": "ParseRefs",
+      "to": "Fork",
+      "guard": ""
+    },
+    {
+      "id": "f3",
+      "from": "Fork",
+      "to": "GwSupplierKind",
+      "guard": "Branch A: supplier"
+    },
+    {
+      "id": "f4",
+      "from": "Fork",
+      "to": "GwItemKind",
+      "guard": "Branch B: items"
+    },
+    {
+      "id": "f5",
+      "from": "GwSupplierKind",
+      "to": "LookupSupplier",
+      "guard": "UUID"
+    },
+    {
+      "id": "f6",
+      "from": "GwSupplierKind",
+      "to": "CreateSupplier",
+      "guard": "free-text name"
+    },
+    {
+      "id": "f7",
+      "from": "GwSupplierKind",
+      "to": "Join",
+      "guard": "null (optional link skipped)"
+    },
+    {
+      "id": "f8",
+      "from": "LookupSupplier",
+      "to": "GwSupplierFound",
+      "guard": ""
+    },
+    {
+      "id": "f9",
+      "from": "GwSupplierFound",
+      "to": "Join",
+      "guard": "found: existing supplierId"
+    },
+    {
+      "id": "f10",
+      "from": "GwSupplierFound",
+      "to": "Reject",
+      "guard": "404 -> abort whole op"
+    },
+    {
+      "id": "f11",
+      "from": "CreateSupplier",
+      "to": "Join",
+      "guard": ""
+    },
+    {
+      "id": "f12",
+      "from": "GwItemKind",
+      "to": "LookupItem",
+      "guard": "UUID"
+    },
+    {
+      "id": "f13",
+      "from": "GwItemKind",
+      "to": "CreateItem",
+      "guard": "free-text name"
+    },
+    {
+      "id": "f14",
+      "from": "LookupItem",
+      "to": "GwItemFound",
+      "guard": ""
+    },
+    {
+      "id": "f15",
+      "from": "GwItemFound",
+      "to": "Join",
+      "guard": "all resolve: existing itemIds"
+    },
+    {
+      "id": "f16",
+      "from": "GwItemFound",
+      "to": "Reject",
+      "guard": "404 -> abort whole op"
+    },
+    {
+      "id": "f17",
+      "from": "CreateItem",
+      "to": "Join",
+      "guard": ""
+    },
+    {
+      "id": "f18",
+      "from": "Join",
+      "to": "LinkAndPersist",
+      "guard": ""
+    },
+    {
+      "id": "f19",
+      "from": "LinkAndPersist",
+      "to": "AuditEmit",
+      "guard": ""
+    },
+    {
+      "id": "f20",
+      "from": "AuditEmit",
+      "to": "End",
+      "guard": ""
+    }
+  ]
+}

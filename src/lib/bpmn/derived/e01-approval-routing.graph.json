@@ -1,0 +1,215 @@
+{
+  "id": "e01-approval-routing",
+  "file": "e01-approval-routing.bpmn",
+  "name": "Edge Case e01 - Approval Routing, Nearest-Bucket Selection and Auto-Approval",
+  "lanes": [
+    {
+      "id": "L_appr",
+      "name": "Approver",
+      "role": "Approver"
+    },
+    {
+      "id": "L_sys",
+      "name": "Platform / System",
+      "role": "Platform / System"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "ManualDecide",
+      "type": "userTask",
+      "name": "Approver approves or returns for revision",
+      "lane": "Approver",
+      "documentation": "The approver acts (approval.approve / approval.reject). Authorized = the approvalRequestedToId user OR an assignee with the required designation rank (DESIGNATION_RANK), AND never the user's own requisition/PO (bounded self-approval SoD). Approve -> sets APPROVED + approvedAt in a transaction, updates OTIF stats for assignee + approver (HIT if remainingTime = allowedDuration(priority) - elapsed > 0, else MISS; overdue approval resets the streak to 0), then routes to the next vertical (Management terminal). Reject -> return-for-revision loop to the requester with a mandatory note. [SCOR OE2 | source: raphe-routing-approval approve + raphe-edge-cases e07 OTIF]"
+    },
+    {
+      "id": "Resolve",
+      "type": "serviceTask",
+      "name": "Resolve approval chain (dept/category/value)",
+      "lane": "Platform / System",
+      "documentation": "Resolve the RoutingRuleEntry for (requester department, current vertical) - unique key (department, verticalId). Load active candidate approvers from the rule's approverUserIds for that vertical (for FINANCE, all active finance approvers). Per-vertical strategy: Req Department assignee = requester (pinned), approver from rule; Procurement assignee from rule, no auto-approver; Finance approval-only (approver = assignee, FinanceRoutingHelper); Management both from rule. [SCOR OE2 | source: raphe-routing-approval per-vertical strategies]"
+    },
+    {
+      "id": "NearestBucket",
+      "type": "serviceTask",
+      "name": "Nearest-bucket approver selection",
+      "lane": "Platform / System",
+      "documentation": "Select exactly one approver. (1) effective limit per candidate = approvalLimit ?? 200000 (DEFAULT_TICKET_APPROVAL_LIMIT; a configured 0 stays 0). (2) eligible iff effectiveLimit >= totalAmountInBase (inclusive). (3) NEAREST BUCKET = keep only candidates at the MINIMUM eligible limit (reserves high-limit approvers for big tickets). (4) tie-break = least-loaded: urgency-weighted count of non-APPROVED completions across assignedToId + approvalRequestedToId, weights ASAP=4 / SameDay=2 / Within2Days=1 / Within1Week=0; pick the lowest. Returns exactly ONE approver; no fallback; empty after step (2) -> BadRequestException (loops back to the eligible gate as NO). [SCOR OE2 | source: raphe-edge-cases e01 nearest-bucket + raphe-routing-approval step 1-5]"
+    },
+    {
+      "id": "AutoApprove",
+      "type": "serviceTask",
+      "name": "Auto-approve (logged, no second person)",
+      "lane": "Platform / System",
+      "documentation": "Auto-approval path. Set completion APPROVED, isAutoApproved = true, approvedAt = now; NO approval-requested email is sent; the human OTIF user-stats path is NOT run (auto-approvals do not count toward streaks). Then RECURSE routing to the next vertical (Management), which never auto-approves -> sets AWAITING_APPROVAL + sends the approval-requested email. Auto-approval does NOT complete the requisition. This is the only no-second-person approval path and is always audited. [SCOR OE2 | source: raphe-routing-approval auto sets APPROVED/isAutoApproved, recurse to Management]"
+    },
+    {
+      "id": "AssignManual",
+      "type": "serviceTask",
+      "name": "Assign to selected approver (AWAITING_APPROVAL)",
+      "lane": "Platform / System",
+      "documentation": "Manual path. Set completion AWAITING_APPROVAL, record approvalRequestedToId = the single nearest-bucket approver, emit TICKET_APPROVAL_REQUESTED notification. First assignment moves the completion NOT_STARTED -> IN_PROGRESS. SoD pre-check: the approver may not be the owner of the requisition/PO (never self-approve). [SCOR OE2 | ISO 8.4 | source: raphe-routing-approval request approval + role-permission-matrix SoD]"
+    },
+    {
+      "id": "Reassign",
+      "type": "serviceTask",
+      "name": "Reassign / delegate to qualified approver",
+      "lane": "Platform / System",
+      "documentation": "Reassignment (approval.reassign) or delegation (approval.delegate): the completion's approvalRequestedToId is moved to another qualified approver (same-or-higher designation rank; not own requisition/PO; eligible by limit if FINANCE). Delegation may be a standing leave rule. The completion stays AWAITING_APPROVAL under the new approver; a new TICKET_APPROVAL_REQUESTED notification fires; audited. Loops back to the manual decision. [SCOR OE2 / OE5 | source: raphe-routing-approval reassign/delegate + role-permission-matrix approval.reassign/delegate]"
+    },
+    {
+      "id": "PostValueSync",
+      "type": "serviceTask",
+      "name": "postValueSync - revert auto-approval on financial change",
+      "lane": "Platform / System",
+      "documentation": "Revert rule (RA e02). After ANY write to the requisition: recompute total = sum(qty x unitPrice); if changed, reconvert to base via FX. THEN, ONLY if payTerms OR paymentSchedules changed, revert completions where vertical IN (FINANCE, MANAGEMENT) AND status == APPROVED AND isAutoApproved == true -> back to AWAITING_APPROVAL (forces re-approval of the financially-changed requisition). Manual approvals and REQ_DEPARTMENT / PROCUREMENT completions are NEVER reverted. Always emits ticket.updated; the hook never aborts. Reverted stages re-enter request-approval. [SCOR OE2 | source: raphe-edge-cases e02 postValueSync + raphe-routing-approval financial-edit revert]"
+    },
+    {
+      "id": "Route",
+      "type": "serviceTask",
+      "name": "Route to next vertical / complete",
+      "lane": "Platform / System",
+      "documentation": "On an APPROVED completion (auto or manual), handleRouting advances to the successor vertical and re-enters this whole resolve/select/decide flow for it. Management is terminal (never auto-approves). When the terminal vertical is APPROVED and all completions = APPROVED, approvals are done for the requisition (completion of the overall cycle has its own guard: POST_DELIVERY + matches cleared + no NCR/CAPA block). Every decision (manual + auto) is audited. [SCOR OE2 | source: raphe-routing-approval handleRouting + data-model completion state machine]"
+    },
+    {
+      "id": "GwEligible",
+      "type": "exclusiveGateway",
+      "name": "eligible approver found?",
+      "lane": "Platform / System",
+      "documentation": "Guard: candidate pool non-empty after loading active approvers for the vertical AND (for finance) after the eligibility filter below. If the pool is empty at load (no routing rule / no active approver) OR no candidate's effective limit covers the amount -> NO. NO -> BadRequestException 'No eligible approver', the transaction rolls back, the requisition STALLS (blocked) until an admin fixes the routing rule or an approver limit. YES -> proceed to threshold check. [SCOR OE2 | source: raphe-routing-approval errors/edges + e01 empty-pool BadRequestException]"
+    },
+    {
+      "id": "GwThreshold",
+      "type": "exclusiveGateway",
+      "name": "within auto-approval threshold?",
+      "lane": "Platform / System",
+      "documentation": "Auto-approval guard allowAutoApproval returns true ONLY for the FINANCE vertical AND totalAmountInBase <= approvalLimit. IMPORTANT divergence: the limit used for the auto-approval DECISION comes from the Req Department approver (approvalRequestedTo ?? assignedTo; approver.approvalLimit ?? 200000), which can DIFFER from the per-candidate eligibility limits used in nearest-bucket selection. Boundary: amount exactly == limit auto-approves (inclusive <=). Non-finance verticals never auto-approve. YES -> auto-approve path; NO -> nearest-bucket selection then manual. [SCOR OE2 | source: raphe-routing-approval Finance auto-approval (04) + e01]"
+    },
+    {
+      "id": "GwAvailable",
+      "type": "exclusiveGateway",
+      "name": "approver available? (on leave / overloaded)",
+      "lane": "Approver",
+      "documentation": "Operational gate. If the selected approver is on leave / inactive / unable to act, the stage is reassigned or delegated. approver active-status is re-checked per request (deactivation forces logout); an inactive approver cannot hold a pending completion. YES (available, acted) -> route onward. NO -> reassignment / delegation. [SCOR OE2 / OE5 | source: raphe-routing-approval delegation/reassignment on leave + platform-services per-request active-status re-check]"
+    },
+    {
+      "id": "Start",
+      "type": "startEvent",
+      "name": "Stage reached (request approval)",
+      "lane": "Platform / System",
+      "documentation": "Entry. The configurable approval engine has advanced to a stage and request-approval is invoked for the current vertical (e.g. POST /api/ticket/:id/vertical/:verticalId/request-approval). This edge case isolates how the engine resolves the chain, selects exactly one approver by nearest-bucket, and decides auto vs manual. Fixed example chain: REQ_DEPARTMENT -> PROCUREMENT -> FINANCE -> MANAGEMENT -> null; this diagram zooms the FINANCE/MANAGEMENT selection. [SCOR OE2 Business Rules | ISO 8.4 | source: raphe-routing-approval + raphe-edge-cases e01]"
+    },
+    {
+      "id": "Blocked",
+      "type": "endEvent",
+      "name": "BadRequest - stage blocked",
+      "lane": "Platform / System",
+      "documentation": "Terminal error state for this stage. BadRequestException is thrown, the approve/request transaction rolls back (no partial state), and the requisition cannot advance past this vertical. An admin must add/correct the RoutingRuleEntry or set an approver's approvalLimit, after which request-approval is retried. No auto-fallback to a default approver (deliberate: silent mis-routing is worse than a hard stop). [SCOR OE2 | source: raphe-edge-cases e01 'no fallback; empty pool -> BadRequestException']"
+    },
+    {
+      "id": "End",
+      "type": "endEvent",
+      "name": "Approvals resolved for requisition",
+      "lane": "Platform / System",
+      "documentation": "Terminal. All approval completions resolved (APPROVED) or the stage blocked. Auto-approvals logged, manual approvals OTIF-scored, financial changes correctly forcing re-approval. [SCOR OE2 | source: build-new + RA engine]"
+    }
+  ],
+  "flows": [
+    {
+      "id": "f1",
+      "from": "Start",
+      "to": "Resolve",
+      "guard": ""
+    },
+    {
+      "id": "f2",
+      "from": "Resolve",
+      "to": "GwEligible",
+      "guard": ""
+    },
+    {
+      "id": "f3",
+      "from": "GwEligible",
+      "to": "Blocked",
+      "guard": "no eligible approver -> BadRequest"
+    },
+    {
+      "id": "f4",
+      "from": "GwEligible",
+      "to": "GwThreshold",
+      "guard": "eligible pool found"
+    },
+    {
+      "id": "f5",
+      "from": "GwThreshold",
+      "to": "AutoApprove",
+      "guard": "FINANCE and totalAmountInBase <= approvalLimit"
+    },
+    {
+      "id": "f6",
+      "from": "GwThreshold",
+      "to": "NearestBucket",
+      "guard": "over threshold or non-finance"
+    },
+    {
+      "id": "f7",
+      "from": "NearestBucket",
+      "to": "AssignManual",
+      "guard": ""
+    },
+    {
+      "id": "f8",
+      "from": "AutoApprove",
+      "to": "Route",
+      "guard": ""
+    },
+    {
+      "id": "f9",
+      "from": "AssignManual",
+      "to": "ManualDecide",
+      "guard": ""
+    },
+    {
+      "id": "f10",
+      "from": "ManualDecide",
+      "to": "GwAvailable",
+      "guard": ""
+    },
+    {
+      "id": "f11",
+      "from": "GwAvailable",
+      "to": "Route",
+      "guard": "available - approved/returned"
+    },
+    {
+      "id": "f12",
+      "from": "GwAvailable",
+      "to": "Reassign",
+      "guard": "on leave / inactive / overloaded"
+    },
+    {
+      "id": "f13",
+      "from": "Reassign",
+      "to": "ManualDecide",
+      "guard": ""
+    },
+    {
+      "id": "f14",
+      "from": "Route",
+      "to": "PostValueSync",
+      "guard": "financial field later edited"
+    },
+    {
+      "id": "f15",
+      "from": "PostValueSync",
+      "to": "GwThreshold",
+      "guard": "reverted auto-approval re-enters"
+    },
+    {
+      "id": "f16",
+      "from": "Route",
+      "to": "End",
+      "guard": "all completions APPROVED"
+    }
+  ]
+}

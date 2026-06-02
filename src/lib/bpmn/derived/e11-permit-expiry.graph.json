@@ -1,0 +1,186 @@
+{
+  "id": "e11-permit-expiry",
+  "file": "e11-permit-expiry.bpmn",
+  "name": "e11 - Permit and Document Expiry Tracking",
+  "lanes": [
+    {
+      "id": "L_buyer",
+      "name": "Procurement / Buyer",
+      "role": "Procurement / Buyer"
+    },
+    {
+      "id": "L_qc",
+      "name": "Quality",
+      "role": "Quality"
+    },
+    {
+      "id": "L_tax",
+      "name": "Tax / Compliance",
+      "role": "Tax / Compliance"
+    },
+    {
+      "id": "L_sys",
+      "name": "Platform / System",
+      "role": "Platform / System"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "BlockPo",
+      "type": "userTask",
+      "name": "Block PO; require valid ministry permit",
+      "lane": "Procurement / Buyer",
+      "documentation": "PO issue is blocked for the regulated item until a valid ministry permit (within date AND with sufficient remaining quantity) is attached. Buyer must obtain/renew the permit and attach it. [SCOR OE4 | ISO 8.4.3 | source: AB hard permit requirement]"
+    },
+    {
+      "id": "AttachPermit",
+      "type": "userTask",
+      "name": "Attach ministry permit to PO; reserve quantity",
+      "lane": "Procurement / Buyer",
+      "documentation": "Buyer attaches the valid ministry permit to the PO. System reserves orderQuantity against permit.remainingQuantity (remainingQuantity -= orderQuantity on PO issue) so the permit is consumed by quantity as orders draw it down. Captures permitNumber, issuingMinistry, expiryDate, totalQuantity, remainingQuantity. [SCOR OE4 | ISO 8.4.3 | source: AB permit attach + quantity consumption]"
+    },
+    {
+      "id": "SuspendSupplier",
+      "type": "userTask",
+      "name": "Suspend supplier (expired cert)",
+      "lane": "Tax / Compliance",
+      "documentation": "Tax/Compliance (or Quality for a quality cert) suspends the supplier: status ONBOARDED -> SUSPENDED. SUSPENDED blocks NEW POs without offboarding; existing commitments continue. permission suppliers.suspend (compliance/quality conditional). On cert renewal the supplier returns SUSPENDED -> ONBOARDED. [SCOR S1.6 | ISO 8.4.1 | source: data-model SUSPENDED state + AB cert-to-suspension]"
+    },
+    {
+      "id": "SurfaceStatus",
+      "type": "serviceTask",
+      "name": "Surface permit / cert status on selection",
+      "lane": "Platform / System",
+      "documentation": "System computes and displays each attached permit/cert: status {valid | expiring-soon | expired | quantity-exhausted}, remainingQuantity, expiryDate, daysToExpiry. Emits an alert ON SELECTION (the first of two alert triggers). [SCOR OE4 | ISO 7.5 | source: AB surface-on-selection alert]"
+    },
+    {
+      "id": "Audit",
+      "type": "serviceTask",
+      "name": "Audit + notify (handler + head)",
+      "lane": "Platform / System",
+      "documentation": "System writes audit entries (category supplier/admin) for permit attach, quantity reservation, alerts, and any suspension; notifies handler + head; emits SSE. Document storage retains permits/certs with expiry + quantity per ISO 7.5 records. [SCOR OE4 | ISO 7.5 | source: platform-services audit + notifications + document storage]"
+    },
+    {
+      "id": "GwRegulated",
+      "type": "exclusiveGateway",
+      "name": "Regulated chemical (solvent / pesticide)?",
+      "lane": "Quality",
+      "documentation": "Expression: item.regulatoryClass in {solvent, pesticide, controlled-chemical}. True -> a ministry permit MUST be attached to the PO before it can issue (hard requirement). False -> standard documents only (cert/COA recommended, not a PO-blocking ministry permit). [SCOR OE4 | ISO 8.4.3 | source: AB regulated-chemical ministry permit]"
+    },
+    {
+      "id": "GwPermitValid",
+      "type": "exclusiveGateway",
+      "name": "Permit valid by date AND quantity?",
+      "lane": "Platform / System",
+      "documentation": "Expression: today <= permit.expiryDate AND permit.remainingQuantity >= orderQuantity. A permit is consumed by QUANTITY OR DATE, whichever comes first: either condition failing makes it unusable. True -> permit usable, attach to PO. False -> permit expired or exhausted; block until a renewed/new permit is attached. [SCOR OE4 | ISO 8.4.3 | source: AB permit consumed by qty OR date, whichever first]"
+    },
+    {
+      "id": "GwCertExpiry",
+      "type": "exclusiveGateway",
+      "name": "Supplier cert expired?",
+      "lane": "Tax / Compliance",
+      "documentation": "Expression: today > supplierCert.expiryDate (an ISO/quality/trade cert on the supplier has lapsed). True -> the cert expiry FEEDS supplier suspension. False -> supplier remains usable; continue monitoring. Cert expiry is one of the suspension triggers (failed audit / expired cert / sanctions / active CAPA). [SCOR S1.6 | ISO 8.4.1 | source: AB cert expiry feeds suspension]"
+    },
+    {
+      "id": "Start",
+      "type": "startEvent",
+      "name": "Item selected on requisition / PO",
+      "lane": "Procurement / Buyer",
+      "documentation": "Trigger: a buyer selects an item on a requisition or PO. Documents attach at two levels: permanent against the supplier (MSDS, vendor registration, COA, certs) and per-item permits. Permits and certs carry BOTH an expiry date AND a quantity allowance. On selection, the system surfaces the item's permit/cert status inline. [SCOR OE4 | ISO 7.5 | source: AB document expiry + quantity, surface on selection]"
+    },
+    {
+      "id": "End",
+      "type": "endEvent",
+      "name": "Compliant item proceeds; alerts armed",
+      "lane": "Platform / System",
+      "documentation": "Item proceeds with a valid permit attached (where required), quantity reserved, expiry alerts armed (selection + 1-week), and supplier compliance enforced (suspension on lapsed cert). [SCOR OE4 | source: AB]"
+    },
+    {
+      "id": "ExpiryTimer",
+      "type": "intermediateCatchEvent",
+      "name": "Expiry alert >= 1 week before",
+      "lane": "Platform / System",
+      "documentation": "Timer: at >= 1 week (7 days) before permit/cert expiryDate, fire the SECOND alert trigger to the handler (buyer) + head. Also fires if remainingQuantity falls below a configurable low threshold. Two alert triggers total: on item selection AND >= 1 week before expiry. [SCOR OE4 | ISO 7.5 | source: AB alert on selection + >=1 week before expiry, to handler + head]"
+    }
+  ],
+  "flows": [
+    {
+      "id": "f1",
+      "from": "Start",
+      "to": "SurfaceStatus",
+      "guard": ""
+    },
+    {
+      "id": "f2",
+      "from": "SurfaceStatus",
+      "to": "GwRegulated",
+      "guard": ""
+    },
+    {
+      "id": "f3",
+      "from": "GwRegulated",
+      "to": "GwPermitValid",
+      "guard": "regulated: needs ministry permit"
+    },
+    {
+      "id": "f4",
+      "from": "GwRegulated",
+      "to": "GwCertExpiry",
+      "guard": "not regulated"
+    },
+    {
+      "id": "f5",
+      "from": "GwPermitValid",
+      "to": "AttachPermit",
+      "guard": "valid by date AND quantity"
+    },
+    {
+      "id": "f6",
+      "from": "GwPermitValid",
+      "to": "BlockPo",
+      "guard": "expired OR quantity exhausted"
+    },
+    {
+      "id": "f7",
+      "from": "BlockPo",
+      "to": "AttachPermit",
+      "guard": "renewed permit obtained"
+    },
+    {
+      "id": "f8",
+      "from": "AttachPermit",
+      "to": "ExpiryTimer",
+      "guard": ""
+    },
+    {
+      "id": "f9",
+      "from": "ExpiryTimer",
+      "to": "GwCertExpiry",
+      "guard": ""
+    },
+    {
+      "id": "f10",
+      "from": "GwCertExpiry",
+      "to": "SuspendSupplier",
+      "guard": "cert expired -> suspend"
+    },
+    {
+      "id": "f11",
+      "from": "GwCertExpiry",
+      "to": "Audit",
+      "guard": "cert valid"
+    },
+    {
+      "id": "f12",
+      "from": "SuspendSupplier",
+      "to": "Audit",
+      "guard": ""
+    },
+    {
+      "id": "f13",
+      "from": "Audit",
+      "to": "End",
+      "guard": ""
+    }
+  ]
+}

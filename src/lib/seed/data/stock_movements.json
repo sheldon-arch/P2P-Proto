@@ -1,0 +1,192 @@
+[
+  {
+    "id": "SMV-0001",
+    "itemId": "ITM-0001",
+    "warehouseCode": "WH-P1-RM",
+    "type": "RECEIPT",
+    "quantity": 500,
+    "reference": "GRN-H-0001",
+    "at": "2026-04-15",
+    "note": null
+  },
+  {
+    "id": "SMV-0002",
+    "itemId": "ITM-0001",
+    "warehouseCode": "WH-P1-RM",
+    "type": "ISSUE",
+    "quantity": 50,
+    "reference": "TKT-H-0001",
+    "at": "2026-04-22",
+    "note": null
+  },
+  {
+    "id": "SMV-0003",
+    "itemId": "ITM-0006",
+    "warehouseCode": "WH-P2-RM",
+    "type": "RECEIPT",
+    "quantity": 400,
+    "reference": "GRN-H-0021",
+    "at": "2026-03-10",
+    "note": null
+  },
+  {
+    "id": "SMV-0004",
+    "itemId": "ITM-0006",
+    "warehouseCode": "WH-P2-RM",
+    "type": "ISSUE",
+    "quantity": 280,
+    "reference": "TKT-H-0015",
+    "at": "2026-04-05",
+    "note": null
+  },
+  {
+    "id": "SMV-0005",
+    "itemId": "ITM-0063",
+    "warehouseCode": "WH-P1-PM",
+    "type": "RECEIPT",
+    "quantity": 10000,
+    "reference": "GRN-H-0045",
+    "at": "2026-03-20",
+    "note": null
+  },
+  {
+    "id": "SMV-0006",
+    "itemId": "ITM-0063",
+    "warehouseCode": "WH-P1-PM",
+    "type": "ISSUE",
+    "quantity": 6500,
+    "reference": "TKT-H-0032",
+    "at": "2026-04-18",
+    "note": null
+  },
+  {
+    "id": "SMV-0007",
+    "itemId": "ITM-0002",
+    "warehouseCode": "WH-P1-RM",
+    "type": "RECEIPT",
+    "quantity": 700,
+    "reference": "GRN-H-0008",
+    "at": "2026-04-01",
+    "note": null
+  },
+  {
+    "id": "SMV-0008",
+    "itemId": "ITM-0002",
+    "warehouseCode": "WH-P1-RM",
+    "type": "ISSUE",
+    "quantity": 80,
+    "reference": "TKT-H-0020",
+    "at": "2026-04-28",
+    "note": null
+  },
+  {
+    "id": "SMV-0009",
+    "itemId": "ITM-0064",
+    "warehouseCode": "WH-P1-PM",
+    "type": "RECEIPT",
+    "quantity": 5000,
+    "reference": "GRN-H-0052",
+    "at": "2026-04-10",
+    "note": null
+  },
+  {
+    "id": "SMV-0010",
+    "itemId": "ITM-0003",
+    "warehouseCode": "WH-P1-RM",
+    "type": "RECEIPT",
+    "quantity": 350,
+    "reference": "GRN-H-0015",
+    "at": "2026-04-12",
+    "note": null
+  },
+  {
+    "id": "SMV-0011",
+    "itemId": "ITM-0003",
+    "warehouseCode": "WH-P1-RM",
+    "type": "ISSUE",
+    "quantity": 70,
+    "reference": "TKT-H-0040",
+    "at": "2026-05-02",
+    "note": null
+  },
+  {
+    "id": "SMV-0012",
+    "itemId": "ITM-0020",
+    "warehouseCode": "WH-MRO",
+    "type": "RECEIPT",
+    "quantity": 20,
+    "reference": "GRN-H-0070",
+    "at": "2026-03-25",
+    "note": null
+  },
+  {
+    "id": "SMV-0013",
+    "itemId": "ITM-0020",
+    "warehouseCode": "WH-MRO",
+    "type": "ISSUE",
+    "quantity": 5,
+    "reference": "TKT-H-0055",
+    "at": "2026-04-30",
+    "note": null
+  },
+  {
+    "id": "SMV-0014",
+    "itemId": "ITM-0005",
+    "warehouseCode": "WH-P2-RM",
+    "type": "RECEIPT",
+    "quantity": 600,
+    "reference": "GRN-H-0030",
+    "at": "2026-04-08",
+    "note": null
+  },
+  {
+    "id": "SMV-0015",
+    "itemId": "ITM-0005",
+    "warehouseCode": "WH-P2-RM",
+    "type": "ISSUE",
+    "quantity": 100,
+    "reference": "TKT-H-0025",
+    "at": "2026-05-10",
+    "note": null
+  },
+  {
+    "id": "SMV-0016",
+    "itemId": "ITM-0013",
+    "warehouseCode": "WH-P2-RM",
+    "type": "RECEIPT",
+    "quantity": 700,
+    "reference": "GRN-H-0038",
+    "at": "2026-04-20",
+    "note": null
+  },
+  {
+    "id": "SMV-0017",
+    "itemId": "ITM-0013",
+    "warehouseCode": "WH-P2-RM",
+    "type": "ISSUE",
+    "quantity": 180,
+    "reference": "TKT-H-0048",
+    "at": "2026-05-15",
+    "note": null
+  },
+  {
+    "id": "SMV-0018",
+    "itemId": "ITM-0050",
+    "warehouseCode": "WH-P1-PM",
+    "type": "RECEIPT",
+    "quantity": 12000,
+    "reference": "GRN-H-0060",
+    "at": "2026-05-01",
+    "note": null
+  },
+  {
+    "id": "SMV-0019",
+    "itemId": "ITM-0050",
+    "warehouseCode": "WH-P1-PM",
+    "type": "ISSUE",
+    "quantity": 3000,
+    "reference": "TKT-H-0060",
+    "at": "2026-05-22",
+    "note": null
+  }
+]

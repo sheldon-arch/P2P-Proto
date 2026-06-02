@@ -1,0 +1,197 @@
+{
+  "id": "e09-contract-supply",
+  "file": "e09-contract-supply.bpmn",
+  "name": "e09 - Contract and Constant Supply",
+  "lanes": [
+    {
+      "id": "L_appr",
+      "name": "Approver",
+      "role": "Approver"
+    },
+    {
+      "id": "L_supplier",
+      "name": "Supplier / Vendor",
+      "role": "Supplier / Vendor"
+    },
+    {
+      "id": "L_recv",
+      "name": "Receiving / Warehouse",
+      "role": "Receiving / Warehouse"
+    },
+    {
+      "id": "L_buyer",
+      "name": "Procurement / Buyer",
+      "role": "Procurement / Buyer"
+    },
+    {
+      "id": "L_finmaker",
+      "name": "Finance - Maker",
+      "role": "Finance - Maker"
+    },
+    {
+      "id": "L_sys",
+      "name": "Platform / System",
+      "role": "Platform / System"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "ReceiveForward",
+      "type": "userTask",
+      "name": "Stores receive + forward invoice",
+      "lane": "Receiving / Warehouse",
+      "documentation": "Stores receive the goods (count against the floated quantity; QC hard block still applies if the item requires a COA) and forward the supplier invoice to the procurement handler for logging. Captures receivedQuantity, deliveryNoteNumber, actualDeliveryDate. [SCOR S2.4 | ISO 8.6 | source: AB receive + forward]"
+    },
+    {
+      "id": "LogInvoicePoFormat",
+      "type": "userTask",
+      "name": "Handler logs invoice in PO-format (reduced fields)",
+      "lane": "Procurement / Buyer",
+      "documentation": "Procurement handler logs the invoice as a lightweight PO-format record with REDUCED fields (supplier, item, quantity, contract price, contract ref, invoice number, invoice date, amount, tax) so the spend ties back to a document for matching and analytics, WITHOUT running the full PO + approval chain. This is the contract-supply substitute for a PO. [SCOR S2.1/OE6 | source: AB PO-format reduced-field log]"
+    },
+    {
+      "id": "Settle",
+      "type": "userTask",
+      "name": "Finance settles invoice",
+      "lane": "Finance - Maker",
+      "documentation": "Finance-Maker matches the invoice to the PO-format record at the contract price (two-way; tolerance applies) and settles per the contract payment terms; posts to the creditor ledger. Constant-supply invoices are typically settled periodically (e.g. monthly consolidation) rather than per delivery. [SCOR S2.7 | ISO 8.6 | source: AB settle]"
+    },
+    {
+      "id": "SetDelivered",
+      "type": "serviceTask",
+      "name": "Set DELIVERED flag (skip delivery tracking)",
+      "lane": "Platform / System",
+      "documentation": "System sets the DELIVERED flag on the PO-format record, which SKIPS the normal delivery-tracking/partial-block machinery (constant supply is received continuously; tracking each block is noise). The record goes straight to the financial/match step. Two-way match applies (PO-format + invoice; a GRN exists for goods so three-way is also possible where stores raised one). [SCOR S2.4/S2.6 | source: AB DELIVERED flag skips tracking]"
+    },
+    {
+      "id": "HandToAccounts",
+      "type": "serviceTask",
+      "name": "Hand to accounts for settlement",
+      "lane": "Platform / System",
+      "documentation": "System routes the PO-format record + invoice to Finance for settlement, accruing against the creditor ledger for the supplier. [SCOR S2.7 | source: AB hand to accounts]"
+    },
+    {
+      "id": "Close",
+      "type": "serviceTask",
+      "name": "Close cycle; update ledger + analytics",
+      "lane": "Platform / System",
+      "documentation": "System closes the supply cycle: creditor ledger updated, spend tied to the contract for contract-compliance analytics, audit + SSE emitted. Loops to the next supply cycle while the contract remains active. [SCOR OE3/OE6 | source: AB close + analytics]"
+    },
+    {
+      "id": "FloatLoad",
+      "type": "sendTask",
+      "name": "Factory floats load / quantity to supplier",
+      "lane": "Approver",
+      "documentation": "The factory manager (Approver lane: factory mgmt) floats the required load/quantity for this cycle directly to the supplier against the contract (e.g. number of bottles for today's production). No requisition, no RFQ, no PO is created; the contract price applies. Captures requestedQuantity, deliveryDate. [SCOR S1.10/OE6 | source: AB factory floats load]"
+    },
+    {
+      "id": "DeliverInvoice",
+      "type": "sendTask",
+      "name": "Supplier delivers + sends invoice",
+      "lane": "Supplier / Vendor",
+      "documentation": "Supplier delivers the floated quantity and sends the invoice (priced at the contract rate). Documents: delivery note + invoice. No PO acknowledgement step (no PO exists). [SCOR S2.2/S2.3 | source: AB]"
+    },
+    {
+      "id": "SupplyDue",
+      "type": "exclusiveGateway",
+      "name": "Supply due for this cycle?",
+      "lane": "Approver",
+      "documentation": "Expression: today >= nextSupplyDate (daily/weekly cadence per contract) AND Contract.status == active AND today <= Contract.validityEnd. True -> factory floats the load/quantity. False (contract expired / not yet due) -> wait or stop. [SCOR OE6 | source: AB supply cadence]"
+    },
+    {
+      "id": "Start",
+      "type": "startEvent",
+      "name": "Constant-supply contract active",
+      "lane": "Platform / System",
+      "documentation": "Trigger context: a pre-priced constant-supply contract is active (e.g. glass bottles delivered daily, LPG, packaging fed continuously to the factory). The contract carries agreed price, validity, and renewal date. This branch SKIPS requisition, RFQ, and PO entirely; supply is called off against the standing contract. [SCOR OE6 contract management / S1.10 | source: AB constant supply]"
+    },
+    {
+      "id": "End",
+      "type": "endEvent",
+      "name": "Cycle settled; await next supply",
+      "lane": "Platform / System",
+      "documentation": "Constant-supply cycle complete: goods received, invoice logged in PO-format, DELIVERED flag set, settled, closed. The contract continues to the next cadence until expiry/non-renewal. [SCOR OE6 | source: AB]"
+    },
+    {
+      "id": "RenewalReminder",
+      "type": "intermediateCatchEvent",
+      "name": "Renewal reminder 15 days before expiry",
+      "lane": "Platform / System",
+      "documentation": "Timer: 15 days before Contract.renewalDate/validity end, the system fires a renewal reminder to the factory manager + buyer (notification). If renewed, supply continues; if not, the constant-supply branch stops and reverts to normal sourcing. The 15-day lead is the configurable AB contract-renewal reminder. [SCOR OE6 | source: AB 15-day renewal reminder]"
+    }
+  ],
+  "flows": [
+    {
+      "id": "f1",
+      "from": "Start",
+      "to": "RenewalReminder",
+      "guard": ""
+    },
+    {
+      "id": "f2",
+      "from": "RenewalReminder",
+      "to": "SupplyDue",
+      "guard": ""
+    },
+    {
+      "id": "f3",
+      "from": "SupplyDue",
+      "to": "FloatLoad",
+      "guard": "due + contract active"
+    },
+    {
+      "id": "f4",
+      "from": "FloatLoad",
+      "to": "DeliverInvoice",
+      "guard": ""
+    },
+    {
+      "id": "f5",
+      "from": "DeliverInvoice",
+      "to": "ReceiveForward",
+      "guard": ""
+    },
+    {
+      "id": "f6",
+      "from": "ReceiveForward",
+      "to": "LogInvoicePoFormat",
+      "guard": ""
+    },
+    {
+      "id": "f7",
+      "from": "LogInvoicePoFormat",
+      "to": "SetDelivered",
+      "guard": ""
+    },
+    {
+      "id": "f8",
+      "from": "SetDelivered",
+      "to": "HandToAccounts",
+      "guard": ""
+    },
+    {
+      "id": "f9",
+      "from": "HandToAccounts",
+      "to": "Settle",
+      "guard": ""
+    },
+    {
+      "id": "f10",
+      "from": "Settle",
+      "to": "Close",
+      "guard": ""
+    },
+    {
+      "id": "f11",
+      "from": "Close",
+      "to": "End",
+      "guard": ""
+    },
+    {
+      "id": "f12",
+      "from": "SupplyDue",
+      "to": "End",
+      "guard": "expired / not renewed -> stop"
+    }
+  ]
+}

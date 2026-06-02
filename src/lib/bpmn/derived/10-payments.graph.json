@@ -1,0 +1,428 @@
+{
+  "id": "10-payments",
+  "file": "10-payments.bpmn",
+  "name": "10 - Payments and Installments",
+  "lanes": [
+    {
+      "id": "L_buyer",
+      "name": "Procurement / Buyer",
+      "role": "Procurement / Buyer"
+    },
+    {
+      "id": "L_finmaker",
+      "name": "Finance - Maker",
+      "role": "Finance - Maker"
+    },
+    {
+      "id": "L_finchecker",
+      "name": "Finance - Checker",
+      "role": "Finance - Checker"
+    },
+    {
+      "id": "L_mgmt",
+      "name": "Management",
+      "role": "Management"
+    },
+    {
+      "id": "L_supplier",
+      "name": "Supplier / Vendor",
+      "role": "Supplier / Vendor"
+    },
+    {
+      "id": "L_sys",
+      "name": "Platform / System",
+      "role": "Platform / System"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "BuildSchedule",
+      "type": "userTask",
+      "name": "Build payment schedule (entries + terms)",
+      "lane": "Finance - Maker",
+      "documentation": "Finance-Maker builds the TicketPaymentSchedule = set of TicketPaymentInstallment entries fixed when the supplier/PO is finalised. Per entry fields: amount (number>0, mandatory), event-or-date (one of: event {after PO | against documents | on delivery | on milestone acceptance} OR a fixed date, mandatory), description (text, mandatory), term (dropdown, mandatory). term value set (locked allowed list, meet-7): {100% advance | part-advance + balance against documents | part-advance + balance against shipment received | 30/70 (and other split combinations) | net 30 | net 60 | net 90}. ~90% of local + US supplies are net 90 (90-day credit). Amounts stored as Float (null treated as 0). Installment initial status = null (pending). Owning role: Finance-Maker (payments.schedules.view + maker prepare). Editing payTerms / paymentSchedules reverts auto-approved Finance/Management completions to AWAITING_APPROVAL (RA e02). [SCOR S2.7 / OE6 | source: AB locked term list + RA schedule]"
+    },
+    {
+      "id": "CashFloat",
+      "type": "userTask",
+      "name": "Cash buy on float, log receipt (no PO)",
+      "lane": "Procurement / Buyer",
+      "documentation": "Cash handler buys on the configurable cash float (OMR-style, default OMR 300 held by procurement), collects the vendor receipt; Stores raise a cash-purchase GRN against the requisition with NO PO reference. Handler logs vendor receipt + deducts spend from the float balance. Fields: floatBalance (number, configurable currency+amount, default OMR 300), spendAmount (number>0), vendorReceipt (file, mandatory), reason (text). Owning role: Buyer/cash handler (payments.cashFloat.manage conditional). Reports must show cash-purchase spend alongside credit. [SCOR S2.7 | source: AB cash float + cash GRN]"
+    },
+    {
+      "id": "ReimburseFloat",
+      "type": "userTask",
+      "name": "Request float reimbursement",
+      "lane": "Procurement / Buyer",
+      "documentation": "Cash handler submits a reimbursement request (~OMR 300; fields: amount (number>0, default top-up to float ceiling), reason (text), currentFloatBalance (number)). Routes into the maker prepares step; the maker/checker pipeline approves it and the destination is the cash handler (not a supplier). Handler then collects cash and tops the float back to its ceiling. Owning role: Buyer/cash handler. [SCOR S2.7 | source: AB reimbursement -> settlement]"
+    },
+    {
+      "id": "MakerPrepare",
+      "type": "userTask",
+      "name": "Maker prepares payment for release",
+      "lane": "Finance - Maker",
+      "documentation": "Finance-Maker prepares the payment run against the schedule (the net release after withholding / advance / retention). Maker is the preparer only; maker is NOT the checker. Owning role: Finance-Maker (payments prepare/process; maker, not checker). Convergence point for both the credit/advance track and the cash-float reimbursement track. [SCOR S2.7 | source: AB maker prepares + role-matrix SoD]"
+    },
+    {
+      "id": "CheckerReview",
+      "type": "userTask",
+      "name": "Checker (Chief Accountant) reviews release",
+      "lane": "Finance - Checker",
+      "documentation": "Finance-Checker (Chief Accountant) reviews the prepared payment against the schedule + cash flow and approves it to pay, or holds it. SoD: maker != checker (financial-control segregation per SOX/COSO + ISO 37001, NOT ISO 9001 8.4). Owning role: Finance-Checker (payments.schedules.approve release). This is the only second-person release gate. [SCOR S2.7 | source: AB Chief Accountant checker + financial-control SoD]"
+    },
+    {
+      "id": "ProcessPayment",
+      "type": "userTask",
+      "name": "Process payment + upload receipt",
+      "lane": "Finance - Maker",
+      "documentation": "Maker processes the payment (multipart ProcessInstallmentDto {paymentDate (ISO, mandatory), notes?, file?}). Sets status = PROCESSED + processedAt / processedById / receiptFile. Optional receipt stored at path receipts/{ticketId}/{originalFilename} (LocalStorageService; upload failure FAILS the whole op). PROCESSED is terminal (no un-process). Realized FX gain/loss computed between PO date rate and this payment date rate. Owning role: Finance-Maker (process). [SCOR S2.7 | source: RA process + receipt path]"
+    },
+    {
+      "id": "Reschedule",
+      "type": "userTask",
+      "name": "Reschedule with reason (capture originalDate)",
+      "lane": "Finance - Maker",
+      "documentation": "Reschedule (POST .../reschedule, perm payments.schedules.reschedule, body {newDate (ISO, mandatory), reason?}). First reschedule captures the current date as originalDate (preserved thereafter); sets date = newDate, status = RESCHEDULED; amount + originalDate unchanged on later reschedules. Reasons: hold (signatory unavailable / cash flow). Re-enters prepare when due. Owning roles: Finance-Maker (conditional, with reason) / Finance-Checker. [SCOR S2.7 | source: RA reschedule + AB hold-reschedule]"
+    },
+    {
+      "id": "MgmtRelease",
+      "type": "userTask",
+      "name": "Management approves release (terminal vertical)",
+      "lane": "Management",
+      "documentation": "For releases at or above the configurable management threshold (and as the terminal approval vertical), Management approves the payment release before processing; this is where the MANAGEMENT vertical completion is exercised through the installment release. Below threshold, the checker approval suffices and this step auto-passes. Gateway: releaseAmountInBase >= managementReleaseThreshold (configurable) -> Management approval required. [SCOR OE1/S2.7 | source: RA MANAGEMENT vertical approves via installments]"
+    },
+    {
+      "id": "SetApproved",
+      "type": "serviceTask",
+      "name": "Status = APPROVED (full)",
+      "lane": "Platform / System",
+      "documentation": "amount == agreed: set installment status = APPROVED, no remainder created. Records approvedAmount = agreed. [SCOR S2.7 | source: RA approve full]"
+    },
+    {
+      "id": "SetPartial",
+      "type": "serviceTask",
+      "name": "Status = PARTIAL_APPROVAL + create ONE remainder",
+      "lane": "Platform / System",
+      "documentation": "0 < amount < agreed: set installment status = PARTIAL_APPROVAL AND create exactly ONE remainder installment (leftover = agreed - approved; same date, same paymentScheduleId, same description; status null = pending). Records approvedAmount = approved. Only ONE remainder is created per partial approval (the remainder itself can later be approved/partial again). [SCOR S2.7 | source: RA e04 remainder]"
+    },
+    {
+      "id": "Withholding",
+      "type": "serviceTask",
+      "name": "Apply withholding tax (TDS/WHT)",
+      "lane": "Platform / System",
+      "documentation": "Tax service applies withholding on the payable where applicable: withholdingTaxCodeId + withholdingAmount (TDS / WHT on cross-border services). Net payable = approvedAmount - withholdingAmount; the withheld portion is remitted to the authority separately. Reverse-charge / import VAT already handled at invoice (diagram 09). [SCOR S2.7 | source: build-new tax service withholding]"
+    },
+    {
+      "id": "Recoup",
+      "type": "serviceTask",
+      "name": "Recoup advance, withhold retention",
+      "lane": "Platform / System",
+      "documentation": "Advance recoupment + retention/holdback. If an AdvancePayment (prepayment asset) exists for the PO, recover it against this and later invoices: status requested -> paid -> recouped; recoupedAgainstInvoiceIds records the invoices it was recovered against, reducing the net release. Retention/holdback: withheld a configured withheldPercent (status withheld), released only on releaseCondition (acceptance / warranty period). Net release = approvedAmount - withholding - advanceRecouped - retentionWithheld. Owning role: Finance-Maker (payments.advance.manage, payments.retention.manage). [SCOR S2.7 | source: data-model AdvancePayment + Retention]"
+    },
+    {
+      "id": "PostPayment",
+      "type": "serviceTask",
+      "name": "Recompute totals, update ledgers + completions",
+      "lane": "Platform / System",
+      "documentation": "Post-commit (all paths converge). Recompute ticket payment totals (getAmounts): Paid = sum approvedAmount of PROCESSED; Upcoming = sum non-processed with date >= start-of-today; Overdue = sum non-processed with date < start-of-today; Pending = totalAmount - Paid (any shortfall added to Upcoming). Overdue boundary = 00:00:00 (start-of-today, no timezone handling); null date = upcoming. Writes Ticket.totalAmountPaid / upcomingPaymentAmount / overduePaymentAmount. Updates the creditor ledger per supplier (name, amount, payment terms, transaction history; read-only to procurement). Emit INSTALLMENT_STATUS_UPDATED (approved / partially approved / processed / rescheduled) -> email PROCUREMENT completion assignee; update MANAGEMENT vertical completion; audit + SSE ticket.updated. [SCOR S2.7 | source: RA getAmounts + post-commit + AB creditor ledger]"
+    },
+    {
+      "id": "TopUpFloat",
+      "type": "serviceTask",
+      "name": "Top up cash float to ceiling",
+      "lane": "Platform / System",
+      "documentation": "Float-reimbursement destination: the cash handler collects cash and the float is topped back to its configured ceiling (default OMR 300); float carries forward. [SCOR S2.7 | source: AB float top-up]"
+    },
+    {
+      "id": "ConfirmSupplier",
+      "type": "sendTask",
+      "name": "Email payment confirmation to supplier",
+      "lane": "Supplier / Vendor",
+      "documentation": "System emails the payment confirmation / receipt copy on the order thread; supplier receives the payment confirmation. Owning role: Platform/System (notification). [SCOR S2.7 | source: AB email confirmation on order thread]"
+    },
+    {
+      "id": "RemindOverdue",
+      "type": "sendTask",
+      "name": "Send overdue payment reminder to Accounts",
+      "lane": "Platform / System",
+      "documentation": "On the timer, the system emails the overdue payment reminder to Accounts / Finance (notification service) so the maker prepares the due credit installment. Informational only; it does not change installment status. Converges into the maker-prepare step for the due entry. [SCOR S2.7 | source: AB overdue reminder ~28d + platform-services notifications]"
+    },
+    {
+      "id": "GwLocked",
+      "type": "exclusiveGateway",
+      "name": "Schedule locked?",
+      "lane": "Platform / System",
+      "documentation": "Lock guard (RA e03). Branch expression: any installment in the schedule has status in {APPROVED, PARTIAL_APPROVAL, PROCESSED} -> schedule LOCKED; else -> editable. Editable installment states = null (pending) and RESCHEDULED only. On a locked schedule, upsert AND delete of entries are SILENTLY SKIPPED (no error); new schedules (no id) are always created. This prevents altering committed money. [SCOR S2.7 | source: RA e03 locked schedule]"
+    },
+    {
+      "id": "GwCash",
+      "type": "exclusiveGateway",
+      "name": "Cash float buy (no PO) or credit/advance?",
+      "lane": "Procurement / Buyer",
+      "documentation": "Branch expression: purchaseChannel == 'cash' (on-the-spot local buy on the cash float, no PO reference) -> cash-float track; else (credit / advance / reimbursement against PO+invoice) -> installment approval track. The cash track produces a cash-purchase GRN with NO PO reference and reimburses the float when low. [SCOR S2.7 | source: AB local-purchase cash branch]"
+    },
+    {
+      "id": "GwFloatLow",
+      "type": "exclusiveGateway",
+      "name": "Float nearing limit?",
+      "lane": "Procurement / Buyer",
+      "documentation": "Branch expression: floatBalance <= reimbursementThreshold (configurable, default ~OMR 100 left / ~OMR 200 spent of the OMR 300 float) -> request reimbursement (runs through the same maker/checker pipeline, destination = cash handler not supplier); else -> cash purchase closed, float carries forward. [SCOR S2.7 | source: AB float reimbursement]"
+    },
+    {
+      "id": "GwApproveAmt",
+      "type": "exclusiveGateway",
+      "name": "Approve installment: amount vs agreed?",
+      "lane": "Finance - Maker",
+      "documentation": "Installment approval (POST /api/payments/schedules/installment/:id/approve, perm payments.schedules.approve, body ApproveInstallmentDto {amount (>0, <= agreed), remarks?}). Validation: amount must be > 0 AND <= installment.amount (agreed); otherwise BadRequestException and the installment stays pending. Branch expression: amount == agreed -> APPROVED (no remainder); 0 < amount < agreed -> PARTIAL_APPROVAL (+ remainder). Records approvedAmount / approvedById / approvedAt / note. Owning role: Finance-Maker (approve action). [SCOR S2.7 | source: RA e04 approve installment]"
+    },
+    {
+      "id": "GwReleaseOk",
+      "type": "exclusiveGateway",
+      "name": "Approved to pay?",
+      "lane": "Finance - Checker",
+      "documentation": "Branch expression: checkerDecision == 'approve' -> process payment; checkerDecision == 'hold' (signatory unavailable / cash-flow) -> reschedule with reason. Hold does not lose the entry; it re-enters prepare when due. [SCOR S2.7 | source: AB approved-to-pay vs not-now]"
+    },
+    {
+      "id": "GwProcessable",
+      "type": "exclusiveGateway",
+      "name": "Processable status?",
+      "lane": "Platform / System",
+      "documentation": "Process guard (POST .../process, perm payments.schedules.process). Branch expression: installment.status in {APPROVED, PARTIAL_APPROVAL} -> process; otherwise BadRequestException (only APPROVED or PARTIAL_APPROVAL are processable; pending/RESCHEDULED/already-PROCESSED are not). [SCOR S2.7 | source: RA process guard]"
+    },
+    {
+      "id": "GwDest",
+      "type": "exclusiveGateway",
+      "name": "Destination?",
+      "lane": "Platform / System",
+      "documentation": "Branch expression: destination == 'supplier' -> email payment confirmation on the order thread to the supplier; destination == 'cashHandler' (float reimbursement) -> notify the cash handler to collect cash and top up the float. [SCOR S2.7 | source: AB destination split]"
+    },
+    {
+      "id": "GwMoreEntries",
+      "type": "exclusiveGateway",
+      "name": "More schedule entries due?",
+      "lane": "Platform / System",
+      "documentation": "Branch expression: any installment in the schedule has status == null (pending) or RESCHEDULED with date due AND net amount remaining > 0 -> loop to the next entry (re-enter approval); else (all settled) -> close out. Remainders created by partial approval are themselves pending entries that re-enter here. [SCOR S2.7 | source: AB next-entry loop + RA remainder]"
+    },
+    {
+      "id": "Start",
+      "type": "startEvent",
+      "name": "Approved payable / acknowledged PO",
+      "lane": "Finance - Maker",
+      "documentation": "Entry trigger: an invoice was matched and approved (diagram 09), OR a PO was acknowledged with an advance term due at acknowledgement (diagram 05). Payment is built and released as a schedule of installments. [SCOR S2.7 Authorize Supplier Payment | source: RA installments + AB payment terms]"
+    },
+    {
+      "id": "End",
+      "type": "endEvent",
+      "name": "Payments settled, ledger updated",
+      "lane": "Platform / System",
+      "documentation": "Outcome: all schedule installments PROCESSED (or accounted via credit/debit note), GR/IR cleared (diagram 09), advance recouped, retention released per condition, withholding remitted, creditor ledger and ticket payment totals updated, supplier (or cash handler) confirmed. Feeds cycle close-out and analytics (diagram 12). [SCOR S2.7 -> OE3 | source: RA + AB settlement]"
+    },
+    {
+      "id": "OverdueTimer",
+      "type": "boundaryEvent",
+      "name": "Overdue reminder timer (~28d before due)",
+      "lane": "Platform / System",
+      "documentation": "Non-interrupting timer boundary on the schedule (where the credit-term entries live). For a credit term the system fires an overdue reminder a few days before the term is due: ~28 days for a 30-day term (and the same number of days before due for 60/90-day terms). Non-interrupting: the main flow continues unchanged; the timer only spawns the reminder. Distinct from the delivery-overdue reminder in diagram 08. [SCOR S2.7 | source: AB overdue reminder ~28d]"
+    }
+  ],
+  "flows": [
+    {
+      "id": "f1",
+      "from": "Start",
+      "to": "BuildSchedule",
+      "guard": ""
+    },
+    {
+      "id": "f2",
+      "from": "BuildSchedule",
+      "to": "GwLocked",
+      "guard": ""
+    },
+    {
+      "id": "f3",
+      "from": "GwLocked",
+      "to": "GwCash",
+      "guard": "editable / committed entries skipped"
+    },
+    {
+      "id": "f4",
+      "from": "GwCash",
+      "to": "CashFloat",
+      "guard": "cash buy (no PO)"
+    },
+    {
+      "id": "f5",
+      "from": "GwCash",
+      "to": "GwApproveAmt",
+      "guard": "credit / advance (against PO)"
+    },
+    {
+      "id": "f6",
+      "from": "CashFloat",
+      "to": "GwFloatLow",
+      "guard": ""
+    },
+    {
+      "id": "f7",
+      "from": "GwFloatLow",
+      "to": "ReimburseFloat",
+      "guard": "float low (<= threshold)"
+    },
+    {
+      "id": "f8",
+      "from": "GwFloatLow",
+      "to": "End",
+      "guard": "float ok, cash buy closed"
+    },
+    {
+      "id": "f9",
+      "from": "ReimburseFloat",
+      "to": "MakerPrepare",
+      "guard": ""
+    },
+    {
+      "id": "f10",
+      "from": "GwApproveAmt",
+      "to": "SetApproved",
+      "guard": "amount == agreed"
+    },
+    {
+      "id": "f11",
+      "from": "GwApproveAmt",
+      "to": "SetPartial",
+      "guard": "0 < amount < agreed"
+    },
+    {
+      "id": "f12",
+      "from": "SetApproved",
+      "to": "Withholding",
+      "guard": ""
+    },
+    {
+      "id": "f13",
+      "from": "SetPartial",
+      "to": "Withholding",
+      "guard": ""
+    },
+    {
+      "id": "f14",
+      "from": "Withholding",
+      "to": "Recoup",
+      "guard": ""
+    },
+    {
+      "id": "f15",
+      "from": "Recoup",
+      "to": "MakerPrepare",
+      "guard": ""
+    },
+    {
+      "id": "f16",
+      "from": "MakerPrepare",
+      "to": "CheckerReview",
+      "guard": ""
+    },
+    {
+      "id": "f17",
+      "from": "CheckerReview",
+      "to": "GwReleaseOk",
+      "guard": ""
+    },
+    {
+      "id": "f18",
+      "from": "GwReleaseOk",
+      "to": "MgmtRelease",
+      "guard": "approved to pay"
+    },
+    {
+      "id": "f19",
+      "from": "GwReleaseOk",
+      "to": "Reschedule",
+      "guard": "hold (signatory / cash flow)"
+    },
+    {
+      "id": "f20",
+      "from": "GwProcessable",
+      "to": "ProcessPayment",
+      "guard": "status in {APPROVED, PARTIAL_APPROVAL}"
+    },
+    {
+      "id": "f21",
+      "from": "GwProcessable",
+      "to": "Reschedule",
+      "guard": "not processable"
+    },
+    {
+      "id": "f22",
+      "from": "ProcessPayment",
+      "to": "PostPayment",
+      "guard": ""
+    },
+    {
+      "id": "f23",
+      "from": "Reschedule",
+      "to": "MakerPrepare",
+      "guard": "re-enter when due"
+    },
+    {
+      "id": "f24",
+      "from": "PostPayment",
+      "to": "GwDest",
+      "guard": ""
+    },
+    {
+      "id": "f25",
+      "from": "GwDest",
+      "to": "ConfirmSupplier",
+      "guard": "supplier"
+    },
+    {
+      "id": "f26",
+      "from": "GwDest",
+      "to": "TopUpFloat",
+      "guard": "cash handler"
+    },
+    {
+      "id": "f27",
+      "from": "ConfirmSupplier",
+      "to": "GwMoreEntries",
+      "guard": ""
+    },
+    {
+      "id": "f28",
+      "from": "TopUpFloat",
+      "to": "GwMoreEntries",
+      "guard": ""
+    },
+    {
+      "id": "f29",
+      "from": "GwMoreEntries",
+      "to": "GwApproveAmt",
+      "guard": "next entry due (loop)"
+    },
+    {
+      "id": "f30",
+      "from": "GwMoreEntries",
+      "to": "End",
+      "guard": "all settled"
+    },
+    {
+      "id": "f31",
+      "from": "OverdueTimer",
+      "to": "RemindOverdue",
+      "guard": "term due in ~28d (non-interrupting)"
+    },
+    {
+      "id": "f32",
+      "from": "RemindOverdue",
+      "to": "MakerPrepare",
+      "guard": "prepare due credit installment"
+    },
+    {
+      "id": "fmgmt",
+      "from": "MgmtRelease",
+      "to": "GwProcessable",
+      "guard": "released"
+    }
+  ]
+}

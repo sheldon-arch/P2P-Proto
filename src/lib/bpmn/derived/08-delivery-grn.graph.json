@@ -1,0 +1,528 @@
+{
+  "id": "08-delivery-grn",
+  "file": "08-delivery-grn.bpmn",
+  "name": "08 - Delivery, Goods Receipt and Inspection",
+  "lanes": [
+    {
+      "id": "L_supplier",
+      "name": "Supplier / Vendor",
+      "role": "Supplier / Vendor"
+    },
+    {
+      "id": "L_buyer",
+      "name": "Procurement / Buyer",
+      "role": "Procurement / Buyer"
+    },
+    {
+      "id": "L_tax",
+      "name": "Tax / Compliance",
+      "role": "Tax / Compliance"
+    },
+    {
+      "id": "L_recv",
+      "name": "Receiving / Warehouse",
+      "role": "Receiving / Warehouse"
+    },
+    {
+      "id": "L_qc",
+      "name": "Quality",
+      "role": "Quality"
+    },
+    {
+      "id": "L_eng",
+      "name": "Engineering",
+      "role": "Engineering"
+    },
+    {
+      "id": "L_sys",
+      "name": "Platform / System",
+      "role": "Platform / System"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "Dispatch",
+      "type": "userTask",
+      "name": "Dispatch goods, share shipment documents",
+      "lane": "Supplier / Vendor",
+      "documentation": "Supplier dispatches and (always AFTER dispatch) shares documents via the authenticated external form (email + OTP): commercial invoice, packing list, certificate of origin, and the transport document for the mode. Owning role: Supplier (suppliers.update own records, scoped). Documents stored at two levels (platform-services 8): per-shipment docs (AWB/BL/LR/tracking, Bayan, health cert, DG declaration) against this consignment; permanent docs (COA batch, MSDS, certs) against the supplier master. Fields captured at dispatch by the buyer/handler: carrier/line name (text, mandatory), containerNumber (text, optional, sea/road), awbBlReference (text, mandatory), vesselTrackingUrl (URL, optional, e.g. vesseltracking.com), initialEta (date, mandatory). [SCOR S2.3 Manage Inbound Transport | ISO 8.4.3(a) | source: AB delivery-tracking + factory-import import-docs]"
+    },
+    {
+      "id": "TrackAir",
+      "type": "userTask",
+      "name": "Track by air (AWB)",
+      "lane": "Procurement / Buyer",
+      "documentation": "Air-mode tracking block. Fields: mawbNumber / hawbNumber (text, mandatory - Master and House Air Waybill), airline (text, mandatory), flightNumber (text, mandatory), originAirport (text/IATA, mandatory), destinationAirport (text/IATA, mandatory), freightForwarder (ref Supplier or text, optional - appointed by buyer when incoterm is Ex-Works/FOB), etd (date, optional editable), eta (date, mandatory, editable). Validation: incoterm consistency (data-model: FOB/CIF are sea-only; air uses FCA/CPT/CIP/DAP) is enforced at PO; here only the air document set is required. Routes to customs (import). [SCOR S2.3 | ISO 8.4.3 | source: AB Air branch]"
+    },
+    {
+      "id": "TrackSea",
+      "type": "userTask",
+      "name": "Track by sea (Bill of Lading)",
+      "lane": "Procurement / Buyer",
+      "documentation": "Sea-mode tracking block. Fields: blNumber (text, mandatory - Bill of Lading), vessel (text, mandatory), pol (text - Port of Loading, mandatory), pod (text - Port of Discharge, mandatory), etd (date, optional editable), eta (date, mandatory editable), containerNumber (text, optional). Rule: a sea consignment is ALWAYS followed by a road-haulage leg from the discharge port to site AFTER customs (arrival is confirmed only after that leg). Routes to customs. [SCOR S2.3 | source: AB Sea branch + road-haulage rule]"
+    },
+    {
+      "id": "TrackRoad",
+      "type": "userTask",
+      "name": "Track by road (consignment note)",
+      "lane": "Procurement / Buyer",
+      "documentation": "Road-mode tracking block. Fields: lrNumber (text, mandatory - consignment note / Lorry Receipt), roadTransporter (text, mandatory), eta (date, mandatory editable). Gateway after this block (GwRoadBorder): international road from Saudi/UAE also clears a border Bayan -> customs; purely domestic road -> direct to arrival. [SCOR S2.3 | source: AB Road branch]"
+    },
+    {
+      "id": "TrackCourier",
+      "type": "userTask",
+      "name": "Track by courier (tracking number)",
+      "lane": "Procurement / Buyer",
+      "documentation": "Courier-mode tracking block. Fields: courierTrackingNumber (text, mandatory), courierCompany (text, mandatory), eta (date, mandatory editable). No customs node in the model for courier (de minimis / courier-cleared); proceeds direct to arrival. [SCOR S2.3 | source: AB Courier branch]"
+    },
+    {
+      "id": "Customs",
+      "type": "userTask",
+      "name": "Customs clearance (Bayan / bill of entry)",
+      "lane": "Tax / Compliance",
+      "documentation": "Clearing / customs agent performs clearance AFTER arrival of an import consignment (air, sea, and cross-border road). Fields: boeNumber (text, mandatory - Bill of Entry / Bayan number), clearanceBy (ref User/agent, mandatory - records authorizing clearing agent), bayanDate (date, mandatory), dutyAmount (number >= 0, optional - actual landed duty, feeds landed cost), homeMOOWR (boolean, optional - bonded/MOOWR scheme flag, RA block field). Required regulatory documents validated here: ministry permits for regulated chemicals (with expiry + quantity, alerted on selection and ~1 week before expiry); healthCertificate for food raw material (legalized, mandatory if category is food RM - HARD requirement); dgDeclaration (UN number + class, mandatory if dangerous-goods flag). Owning role: Tax/Compliance (customs.manage). Reverse-charge / import VAT flagged for the invoice (tax service). [SCOR S2.3 / OE8 Regulatory and Compliance | ISO 8.4.3 | source: AB customs + factory-import import-docs]"
+    },
+    {
+      "id": "ConfirmArrival",
+      "type": "userTask",
+      "name": "Confirm arrival at site",
+      "lane": "Procurement / Buyer",
+      "documentation": "Handler confirms arrival at site (for sea/air, only AFTER the road-haulage leg from discharge port; for domestic road/courier, on delivery). On arrival, goods + documents (including COA for regulated items) are checked in at the receiving store and handed to receiving/inspection. Sets the consignment to delivered-pending-inspection. [SCOR S2.4 Receive Product | source: AB arrival + handoff to receiving]"
+    },
+    {
+      "id": "RecordBlock",
+      "type": "userTask",
+      "name": "Record partial-delivery block",
+      "lane": "Receiving / Warehouse",
+      "documentation": "At PARTIAL_DELIVERY stage, add one TicketPartialDeliveryBlock per inbound consignment via PATCH /api/ticket/:id/fields (partialDeliveryBlocks, deletedBlockIds). Block fields (RA model): trackingNumber_MAWB_HAWB (text), boeNumber (text - from customs), clearanceBy (ref/text - from customs), homeMOOWR (boolean), actualDeliveryDate (date, mandatory), erpGrNumber (text - GR number from ERP), erpCcNumber (text), carrier (text), courierCargo (text), itemsDelivery (JSON array of {ticketItemId (string), quantity (finite number)}; may list a subset of lines; invalid entries [non-string id or non-finite qty] skipped silently; null/empty -> empty). Delivered quantity is aggregated per ticketItemId across ALL blocks (summed, no de-dup, order-dependent). Field history written with entityType PARTIAL_DELIVERY_BLOCK, referenceId = block id; SSE ticket.updated + audit. Owning role: Receiving (delivery.record). [SCOR S2.4 | ISO 8.6 | source: RA partial-delivery block]"
+    },
+    {
+      "id": "StoreReceive",
+      "type": "userTask",
+      "name": "Store receives, send COA + sample to QC",
+      "lane": "Receiving / Warehouse",
+      "documentation": "Materials path. The receiving store (e.g. Barka stores for Oman Chemical / Oman Agro; Vadi Kabir for Oman Hygienic) receives against the requisition and sends the COA (certificate of analysis) + a physical sample to Quality. Fields: receivedQuantity per line (number >= 0, mandatory), receivingStore (dropdown of warehouses, mandatory), coaAttached (boolean), sampleSentToQc (boolean). Owning role: Receiving (delivery.record). [SCOR S2.4 Receive Product | ISO 8.6 | source: AB materials path]"
+    },
+    {
+      "id": "QcInspect",
+      "type": "userTask",
+      "name": "QC inspect and test sample",
+      "lane": "Quality",
+      "documentation": "Quality inspects/tests the sample against the requisition and COA/MSDS. Most lots are cleared same / next day; some label or moisture issues surface 10-15 days later. Inspection level is risk-based per item criticality (ISO 8.4.2: skip-lot / sampling / 100% / source / CoC-only - configurable). Fields recorded: inspectionResult (computed from sub-checks), defectQuantity (number >= 0), inspectionNotes (text), testAttachments (files). Owning role: Quality (qc.inspect). [SCOR S2.5 Inspect and Verify | ISO 8.6 release verification | source: AB QC]"
+    },
+    {
+      "id": "Ncr",
+      "type": "userTask",
+      "name": "Raise NCR -> RMA / CAPA (diagram 11)",
+      "lane": "Quality",
+      "documentation": "Reject / quarantine -> log non-conformance (NCR). Fields (AB): itemName (ref, mandatory), deliveryNoteNumber (text, mandatory), deliveryDate (date, mandatory), descriptionOfNonCompliance (text, mandatory), percentNonConformance (number 0-100, mandatory), image (file, optional). Raisable by QC, factory manager (FM), or requester. NCRs can also be raised AFTER GRN when QC finds damage / off-spec later. Handler resolves with supplier (replace / credit / corrective action); disposition return/rework/concession/scrap; feeds supplier rating and may SUSPEND the supplier. Full flow in diagram 11. On accepted/resolved it returns to the GRN step. [SCOR S2.5 / S4 | ISO 8.7 nonconforming -> 10.2 CAPA -> 8.4.1 | source: AB NCR + build-new CAPA]"
+    },
+    {
+      "id": "AmendPo",
+      "type": "userTask",
+      "name": "Amend PO quantity to actual (within tolerance)",
+      "lane": "Procurement / Buyer",
+      "documentation": "For tolerance-eligible items (labels/cartons/printed packaging) the handler adjusts PO line quantity to the actual delivered quantity BEFORE the GRN, so the GRN and three-way match reconcile. Every PO edit is audited and visible to the purchaser; the handler can flag for sign-off. PO must still be in the editable-until-first-receipt window for this line. Owning role: Buyer (po.amend). [SCOR S2.6 | ISO 8.4.3 | source: AB PO-qty adjustment]"
+    },
+    {
+      "id": "RaiseGrn",
+      "type": "userTask",
+      "name": "Raise GRN (links requisition + PO)",
+      "lane": "Receiving / Warehouse",
+      "documentation": "Store raises the Goods Receipt Note linking the requisition + PO reference; this feeds invoicing and payment. One PO can produce SEVERAL GRNs for partial deliveries; each block/consignment yields its own GRN. Fields: grnNumber (auto, mandatory), poReference (ref, mandatory), requisitionReference (ref, mandatory), receivedLines [{poLineId, acceptedQty, rejectedQty}], grnDate (date, default today). Owning role: Receiving (grn.raise; conditional Quality after QC pass). [SCOR S2.6 Transfer Product | ISO 8.6 release record | source: AB GRN + RA erpGrNumber]"
+    },
+    {
+      "id": "EngReceive",
+      "type": "userTask",
+      "name": "Engineering receives spares/services directly",
+      "lane": "Engineering",
+      "documentation": "Spares / Services path. Spares are received DIRECTLY by Engineering - no Stores, no QC, no GRN. Engineering checks against the requisition they raised. For service contracts Engineering gives the completion green signal the same way. Fields: receivedAgainstRequisition (boolean), conformsToOrder (boolean). Owning role: Engineering (delivery.record conditional, no GRN). [SCOR S2.4 / T3 MRO / T2 Service | source: AB spares/engineering path]"
+    },
+    {
+      "id": "CloseRequisition",
+      "type": "userTask",
+      "name": "Close requisition 'received as per order' (no GRN)",
+      "lane": "Engineering",
+      "documentation": "Engineering closes the requisition with a single 'received as per order' field; NO GRN is raised. This makes the match TWO-WAY (PO + invoice, no GRN) downstream (diagram 09), with milestone acceptance for service POs. For service contracts the completion green signal closes the requisition the same way. Fields: receivedAsPerOrder (boolean, mandatory true to close), completionDate (date). Owning role: Engineering. [SCOR S2.6 | source: AB spares closure, no GRN]"
+    },
+    {
+      "id": "GrIr",
+      "type": "serviceTask",
+      "name": "Accrue GR/IR, relieve commitment to actual",
+      "lane": "Platform / System",
+      "documentation": "At GR the platform posts a GrIrEntry: accrue a liability to the GR/IR clearing account for the received quantity x agreed price (status accrued; poLineId, grnId, invoiceId null until matched, accruedAmount). This decouples receiving from invoicing (enables goods-received-not-invoiced reconciliation). Simultaneously the commitment is relieved to actual: Commitment committed -= amount, Budget actual += amount (budget/commitment service). GR/IR is cleared later when the invoice is matched (diagram 09). [SCOR S2.6 -> S2.7 | ISO 8.6 | source: build-new GR/IR + commitment]"
+    },
+    {
+      "id": "DeliveryStatus",
+      "type": "serviceTask",
+      "name": "Derive delivery status, advance stage",
+      "lane": "Platform / System",
+      "documentation": "Delivery status is DERIVED on demand (never stored) per item then rolled up. Item status precedence: delivered (ordered>0 AND aggregated delivered>=ordered; over-delivery counts) > partial (delivered>0 AND <ordered) > overdue (delivered=0 AND needDate < start-of-today; null needDate never overdue) > upcoming (delivered=0, not overdue). Item progress = min(round(delivered/ordered*100),100), 0 if ordered=0; pending = max(ordered-delivered,0). Ticket status precedence: all delivered > any delivered-or-partial (=partial) > any overdue > upcoming; ticket progress = round(fullyDeliveredItems/totalItems*100). Stage advance PARTIAL_DELIVERY -> POST_DELIVERY via POST /api/ticket/:id/move-stage validates Partial Delivery mandatory fields (ticket + per block [block index in error] + payment schedules); blocked -> remainingStageFields[]. Advancing does NOT complete the ticket (COMPLETED still needs POST_DELIVERY + all verticals APPROVED). [SCOR S2.4 | source: RA derived status + stage advance]"
+    },
+    {
+      "id": "OverdueReminder",
+      "type": "sendTask",
+      "name": "Send overdue reminder, dock supplier score",
+      "lane": "Platform / System",
+      "documentation": "System sends a reminder to supplier + procurement (notification service) and records a delivery-delay event that feeds the supplier scorecard delivery dimension (OTD, two-factor OTIF, RL.2.6). Non-blocking: the consignment can still be received late. Loops back to await arrival. For services, tracking is just the completion date with the same late reminder. [SCOR RL.2.6 | ISO 8.4.1 monitoring | source: AB late reminder + analytics service]"
+    },
+    {
+      "id": "ChaseCoa",
+      "type": "sendTask",
+      "name": "Chase supplier for COA",
+      "lane": "Procurement / Buyer",
+      "documentation": "Handler chases the supplier for the missing COA (notification on the order thread). Flow loops back to the COA gate; no QC, no GRN until received. [SCOR S2.5 | ISO 8.6 | source: factory-import COA chase loop]"
+    },
+    {
+      "id": "GwMode",
+      "type": "exclusiveGateway",
+      "name": "Transport mode?",
+      "lane": "Procurement / Buyer",
+      "documentation": "Buyer/Procurement Handler records inbound tracking. Field transportMode (dropdown, mandatory, no default) exact value set {Air | Sea | Road | Courier}. Branch expression: transportMode == 'Air' -> Air block; == 'Sea' -> Sea block; == 'Road' -> Road block; == 'Courier' -> Courier block. Tracking is fully MANUAL (meet-7): the handler enters and updates in-transit status from external carrier/vessel sites; there is NO auto-fetch from carrier portals (out of scope). Requester, manager and procurement all see the same read view. [SCOR S2.3 | source: AB delivery-tracking GW_mode]"
+    },
+    {
+      "id": "GwRoadBorder",
+      "type": "exclusiveGateway",
+      "name": "International road (border Bayan)?",
+      "lane": "Procurement / Buyer",
+      "documentation": "Branch expression: roadOrigin in {Saudi, UAE, other cross-border} -> customs (border Bayan / bill of entry required); roadOrigin == domestic -> EtaAlarm (skip customs). [SCOR S2.3/OE8 | source: AB road border rule]"
+    },
+    {
+      "id": "GwOverdue",
+      "type": "exclusiveGateway",
+      "name": "Committed delivery date passed without receipt?",
+      "lane": "Platform / System",
+      "documentation": "Branch expression: today (start-of-today) > PO committed deliveryDate AND no goods received against the consignment -> overdue reminder; else -> arrival confirmation. Overdue lowers the supplier delivery score (OTD / OTIF inputs, analytics service). Null committed date never overdue. [SCOR S2.3 / RL.2.6 Delivery Performance to Original Supplier Commit Date | source: AB late-delivery reminder]"
+    },
+    {
+      "id": "GwPartial",
+      "type": "exclusiveGateway",
+      "name": "Full or partial consignment?",
+      "lane": "Receiving / Warehouse",
+      "documentation": "Branch expression: this consignment fulfils all open PO line quantities -> single full receipt path; otherwise -> partial path (one TicketPartialDeliveryBlock per inbound consignment; multiple blocks/GRNs per PO allowed). Both branches converge into the category gateway; the difference is only that partial creates one block now and the flow re-enters for the next batch. Labels/cartons typically arrive in several partial deliveries; contract glass bottles treat each truckload as a full receipt. [SCOR S2.4 | source: RA partial-delivery blocks + AB partial GRNs]"
+    },
+    {
+      "id": "GwCategory",
+      "type": "exclusiveGateway",
+      "name": "Materials or spares/services?",
+      "lane": "Receiving / Warehouse",
+      "documentation": "Branch expression on requisition.category: category in {Items} resolving to materials (raw material / packaging material, S2 Direct) -> Materials path (Store -> QC -> GRN). category in {Spares, Services, ProductDesign-maintenance} (S3 Indirect / T3 MRO / T2 Service) -> Spares/Services path (Engineering receives, closes requisition, NO GRN). QA/QC always compares against the requisition; the PO stays procurement-only (QA/QC do not see the PO). [SCOR S2.4/S2.5 | source: AB receiving GW_cat]"
+    },
+    {
+      "id": "GwCoa",
+      "type": "exclusiveGateway",
+      "name": "COA received?",
+      "lane": "Receiving / Warehouse",
+      "documentation": "HARD BLOCK gateway. Branch expression: coaAttached == true -> proceed to QC inspection; coaAttached == false -> chase supplier for COA (loop). For regulated / OTC / pharma items no inspection and no GRN may proceed without the COA on file. This is the certificate-of-analysis hard block. [SCOR S2.5 | ISO 8.4.3(b) release control / 8.6 | source: AB + factory-import COA gate]"
+    },
+    {
+      "id": "GwQc",
+      "type": "exclusiveGateway",
+      "name": "QC approved?",
+      "lane": "Quality",
+      "documentation": "Branch expression: qcDecision == 'approve' -> quantity tolerance check; qcDecision == 'reject' (reject / quarantine) -> raise NCR (diagram 11). On approve, QC retains conformity evidence + traceability to the authorizing person (ISO 8.6). Owning role: Quality (qc.approve / qc.reject). [SCOR S2.5 | ISO 8.6 -> 8.7 | source: AB QC approve/reject]"
+    },
+    {
+      "id": "GwTolerance",
+      "type": "exclusiveGateway",
+      "name": "Quantity variance to PO?",
+      "lane": "Receiving / Warehouse",
+      "documentation": "Branch expression: abs(actualReceivedQty - poLineQty) / poLineQty <= lineTolerancePercent (configurable, default band +/-5% to +/-10% for labels/cartons/printed packaging) -> within tolerance, raise GRN directly; variance within tolerance but != 0 AND item is tolerance-eligible -> amend PO qty to actual first. No-tolerance items (RM in fixed packs, contract glass bottles) have lineTolerancePercent = 0 and skip the amend. Variance beyond tolerance is not silently accepted: it routes to NCR / buyer review. [SCOR S2.6 | source: AB +/-5-10% tolerance rule]"
+    },
+    {
+      "id": "GwEngOk",
+      "type": "exclusiveGateway",
+      "name": "Received as per order?",
+      "lane": "Engineering",
+      "documentation": "Branch expression: conformsToOrder == true -> Engineering closes the requisition; conformsToOrder == false -> route to handler for NCR resolution (same NCR path as materials, diagram 11). [SCOR S2.5 | source: AB engineering check]"
+    },
+    {
+      "id": "GwMore",
+      "type": "exclusiveGateway",
+      "name": "More partial deliveries expected on this PO?",
+      "lane": "Receiving / Warehouse",
+      "documentation": "Branch expression: any PO line has pending = max(ordered - aggregatedDelivered, 0) > 0 AND further consignments expected -> re-enter receiving for the next batch (Store receives / Engineering receives); else -> proceed to invoicing (diagram 09). Each new batch re-enters at the receive step and produces its own block + GRN. [SCOR S2.4 | source: AB partial re-entry + RA aggregation]"
+    },
+    {
+      "id": "Start",
+      "type": "startEvent",
+      "name": "PO acknowledged, goods ready to dispatch",
+      "lane": "Supplier / Vendor",
+      "documentation": "Entry trigger: the PurchaseOrder is in status acknowledged (diagram 05) and the supplier is ready to dispatch. Contract / constant-supply lines that were marked Delivered at agreement time (framework call-off) NEVER enter inbound tracking; they go straight to receipt. Requisition stage at entry = ORDERED; this diagram advances it to PARTIAL_DELIVERY then POST_DELIVERY. [SCOR S2.2 Schedule Product Delivery | source: AB delivery-tracking + RA stage model]"
+    },
+    {
+      "id": "End",
+      "type": "endEvent",
+      "name": "Received and inspected -> invoicing (diagram 09)",
+      "lane": "Platform / System",
+      "documentation": "Outcome: goods received and (for materials) QC-passed with GRN raised and GR/IR accrued, or spares/services received by Engineering with the requisition closed (no GRN). Hands off to diagram 09 invoice capture and matching: GRN present -> three-way; no GRN -> two-way. [SCOR S2.6 -> S2.7 | source: build-new]"
+    },
+    {
+      "id": "EtaAlarm",
+      "type": "intermediateCatchEvent",
+      "name": "ETA-approaching alarm",
+      "lane": "Platform / System",
+      "documentation": "Timer event. The platform fires an automatic ETA-APPROACHING ALARM a few days before the recorded eta (configurable lead, default 5 days; example: eta 10 June -> alarm 5 June) to handler, requester and manager via the notification service. The handler may revise eta at any point from the carrier / vessel-tracking site (eta is editable throughout the voyage); each revision re-arms the alarm and is audited. This is a monitoring beat, not a gate; flow continues to overdue detection. [SCOR S2.3 | source: AB ETA alarm + platform-services notifications]"
+    }
+  ],
+  "flows": [
+    {
+      "id": "f1",
+      "from": "Start",
+      "to": "Dispatch",
+      "guard": ""
+    },
+    {
+      "id": "f2",
+      "from": "Dispatch",
+      "to": "GwMode",
+      "guard": ""
+    },
+    {
+      "id": "f3",
+      "from": "GwMode",
+      "to": "TrackAir",
+      "guard": "Air"
+    },
+    {
+      "id": "f4",
+      "from": "GwMode",
+      "to": "TrackSea",
+      "guard": "Sea"
+    },
+    {
+      "id": "f5",
+      "from": "GwMode",
+      "to": "TrackRoad",
+      "guard": "Road"
+    },
+    {
+      "id": "f6",
+      "from": "GwMode",
+      "to": "TrackCourier",
+      "guard": "Courier"
+    },
+    {
+      "id": "f7",
+      "from": "TrackAir",
+      "to": "Customs",
+      "guard": "import clearance"
+    },
+    {
+      "id": "f8",
+      "from": "TrackSea",
+      "to": "Customs",
+      "guard": "import clearance"
+    },
+    {
+      "id": "f9",
+      "from": "TrackRoad",
+      "to": "GwRoadBorder",
+      "guard": ""
+    },
+    {
+      "id": "f10",
+      "from": "GwRoadBorder",
+      "to": "Customs",
+      "guard": "cross-border (Saudi/UAE)"
+    },
+    {
+      "id": "f11",
+      "from": "GwRoadBorder",
+      "to": "EtaAlarm",
+      "guard": "domestic"
+    },
+    {
+      "id": "f12",
+      "from": "TrackCourier",
+      "to": "EtaAlarm",
+      "guard": "no customs node"
+    },
+    {
+      "id": "f13",
+      "from": "Customs",
+      "to": "EtaAlarm",
+      "guard": ""
+    },
+    {
+      "id": "f14",
+      "from": "EtaAlarm",
+      "to": "GwOverdue",
+      "guard": ""
+    },
+    {
+      "id": "f15",
+      "from": "GwOverdue",
+      "to": "OverdueReminder",
+      "guard": "committed date passed, not received"
+    },
+    {
+      "id": "f16",
+      "from": "GwOverdue",
+      "to": "ConfirmArrival",
+      "guard": "on/within commit, arrived"
+    },
+    {
+      "id": "f17",
+      "from": "OverdueReminder",
+      "to": "GwOverdue",
+      "guard": "await arrival (re-check)"
+    },
+    {
+      "id": "f18",
+      "from": "ConfirmArrival",
+      "to": "GwPartial",
+      "guard": ""
+    },
+    {
+      "id": "f19",
+      "from": "GwPartial",
+      "to": "GwCategory",
+      "guard": "full receipt"
+    },
+    {
+      "id": "f20",
+      "from": "GwPartial",
+      "to": "RecordBlock",
+      "guard": "partial consignment"
+    },
+    {
+      "id": "f21",
+      "from": "RecordBlock",
+      "to": "GwCategory",
+      "guard": ""
+    },
+    {
+      "id": "f22",
+      "from": "GwCategory",
+      "to": "StoreReceive",
+      "guard": "materials (RM/PM, S2 direct)"
+    },
+    {
+      "id": "f23",
+      "from": "GwCategory",
+      "to": "EngReceive",
+      "guard": "spares/services (S3/T2/T3)"
+    },
+    {
+      "id": "f24",
+      "from": "StoreReceive",
+      "to": "GwCoa",
+      "guard": ""
+    },
+    {
+      "id": "f25",
+      "from": "GwCoa",
+      "to": "QcInspect",
+      "guard": "COA on file"
+    },
+    {
+      "id": "f26",
+      "from": "GwCoa",
+      "to": "ChaseCoa",
+      "guard": "no COA (HARD BLOCK)"
+    },
+    {
+      "id": "f27",
+      "from": "ChaseCoa",
+      "to": "GwCoa",
+      "guard": "COA chased (loop)"
+    },
+    {
+      "id": "f28",
+      "from": "QcInspect",
+      "to": "GwQc",
+      "guard": ""
+    },
+    {
+      "id": "f29",
+      "from": "GwQc",
+      "to": "GwTolerance",
+      "guard": "approved"
+    },
+    {
+      "id": "f30",
+      "from": "GwQc",
+      "to": "Ncr",
+      "guard": "rejected / quarantine"
+    },
+    {
+      "id": "f31",
+      "from": "Ncr",
+      "to": "RaiseGrn",
+      "guard": "resolved / accepted qty"
+    },
+    {
+      "id": "f32",
+      "from": "GwTolerance",
+      "to": "AmendPo",
+      "guard": "within tolerance, qty != ordered"
+    },
+    {
+      "id": "f33",
+      "from": "GwTolerance",
+      "to": "RaiseGrn",
+      "guard": "no variance / no-tolerance item"
+    },
+    {
+      "id": "f34",
+      "from": "AmendPo",
+      "to": "RaiseGrn",
+      "guard": ""
+    },
+    {
+      "id": "f35",
+      "from": "RaiseGrn",
+      "to": "GrIr",
+      "guard": ""
+    },
+    {
+      "id": "f36",
+      "from": "GrIr",
+      "to": "DeliveryStatus",
+      "guard": ""
+    },
+    {
+      "id": "f37",
+      "from": "EngReceive",
+      "to": "GwEngOk",
+      "guard": ""
+    },
+    {
+      "id": "f38",
+      "from": "GwEngOk",
+      "to": "CloseRequisition",
+      "guard": "as per order"
+    },
+    {
+      "id": "f39",
+      "from": "GwEngOk",
+      "to": "Ncr",
+      "guard": "not as per order"
+    },
+    {
+      "id": "f40",
+      "from": "CloseRequisition",
+      "to": "DeliveryStatus",
+      "guard": ""
+    },
+    {
+      "id": "f41",
+      "from": "DeliveryStatus",
+      "to": "GwMore",
+      "guard": ""
+    },
+    {
+      "id": "f42",
+      "from": "GwMore",
+      "to": "GwCategory",
+      "guard": "more batches expected (re-enter)"
+    },
+    {
+      "id": "f43",
+      "from": "GwMore",
+      "to": "End",
+      "guard": "all lines received"
+    }
+  ]
+}

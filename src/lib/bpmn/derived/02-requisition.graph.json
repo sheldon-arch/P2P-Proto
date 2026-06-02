@@ -1,0 +1,257 @@
+{
+  "id": "02-requisition",
+  "file": "02-requisition.bpmn",
+  "name": "02 - Requisition and Intake (Requester-led)",
+  "lanes": [
+    {
+      "id": "L_req",
+      "name": "Requester",
+      "role": "Requester"
+    },
+    {
+      "id": "L_buyer",
+      "name": "Procurement / Buyer",
+      "role": "Procurement / Buyer"
+    },
+    {
+      "id": "L_budget",
+      "name": "Budget Owner",
+      "role": "Budget Owner"
+    },
+    {
+      "id": "L_sys",
+      "name": "Platform / System",
+      "role": "Platform / System"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "OpenForm",
+      "type": "userTask",
+      "name": "Open requisition, fill header",
+      "lane": "Requester",
+      "documentation": "Requester opens the intake form (requisition.create). HEADER FIELDS: identifier (string, AUTO, immutable across the whole cycle including delays; configurable pattern e.g. {YYYY}{MM_SHORT}{DEPT_PREFIX}07{RUNNING5} = year + short month + first 3 chars of dept (or 'Dept') + literal '07' + 5-digit padded counter; isAuto, never gates, read-only); date (date, AUTO-stamped in tenant timezone e.g. Oman GST+4, format DD-MMM-YYYY, isAuto, read-only); requester (reference user, AUTO from authenticated profile, read-only); department (reference, AUTO from profile, read-only); category (enum dropdown {Items|Spares|Services|ProductDesign}, MANDATORY, no default; drives field config + later receipt routing - Spares/Services go to Engineering, Items to Receiving/QC); directOrIndirect (enum dropdown {Direct|Indirect}, MANDATORY; Direct = goes into product, Indirect = MRO/office/services); purchaseType (enum dropdown {Local|Import}, MANDATORY, default Local; note RA: requester is NOT told local/import for routing, but the field is captured); priority (enum dropdown {ASAP|SameDay|Within2Days|Within1Week}, MANDATORY, default Within1Week; urgency weights for least-loaded assignment ASAP=4/SameDay=2/Within2Days=1/Within1Week=0); currency (reference Currency dropdown, MANDATORY, default tenant base currency); projectOrCostCenter (reference dropdown of ACTIVE projects/cost-centers only, MANDATORY; an INACTIVE project is not selectable); justification/notes (text, OPTIONAL, max 2000 chars). Mandatory set is the field-config INITIATION/TICKET_LEVEL entries for this category/purchaseType. [SCOR S1.1/O2 | ISO 7.5 | source: AB requisition fields + RA CreateTicketDto + data-model]"
+    },
+    {
+      "id": "AddLines",
+      "type": "userTask",
+      "name": "Add line items (search master or free-text)",
+      "lane": "Requester",
+      "documentation": "Requester adds one or more lines. LINE FIELDS: item (reference OR free-text; search master first by name/code; a UUID resolves to existing, a non-UUID string triggers the new-item-on-the-fly sub-flow, non-blocking); itemCode (string, AUTO from master, or 'PENDING - New Item' while awaiting handler approval; isAuto, read-only); hsCode (string, OPTIONAL, import-relevant); itemDescription (text, AUTO-populated from master on select, editable for free-text); productUsedFor (string, OPTIONAL; which finished product it feeds, for spend reporting); quantity (decimal, MANDATORY, > 0, decimals allowed for weight/volume); unitOfMeasure (reference UoM dropdown, MANDATORY; from UoM master); unitPrice (decimal, OPTIONAL, may be 0 at creation - flagged, not blocked); availableStock (decimal, OPTIONAL, AUTO/read from inventory if known); needDate (date, MANDATORY per line, datepicker, must be >= today); lineNote (text, OPTIONAL); attachments (file list, OPTIONAL; drawings/specs). SERVICE category lines instead use serviceName + itemReferenceNumber + contractDuration (dropdown {3m|6m|1y|2y|Custom}). Item-level mandatory set comes from field config (ITEM_LEVEL, category, purchaseType); blocks on ANY line if missing. [SCOR S1.1 | ISO 7.5 | source: AB line fields + RA items[] + data-model RequisitionLine]"
+    },
+    {
+      "id": "NewItem",
+      "type": "userTask",
+      "name": "Request new item (free-text entered)",
+      "lane": "Requester",
+      "documentation": "Sub-flow entry: requester typed an item not in the master. NON-BLOCKING - the requisition still proceeds. The line keeps the free-text description, itemCode shows 'PENDING - New Item', and a new-item request is created for the Procurement Handler/Buyer to approve. RA behavior: a non-UUID item reference auto-creates an item (description = the string; stockUom/purchaseUom = the line UoM; 6-digit running-number code) which then follows the item lifecycle PENDING_ONBOARDING -> PENDING_APPROVAL -> ONBOARDED. [SCOR OE4 | source: AB new-item sub-flow + RA auto-create + raphe-ticket-creation]"
+    },
+    {
+      "id": "ApproveItem",
+      "type": "userTask",
+      "name": "Approve / create new item in master",
+      "lane": "Procurement / Buyer",
+      "documentation": "The PROCUREMENT HANDLER/Buyer (items.create / item.approve), NOT the Purchase Head, reviews the free-text item and adds it to the master: assigns/confirms code (RM/PM from Excel master, others system-generated), description, stockUom, purchaseUom, segment, HS code, sourcePriority. On approval the item moves PENDING_APPROVAL -> ONBOARDED and the requisition line's itemCode is back-filled from the new master record. This runs in parallel and does not hold the requisition submission. [SCOR OE4 | ISO 7.5 | source: AB BPMN (handler approves, supersedes Word doc) + albahja-requisition-approval]"
+    },
+    {
+      "id": "Draft",
+      "type": "userTask",
+      "name": "Save as draft",
+      "lane": "Requester",
+      "documentation": "Persists the requisition with status Draft. No mandatory-field gate, no routing, no budget check. Visible only to the requester (and own department per view scope). The requester later reopens it (loops back to add/edit lines) and submits. Identifier is already assigned and immutable. [source: AB draft + data-model status IN_PROGRESS not yet set]"
+    },
+    {
+      "id": "Submit",
+      "type": "userTask",
+      "name": "Submit requisition",
+      "lane": "Requester",
+      "documentation": "Requester clicks Submit (requisition.submit). Triggers server-side validation: every field-config mandatory, non-auto field for INITIATION at TICKET_LEVEL and ITEM_LEVEL (filtered by category + purchaseType) must be present (isEmpty rule: null/blank/[]/{}/invalid-date empty; 0 and false present). On any missing field -> 400 with remainingStageFields[], status stays Draft, nothing routes. On pass -> status IN_PROGRESS, stage INITIATION, totals computed. [SCOR S1.1/O2 | source: AB submit + raphe-stage-progression mandatory gate + raphe-ticket-creation]"
+    },
+    {
+      "id": "Override",
+      "type": "userTask",
+      "name": "Approve budget override (logged) or send back",
+      "lane": "Budget Owner",
+      "documentation": "Budget Owner acts on the over-budget warning (budget.approve, scoped to own cost-center). Actions: 'Approve override' (records overrideReason mandatory, overrideBy, overrideAt to the audit log; requisition proceeds to approval routing) OR 'Send back for revision' (returns to the requester with a mandatory note to reduce quantity/price or change cost-center). Override is a logged exception, not a silent bypass; approval limits remain separate from this budget gate. [SCOR OE11 | source: data-model + role-model Budget Owner + build-new finance control]"
+    },
+    {
+      "id": "Revise",
+      "type": "userTask",
+      "name": "Revise requisition (same identifier)",
+      "lane": "Requester",
+      "documentation": "Requester edits the SAME requisition per the send-back note (identifier unchanged, immutable). Can adjust quantity, unitPrice, lines, cost-center, or split the requirement. Resubmits, which re-runs validation + budget check (loops back to Submit). The remarks/notes field is an appended, timestamped activity log that cannot be deleted. [source: AB return-for-revision + albahja-requisition-approval loop]"
+    },
+    {
+      "id": "LinkItem",
+      "type": "serviceTask",
+      "name": "Link new item, resolve references",
+      "lane": "Platform / System",
+      "documentation": "System links the approved (or auto-created) item to the requisition line, resolves all reference fields to live records via the entity normalizer (project/vertical/user/supplier -> name; item/ticket-item -> description; dangling id -> 400, missing resolver -> 500 config defect), recomputes line and header totals. The requisition can be submitted before this completes because the sub-flow is non-blocking; the linked code simply replaces 'PENDING - New Item' when ready. [SCOR OE4 | source: platform-services dynamic forms 2 + raphe-edge-cases e09]"
+    },
+    {
+      "id": "Compute",
+      "type": "serviceTask",
+      "name": "Validate, compute total, convert to base",
+      "lane": "Platform / System",
+      "documentation": "System computes total = sum(quantity x unitPrice) per line summed to header (totalAmount in requisition currency), then totalAmountInBase via convertToBase(amount, currency): if currency == base or null -> unchanged, no call; else fetch live FX rate (e.g. Frankfurter), round to 2dp; on fetch failure or invalid rate (0/NaN/Inf/negative) -> log + return original unconverted (graceful degradation, never throws). totalAmountInBase drives the budget check, approval thresholds, and analytics. Audit (category ticket) + SSE ticket.updated emitted. [SCOR OE4 | source: platform-services FX 3 + raphe-ticket-creation step 5 + raphe-edge-cases e08]"
+    },
+    {
+      "id": "BudgetCheck",
+      "type": "serviceTask",
+      "name": "Soft budget check against cost-center",
+      "lane": "Platform / System",
+      "documentation": "Soft check (NOT a hard commit - the hard encumbrance happens at PO issue). System reads the Budget for the requisition's projectOrCostCenter and current period and compares. Expression evaluated downstream at the gateway: totalAmountInBase <= budget.availableAmount. This check WARNS only; it never blocks submission by itself. Approval limits are NOT budget control - budget is a separate dimension. [SCOR OE11 | source: platform-services budget 11 + data-model budget soft-check]"
+    },
+    {
+      "id": "Route",
+      "type": "serviceTask",
+      "name": "Route into configurable approval chain",
+      "lane": "Platform / System",
+      "documentation": "System routes the submitted, budget-cleared requisition into the configurable approval chain (handleRouting, isInitialRouting=true): creates one per-stage completion (NOT_STARTED) for each configured stage, then assigns the first stage. For the Requester/Req-Department stage the assignee is pinned to the requester and the approver is resolved from the RoutingRuleEntry matched on (department, stage) least-loaded (urgency-weighted). Missing routing rule -> BadRequestException, whole transaction rolls back, requisition stalls until admin fixes rules. Emits TICKET_ASSIGNED + audit + SSE. This hands off to the approval domain (diagram 03). [SCOR OE2 | ISO 8.4 | source: platform-services approval engine 1 + raphe-routing-approval + raphe-ticket-creation step 9]"
+    },
+    {
+      "id": "GwSaveOrSubmit",
+      "type": "exclusiveGateway",
+      "name": "Save draft or submit?",
+      "lane": "Requester",
+      "documentation": "Branch on the requester's action. Expression: action == 'SAVE_DRAFT' -> persist as Draft (status Draft; no validation gate, no routing); action == 'SUBMIT' -> run validation + budget soft-check then route. A draft can be reopened and edited any number of times before submit; the identifier is generated and immutable from first save. [source: AB draft save + albahja-requisition-approval status machine]"
+    },
+    {
+      "id": "GwBudget",
+      "type": "exclusiveGateway",
+      "name": "Within available budget?",
+      "lane": "Budget Owner",
+      "documentation": "Budget gate. Expression: totalAmountInBase <= budget.availableAmount -> within budget, route to approval directly. totalAmountInBase > budget.availableAmount -> over budget: the system shows a non-blocking warning and the Budget Owner (budget.approve, own cost-center) must either approve an override (logged) to proceed, or the requester revises the requisition down. This soft gate at intake does not encumber funds; the hard commit is at PO issue. [SCOR OE11 | source: data-model budget/commitment + role-permission-matrix budget.approve]"
+    },
+    {
+      "id": "Start",
+      "type": "startEvent",
+      "name": "Need identified",
+      "lane": "Requester",
+      "documentation": "Trigger: a requester in any department identifies a purchase need (material, spare, service, or product-design item). Precondition: tenant configured (diagram 01) - masters, routing rules, budgets, field config exist. Requester holds requisition.create scoped to own/own-department; sees only own/own-department requisitions and history (requisition.view own/dept). [SCOR S1.1 Define Business Need / O2 | ISO 7.5 | source: AB + RA + role-model]"
+    },
+    {
+      "id": "End",
+      "type": "endEvent",
+      "name": "Requisition submitted, in approval",
+      "lane": "Platform / System",
+      "documentation": "Outcome: a validated requisition (status IN_PROGRESS, stage INITIATION) with an immutable identifier, full header and line detail, base-currency totals, a soft budget result (or logged override), and per-stage approval completions created, the first stage assigned. Visibility stays scoped to own/department for the requester. Continues in diagram 03 (approval). New-item sub-flow may still be finishing in parallel without holding this outcome. [SCOR OE2 | source: build-new + RA initial routing]"
+    }
+  ],
+  "flows": [
+    {
+      "id": "f1",
+      "from": "Start",
+      "to": "OpenForm",
+      "guard": ""
+    },
+    {
+      "id": "f2",
+      "from": "OpenForm",
+      "to": "AddLines",
+      "guard": ""
+    },
+    {
+      "id": "f3",
+      "from": "AddLines",
+      "to": "NewItem",
+      "guard": "item is free-text (not in master)"
+    },
+    {
+      "id": "f4",
+      "from": "AddLines",
+      "to": "GwSaveOrSubmit",
+      "guard": "item found in master"
+    },
+    {
+      "id": "f5",
+      "from": "NewItem",
+      "to": "ApproveItem",
+      "guard": ""
+    },
+    {
+      "id": "f6",
+      "from": "ApproveItem",
+      "to": "LinkItem",
+      "guard": ""
+    },
+    {
+      "id": "f7",
+      "from": "LinkItem",
+      "to": "GwSaveOrSubmit",
+      "guard": "non-blocking, requisition continues"
+    },
+    {
+      "id": "f8",
+      "from": "GwSaveOrSubmit",
+      "to": "Draft",
+      "guard": "action == SAVE_DRAFT"
+    },
+    {
+      "id": "f9",
+      "from": "GwSaveOrSubmit",
+      "to": "Submit",
+      "guard": "action == SUBMIT"
+    },
+    {
+      "id": "f10",
+      "from": "Draft",
+      "to": "AddLines",
+      "guard": "reopen and edit"
+    },
+    {
+      "id": "f11",
+      "from": "Submit",
+      "to": "Compute",
+      "guard": ""
+    },
+    {
+      "id": "f12",
+      "from": "Compute",
+      "to": "BudgetCheck",
+      "guard": ""
+    },
+    {
+      "id": "f13",
+      "from": "BudgetCheck",
+      "to": "GwBudget",
+      "guard": ""
+    },
+    {
+      "id": "f14",
+      "from": "GwBudget",
+      "to": "Route",
+      "guard": "totalAmountInBase <= availableAmount"
+    },
+    {
+      "id": "f15",
+      "from": "GwBudget",
+      "to": "Override",
+      "guard": "totalAmountInBase > availableAmount"
+    },
+    {
+      "id": "f16",
+      "from": "Override",
+      "to": "Route",
+      "guard": "override approved (logged)"
+    },
+    {
+      "id": "f17",
+      "from": "Override",
+      "to": "Revise",
+      "guard": "sent back for revision"
+    },
+    {
+      "id": "f18",
+      "from": "Revise",
+      "to": "Submit",
+      "guard": "resubmit, same identifier"
+    },
+    {
+      "id": "f19",
+      "from": "Route",
+      "to": "End",
+      "guard": ""
+    }
+  ]
+}

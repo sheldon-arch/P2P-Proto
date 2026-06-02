@@ -1,0 +1,80 @@
+[
+  {
+    "id": "PO-LV-3",
+    "ticketId": "TKT-LV-003",
+    "supplierId": "SUP-0005",
+    "status": "ACKNOWLEDGED",
+    "poDate": "2026-05-12",
+    "value": 17225.0,
+    "currency": "USD",
+    "incoterm": "FOB",
+    "contractQty": 5000
+  },
+  {
+    "id": "PO-HERO", "budgetId": "BUD-0012",
+    "ticketId": "TKT-HERO",
+    "rfqId": "RFQ-HERO",
+    "supplierId": "SUP-0001",
+    "status": "DRAFT",
+    "poDate": "2026-05-28",
+    "currency": "INR",
+    "incoterm": "CIF",
+    "lines": [
+      {
+        "lineId": "TL-HERO-FIN",
+        "itemId": "ITM-0006",
+        "quantity": 5000,
+        "agreedPrice": 139.298
+      }
+    ],
+    "value": 696490.0
+  },
+  {
+    "id": "PO-HERO-CTN", "budgetId": "BUD-0001",
+    "ticketId": "TKT-HERO",
+    "rfqId": "RFQ-HERO-CTN",
+    "supplierId": "SUP-0005",
+    "status": "DRAFT",
+    "poDate": "2026-05-28",
+    "currency": "USD",
+    "incoterm": "FOB",
+    "lines": [
+      {
+        "lineId": "TL-HERO-CTN",
+        "itemId": "ITM-0063",
+        "quantity": 200000,
+        "agreedPrice": 0.077
+      },
+      {
+        "lineId": "TL-HERO-CTN-TOOL",
+        "itemId": "ITM-0063",
+        "description": "Die/cylinder (one-time tooling)",
+        "isToolingLine": true,
+        "quantity": 1,
+        "agreedPrice": 2500
+      }
+    ],
+    "value": 17900.0
+  },
+  {
+    "id": "PO-HERO-CTN-2",
+    "ticketId": "TKT-HERO",
+    "rfqId": "RFQ-HERO-CTN",
+    "supplierId": "SUP-0005",
+    "status": "DRAFT",
+    "poDate": "2026-06-01",
+    "currency": "USD",
+    "incoterm": "FOB",
+    "lines": [
+      {
+        "lineId": "TL-HERO-CTN-2",
+        "itemId": "ITM-0063",
+        "quantity": 200000,
+        "agreedPrice": 0.077
+      }
+    ],
+    "value": 15400.0,
+    "toolingWaived": true,
+    "toolingWaivedReason": "repeat order; die/cylinder already paid on PO-HERO-CTN"
+  }
+]

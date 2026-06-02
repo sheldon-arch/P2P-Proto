@@ -1,0 +1,200 @@
+{
+  "id": "e07-currency",
+  "file": "e07-currency.bpmn",
+  "name": "e07 - Currency Conversion and Graceful Degradation",
+  "lanes": [
+    {
+      "id": "L_buyer",
+      "name": "Procurement / Buyer",
+      "role": "Procurement / Buyer"
+    },
+    {
+      "id": "L_finmaker",
+      "name": "Finance - Maker",
+      "role": "Finance - Maker"
+    },
+    {
+      "id": "L_sys",
+      "name": "Platform / System",
+      "role": "Platform / System"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "ApplyOverride",
+      "type": "serviceTask",
+      "name": "Apply manual rate; record date + source = manual",
+      "lane": "Platform / System",
+      "documentation": "baseAmount = round(amount * PO.exchangeRate, 2). Persist the FX context on the line/PO: rate value, rate date (today or the buyer-entered date), source = 'manual', enteredBy. No external call. [SCOR OE4 | source: AB override + review FX-context]"
+    },
+    {
+      "id": "FetchRate",
+      "type": "serviceTask",
+      "name": "Fetch live rate (Frankfurter)",
+      "lane": "Platform / System",
+      "documentation": "Call the FX provider (e.g. Frankfurter) for currency -> baseCurrency. The call is wrapped so it NEVER throws to the caller; any transport/HTTP error is captured and turned into a fetch-failure flag. [SCOR OE4 | source: platform-services FX + RA e08 graceful degradation]"
+    },
+    {
+      "id": "Convert",
+      "type": "serviceTask",
+      "name": "baseAmount = round(amount * rate, 2)",
+      "lane": "Platform / System",
+      "documentation": "Convert: baseAmount = round(amount * rate, 2) (2 decimal places). Persist the FX context: rate value, rate date = fetch date, source = provider name (e.g. 'Frankfurter'). The base amount now drives approval thresholds, landed-cost comparison, and analytics. [SCOR OE4 | source: platform-services FX convert + review FX-context]"
+    },
+    {
+      "id": "Degrade",
+      "type": "serviceTask",
+      "name": "Log + return original amount unconverted",
+      "lane": "Platform / System",
+      "documentation": "Graceful degradation: log the reason (fetch-failure | invalid-rate) and return the ORIGINAL amount unchanged; mark the FX context source = 'unconverted', rate = null so downstream knows the figure is not normalized. convertToBase NEVER throws; the cycle continues rather than blocking on an FX outage. A flagged unconverted amount can be re-converted later. [SCOR OE4 | source: RA e08 never-throws graceful degradation]"
+    },
+    {
+      "id": "Persist",
+      "type": "serviceTask",
+      "name": "Persist base amount + FX context (rate, date, source)",
+      "lane": "Platform / System",
+      "documentation": "Store totalAmountInBase (or line baseAmount), exchangeRate, fxRateDate, fxSource on the entity. The FX context is required so the realized FX gain/loss can later be computed PO-date-vs-payment-date. Emits SSE; the figure is now comparable across currencies. [SCOR OE4 | source: review FX gain/loss addition]"
+    },
+    {
+      "id": "RealizedFx",
+      "type": "serviceTask",
+      "name": "Compute realized FX gain/loss at payment",
+      "lane": "Finance - Maker",
+      "documentation": "At payment time, Finance computes realized FX gain/loss = (PO-date base value) - (payment-date base value) for the same foreign amount, using each date's rate from the stored FX context. Posts the gain/loss to the ledger and surfaces it on the creditor ledger and analytics. This step only runs for foreign-currency settlements. [SCOR S2.7 | source: review realized FX gain/loss PO-vs-payment]"
+    },
+    {
+      "id": "GwOverride",
+      "type": "exclusiveGateway",
+      "name": "Per-PO manual exchange rate set?",
+      "lane": "Procurement / Buyer",
+      "documentation": "Expression: PO.exchangeRate != null (buyer set a manual override on this PO). True -> use the manual rate directly (baseAmount = round(amount * PO.exchangeRate, 2)), skip the live fetch; the override carries its own rate date + source = 'manual'. False -> call the FX service. The override exists for contracts that fix a rate or where the buyer must match a bank rate (AB per-PO override). [SCOR OE4 | source: AB per-PO manual exchange-rate override]"
+    },
+    {
+      "id": "GwBaseOrNull",
+      "type": "exclusiveGateway",
+      "name": "currency is base or null?",
+      "lane": "Platform / System",
+      "documentation": "Expression: currency == baseCurrency OR currency == null. True -> return the amount UNCHANGED and make NO external call (no conversion needed; rate implicitly 1.0). False (a foreign currency) -> fetch a live rate. This guard prevents needless calls and is the first branch of convertToBase. [SCOR OE4 | source: platform-services FX convertToBase base/null short-circuit]"
+    },
+    {
+      "id": "GwFetchOk",
+      "type": "exclusiveGateway",
+      "name": "Fetch succeeded?",
+      "lane": "Platform / System",
+      "documentation": "Expression: the provider returned a 2xx response with a parseable rate. False (timeout, non-2xx, network error, unparseable body) -> LOG the failure and RETURN THE ORIGINAL amount unconverted (graceful degradation). True -> validate the rate value. [SCOR OE4 | source: RA e08 fetch-failure -> return original]"
+    },
+    {
+      "id": "GwRateValid",
+      "type": "exclusiveGateway",
+      "name": "Rate finite and > 0?",
+      "lane": "Platform / System",
+      "documentation": "Expression: isFinite(rate) AND rate > 0 (rejects 0, NaN, Infinity, negative). False -> LOG the invalid rate and RETURN THE ORIGINAL amount unconverted. True -> convert. This second guard catches a successful fetch that nonetheless yields a garbage rate. [SCOR OE4 | source: RA e08 invalid-rate guard]"
+    },
+    {
+      "id": "Start",
+      "type": "startEvent",
+      "name": "Amount needs base-currency value",
+      "lane": "Platform / System",
+      "documentation": "Trigger: any transaction amount (requisition total, quote price, PO line value, invoice amount, payment) needs its base-currency equivalent for thresholds, landed-cost comparison, and analytics. Entry point convertToBase(amount, currency). The base/reporting currency is configurable per tenant (NOT hard-coded INR or OMR). [SCOR OE4 | source: platform-services FX + RA e08]"
+    },
+    {
+      "id": "End",
+      "type": "endEvent",
+      "name": "Base value available (or original, flagged)",
+      "lane": "Platform / System",
+      "documentation": "Either a normalized base amount with full FX context, or (on degradation) the original amount flagged unconverted. Either way the call returned without throwing and the cycle proceeded. [SCOR OE4 | source: platform-services FX]"
+    }
+  ],
+  "flows": [
+    {
+      "id": "f1",
+      "from": "Start",
+      "to": "GwOverride",
+      "guard": ""
+    },
+    {
+      "id": "f2",
+      "from": "GwOverride",
+      "to": "ApplyOverride",
+      "guard": "PO.exchangeRate != null"
+    },
+    {
+      "id": "f3",
+      "from": "GwOverride",
+      "to": "GwBaseOrNull",
+      "guard": "no override -> convertToBase"
+    },
+    {
+      "id": "f4",
+      "from": "ApplyOverride",
+      "to": "Persist",
+      "guard": ""
+    },
+    {
+      "id": "f5",
+      "from": "GwBaseOrNull",
+      "to": "Persist",
+      "guard": "base or null: return unchanged, no call"
+    },
+    {
+      "id": "f6",
+      "from": "GwBaseOrNull",
+      "to": "FetchRate",
+      "guard": "foreign currency"
+    },
+    {
+      "id": "f7",
+      "from": "FetchRate",
+      "to": "GwFetchOk",
+      "guard": ""
+    },
+    {
+      "id": "f8",
+      "from": "GwFetchOk",
+      "to": "GwRateValid",
+      "guard": "fetch ok"
+    },
+    {
+      "id": "f9",
+      "from": "GwFetchOk",
+      "to": "Degrade",
+      "guard": "fetch failed -> log, return original"
+    },
+    {
+      "id": "f10",
+      "from": "GwRateValid",
+      "to": "Convert",
+      "guard": "isFinite(rate) AND rate > 0"
+    },
+    {
+      "id": "f11",
+      "from": "GwRateValid",
+      "to": "Degrade",
+      "guard": "0 / NaN / Inf / negative -> log, return original"
+    },
+    {
+      "id": "f12",
+      "from": "Convert",
+      "to": "Persist",
+      "guard": ""
+    },
+    {
+      "id": "f13",
+      "from": "Degrade",
+      "to": "Persist",
+      "guard": ""
+    },
+    {
+      "id": "f14",
+      "from": "Persist",
+      "to": "RealizedFx",
+      "guard": ""
+    },
+    {
+      "id": "f15",
+      "from": "RealizedFx",
+      "to": "End",
+      "guard": ""
+    }
+  ]
+}

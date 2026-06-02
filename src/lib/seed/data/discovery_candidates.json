@@ -1,0 +1,110 @@
+[
+  {
+    "id": "DC-001",
+    "name": "Zhejiang Food Chem Co.",
+    "country": "China",
+    "hsCodes": ["29420090", "29339990"],
+    "keywords": ["food ingredient", "food ingredient", "bulk ingredient"],
+    "clearlyMocked": true,
+    "marketRateHint": 145
+  },
+  {
+    "id": "DC-002",
+    "name": "ChemStar India Pvt Ltd",
+    "country": "India",
+    "hsCodes": ["29420090", "29362990"],
+    "keywords": ["food ingredient", "synthesis", "food-grade", "custom synthesis"],
+    "clearlyMocked": true,
+    "marketRateHint": 132
+  },
+  {
+    "id": "DC-003",
+    "name": "EuroBio Actives GmbH",
+    "country": "Germany",
+    "hsCodes": ["29420090"],
+    "keywords": ["food ingredient", "high-potency", "cGMP", "food-grade ingredient"],
+    "clearlyMocked": true,
+    "marketRateHint": 178
+  },
+  {
+    "id": "DC-004",
+    "name": "BrightPack Industries",
+    "country": "India",
+    "hsCodes": ["48191000"],
+    "keywords": ["carton", "packaging", "folding box", "secondary packaging"],
+    "clearlyMocked": true,
+    "marketRateHint": 0.065
+  },
+  {
+    "id": "DC-005",
+    "name": "SinoBox Packaging Ltd",
+    "country": "China",
+    "hsCodes": ["48191000", "48192000"],
+    "keywords": ["carton", "corrugated box", "offset printing", "packaging"],
+    "clearlyMocked": true,
+    "marketRateHint": 0.058
+  },
+  {
+    "id": "DC-006",
+    "name": "PolyPrint Europe BV",
+    "country": "Netherlands",
+    "hsCodes": ["48191000"],
+    "keywords": ["carton", "food-grade packaging", "blister carton", "leaflet"],
+    "clearlyMocked": true,
+    "marketRateHint": 0.091
+  },
+  {
+    "id": "DC-007",
+    "name": "Apex Chem Solutions",
+    "country": "South Korea",
+    "hsCodes": ["29420090", "29339990"],
+    "keywords": ["food ingredient", "contract manufacturing", "food-grade"],
+    "clearlyMocked": true,
+    "marketRateHint": 158
+  },
+  {
+    "id": "DC-008",
+    "name": "OmniFood Raw Materials",
+    "country": "Brazil",
+    "hsCodes": ["29420090"],
+    "keywords": ["food ingredient", "bulk substance", "active ingredient"],
+    "clearlyMocked": true,
+    "marketRateHint": 128
+  },
+  {
+    "id": "DC-009",
+    "name": "PrimePack Solutions",
+    "country": "India",
+    "hsCodes": ["48191000", "48192000"],
+    "keywords": ["carton", "mono-carton", "printed packaging", "food pack"],
+    "clearlyMocked": true,
+    "marketRateHint": 0.071
+  },
+  {
+    "id": "DC-010",
+    "name": "Hanover Biochem AG",
+    "country": "Germany",
+    "hsCodes": ["29420090", "29300090"],
+    "keywords": ["food ingredient", "synthesis intermediate", "gmp certified"],
+    "clearlyMocked": true,
+    "marketRateHint": 190
+  },
+  {
+    "id": "DC-011",
+    "name": "EastPac Manufacturing",
+    "country": "China",
+    "hsCodes": ["48191000"],
+    "keywords": ["carton", "offset carton", "packaging material", "folding"],
+    "clearlyMocked": true,
+    "marketRateHint": 0.055
+  },
+  {
+    "id": "DC-012",
+    "name": "Verdant ChemLab",
+    "country": "India",
+    "hsCodes": ["29420090", "29419090"],
+    "keywords": ["food ingredient", "food-grade", "specialty chemical", "active substance"],
+    "clearlyMocked": true,
+    "marketRateHint": 137
+  }
+]

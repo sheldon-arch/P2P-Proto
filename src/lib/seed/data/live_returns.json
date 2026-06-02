@@ -1,0 +1,21 @@
+[
+  {
+    "id": "RMA-LV-1",
+    "rmaNumber": "RMA-2026-018",
+    "sourceOrderId": "TKT-LV-021",
+    "supplierId": "SUP-0009",
+    "reason": "defective",
+    "productCondition": "rejected at inspection",
+    "authorizationStatus": "AUTHORIZED",
+    "closureStatus": "SHIPMENT_SCHEDULED",
+    "linkedNcrId": null,
+    "shipment": {
+      "carrier": "DHL",
+      "label": "issued",
+      "date": "2026-05-30"
+    },
+    "quarantineLocation": "QZ-C-01",
+    "quarantineUntil": "2026-08-28",
+    "disposalSopRef": "SOP-QC-007"
+  }
+]

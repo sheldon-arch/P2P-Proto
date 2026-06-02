@@ -1,0 +1,335 @@
+[
+  {
+    "id": "QA-0001",
+    "supplierId": "SUP-0001",
+    "version": "v2.0",
+    "signedDate": "2025-06-01",
+    "expiryDate": "2027-05-31",
+    "scope": "api-raw: Food Ingredients including Lactose, Sorbitol, Omega-3, Cellulose, and Vitamin C APIs",
+    "status": "ACTIVE"
+  },
+  {
+    "id": "QA-0002",
+    "supplierId": "SUP-0002",
+    "version": "v1.0",
+    "signedDate": "2025-01-15",
+    "expiryDate": "2027-01-14",
+    "scope": "api-raw: Food Ingredients including Sorbitol, Vitamin D3, Collagen, Benzoyl, and Cetirizine APIs",
+    "status": "ACTIVE"
+  },
+  {
+    "id": "QA-0003",
+    "supplierId": "SUP-0003",
+    "version": "v1.0",
+    "signedDate": "2025-03-10",
+    "expiryDate": "2027-03-09",
+    "scope": "api-raw: Food Ingredients including Camphor, Zinc, Potassium, and Loratadine APIs",
+    "status": "ACTIVE"
+  },
+  {
+    "id": "QA-0004",
+    "supplierId": "SUP-0004",
+    "version": "v1.0",
+    "signedDate": "2025-07-20",
+    "expiryDate": "2027-07-19",
+    "scope": "api-raw: Food Additive raw materials - microcrystalline cellulose, lactose monohydrate, and related additives",
+    "status": "ACTIVE"
+  },
+  {
+    "id": "QA-0005",
+    "supplierId": "SUP-0005",
+    "version": "v1.0",
+    "signedDate": "2025-02-28",
+    "expiryDate": "2027-02-27",
+    "scope": "packing-material: Folding cartons, shipper boxes, and printed outer packaging materials",
+    "status": "ACTIVE"
+  },
+  {
+    "id": "QA-0006",
+    "supplierId": "SUP-0006",
+    "version": "v1.0",
+    "signedDate": "2025-04-15",
+    "expiryDate": "2027-04-14",
+    "scope": "packing-material: HDPE bottles, containers, and closures for food-grade use",
+    "status": "ACTIVE"
+  },
+  {
+    "id": "QA-0007",
+    "supplierId": "SUP-0007",
+    "version": "v1.0",
+    "signedDate": "2025-05-01",
+    "expiryDate": "2027-04-30",
+    "scope": "packing-material: Child-resistant closures, tamper-evident caps, and safety packaging",
+    "status": "ACTIVE"
+  },
+  {
+    "id": "QA-0008",
+    "supplierId": "SUP-0009",
+    "version": "v1.0",
+    "signedDate": "2025-01-10",
+    "expiryDate": "2027-01-09",
+    "scope": "packing-material: Glass and PET bottles for liquid formulations and syrups",
+    "status": "ACTIVE"
+  },
+  {
+    "id": "QA-0009",
+    "supplierId": "SUP-0010",
+    "version": "v1.0",
+    "signedDate": "2025-08-01",
+    "expiryDate": "2027-07-31",
+    "scope": "food-agro: Laboratory consumables and reagents used in food testing and quality control",
+    "status": "ACTIVE"
+  },
+  {
+    "id": "QA-0010",
+    "supplierId": "SUP-0011",
+    "version": "v1.0",
+    "signedDate": "2025-06-15",
+    "expiryDate": "2027-06-14",
+    "scope": "food-agro: Chemical ingredients and additives for food and consumer health formulations",
+    "status": "ACTIVE"
+  },
+  {
+    "id": "QA-0011",
+    "supplierId": "SUP-0013",
+    "version": "v1.0",
+    "signedDate": "2025-03-01",
+    "expiryDate": "2027-02-28",
+    "scope": "packing-material: Pressure-sensitive labels, promotional stickers, and barcode labels",
+    "status": "ACTIVE"
+  },
+  {
+    "id": "QA-0012",
+    "supplierId": "SUP-0014",
+    "version": "v1.0",
+    "signedDate": "2025-04-01",
+    "expiryDate": "2027-03-31",
+    "scope": "packing-material: Leaflets, inserts, and printed instructional materials",
+    "status": "ACTIVE"
+  },
+  {
+    "id": "QA-0013",
+    "supplierId": "SUP-0015",
+    "version": "v1.0",
+    "signedDate": "2025-09-01",
+    "expiryDate": "2027-08-31",
+    "scope": "api-raw: Food-Grade additives including binders, disintegrants, and lubricants",
+    "status": "ACTIVE"
+  },
+  {
+    "id": "QA-0014",
+    "supplierId": "SUP-0016",
+    "version": "v1.0",
+    "signedDate": "2025-05-10",
+    "expiryDate": "2027-05-09",
+    "scope": "packing-material: Printed cartons, blister foil, and secondary packaging materials",
+    "status": "ACTIVE"
+  },
+  {
+    "id": "QA-0015",
+    "supplierId": "SUP-0017",
+    "version": "v1.0",
+    "signedDate": "2025-07-01",
+    "expiryDate": "2027-06-30",
+    "scope": "food-agro: Scientific instruments and laboratory equipment for quality analysis",
+    "status": "ACTIVE"
+  },
+  {
+    "id": "QA-0016",
+    "supplierId": "SUP-0018",
+    "version": "v1.0",
+    "signedDate": "2025-02-15",
+    "expiryDate": "2027-02-14",
+    "scope": "food-agro: Specialty chemicals and intermediates for nutraceutical formulations",
+    "status": "ACTIVE"
+  },
+  {
+    "id": "QA-0017",
+    "supplierId": "SUP-0019",
+    "version": "v1.0",
+    "signedDate": "2025-10-01",
+    "expiryDate": "2027-09-30",
+    "scope": "packing-material: High-density polyethylene and PET bottles for supplement products",
+    "status": "ACTIVE"
+  },
+  {
+    "id": "QA-0018",
+    "supplierId": "SUP-0020",
+    "version": "v1.0",
+    "signedDate": "2025-11-15",
+    "expiryDate": "2027-11-14",
+    "scope": "packing-material: Specialty bottles and containers for oral liquids and suspensions",
+    "status": "ACTIVE"
+  },
+  {
+    "id": "QA-0019",
+    "supplierId": "SUP-0021",
+    "version": "v1.0",
+    "signedDate": "2025-08-20",
+    "expiryDate": "2027-08-19",
+    "scope": "api-raw: Food Additive raw materials for solid dosage forms including fillers and binders",
+    "status": "ACTIVE"
+  },
+  {
+    "id": "QA-0020",
+    "supplierId": "SUP-0022",
+    "version": "v1.0",
+    "signedDate": "2025-12-01",
+    "expiryDate": "2027-11-30",
+    "scope": "packing-material: Amber glass and plastic containers for light-sensitive formulations",
+    "status": "ACTIVE"
+  },
+  {
+    "id": "QA-0021",
+    "supplierId": "SUP-0023",
+    "version": "v1.0",
+    "signedDate": "2025-04-20",
+    "expiryDate": "2027-04-19",
+    "scope": "food-agro: Analytical chemistry standards and reference materials for laboratory testing",
+    "status": "ACTIVE"
+  },
+  {
+    "id": "QA-0022",
+    "supplierId": "SUP-0024",
+    "version": "v1.0",
+    "signedDate": "2025-03-15",
+    "expiryDate": "2027-03-14",
+    "scope": "packing-material: Tamper-evident bottles and screw-cap containers for snack bar products",
+    "status": "ACTIVE"
+  },
+  {
+    "id": "QA-0023",
+    "supplierId": "SUP-0025",
+    "version": "v1.0",
+    "signedDate": "2025-06-20",
+    "expiryDate": "2027-06-19",
+    "scope": "packing-material: Clear and amber plastic bottles for effervescent and powder formulations",
+    "status": "ACTIVE"
+  },
+  {
+    "id": "QA-0024",
+    "supplierId": "SUP-0026",
+    "version": "v1.0",
+    "signedDate": "2025-01-20",
+    "expiryDate": "2027-01-19",
+    "scope": "food-agro: Processing chemicals and sanitizers used in food-grade manufacturing environments",
+    "status": "ACTIVE"
+  },
+  {
+    "id": "QA-0025",
+    "supplierId": "SUP-0027",
+    "version": "v1.0",
+    "signedDate": "2025-05-25",
+    "expiryDate": "2027-05-24",
+    "scope": "packing-material: Corrugated cartons and shippers for transit packaging of finished goods",
+    "status": "ACTIVE"
+  },
+  {
+    "id": "QA-0026",
+    "supplierId": "SUP-0029",
+    "version": "v1.0",
+    "signedDate": "2025-07-10",
+    "expiryDate": "2027-07-09",
+    "scope": "packing-material: Offset-printed cartons, display boxes, and specialist printing for retail products",
+    "status": "ACTIVE"
+  },
+  {
+    "id": "QA-0027",
+    "supplierId": "SUP-0030",
+    "version": "v1.0",
+    "signedDate": "2025-09-15",
+    "expiryDate": "2027-09-14",
+    "scope": "packing-material: Spray bottles, pump dispensers, and foam containers for topical products",
+    "status": "ACTIVE"
+  },
+  {
+    "id": "QA-0028",
+    "supplierId": "SUP-0031",
+    "version": "v1.0",
+    "signedDate": "2025-10-10",
+    "expiryDate": "2027-10-09",
+    "scope": "food-agro: Microbiology media, reagents, and environmental monitoring supplies",
+    "status": "ACTIVE"
+  },
+  {
+    "id": "QA-0029",
+    "supplierId": "SUP-0032",
+    "version": "v1.0",
+    "signedDate": "2025-11-01",
+    "expiryDate": "2027-10-31",
+    "scope": "api-raw: Food-Grade-grade additives for modified-release and specialty formulations",
+    "status": "ACTIVE"
+  },
+  {
+    "id": "QA-0030",
+    "supplierId": "SUP-0033",
+    "version": "v1.0",
+    "signedDate": "2025-02-01",
+    "expiryDate": "2027-01-31",
+    "scope": "food-agro: Preservatives, stabilizers, and food-grade chemical additives",
+    "status": "ACTIVE"
+  },
+  {
+    "id": "QA-0031",
+    "supplierId": "SUP-0035",
+    "version": "v1.0",
+    "signedDate": "2025-08-10",
+    "expiryDate": "2027-08-09",
+    "scope": "packing-material: Self-adhesive labels with variable print for tracking and serialization",
+    "status": "ACTIVE"
+  },
+  {
+    "id": "QA-0032",
+    "supplierId": "SUP-0036",
+    "version": "v1.0",
+    "signedDate": "2025-12-15",
+    "expiryDate": "2027-12-14",
+    "scope": "food-agro: Dissolution test apparatus, stability chambers, and analytical balance calibration standards",
+    "status": "ACTIVE"
+  },
+  {
+    "id": "QA-0033",
+    "supplierId": "SUP-0037",
+    "version": "v1.0",
+    "signedDate": "2025-04-05",
+    "expiryDate": "2027-04-04",
+    "scope": "food-agro: General laboratory consumables and rapid test kits for food safety monitoring",
+    "status": "ACTIVE"
+  },
+  {
+    "id": "QA-0034",
+    "supplierId": "SUP-0038",
+    "version": "v1.0",
+    "signedDate": "2025-10-20",
+    "expiryDate": "2027-10-19",
+    "scope": "api-raw: Food Additive specialties including superdisintegrants, film coating polymers, and controlled-release materials",
+    "status": "ACTIVE"
+  },
+  {
+    "id": "QA-0035",
+    "supplierId": "SUP-0040",
+    "version": "v1.0",
+    "signedDate": "2025-03-25",
+    "expiryDate": "2027-03-24",
+    "scope": "food-agro: Specialty chemical blends and organic-synthesis intermediates for R&D",
+    "status": "ACTIVE"
+  },
+  {
+    "id": "QA-0036",
+    "supplierId": "SUP-0043",
+    "version": "v1.0",
+    "signedDate": "2025-07-15",
+    "expiryDate": "2027-07-14",
+    "scope": "api-raw: Food-Grade-grade additives for inhalation, parenteral, and ophthalmic formulations",
+    "status": "ACTIVE"
+  },
+  {
+    "id": "QA-0037",
+    "supplierId": "SUP-0047",
+    "version": "v1.0",
+    "signedDate": "2025-09-05",
+    "expiryDate": "2027-09-04",
+    "scope": "packing-material: Digital and flexographic printing for labels, inserts, and smart packaging",
+    "status": "ACTIVE"
+  }
+]

@@ -1,0 +1,39 @@
+[
+  {
+    "id": "QM-001",
+    "materialType": "food-agro",
+    "version": "v1.0",
+    "effectiveFrom": "2025-01-01",
+    "requiredCertSet": [
+      { "certCode": "FSMS",     "certName": "Food Safety Management System",       "mandatory": true,  "notes": "ISO 22000 or equivalent FSMS certification required" },
+      { "certCode": "HACCP",    "certName": "Hazard Analysis Critical Control Points", "mandatory": true,  "notes": "HACCP plan and certification covering supplied food/agro materials" },
+      { "certCode": "ISO22000", "certName": "ISO 22000:2018",                      "mandatory": true,  "notes": "Third-party certified to ISO 22000:2018; expiry must be > 90 days from today" }
+    ]
+  },
+  {
+    "id": "QM-002",
+    "materialType": "packing-material",
+    "version": "v1.0",
+    "effectiveFrom": "2025-01-01",
+    "requiredCertSet": [
+      { "certCode": "FoodGradeDecl",  "certName": "Food-Grade Declaration",              "mandatory": true,  "notes": "Signed declaration confirming materials are food-contact compliant" },
+      { "certCode": "MigrationFreeInk", "certName": "Migration-Free Ink Certification",  "mandatory": true,  "notes": "Ink/coating migration test certificate confirming compliance with EU 10/2011 or equivalent" },
+      { "certCode": "ChildResistPkg", "certName": "Child-Resistant Packaging Certification", "mandatory": false, "notes": "Required only for retail/Rx-labelled outer packs; not mandatory for bulk packaging" },
+      { "certCode": "BSE-TSE-Decl",   "certName": "BSE/TSE Declaration",                "mandatory": true,  "notes": "Supplier declaration that no animal-derived materials subject to BSE/TSE risk are used" }
+    ]
+  },
+  {
+    "id": "QM-003",
+    "materialType": "api-raw",
+    "version": "v1.0",
+    "effectiveFrom": "2025-01-01",
+    "requiredCertSet": [
+      { "certCode": "GMP",           "certName": "Good Manufacturing Practice",          "mandatory": true,  "notes": "Valid GMP certificate issued by a recognized authority (WHO, USFDA, EMA, PMDA)" },
+      { "certCode": "FDAReg",        "certName": "FDA Registration",                     "mandatory": true,  "notes": "Current FDA facility registration or equivalent national regulatory registration" },
+      { "certCode": "FCC-FOODGRADE",  "certName": "Food-Grade Compliance",            "mandatory": true,  "notes": "Ingredient must comply with FCC or relevant food-grade standard as applicable" },
+      { "certCode": "COA-3Batch",    "certName": "Certificate of Analysis (3 Batches)",  "mandatory": true,  "notes": "COA for three consecutive commercial batches; must cover all compendial tests" },
+      { "certCode": "ICH-Compliance","certName": "ICH Guidelines Compliance",            "mandatory": true,  "notes": "Compliance with ICH Q7 (GMP for APIs) and relevant ICH stability guidelines" },
+      { "certCode": "RetentionSamples","certName": "Retention Samples Program",          "mandatory": true,  "notes": "Supplier must maintain and provide retention samples per GMP requirements; verified pre-ONBOARDED" }
+    ]
+  }
+]

@@ -1,0 +1,235 @@
+{
+  "id": "11-returns-rma",
+  "file": "11-returns-rma.bpmn",
+  "name": "Returns and RMA (SCOR S4 Source Return)",
+  "lanes": [
+    {
+      "id": "L_qc",
+      "name": "Quality",
+      "role": "Quality"
+    },
+    {
+      "id": "L_buyer",
+      "name": "Procurement / Buyer",
+      "role": "Procurement / Buyer"
+    },
+    {
+      "id": "L_supplier",
+      "name": "Supplier / Vendor",
+      "role": "Supplier / Vendor"
+    },
+    {
+      "id": "L_recv",
+      "name": "Receiving / Warehouse",
+      "role": "Receiving / Warehouse"
+    },
+    {
+      "id": "L_finmaker",
+      "name": "Finance - Maker",
+      "role": "Finance - Maker"
+    },
+    {
+      "id": "L_sys",
+      "name": "Platform / System",
+      "role": "Platform / System"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "Initiate",
+      "type": "userTask",
+      "name": "S4.1 Initiate source return",
+      "lane": "Quality",
+      "documentation": "Initiator creates the Return/RMA record. Fields: returnId (auto, configurable pattern e.g. RET/#####, immutable), sourceOrderId (PO reference, mandatory, resolves to PO header), supplierId (auto from PO, read-only), linkedNcrId (mandatory if trigger = NCR disposition 'return', else null), initiatedBy (auto = current user), initiatedAt (auto timestamp), returnType dropdown {full-lot | partial-lot | single-line}, lines [{poLineId, itemId, quantityToReturn (>0 and <= received quantity), unitPrice (auto from PO line), reasonCode}]. Permission return.initiate held by Quality (C: initiate on NCR), Engineering (C: initiate), Buyer (G: handle); Supplier may only respond (C: return goods). On submit, Return status = raised. SSE return.created emitted; audit logged (category: return). [SCOR S4.1 | ISO 8.7 | source: data-model Return/RMA + role-permission-matrix return.initiate]"
+    },
+    {
+      "id": "Authorize",
+      "type": "userTask",
+      "name": "S4.2 Request / authorize product return",
+      "lane": "Procurement / Buyer",
+      "documentation": "Buyer (return.authorize) requests authorization from the supplier and records the supplier-issued RMA. Fields: rmaNumber (text, supplier-issued authorization reference, mandatory before shipment), authorizationStatus dropdown {requested | authorized | declined}, authorizedBy (supplier contact), authorizedAt (date), returnAuthorizationMethod {email+OTP supplier form | phone-confirmed | contract-clause auto}, supplierReturnAddress (resolves from SupplierAddress, where goods ship back), restockingFeePercent (number, optional, default 0, configurable per contract). The buyer floats the request to the supplier via the authenticated external form (email + OTP, same channel as quote.capture / po.acknowledge). [SCOR S4.2 Request Authorize Product Return | ISO 8.7 (return as a disposition requires supplier agreement) | source: build-new + RA OTP external form]"
+    },
+    {
+      "id": "Declined",
+      "type": "userTask",
+      "name": "Escalate declined return (re-disposition)",
+      "lane": "Procurement / Buyer",
+      "documentation": "On declined / no-response authorization: buyer records declineReason, sets Return status = blocked, and routes back to the NCR handler in e04 to pick an alternative disposition {rework | use-as-is-concession | scrap}. A buyer-raised debit note may still be raised unilaterally for a contractual breach (handled at S4.5 closure). Notification to QC, requester, and management. [SCOR S4.2 | ISO 8.7 disposition alternatives | source: build-new + e04 cross-link]"
+    },
+    {
+      "id": "Identify",
+      "type": "userTask",
+      "name": "S4.3 Identify product condition / return reason",
+      "lane": "Quality",
+      "documentation": "Quality classifies each return line. reasonCode dropdown (mandatory per line, exact set): {defective | damaged | wrong-item | over-delivery | expired | quality-fail}. Definitions: defective = functional non-conformance to spec; damaged = transit/handling physical damage (RL.3.22-24 damage-free); wrong-item = SKU mismatch vs PO line (RL.3.13 item accuracy); over-delivery = quantity received beyond PO + tolerance (+/-5-10% for labels/cartons per AB, RL.3.14 quantity accuracy); expired = shelf-life past at receipt (food/regulated RM); quality-fail = COA/test fail at QC gate. Fields: conditionDescription (text, mandatory), percentNonConformance (number 0-100, mandatory, copied from linked NCR if present), images [attachments, >=1 mandatory for defective/damaged/quality-fail], rootCauseSuspected (optional, seeds CAPA in e04). The reasonCode drives the financial adjustment direction at S4.5 (over-delivery -> debit note to recover over-billed value; defective/damaged/quality-fail -> credit note expected from supplier). [SCOR S4.3 Identify Product Condition/Return Reason | ISO 8.7 (nature of nonconformity recorded) | source: AB NCR fields + data-model Return reason/condition]"
+    },
+    {
+      "id": "Schedule",
+      "type": "userTask",
+      "name": "S4.4 Schedule product shipment",
+      "lane": "Receiving / Warehouse",
+      "documentation": "Receiving/Warehouse (return.schedule) arranges the physical return. Fields: carrier (dropdown from carrier master / free-text), returnLabelRef (text or attachment; who-pays dropdown {supplier-paid | buyer-paid | shared} default supplier-paid for defective/quality-fail), pickupDate (date, mandatory, >= today), returnTrackingNumber (AWB/BL/LR/courier no., mirrors inbound tracking fields), returnIncoterm (validated against transport mode: FOB/CIF sea-only, air/multimodal FCA/CPT/CIP/DAP per Incoterms 2020), packingNote, segregationLocation (quarantine bin reference; goods physically segregated per ISO 8.7 until dispatched). On dispatch: Return status = in-transit; an ETA-approaching alarm fires a few days before expected supplier receipt (mirrors AB inbound ETA alarm) to buyer + QC. Stock relieved from quarantine on dispatch confirmation. [SCOR S4.4 Schedule Product Shipment | ISO 8.7 (segregate nonconforming) | source: build-new + AB delivery-tracking transport fields]"
+    },
+    {
+      "id": "CreditNote",
+      "type": "userTask",
+      "name": "Apply supplier credit note",
+      "lane": "Finance - Maker",
+      "documentation": "Finance-Maker (creditNote.manage) records the supplier-issued CreditNote. Fields: creditNoteRef (mandatory), linkedReturnId (auto), linkedInvoiceId (the original invoice), amount (= returned value), taxAmount (reverses input-VAT/GST credit on the returned portion; recoverable tax adjusted), reason (auto from reasonCode). Effect: reduces the payable to the supplier; posts a debit to the creditor ledger entry for that supplier (reduces what is owed). If the original invoice was already paid, the credit note becomes a recoverable balance carried on the creditor ledger against the next payable. GR/IR accrual for the returned quantity is reversed. [ISO 8.7 | source: data-model CreditNote + AB creditor ledger read-model]"
+    },
+    {
+      "id": "DebitNote",
+      "type": "userTask",
+      "name": "Raise buyer debit note",
+      "lane": "Finance - Maker",
+      "documentation": "Finance-Maker (debitNote.manage) raises a buyer-issued DebitNote when the supplier over-delivered, shipped wrong items, or declines a warranted credit. Fields: debitNoteRef (auto), linkedReturnId (auto), linkedInvoiceId (if invoiced), linkedMatchExceptionId (if it arose from a qty-over / wrong-item match exception in e12), amount (= over-billed or disputed value + supplier-paid return freight where applicable), taxAmount, reason. Effect: reduces the payable / raises a receivable; posts against the creditor ledger. Approval follows the maker/checker control (Finance-Checker releases any resulting payment adjustment). [ISO 8.7 | source: data-model DebitNote + role-permission-matrix debitNote.manage]"
+    },
+    {
+      "id": "Close",
+      "type": "serviceTask",
+      "name": "S4.5 Close or adjust return order",
+      "lane": "Platform / System",
+      "documentation": "System closes the Return and posts the ledger/budget adjustments. Actions: set Return status = closed; relieve commitment for the returned value (committed -= returnedValue moved correctly, or actual reduced if already relieved at GR); adjust creditor ledger (credit-note reduces payable; debit-note reduces payable / raises receivable); reverse the GR/IR accrual for the returned quantity; update the linked NCR (if linkedNcrId present) to reflect return-resolved; feed the supplier scorecard (return event counts against quality PPM/defect and, if late or documentation-poor, against the four-factor perfect-order RL.1.2). Guard: a return cannot close while authorizationStatus != authorized and goods are still in quarantine. Emits return.closed SSE + audit. [SCOR S4.5 Close or Adjust Return Order | ISO 8.7 (retain disposition record) -> 8.4.1 (feeds re-evaluation) | source: build-new + data-model state machine NCR/Return]"
+    },
+    {
+      "id": "FeedNcr",
+      "type": "serviceTask",
+      "name": "Update NCR + feed CAPA / scorecard",
+      "lane": "Platform / System",
+      "documentation": "If linkedNcrId is set, the closed return updates the NCR record (disposition 'return' marked executed) and hands control to the CAPA loop (e04): the systemic root-cause + corrective action and effectiveness review continue independently of the physical return closing. The return event is written to the supplier scorecard period (quality dimension: NCR/defect count; delivery dimension: a returned line that was late or wrong fails the four-factor perfect-order test). Recurring returns from one supplier may trip the consecutive-below counter and contribute to a SUSPENDED gate in e04. [ISO 8.7 -> 10.2 -> 8.4.1 | source: iso-supply-chain-standards feedback loop + e04 cross-link]"
+    },
+    {
+      "id": "Receipt",
+      "type": "receiveTask",
+      "name": "Supplier confirms receipt of returned goods",
+      "lane": "Supplier / Vendor",
+      "documentation": "Supplier acknowledges receipt of the returned goods via the external form (email + OTP). Fields: supplierReceiptDate (date), supplierReceiptCondition (free-text), creditNoteIssued (boolean), creditNoteRef (if issued). This is the trigger event for the credit-note expectation at closure. For buyer-paid return freight the buyer absorbs cost; for supplier-paid the freight is added to the debit/credit reconciliation. [SCOR S4.4/S4.5 | source: build-new + RA external supplier form]"
+    },
+    {
+      "id": "GwAuth",
+      "type": "exclusiveGateway",
+      "name": "authorizationStatus == authorized?",
+      "lane": "Procurement / Buyer",
+      "documentation": "Precise gate on authorizationStatus. authorizationStatus == 'authorized' AND rmaNumber != null -> proceed to identify condition. authorizationStatus == 'declined' OR (still 'requested' after reminder SLA) -> escalate. A declined return does NOT close the underlying NCR; it forces an alternative disposition (rework / concession / scrap handled in e04) and may itself feed the supplier scorecard as a dispute. [SCOR S4.2 | ISO 8.7 | source: build-new]"
+    },
+    {
+      "id": "GwAdjust",
+      "type": "exclusiveGateway",
+      "name": "financial adjustment direction?",
+      "lane": "Finance - Maker",
+      "documentation": "Branch on reasonCode + invoice state. Branch A (credit note): reasonCode IN {defective, damaged, expired, quality-fail} AND supplier-billed value already invoiced/payable -> expect supplier credit note (reduces payable). Branch B (debit note): reasonCode IN {over-delivery, wrong-item} OR supplier disputes / declines credit -> buyer raises a debit note (raises a receivable / reduces payable unilaterally). Both post against the creditor ledger. Branch C (no financial impact): goods not yet invoiced and GR/IR accrual simply reversed -> no note, only commitment relief. [ISO 8.7 (concession/return disposition) | source: data-model CreditNote/DebitNote + AB creditor ledger]"
+    },
+    {
+      "id": "Start",
+      "type": "startEvent",
+      "name": "Return trigger raised",
+      "lane": "Quality",
+      "documentation": "Entry. Two triggers: (a) an NCR disposition is set to 'return' at receiving inspection or post-GRN (link: e04 / diagram 08 QC gate), or (b) a buyer-initiated return outside the NCR path (over-delivery beyond PO tolerance, wrong item shipped, supplier-acknowledged error). The NCR-triggered path carries linkedNcrId; the buyer-initiated path has linkedNcrId = null. [SCOR S4.1 Initiate a Source Return | ISO 8.7 control of nonconforming outputs | source: build-new + AB NCR flow]"
+    },
+    {
+      "id": "End",
+      "type": "endEvent",
+      "name": "Return closed and adjusted",
+      "lane": "Platform / System",
+      "documentation": "Terminal. Return is closed, goods returned or written off, payable adjusted via credit/debit note, GR/IR and commitment reconciled, NCR updated, scorecard updated. Fully audit-traceable. [SCOR S4.5 | source: build-new]"
+    }
+  ],
+  "flows": [
+    {
+      "id": "f1",
+      "from": "Start",
+      "to": "Initiate",
+      "guard": ""
+    },
+    {
+      "id": "f2",
+      "from": "Initiate",
+      "to": "Authorize",
+      "guard": ""
+    },
+    {
+      "id": "f3",
+      "from": "Authorize",
+      "to": "GwAuth",
+      "guard": ""
+    },
+    {
+      "id": "f4",
+      "from": "GwAuth",
+      "to": "Identify",
+      "guard": "authorized + rmaNumber set"
+    },
+    {
+      "id": "f5",
+      "from": "GwAuth",
+      "to": "Declined",
+      "guard": "declined / no-response"
+    },
+    {
+      "id": "f6",
+      "from": "Declined",
+      "to": "End",
+      "guard": "re-dispositioned in e04"
+    },
+    {
+      "id": "f7",
+      "from": "Identify",
+      "to": "Schedule",
+      "guard": ""
+    },
+    {
+      "id": "f8",
+      "from": "Schedule",
+      "to": "Receipt",
+      "guard": ""
+    },
+    {
+      "id": "f9",
+      "from": "Receipt",
+      "to": "GwAdjust",
+      "guard": ""
+    },
+    {
+      "id": "f10",
+      "from": "GwAdjust",
+      "to": "CreditNote",
+      "guard": "credit expected (defective/damaged/expired/quality-fail)"
+    },
+    {
+      "id": "f11",
+      "from": "GwAdjust",
+      "to": "DebitNote",
+      "guard": "debit raised (over-delivery/wrong-item/dispute)"
+    },
+    {
+      "id": "f12",
+      "from": "GwAdjust",
+      "to": "Close",
+      "guard": "not invoiced - reverse accrual only"
+    },
+    {
+      "id": "f13",
+      "from": "CreditNote",
+      "to": "Close",
+      "guard": ""
+    },
+    {
+      "id": "f14",
+      "from": "DebitNote",
+      "to": "Close",
+      "guard": ""
+    },
+    {
+      "id": "f15",
+      "from": "Close",
+      "to": "FeedNcr",
+      "guard": ""
+    },
+    {
+      "id": "f16",
+      "from": "FeedNcr",
+      "to": "End",
+      "guard": ""
+    }
+  ]
+}

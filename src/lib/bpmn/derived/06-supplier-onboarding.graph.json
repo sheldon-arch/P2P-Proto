@@ -1,0 +1,389 @@
+{
+  "id": "06-supplier-onboarding",
+  "file": "06-supplier-onboarding.bpmn",
+  "name": "Unified P2P - 06 Supplier Onboarding and Qualification (Single, Bulk, Qualify, Approve, Suspend, Offboard)",
+  "lanes": [
+    {
+      "id": "L_buyer",
+      "name": "Procurement / Buyer",
+      "role": "Procurement / Buyer"
+    },
+    {
+      "id": "L_supplier",
+      "name": "Supplier / Vendor",
+      "role": "Supplier / Vendor"
+    },
+    {
+      "id": "L_appr",
+      "name": "Approver",
+      "role": "Approver"
+    },
+    {
+      "id": "L_qc",
+      "name": "Quality",
+      "role": "Quality"
+    },
+    {
+      "id": "L_tax",
+      "name": "Tax / Compliance",
+      "role": "Tax / Compliance"
+    },
+    {
+      "id": "L_sys",
+      "name": "Platform / System",
+      "role": "Platform / System"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "CreateSupplier",
+      "type": "userTask",
+      "name": "Create supplier profile (PENDING_ONBOARDING)",
+      "lane": "Procurement / Buyer",
+      "documentation": "Buyer/Admin (permission suppliers.create) creates the supplier. CORE FIELDS: code (string, AUTO-generated, pattern S/##### = 'S/' + 5-digit zero-padded counter from highest existing + 1; first = S/00001; configurable prefix/width; immutable; natural key for upsert/import); name (text, mandatory); currency (dropdown, default first-currency configurable - generalized from RA INR, value set {USD|OMR|SAR|AED|EUR|CHF|INR}); dealCurrency (dropdown, default = currency); classification (dropdown, mandatory, value set {Internal | External} - constants only); group (reference to SupplierGroup master, optional, natural key = name); minimumOrderValue (decimal, default 1); advancePayable (boolean, default false); advanceTolerance (decimal, default 0); autoInvoicing (boolean, default false); isErpSynced (boolean, default false, generalized from isRamcoSynced, may be toggled only when ONBOARDED). ADDRESSES (child SupplierAddress[], at least one): line, city, country, state/region code (padded to 2 digits); each with SupplierAddressTaxDetail[] (REPLACE-on-update: delete tax details then addresses, recreate, transactional). On create, status = PENDING_ONBOARDING (default). [SCOR S1.6 | ISO 8.4.1 | source: RA supplier create + data-model Supplier]"
+    },
+    {
+      "id": "TaxDetails",
+      "type": "userTask",
+      "name": "Capture tax + registration details",
+      "lane": "Tax / Compliance",
+      "documentation": "Tax/Compliance (or buyer with later compliance.review) records tax registration on the supplier addresses. FIELDS: gstNumber (string, optional, validated ONLY when supplied against regex ^\\d{2}[A-Z]{5}\\d{4}[A-Z][A-Z\\d]Z[A-Z\\d]$ - India GST); panNumber (string, optional, validated ONLY when supplied against regex ^[A-Z]{5}\\d{4}[A-Z]$ - India PAN); vatNumber / taxRegistrationNumber (string, optional, per jurisdiction e.g. Oman VAT); taxRegion / stateCode (padded to 2 digits); recoverable-tax eligibility flag (boolean). Invalid format on a supplied value blocks save with a field error. Tax details attach per address (SupplierAddressTaxDetail). [ISO 8.4.1 records | source: RA GST/PAN regex + data-model tax + multi-country build-new]"
+    },
+    {
+      "id": "QualDocs",
+      "type": "userTask",
+      "name": "Upload qualification documents + certifications",
+      "lane": "Procurement / Buyer",
+      "documentation": "Buyer/Supplier uploads qualification evidence (permanent documents against the supplier - AB two-level model). FIELDS: vendorRegistration (file, mandatory, the completed onboarding/registration form returned via email+OTP); threeBatchCOA (file[], mandatory for OTC/pharma-grade RM and PM = three batches' Certificates of Analysis + samples - AB); certifications (Certification[], each: certType dropdown {ISO 9001 | ISO 14001 | ISO 45001 | ISO 22000/HACCP | GMP | other}, certNumber, issuingBody, issueDate, expiryDate mandatory, evidence file; expiry tracked with alerts on selection and >=1 week before expiry); MSDS (file, for chemicals); other permits (file[], regulated chemicals: ministry permits with expiry + quantity). Documents stored via document storage service with expiry + quantity tracking. [ISO 8.4.1 + 7.5 records, 8.4 certifications hard-gate | source: AB COA/AVL/certs + platform-services 8]"
+    },
+    {
+      "id": "AVL",
+      "type": "userTask",
+      "name": "Set AVL scope-of-approval + grade",
+      "lane": "Quality",
+      "documentation": "Quality sets the Approved Vendor List entry (permission supplier.qualify, condition: quality criteria). FIELDS: avlStatus (dropdown {Approved | Conditional | Suspended | Disqualified | Preferred}, default Conditional until scored); scopeOfApproval (text, mandatory = the categories/items the supplier is approved to supply - AB scope-of-approval); grade (dropdown {A | B | C | D | F}, default from composite scorecard band A>=90 / B>=80 / C>=70 / D>=60 / F<=59, configurable); approvalDate (date); nextReEvalDate (date, cadence risk-based: monthly KPI / quarterly review / annual re-approval, configurable). AVL gate rule: certifications 100% valid AND composite score >= threshold (~80, configurable) qualifies; preferred = sustained Grade A. [ISO 8.4.1 AVL + 9001 8.4 | SCOR BP.097 Supplier Appraisal | source: AB AVL scope/grade + iso-supply-chain-standards]"
+    },
+    {
+      "id": "IsoAttributes",
+      "type": "userTask",
+      "name": "Set ISO risk/security/continuity/ESG/infosec/anti-bribery attributes",
+      "lane": "Tax / Compliance",
+      "documentation": "Tax/Compliance + Quality + Buyer populate the cross-standard supplier criteria (permission supplier.riskAssess + compliance.review). Each attribute group carries lastAssessedDate, nextDueDate, evidence/cert attachment + expiry, and a corrective-action log. RISK (ISO 31000): riskCategory, likelihood, impact, inherentVsResidual, riskScore (composite), riskTier (dropdown {low | medium | high | critical}, drives review cadence), treatment, owner. SECURITY (ISO 28000): securityRiskRating, facilityScreening, tradeProgram (dropdown {none | C-TPAT | AEO | TAPA} + cert# + expiry), sealIntegrity (ISO 17712), incidentRegister. CONTINUITY (ISO 22301): criticalityFlag, ownBcms (boolean), bcPlan (file), lastTestDate, MTPD, RTO, MBCO, RPO, backupSupplierRegister, dualSourcingCoverage. SUSTAINABILITY/ESG (ISO 20400 + 14001): iso14001Status (boolean + expiry + scope), ecoVadis/CDP scores, ghgData, modernSlaveryStatement, codeOfConductSignoff, conflictMinerals. INFOSEC (ISO 27001): dataClassificationAccessed, securityCertStatus + expiry, dpaStatus (boolean), incidentLog, cloudAttestations (27017/27018/SOC2). ANTI-BRIBERY (ISO 37001): briberyRiskRating, dueDiligenceStatus + date, beneficialOwnership/PEP/sanctions screening result, antiBriberyClauseSignoff, reScreeningCadence by tier, redFlagLog. All thresholds/scales are configurable defaults (ISO prescribes none). [ISO 31000/28000/22301/20400/14001/27001/37001 | SCOR OE9 Risk / OE10 ESG | source: iso-supply-chain-standards + data-model Supplier attributes, build-new]"
+    },
+    {
+      "id": "RequestApproval",
+      "type": "userTask",
+      "name": "Request approval (PENDING_ONBOARDING -> PENDING_APPROVAL)",
+      "lane": "Procurement / Buyer",
+      "documentation": "Buyer submits the supplier for approval (permission suppliers.update, POST /api/suppliers/{id}/request-approval). GUARD: status MUST be PENDING_ONBOARDING (wrong status -> BadRequestException, record unchanged). On success: status PENDING_ONBOARDING -> PENDING_APPROVAL; the SUPPLIER_APPROVAL_REQUESTED notification is emitted (ONLY here, not at approve/offboard); audit category SUPPLIER (carries supplierId). [SCOR S1.6 | ISO 8.4.1 | source: RA request-approval guard + notification]"
+    },
+    {
+      "id": "ReviewQualify",
+      "type": "userTask",
+      "name": "Review qualification (Quality + Tax/Compliance)",
+      "lane": "Quality",
+      "documentation": "Quality and Tax/Compliance review the qualification package before approval. Quality verifies certifications validity, 3-batch COA for OTC/pharma, AVL scope/grade, COA/MSDS for regulated items; Compliance verifies sanctions/anti-bribery screening, tax registration, ISO risk/ESG attributes. For regulated chemical items, QC must approve COA/MSDS as a gate before the supplier can be selected (Diagram 04). Either may flag deficiencies returning the record to the buyer/supplier to complete (back to QualDocs). [ISO 8.4.1 monitoring + 8.4 certifications gate | SCOR S1.6 | source: AB QC COA gate + role-permission-matrix conditional suspend]"
+    },
+    {
+      "id": "ApproveSupplier",
+      "type": "userTask",
+      "name": "Approve supplier (PENDING_APPROVAL -> ONBOARDED)",
+      "lane": "Approver",
+      "documentation": "Approver (permission suppliers.approve; Buyer recommends, Approver/Admin approves; condition: if supplier-approval stage configured) approves. GUARD: status MUST be PENDING_APPROVAL (else BadRequestException). On success: status PENDING_APPROVAL -> ONBOARDED. No notification emitted at approve (only at request-approval). Audit category SUPPLIER. The supplier may now be awarded RFQs and issued POs (Diagram 05 gate satisfied). [SCOR S1.6 | ISO 8.4.1 selection records | source: RA approve guard + role-permission-matrix]"
+    },
+    {
+      "id": "EditSupplier",
+      "type": "userTask",
+      "name": "Edit supplier (reverts to PENDING_APPROVAL)",
+      "lane": "Procurement / Buyer",
+      "documentation": "Buyer/Admin edits an ONBOARDED supplier (permission suppliers.update). RULE: ONBOARDED or PENDING_APPROVAL -> recomputed to PENDING_APPROVAL (an edit to an approved record pulls it back into the approval queue); PENDING_ONBOARDING stays PENDING_ONBOARDING. isErpSynced reset to false on every update. Address update is REPLACE-on-update (transactional delete-then-recreate of tax details + addresses). Re-enters the approval path (back to RequestApproval/ReviewQualify). [source: RA edit-reverts-to-pending + data-model]"
+    },
+    {
+      "id": "Suspend",
+      "type": "userTask",
+      "name": "Suspend supplier (ONBOARDED -> SUSPENDED)",
+      "lane": "Quality",
+      "documentation": "Suspension is split by trigger (role-permission-matrix): Quality suspends on a quality stop / failed audit / active CAPA (permission suppliers.suspend, condition quality); Tax/Compliance suspends on a sanctions or compliance hit / expired ISO cert (condition compliance); Admin always. GUARD: status = ONBOARDED. FIELDS: suspendReason (text, mandatory); suspendCategory (dropdown {quality | compliance | expired-cert | sanctions | active-CAPA}); reviewDate (date). EFFECT: status ONBOARDED -> SUSPENDED; SUSPENDED BLOCKS new POs (Diagram 05 gate fails) without offboarding the record. Resolution returns to ONBOARDED. Driven by the CAPA-to-re-evaluation loop (Diagram 11). [ISO 8.4.1 re-evaluation | SCOR OE3 | source: review SUSPENDED state + data-model]"
+    },
+    {
+      "id": "Offboard",
+      "type": "userTask",
+      "name": "Offboard supplier (-> OFFBOARDED, terminal)",
+      "lane": "Procurement / Buyer",
+      "documentation": "Buyer/Admin offboards (permission suppliers.offboard). GUARD: status = ONBOARDED (or from SUSPENDED via the resolve gate). EFFECT: status -> OFFBOARDED, which is TERMINAL (soft-delete; record retained for history + referencing POs/tickets; no documented reactivation). No new POs possible. No notification at offboard. Audit category SUPPLIER. [SCOR S1.6 | ISO 8.4.1 records retention 7.5 | source: RA offboard guard]"
+    },
+    {
+      "id": "UploadFile",
+      "type": "userTask",
+      "name": "Upload supplier import file",
+      "lane": "Procurement / Buyer",
+      "documentation": "BULK branch. Buyer/Admin uploads an XLSX/CSV of suppliers (permission suppliers.import). One generic import pipeline (shared across all masters). The file is parsed: file readable? sheet present? has data rows? (no file -> 'No file uploaded'; header-only -> 'No valid data found'). [source: RA bulk import + platform-services 7]"
+    },
+    {
+      "id": "SyncErp",
+      "type": "serviceTask",
+      "name": "Mark onboarded, optional ERP sync",
+      "lane": "Platform / System",
+      "documentation": "System finalizes the ONBOARDED supplier. ERP-sync toggle (isErpSynced, generalized from isRamcoSynced) is allowed ONLY when status = ONBOARDED; toggling logs audit activity 'ERP Synced' / 'Not ERP Synced' and pushes master data to the external system of record (boundary integration, outbound hook). IMPORTANT: any later edit to an ONBOARDED supplier reverts status to PENDING_APPROVAL and resets isErpSynced = false (see EditSupplier). Audit + SSE emitted. [SCOR OE4 integration boundary | source: RA isRamcoSynced + platform-services 13]"
+    },
+    {
+      "id": "Restore",
+      "type": "serviceTask",
+      "name": "Restore to ONBOARDED",
+      "lane": "Platform / System",
+      "documentation": "System returns SUSPENDED -> ONBOARDED on resolution; re-enables PO eligibility; audit entry records the resolution + linked CAPA/cert/screening evidence. [ISO 8.4.1 | source: build-new]"
+    },
+    {
+      "id": "ValidateImport",
+      "type": "serviceTask",
+      "name": "Validate header + rows (accumulate all errors)",
+      "lane": "Platform / System",
+      "documentation": "System validates the import. STEPS: validate header EXACTLY (no missing, no extra columns; order-insensitive); iterate rows tracking rowNumber (header = row 1, first data row = row 2); per row validate fields/types/enums (purchaseType lo/local -> LOCAL, im/import -> IMPORT; phone stripped to digits; state codes padded to 2 digits; GST/PAN validated when supplied) and resolve foreign refs by natural key (group, currency); ACCUMULATE ALL row errors (never fail-fast). Natural key for upsert = code. [source: RA bulk import e06 + platform-services 7]"
+    },
+    {
+      "id": "CommitImport",
+      "type": "serviceTask",
+      "name": "Upsert by code in one transaction (PENDING_ONBOARDING)",
+      "lane": "Platform / System",
+      "documentation": "System opens ONE prisma.$transaction and upserts each row by natural key code (match -> update; else create with generated S/##### code). Duplicate natural keys within one file resolve last-wins. Commit-all or roll-back-all (late DB failure rolls back fully, audit NOT emitted). Imported records default status = PENDING_ONBOARDING and isErpSynced = false. On success: audit emitted, returns {created, updated}. Imported suppliers then follow the SAME approval lifecycle (request-approval -> review -> approve). [source: RA e06 + platform-services 7]"
+    },
+    {
+      "id": "GwPath",
+      "type": "exclusiveGateway",
+      "name": "Single record or bulk import?",
+      "lane": "Procurement / Buyer",
+      "documentation": "Expression: if the operator chooses single-record entry (one supplier via the form, permission suppliers.create) -> SINGLE branch. If a file of many suppliers is uploaded (permission suppliers.import, POST /api/suppliers/import) -> BULK branch. Both converge on the same lifecycle (records default PENDING_ONBOARDING). [source: RA single + bulk paths]"
+    },
+    {
+      "id": "ApproveGw",
+      "type": "exclusiveGateway",
+      "name": "Qualification complete + approved?",
+      "lane": "Approver",
+      "documentation": "Expression: APPROVE iff status = PENDING_APPROVAL AND qualification complete (vendorRegistration present AND required certs valid/unexpired AND 3-batch COA present for OTC/pharma AND AVL scope/grade set AND sanctions/anti-bribery screening clear AND required ISO attributes populated for the supplier's risk tier). Else -> RETURN branch to complete the package (back to QualDocs/IsoAttributes), record stays PENDING_APPROVAL. [ISO 8.4.1 selection | SCOR S1.6 | source: RA approve guard + iso gates]"
+    },
+    {
+      "id": "OnboardedGw",
+      "type": "exclusiveGateway",
+      "name": "Post-onboarding lifecycle event",
+      "lane": "Platform / System",
+      "documentation": "Routing of post-onboarding events. Expression: EDIT (any field update) -> revert to PENDING_APPROVAL; SUSPEND (failed audit / quality stop / expired ISO cert / sanctions hit / active CAPA) -> SUSPENDED; OFFBOARD (end of relationship) -> OFFBOARDED; otherwise the supplier stays ONBOARDED and active (terminal-active for this diagram). [source: RA lifecycle + review SUSPENDED addition + data-model state machine]"
+    },
+    {
+      "id": "ResolveSuspend",
+      "type": "exclusiveGateway",
+      "name": "Suspension resolved?",
+      "lane": "Quality",
+      "documentation": "Expression: if the suspension cause is cleared (CAPA effectiveness verified / cert renewed / sanctions cleared / audit passed) -> RESTORE to ONBOARDED. Else if the relationship is to be terminated -> OFFBOARD. [ISO 10.2 effectiveness review -> 8.4.1 | source: build-new loop]"
+    },
+    {
+      "id": "ImportGw",
+      "type": "exclusiveGateway",
+      "name": "All rows valid?",
+      "lane": "Platform / System",
+      "documentation": "Expression: if zero accumulated errors -> COMMIT branch. If any error -> throw ONE BadRequestException listing every {rowNumber, reason}, write NOTHING (all-or-nothing); operator fixes the file and re-uploads. Even valid rows are not saved when any row fails. [source: RA e06 all-or-nothing]"
+    },
+    {
+      "id": "JoinImport",
+      "type": "exclusiveGateway",
+      "name": "Imported records join lifecycle",
+      "lane": "Procurement / Buyer",
+      "documentation": "Imported suppliers (PENDING_ONBOARDING) merge into the single-record lifecycle: each still requires qualification docs + ISO attributes + request-approval -> review -> approve to reach ONBOARDED. Convenience routing node; no decision logic beyond joining the happy path. [source: RA bulk + lifecycle convergence]"
+    },
+    {
+      "id": "Start",
+      "type": "startEvent",
+      "name": "New supplier needed",
+      "lane": "Procurement / Buyer",
+      "documentation": "Trigger: sourcing (Diagram 04) needs a supplier not yet in the master, or an admin/buyer adds one proactively, or a supplier inquiry is recorded. A supplier must reach status ONBOARDED before any RFQ award or PO (gates Diagram 05). [SCOR S1.6 Prequalify Suppliers | ISO 8.4.1 evaluation | source: AB qualification + RA lifecycle]"
+    },
+    {
+      "id": "Active",
+      "type": "endEvent",
+      "name": "Supplier ONBOARDED / OFFBOARDED",
+      "lane": "Platform / System",
+      "documentation": "Terminal for this diagram: supplier is ONBOARDED (orderable), SUSPENDED-then-restored (orderable), or OFFBOARDED (terminal, not orderable). ONBOARDED suppliers feed Diagram 04 (sourcing) and Diagram 05 (PO). [source: build-new]"
+    }
+  ],
+  "flows": [
+    {
+      "id": "f1",
+      "from": "Start",
+      "to": "GwPath",
+      "guard": ""
+    },
+    {
+      "id": "f2",
+      "from": "GwPath",
+      "to": "CreateSupplier",
+      "guard": "single record"
+    },
+    {
+      "id": "f3",
+      "from": "GwPath",
+      "to": "UploadFile",
+      "guard": "bulk import"
+    },
+    {
+      "id": "f4",
+      "from": "CreateSupplier",
+      "to": "TaxDetails",
+      "guard": ""
+    },
+    {
+      "id": "f5",
+      "from": "TaxDetails",
+      "to": "QualDocs",
+      "guard": ""
+    },
+    {
+      "id": "f6",
+      "from": "QualDocs",
+      "to": "AVL",
+      "guard": ""
+    },
+    {
+      "id": "f7",
+      "from": "AVL",
+      "to": "IsoAttributes",
+      "guard": ""
+    },
+    {
+      "id": "f8",
+      "from": "IsoAttributes",
+      "to": "RequestApproval",
+      "guard": ""
+    },
+    {
+      "id": "f9",
+      "from": "RequestApproval",
+      "to": "ReviewQualify",
+      "guard": ""
+    },
+    {
+      "id": "f10",
+      "from": "ReviewQualify",
+      "to": "ApproveGw",
+      "guard": ""
+    },
+    {
+      "id": "f11",
+      "from": "ApproveGw",
+      "to": "ApproveSupplier",
+      "guard": "complete + approve"
+    },
+    {
+      "id": "f12",
+      "from": "ApproveGw",
+      "to": "QualDocs",
+      "guard": "incomplete, return"
+    },
+    {
+      "id": "f13",
+      "from": "ApproveSupplier",
+      "to": "SyncErp",
+      "guard": ""
+    },
+    {
+      "id": "f14",
+      "from": "SyncErp",
+      "to": "OnboardedGw",
+      "guard": ""
+    },
+    {
+      "id": "f15",
+      "from": "OnboardedGw",
+      "to": "EditSupplier",
+      "guard": "edit"
+    },
+    {
+      "id": "f16",
+      "from": "OnboardedGw",
+      "to": "Suspend",
+      "guard": "suspend"
+    },
+    {
+      "id": "f17",
+      "from": "OnboardedGw",
+      "to": "Offboard",
+      "guard": "offboard"
+    },
+    {
+      "id": "f18",
+      "from": "OnboardedGw",
+      "to": "Active",
+      "guard": "stay onboarded"
+    },
+    {
+      "id": "f19",
+      "from": "EditSupplier",
+      "to": "RequestApproval",
+      "guard": "reverts to PENDING_APPROVAL"
+    },
+    {
+      "id": "f20",
+      "from": "Suspend",
+      "to": "ResolveSuspend",
+      "guard": ""
+    },
+    {
+      "id": "f21",
+      "from": "ResolveSuspend",
+      "to": "Restore",
+      "guard": "resolved"
+    },
+    {
+      "id": "f22",
+      "from": "ResolveSuspend",
+      "to": "Offboard",
+      "guard": "terminate"
+    },
+    {
+      "id": "f23",
+      "from": "Restore",
+      "to": "OnboardedGw",
+      "guard": ""
+    },
+    {
+      "id": "f24",
+      "from": "Offboard",
+      "to": "Active",
+      "guard": ""
+    },
+    {
+      "id": "f25",
+      "from": "UploadFile",
+      "to": "ValidateImport",
+      "guard": ""
+    },
+    {
+      "id": "f26",
+      "from": "ValidateImport",
+      "to": "ImportGw",
+      "guard": ""
+    },
+    {
+      "id": "f27",
+      "from": "ImportGw",
+      "to": "CommitImport",
+      "guard": "all rows valid"
+    },
+    {
+      "id": "f28",
+      "from": "ImportGw",
+      "to": "UploadFile",
+      "guard": "errors, fix + re-upload"
+    },
+    {
+      "id": "f29",
+      "from": "CommitImport",
+      "to": "JoinImport",
+      "guard": ""
+    },
+    {
+      "id": "f30",
+      "from": "JoinImport",
+      "to": "QualDocs",
+      "guard": ""
+    }
+  ]
+}

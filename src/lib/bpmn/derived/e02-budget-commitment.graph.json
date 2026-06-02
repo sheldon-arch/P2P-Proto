@@ -1,0 +1,225 @@
+{
+  "id": "e02-budget-commitment",
+  "file": "e02-budget-commitment.bpmn",
+  "name": "Edge Case e02 - Budget Check and Commitment (Encumbrance Accounting)",
+  "lanes": [
+    {
+      "id": "L_req",
+      "name": "Requester",
+      "role": "Requester"
+    },
+    {
+      "id": "L_budget",
+      "name": "Budget Owner",
+      "role": "Budget Owner"
+    },
+    {
+      "id": "L_buyer",
+      "name": "Procurement / Buyer",
+      "role": "Procurement / Buyer"
+    },
+    {
+      "id": "L_sys",
+      "name": "Platform / System",
+      "role": "Platform / System"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "Revise",
+      "type": "userTask",
+      "name": "Revise requisition (reduce scope)",
+      "lane": "Requester",
+      "documentation": "On a rejected override, the requester edits the requisition (lower quantity, lower unit price, split, or change cost-center) and resubmits, re-entering the soft check. The requisition identifier is unchanged (immutable across delays). [SCOR OE11 | source: data-model requisition immutable identifier + e02 revise loop]"
+    },
+    {
+      "id": "POIssue",
+      "type": "userTask",
+      "name": "Buyer issues PO",
+      "lane": "Procurement / Buyer",
+      "documentation": "Buyer issues the PO (po.issue) from the requisition + selected quote, with PO value in base currency (poValueInBase). PO issue is the point of HARD budget commitment. Buyer cannot approve own PO (SoD). The PO state guard also requires supplier ONBOARDED. [SCOR S2.1 / OE11 | ISO 8.4.3 | source: data-model PO state machine 'issued (guard: budget committed, supplier ONBOARDED)']"
+    },
+    {
+      "id": "SoftCheck",
+      "type": "serviceTask",
+      "name": "Soft budget check (warn if over)",
+      "lane": "Platform / System",
+      "documentation": "On submit, the system reads the Budget for the requisition's costCenterId/projectId + period {costCenterId, period, amount, availableAmount, committedAmount, actualAmount}. SOFT check = compares requisition value <= availableAmount; it WARNS but does not block. No ledger change is made at requisition (soft only). The check is informational so the requester/Budget Owner can decide before sourcing effort is spent. [SCOR OE11 | source: data-model 'Budget check fires at requisition (soft)' + platform-services budget service]"
+    },
+    {
+      "id": "Proceed",
+      "type": "serviceTask",
+      "name": "Proceed to sourcing / PO (carry override flag)",
+      "lane": "Platform / System",
+      "documentation": "The requisition proceeds through approval and sourcing (diagrams 03/04). The over-budget override flag (if any) and overrideReason are carried on the requisition so the hard-commit guard at PO issue can honour the approved override rather than re-blocking. Still no ledger movement at this point - the soft check never encumbers. [SCOR OE11 | source: data-model 'hard commit happens later at PO issue']"
+    },
+    {
+      "id": "HoldCommit",
+      "type": "serviceTask",
+      "name": "Block commit - request override / reduce PO",
+      "lane": "Platform / System",
+      "documentation": "Commit blocked. The PO issue is held; the buyer must either obtain a logged Budget Owner override (routes to the override gateway) or reduce the PO value (re-source / re-negotiate / split). No commitment is created and no PO is issued while blocked. [SCOR OE11 | source: data-model over-commitment prevention]"
+    },
+    {
+      "id": "HardCommit",
+      "type": "serviceTask",
+      "name": "Hard commit (encumber budget, create Commitment)",
+      "lane": "Platform / System",
+      "documentation": "Encumbrance posting at PO issue: Budget.availableAmount -= poValueInBase; Budget.committedAmount += poValueInBase. Create Commitment {budgetId, poId, amount = poValueInBase, status = 'committed'}. This reserves funds against the budget so two POs cannot spend the same money. The posting is a natural GL integration point (commitment/encumbrance to the external system of record). Emits audit + SSE. [SCOR OE11 / OE4 | source: data-model Commitment 'created at PO issue (encumbers budget) ... available -= amount, committed += amount']"
+    },
+    {
+      "id": "GrInvoice",
+      "type": "serviceTask",
+      "name": "GR / invoice posted",
+      "lane": "Platform / System",
+      "documentation": "Goods receipt (GRN) or matched invoice is posted for the PO line. This is the relief trigger. At GR, a GR/IR accrual is also raised (separate clearing flow); here we focus on moving the encumbrance to actual spend. Partial GR relieves the committed amount pro-rata to the received/invoiced value. [SCOR S2.4 -> S2.7 / OE11 | source: data-model 'relieved at GR/invoice']"
+    },
+    {
+      "id": "Relieve",
+      "type": "serviceTask",
+      "name": "Relieve commitment to actual",
+      "lane": "Platform / System",
+      "documentation": "Relief posting: Budget.committedAmount -= reliefAmount; Budget.actualAmount += reliefAmount; set Commitment.status = 'relieved' (or partially relieved for a partial GR/invoice). availableAmount is unchanged at relief (the funds were already encumbered at commit; relief only moves committed -> actual). For a returned quantity (diagram 11), the relief is reversed for that quantity. Emits audit + SSE. [SCOR OE11 | source: data-model 'GR/invoice: committed -= amount, actual += amount -> relieved']"
+    },
+    {
+      "id": "Report",
+      "type": "serviceTask",
+      "name": "Commitment-vs-actual reporting",
+      "lane": "Platform / System",
+      "documentation": "The Budget carries availableAmount / committedAmount / actualAmount through the cycle, enabling commitment-vs-actual reporting per cost-center/period: open commitments (committed not yet relieved), actual spend, remaining available, and over-commitment exceptions. Feeds the cost analytics (diagram 12) and the Budget Owner / Finance views. [SCOR OE11 / OE3 | source: data-model 'Enables commitment-vs-actual reporting' + platform-services budget service]"
+    },
+    {
+      "id": "GwSoft",
+      "type": "exclusiveGateway",
+      "name": "value <= availableAmount?",
+      "lane": "Platform / System",
+      "documentation": "Precise gate. requisitionValueInBase <= Budget.availableAmount -> within budget, proceed (no warning). requisitionValueInBase > Budget.availableAmount -> over budget: a non-blocking warning is shown and the over-budget override gateway is invoked (routes to the Budget Owner). [SCOR OE11 | source: data-model soft-check warns if over]"
+    },
+    {
+      "id": "GwOverride",
+      "type": "exclusiveGateway",
+      "name": "Budget Owner override approved?",
+      "lane": "Budget Owner",
+      "documentation": "Over-budget override gateway. The Budget Owner (budget.approve, budget gate) reviews the over-budget requisition. Approve override -> overrideApprovedBy + overrideReason captured, the event is LOGGED to the audit (category: budget), and the requisition proceeds; the over-budget condition is carried forward so the hard commit at PO can use the override guard. Reject -> the requisition is revised (reduce qty/price/scope) or cancelled; it does not proceed over budget without an approved, logged override. [SCOR OE11 | source: data-model 'guard: available >= amount or override-with-approval' + role-permission-matrix budget.approve]"
+    },
+    {
+      "id": "GwHard",
+      "type": "exclusiveGateway",
+      "name": "availableAmount >= poValue OR override approved?",
+      "lane": "Platform / System",
+      "documentation": "Hard-commit guard. Budget.availableAmount >= poValueInBase -> commit allowed. availableAmount < poValueInBase AND an approved+logged Budget Owner override exists -> commit allowed under override. availableAmount < poValueInBase AND no override -> commit BLOCKED; the PO cannot issue until a Budget Owner override is obtained or the PO value is reduced. This is the over-commitment prevention guard. [SCOR OE11 | source: data-model 'PO issue HARD commit ... guard: available >= amount or override-with-approval']"
+    },
+    {
+      "id": "Start",
+      "type": "startEvent",
+      "name": "Requisition submitted",
+      "lane": "Requester",
+      "documentation": "Entry. A requisition is submitted with a value in base currency (totalAmountInBase). This edge case isolates the budget/commitment lifecycle: soft check at requisition, hard commit at PO issue, relief at GR/invoice. Note: approval limits are NOT budget control - a real operation checks funds and encumbers them separately. [SCOR OE11 Enterprise Business Planning | source: data-model Budget/Commitment build-new + best-of-decisions finance control]"
+    },
+    {
+      "id": "End",
+      "type": "endEvent",
+      "name": "Budget reconciled to actual",
+      "lane": "Platform / System",
+      "documentation": "Terminal. Soft-checked at requisition, hard-committed (encumbered) at PO, relieved to actual at GR/invoice, with commitment-vs-actual reporting. Over-commitment prevented; every posting audited. [SCOR OE11 | source: build-new finance control]"
+    }
+  ],
+  "flows": [
+    {
+      "id": "f1",
+      "from": "Start",
+      "to": "SoftCheck",
+      "guard": ""
+    },
+    {
+      "id": "f2",
+      "from": "SoftCheck",
+      "to": "GwSoft",
+      "guard": ""
+    },
+    {
+      "id": "f3",
+      "from": "GwSoft",
+      "to": "Proceed",
+      "guard": "value <= availableAmount (within budget)"
+    },
+    {
+      "id": "f4",
+      "from": "GwSoft",
+      "to": "GwOverride",
+      "guard": "value > availableAmount (warn, over budget)"
+    },
+    {
+      "id": "f5",
+      "from": "GwOverride",
+      "to": "Proceed",
+      "guard": "override approved (logged)"
+    },
+    {
+      "id": "f6",
+      "from": "GwOverride",
+      "to": "Revise",
+      "guard": "override rejected"
+    },
+    {
+      "id": "f7",
+      "from": "Revise",
+      "to": "SoftCheck",
+      "guard": ""
+    },
+    {
+      "id": "f8",
+      "from": "Proceed",
+      "to": "POIssue",
+      "guard": ""
+    },
+    {
+      "id": "f9",
+      "from": "POIssue",
+      "to": "GwHard",
+      "guard": ""
+    },
+    {
+      "id": "f10",
+      "from": "GwHard",
+      "to": "HardCommit",
+      "guard": "available >= poValue OR override approved"
+    },
+    {
+      "id": "f11",
+      "from": "GwHard",
+      "to": "HoldCommit",
+      "guard": "available < poValue AND no override"
+    },
+    {
+      "id": "f12",
+      "from": "HoldCommit",
+      "to": "GwOverride",
+      "guard": "request override or reduce PO"
+    },
+    {
+      "id": "f13",
+      "from": "HardCommit",
+      "to": "GrInvoice",
+      "guard": ""
+    },
+    {
+      "id": "f14",
+      "from": "GrInvoice",
+      "to": "Relieve",
+      "guard": ""
+    },
+    {
+      "id": "f15",
+      "from": "Relieve",
+      "to": "Report",
+      "guard": ""
+    },
+    {
+      "id": "f16",
+      "from": "Report",
+      "to": "End",
+      "guard": ""
+    }
+  ]
+}

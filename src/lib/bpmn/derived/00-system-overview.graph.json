@@ -1,0 +1,382 @@
+{
+  "id": "00-system-overview",
+  "file": "00-system-overview.bpmn",
+  "name": "Unified Procure-to-Pay / Source-to-Pay - End-to-End Overview",
+  "lanes": [
+    {
+      "id": "L_admin",
+      "name": "Administrator",
+      "role": "Administrator"
+    },
+    {
+      "id": "L_req",
+      "name": "Requester",
+      "role": "Requester"
+    },
+    {
+      "id": "L_budget",
+      "name": "Budget Owner",
+      "role": "Budget Owner"
+    },
+    {
+      "id": "L_appr",
+      "name": "Approver",
+      "role": "Approver"
+    },
+    {
+      "id": "L_buyer",
+      "name": "Procurement / Buyer",
+      "role": "Procurement / Buyer"
+    },
+    {
+      "id": "L_supplier",
+      "name": "Supplier / Vendor",
+      "role": "Supplier / Vendor"
+    },
+    {
+      "id": "L_recv",
+      "name": "Receiving / Warehouse",
+      "role": "Receiving / Warehouse"
+    },
+    {
+      "id": "L_qc",
+      "name": "Quality",
+      "role": "Quality"
+    },
+    {
+      "id": "L_finmaker",
+      "name": "Finance - Maker",
+      "role": "Finance - Maker"
+    },
+    {
+      "id": "L_finchecker",
+      "name": "Finance - Checker",
+      "role": "Finance - Checker"
+    },
+    {
+      "id": "L_mgmt",
+      "name": "Management",
+      "role": "Management"
+    },
+    {
+      "id": "L_sys",
+      "name": "Platform / System",
+      "role": "Platform / System"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "Requisition",
+      "type": "userTask",
+      "name": "Raise requisition (lines, budget soft-check)",
+      "lane": "Requester",
+      "documentation": "Requester creates a requisition: header (auto identifier, date, requester+department auto, category {Items|Spares|Services|ProductDesign}, direct/indirect, purchase type {Local|Import}, priority {ASAP|SameDay|Within2Days|Within1Week}, currency, project/cost-center) and one or more lines (item [search master or free-text -> auto-create], quantity >0, UoM, unit price, need date, product-used-for, available stock, line note, attachments). On submit, a soft budget check warns if over available; auto identifier generated; sees only own/department requisitions. [SCOR S1.1/O2 | ISO 7.5 | source: AB fields + RA structure]"
+    },
+    {
+      "id": "Approve",
+      "type": "userTask",
+      "name": "Approve through stages (auto or manual)",
+      "lane": "Approver",
+      "documentation": "Each stage: within auto-approval threshold -> system auto-approves (nearest-bucket approver, logged); else the requested approver (or qualified assignee, never own requisition) approves or returns for revision. SoD enforced. [SCOR OE2 | source: RA auto-approval + AB FM/head as config]"
+    },
+    {
+      "id": "Revise",
+      "type": "userTask",
+      "name": "Revise and resubmit",
+      "lane": "Requester",
+      "documentation": "Requester edits the same requisition per the rejection note (identifier unchanged) and resubmits. [source: both]"
+    },
+    {
+      "id": "Source",
+      "type": "userTask",
+      "name": "Source: RFQ, compare landed cost, select, award",
+      "lane": "Procurement / Buyer",
+      "documentation": "Buyer sources: prequalify/discover suppliers, float RFQ to >=3 (email+OTP form), capture structured quotes (price, payment terms, delivery terms, incoterm, charges), negotiate, compare on normalized landed cost + scorecard, select (justify non-top pick), award + capture contract terms. Repeat/preferred buys bypass via framework call-off. [SCOR S1.2-S1.10 | source: AB depth + RA mechanics]"
+    },
+    {
+      "id": "Onboard",
+      "type": "userTask",
+      "name": "Onboard / qualify supplier (if new)",
+      "lane": "Supplier / Vendor",
+      "documentation": "A new supplier completes onboarding (profile, addresses, tax, qualification docs: certs/COA/AVL, risk/security/ESG attributes) and is approved before any order. Gates ordering. [SCOR S1.6 | ISO 8.4.1 + family | source: RA lifecycle + AB qualification]"
+    },
+    {
+      "id": "PO",
+      "type": "userTask",
+      "name": "Issue PO (budget commit, terms, PDF)",
+      "lane": "Procurement / Buyer",
+      "documentation": "Buyer issues the PO from requisition+quote: budget HARD-committed (encumbrance), incoterms/scope/currency+exchange rate, T&Cs, delivery place/date, tax on lines, ISO doc ref; emitted as PDF to the supplier. Editable until first receipt (qty tolerance). Buyer cannot approve own PO (SoD). [SCOR S2.1 | ISO 8.4.3 | source: AB + commit build-new]"
+    },
+    {
+      "id": "Ack",
+      "type": "userTask",
+      "name": "Acknowledge PO",
+      "lane": "Supplier / Vendor",
+      "documentation": "Supplier acknowledges the PO before production; any advance payment triggers here per the schedule. [SCOR S2.1 | source: both]"
+    },
+    {
+      "id": "Receive",
+      "type": "userTask",
+      "name": "Receive, inspect (GRN), QC gate",
+      "lane": "Receiving / Warehouse",
+      "documentation": "Receiving records delivery (partial-delivery blocks; transport-mode + customs tracking for import). Materials -> COA+sample to QC -> QC approves (hard block if no COA) -> GRN raised, GR/IR accrued; qty tolerance +/-5-10% amends PO first. Spares/services -> Engineering receives, closes requisition (no GRN). [SCOR S2.4/S2.5/S2.6 | ISO 8.6/8.7 | source: AB QC + RA blocks]"
+    },
+    {
+      "id": "Ncr",
+      "type": "userTask",
+      "name": "Raise NCR -> RMA / CAPA loop",
+      "lane": "Quality",
+      "documentation": "NCR (item, delivery-note no., date, % non-conformance, image) by QC/FM/requester -> handler resolves with supplier -> return (S4) and/or corrective action -> effectiveness review -> feeds supplier scorecard + may SUSPEND supplier. [SCOR S4 | ISO 8.6->8.7->10.2->8.4.1 | source: build-new]"
+    },
+    {
+      "id": "Invoice",
+      "type": "userTask",
+      "name": "Capture invoice, two/three-way match",
+      "lane": "Finance - Maker",
+      "documentation": "Invoice captured (with documents). Match: three-way (PO+GRN+invoice) for materials, two-way (PO+invoice) for services/no-GRN; within price/qty tolerance + tax-inclusive -> auto-clear and relieve GR/IR; else exception (price/qty/missing-GR/duplicate-invoice/tax-mismatch) routed to resolver -> accept/adjust/credit-note/debit-note/reject. [SCOR S2.7 | ISO 8.6 | source: build-new + AB package]"
+    },
+    {
+      "id": "Pay",
+      "type": "userTask",
+      "name": "Schedule and process payment (installments)",
+      "lane": "Finance - Maker",
+      "documentation": "Finance-Maker builds the payment schedule per terms {100% advance | part-advance+against-docs | part-advance+against-shipment | 30/70 | net 30/60/90}; approves installments full or partial (+remainder), processes with receipt, handles advance recoupment + retention, cash float for cash buys, withholding tax. Overdue reminder ~28d. [SCOR S2.7 | source: RA installments + AB terms]"
+    },
+    {
+      "id": "Check",
+      "type": "userTask",
+      "name": "Approve payment release (checker)",
+      "lane": "Finance - Checker",
+      "documentation": "Finance-Checker (Chief Accountant) reviews and approves the prepared payment before release; maker != checker (financial-control SoD per SOX/COSO + ISO 37001, NOT ISO 9001). Reschedule with reason if held. [source: both, segregation]"
+    },
+    {
+      "id": "MgmtApprove",
+      "type": "userTask",
+      "name": "Management final approval (terminal vertical)",
+      "lane": "Management",
+      "documentation": "Management is the terminal vertical in the approval chain; it gives final sign-off, frequently exercised through approving the final payment installment release. Marks the Management completion APPROVED, the last gate before the COMPLETED guard. [SCOR OE1 (Supply Chain Strategy) / S2.7 | source: RA MANAGEMENT vertical]"
+    },
+    {
+      "id": "Seed",
+      "type": "serviceTask",
+      "name": "Configure masters, roles, approval chain, budgets, tax",
+      "lane": "Administrator",
+      "documentation": "Admin pre-seeds before any transaction: master data (items, suppliers, UoM, currencies, warehouses, payment terms, projects/cost-centers, categories/segments, tax codes), users + roles + designations + business units (RBAC), the configurable approval chain + routing rules, budgets per cost-center x period, and the dynamic field config. Without routing rules and budgets, downstream routing and commitment fail. [SCOR OE2/OE4/OE5/OE11 | source: blueprint+RA build-new]"
+    },
+    {
+      "id": "Route",
+      "type": "serviceTask",
+      "name": "Route into configurable approval chain",
+      "lane": "Platform / System",
+      "documentation": "System resolves the approval chain by department/category/value, creates one completion per stage (NOT_STARTED), assigns the first stage (Requester pinned), least-loaded approver selected. [SCOR OE2 | ISO 8.4 | source: RA engine]"
+    },
+    {
+      "id": "Ship",
+      "type": "serviceTask",
+      "name": "Manufacture, ship, share documents",
+      "lane": "Supplier / Vendor",
+      "documentation": "Supplier manufactures and ships; shares documents after dispatch (invoice, packing list, certificate of origin, AWB/BL, and for import: Bayan after arrival, health cert for food, DG declaration). [SCOR S2.2/S2.3 | source: AB import docs]"
+    },
+    {
+      "id": "Complete",
+      "type": "serviceTask",
+      "name": "Close out, update analytics + audit",
+      "lane": "Platform / System",
+      "documentation": "Cycle closes when stage = POST_DELIVERY, all approvals APPROVED, all matches cleared, payments settled, no open NCR/CAPA block. Commitment relieved to actual; supplier scorecard (OTIF/perfect-order, quality, cost, responsiveness), cycle-time, savings, spend analytics updated; audit log + SSE emitted throughout. [SCOR OE3 + RL/RS/CO | ISO 8.4.1 | source: both + KPIs]"
+    },
+    {
+      "id": "BudgetCheck",
+      "type": "exclusiveGateway",
+      "name": "Within budget or override?",
+      "lane": "Budget Owner",
+      "documentation": "Soft budget gate. If requisition value <= cost-center available budget -> proceeds. If over -> Budget Owner must approve an override (logged) or the requisition is revised. Hard commit happens later at PO issue. [SCOR OE11 | source: build-new finance control]"
+    },
+    {
+      "id": "GwApproved",
+      "type": "exclusiveGateway",
+      "name": "Approved?",
+      "lane": "Approver",
+      "documentation": "Approved -> sourcing. Rejected -> return-for-revision loop to the requester with mandatory note. [source: both]"
+    },
+    {
+      "id": "QcGate",
+      "type": "exclusiveGateway",
+      "name": "QC pass?",
+      "lane": "Quality",
+      "documentation": "Pass -> GRN + onward. Fail -> non-conformance (NCR) raised, disposition (return/rework/concession/scrap), may start RMA + CAPA loop feeding supplier re-evaluation. [SCOR S2.5 | ISO 8.7/10.2 | source: AB NCR + build-new CAPA]"
+    },
+    {
+      "id": "AdminStart",
+      "type": "startEvent",
+      "name": "Setup begins",
+      "lane": "Administrator",
+      "documentation": "Administrator setup precedes any transaction. [SCOR OE | source: blueprint]"
+    },
+    {
+      "id": "Start",
+      "type": "startEvent",
+      "name": "Need identified",
+      "lane": "Requester",
+      "documentation": "A requester in any department identifies a purchase need (material, spare, service, or product-design item). Trigger for the cycle. [SCOR S1.1 Define Business Need | source: AB+RA]"
+    },
+    {
+      "id": "End",
+      "type": "endEvent",
+      "name": "Source-to-pay complete",
+      "lane": "Platform / System",
+      "documentation": "Fully recorded, benchmark-traceable cycle. [source: build-new]"
+    }
+  ],
+  "flows": [
+    {
+      "id": "fa",
+      "from": "AdminStart",
+      "to": "Seed",
+      "guard": ""
+    },
+    {
+      "id": "f0",
+      "from": "Seed",
+      "to": "Start",
+      "guard": "config ready"
+    },
+    {
+      "id": "f1",
+      "from": "Start",
+      "to": "Requisition",
+      "guard": ""
+    },
+    {
+      "id": "f2",
+      "from": "Requisition",
+      "to": "BudgetCheck",
+      "guard": ""
+    },
+    {
+      "id": "f3",
+      "from": "BudgetCheck",
+      "to": "Route",
+      "guard": "within budget / override approved"
+    },
+    {
+      "id": "f3b",
+      "from": "BudgetCheck",
+      "to": "Revise",
+      "guard": "over budget, no override"
+    },
+    {
+      "id": "f4",
+      "from": "Route",
+      "to": "Approve",
+      "guard": ""
+    },
+    {
+      "id": "f5",
+      "from": "Approve",
+      "to": "GwApproved",
+      "guard": ""
+    },
+    {
+      "id": "f6",
+      "from": "GwApproved",
+      "to": "Source",
+      "guard": "Approved"
+    },
+    {
+      "id": "f7",
+      "from": "GwApproved",
+      "to": "Revise",
+      "guard": "Rejected"
+    },
+    {
+      "id": "f8",
+      "from": "Revise",
+      "to": "Approve",
+      "guard": ""
+    },
+    {
+      "id": "f9",
+      "from": "Source",
+      "to": "Onboard",
+      "guard": ""
+    },
+    {
+      "id": "f10",
+      "from": "Onboard",
+      "to": "PO",
+      "guard": ""
+    },
+    {
+      "id": "f11",
+      "from": "PO",
+      "to": "Ack",
+      "guard": ""
+    },
+    {
+      "id": "f12",
+      "from": "Ack",
+      "to": "Ship",
+      "guard": ""
+    },
+    {
+      "id": "f13",
+      "from": "Ship",
+      "to": "Receive",
+      "guard": ""
+    },
+    {
+      "id": "f14",
+      "from": "Receive",
+      "to": "QcGate",
+      "guard": ""
+    },
+    {
+      "id": "f15",
+      "from": "QcGate",
+      "to": "Invoice",
+      "guard": "QC pass"
+    },
+    {
+      "id": "f16",
+      "from": "QcGate",
+      "to": "Ncr",
+      "guard": "QC fail"
+    },
+    {
+      "id": "f17",
+      "from": "Ncr",
+      "to": "Invoice",
+      "guard": "resolved / accepted"
+    },
+    {
+      "id": "f18",
+      "from": "Invoice",
+      "to": "Pay",
+      "guard": ""
+    },
+    {
+      "id": "f19",
+      "from": "Pay",
+      "to": "Check",
+      "guard": ""
+    },
+    {
+      "id": "f20",
+      "from": "Check",
+      "to": "MgmtApprove",
+      "guard": ""
+    },
+    {
+      "id": "f21",
+      "from": "Complete",
+      "to": "End",
+      "guard": ""
+    },
+    {
+      "id": "f20b",
+      "from": "MgmtApprove",
+      "to": "Complete",
+      "guard": ""
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+[
+  {
+    "id": "TL-HERO-FIN",
+    "ticketId": "TKT-HERO",
+    "itemId": "ITM-0006",
+    "quantity": 5000,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 145.102,
+    "hsCode": "29420090",
+    "needDate": "2026-08-06",
+    "stageStatus": "AWAITING_APPROVAL (Finance, manual: over auto-approval limit)"
+  },
+  {
+    "id": "TL-HERO-CTN",
+    "ticketId": "TKT-HERO",
+    "itemId": "ITM-0063",
+    "quantity": 200000,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.077,
+    "needDate": "2026-06-10",
+    "stageStatus": "APPROVED (Finance auto-approved: under nearest-bucket limit)"
+  }
+]

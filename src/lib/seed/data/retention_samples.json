@@ -1,0 +1,92 @@
+[
+  {
+    "id": "RET-0001",
+    "supplierId": "SUP-0001",
+    "itemId": "ITM-0001",
+    "batchRef": "SYN-2025-B001",
+    "quantity": 0.5,
+    "location": "QC-STORE-A/S01",
+    "retainUntil": "2027-09-01"
+  },
+  {
+    "id": "RET-0002",
+    "supplierId": "SUP-0001",
+    "itemId": "ITM-0002",
+    "batchRef": "SYN-2025-B002",
+    "quantity": 0.5,
+    "location": "QC-STORE-A/S02",
+    "retainUntil": "2027-10-15"
+  },
+  {
+    "id": "RET-0003",
+    "supplierId": "SUP-0001",
+    "itemId": "ITM-0004",
+    "batchRef": "SYN-2026-B001",
+    "quantity": 0.5,
+    "location": "QC-STORE-A/S03",
+    "retainUntil": "2028-02-01"
+  },
+  {
+    "id": "RET-0004",
+    "supplierId": "SUP-0002",
+    "itemId": "ITM-0005",
+    "batchRef": "BIO-2025-B012",
+    "quantity": 0.3,
+    "location": "QC-STORE-B/S01",
+    "retainUntil": "2027-11-30"
+  },
+  {
+    "id": "RET-0005",
+    "supplierId": "SUP-0002",
+    "itemId": "ITM-0007",
+    "batchRef": "BIO-2025-B015",
+    "quantity": 0.3,
+    "location": "QC-STORE-B/S02",
+    "retainUntil": "2027-12-15"
+  },
+  {
+    "id": "RET-0006",
+    "supplierId": "SUP-0003",
+    "itemId": "ITM-0003",
+    "batchRef": "HEL-2025-A042",
+    "quantity": 0.4,
+    "location": "QC-STORE-B/S03",
+    "retainUntil": "2027-08-20"
+  },
+  {
+    "id": "RET-0007",
+    "supplierId": "SUP-0015",
+    "itemId": "ITM-0006",
+    "batchRef": "SUM-2025-R011",
+    "quantity": 0.5,
+    "location": "QC-STORE-C/S01",
+    "retainUntil": "2027-07-31"
+  },
+  {
+    "id": "RET-0008",
+    "supplierId": "SUP-0021",
+    "itemId": "ITM-0009",
+    "batchRef": "HAR-2025-X007",
+    "quantity": 0.5,
+    "location": "QC-STORE-C/S02",
+    "retainUntil": "2027-09-30"
+  },
+  {
+    "id": "RET-0009",
+    "supplierId": "SUP-0038",
+    "itemId": "ITM-0014",
+    "batchRef": "CAR-2025-M003",
+    "quantity": 0.4,
+    "location": "QC-STORE-D/S01",
+    "retainUntil": "2027-11-01"
+  },
+  {
+    "id": "RET-0010",
+    "supplierId": "SUP-0043",
+    "itemId": "ITM-0013",
+    "batchRef": "LUM-2025-Q019",
+    "quantity": 0.3,
+    "location": "QC-STORE-D/S02",
+    "retainUntil": "2027-10-01"
+  }
+]

@@ -1,0 +1,299 @@
+[
+  {
+    "id": "INV-0001",
+    "itemId": "ITM-0006",
+    "warehouseCode": "WH-P2-RM",
+    "stockOnHand": 120,
+    "allocated": 20,
+    "available": 100,
+    "lastMovementAt": "2026-05-15"
+  },
+  {
+    "id": "INV-0002",
+    "itemId": "ITM-0063",
+    "warehouseCode": "WH-P1-PM",
+    "stockOnHand": 3500,
+    "allocated": 600,
+    "available": 2900,
+    "lastMovementAt": "2026-05-20"
+  },
+  {
+    "id": "INV-0003",
+    "itemId": "ITM-0001",
+    "warehouseCode": "WH-P1-RM",
+    "stockOnHand": 450,
+    "allocated": 100,
+    "available": 350,
+    "lastMovementAt": "2026-05-18"
+  },
+  {
+    "id": "INV-0004",
+    "itemId": "ITM-0002",
+    "warehouseCode": "WH-P1-RM",
+    "stockOnHand": 620,
+    "allocated": 80,
+    "available": 540,
+    "lastMovementAt": "2026-05-10"
+  },
+  {
+    "id": "INV-0005",
+    "itemId": "ITM-0003",
+    "warehouseCode": "WH-P1-RM",
+    "stockOnHand": 280,
+    "allocated": 50,
+    "available": 230,
+    "lastMovementAt": "2026-05-12"
+  },
+  {
+    "id": "INV-0006",
+    "itemId": "ITM-0004",
+    "warehouseCode": "WH-P2-RM",
+    "stockOnHand": 175,
+    "allocated": 25,
+    "available": 150,
+    "lastMovementAt": "2026-05-08"
+  },
+  {
+    "id": "INV-0007",
+    "itemId": "ITM-0005",
+    "warehouseCode": "WH-P2-RM",
+    "stockOnHand": 500,
+    "allocated": 60,
+    "available": 440,
+    "lastMovementAt": "2026-05-14"
+  },
+  {
+    "id": "INV-0008",
+    "itemId": "ITM-0007",
+    "warehouseCode": "WH-P2-RM",
+    "stockOnHand": 180,
+    "allocated": 30,
+    "available": 150,
+    "lastMovementAt": "2026-05-22"
+  },
+  {
+    "id": "INV-0009",
+    "itemId": "ITM-0008",
+    "warehouseCode": "WH-P2-RM",
+    "stockOnHand": 90,
+    "allocated": 10,
+    "available": 80,
+    "lastMovementAt": "2026-05-05"
+  },
+  {
+    "id": "INV-0010",
+    "itemId": "ITM-0009",
+    "warehouseCode": "WH-P1-RM",
+    "stockOnHand": 350,
+    "allocated": 40,
+    "available": 310,
+    "lastMovementAt": "2026-05-19"
+  },
+  {
+    "id": "INV-0011",
+    "itemId": "ITM-0010",
+    "warehouseCode": "WH-P1-RM",
+    "stockOnHand": 160,
+    "allocated": 20,
+    "available": 140,
+    "lastMovementAt": "2026-05-16"
+  },
+  {
+    "id": "INV-0012",
+    "itemId": "ITM-0064",
+    "warehouseCode": "WH-P1-PM",
+    "stockOnHand": 4200,
+    "allocated": 500,
+    "available": 3700,
+    "lastMovementAt": "2026-05-21"
+  },
+  {
+    "id": "INV-0013",
+    "itemId": "ITM-0011",
+    "warehouseCode": "WH-P1-RM",
+    "stockOnHand": 420,
+    "allocated": 60,
+    "available": 360,
+    "lastMovementAt": "2026-05-17"
+  },
+  {
+    "id": "INV-0014",
+    "itemId": "ITM-0012",
+    "warehouseCode": "WH-P2-RM",
+    "stockOnHand": 130,
+    "allocated": 30,
+    "available": 100,
+    "lastMovementAt": "2026-05-13"
+  },
+  {
+    "id": "INV-0015",
+    "itemId": "ITM-0013",
+    "warehouseCode": "WH-P2-RM",
+    "stockOnHand": 600,
+    "allocated": 80,
+    "available": 520,
+    "lastMovementAt": "2026-05-25"
+  },
+  {
+    "id": "INV-0016",
+    "itemId": "ITM-0014",
+    "warehouseCode": "WH-P1-RM",
+    "stockOnHand": 370,
+    "allocated": 70,
+    "available": 300,
+    "lastMovementAt": "2026-05-11"
+  },
+  {
+    "id": "INV-0017",
+    "itemId": "ITM-0015",
+    "warehouseCode": "WH-P1-RM",
+    "stockOnHand": 490,
+    "allocated": 90,
+    "available": 400,
+    "lastMovementAt": "2026-05-23"
+  },
+  {
+    "id": "INV-0018",
+    "itemId": "ITM-0016",
+    "warehouseCode": "WH-P2-BOND",
+    "stockOnHand": 800,
+    "allocated": 100,
+    "available": 700,
+    "lastMovementAt": "2026-05-07"
+  },
+  {
+    "id": "INV-0019",
+    "itemId": "ITM-0017",
+    "warehouseCode": "WH-P2-RM",
+    "stockOnHand": 240,
+    "allocated": 40,
+    "available": 200,
+    "lastMovementAt": "2026-05-18"
+  },
+  {
+    "id": "INV-0020",
+    "itemId": "ITM-0020",
+    "warehouseCode": "WH-MRO",
+    "stockOnHand": 15,
+    "allocated": 2,
+    "available": 13,
+    "lastMovementAt": "2026-05-09"
+  },
+  {
+    "id": "INV-0021",
+    "itemId": "ITM-0021",
+    "warehouseCode": "WH-MRO",
+    "stockOnHand": 8,
+    "allocated": 1,
+    "available": 7,
+    "lastMovementAt": "2026-05-06"
+  },
+  {
+    "id": "INV-0022",
+    "itemId": "ITM-0065",
+    "warehouseCode": "WH-P1-PM",
+    "stockOnHand": 6000,
+    "allocated": 800,
+    "available": 5200,
+    "lastMovementAt": "2026-05-24"
+  },
+  {
+    "id": "INV-0023",
+    "itemId": "ITM-0066",
+    "warehouseCode": "WH-P1-PM",
+    "stockOnHand": 2800,
+    "allocated": 400,
+    "available": 2400,
+    "lastMovementAt": "2026-05-26"
+  },
+  {
+    "id": "INV-0024",
+    "itemId": "ITM-0018",
+    "warehouseCode": "WH-P1-RM",
+    "stockOnHand": 310,
+    "allocated": 60,
+    "available": 250,
+    "lastMovementAt": "2026-05-15"
+  },
+  {
+    "id": "INV-0025",
+    "itemId": "ITM-0019",
+    "warehouseCode": "WH-P2-RM",
+    "stockOnHand": 195,
+    "allocated": 45,
+    "available": 150,
+    "lastMovementAt": "2026-05-20"
+  },
+  {
+    "id": "INV-0026",
+    "itemId": "ITM-0022",
+    "warehouseCode": "WH-P1-RM",
+    "stockOnHand": 580,
+    "allocated": 80,
+    "available": 500,
+    "lastMovementAt": "2026-05-28"
+  },
+  {
+    "id": "INV-0027",
+    "itemId": "ITM-0023",
+    "warehouseCode": "WH-P1-RM",
+    "stockOnHand": 145,
+    "allocated": 15,
+    "available": 130,
+    "lastMovementAt": "2026-05-27"
+  },
+  {
+    "id": "INV-0028",
+    "itemId": "ITM-0024",
+    "warehouseCode": "WH-P2-RM",
+    "stockOnHand": 210,
+    "allocated": 30,
+    "available": 180,
+    "lastMovementAt": "2026-05-16"
+  },
+  {
+    "id": "INV-0029",
+    "itemId": "ITM-0025",
+    "warehouseCode": "WH-P1-RM",
+    "stockOnHand": 680,
+    "allocated": 80,
+    "available": 600,
+    "lastMovementAt": "2026-05-14"
+  },
+  {
+    "id": "INV-0030",
+    "itemId": "ITM-0026",
+    "warehouseCode": "WH-P2-BOND",
+    "stockOnHand": 750,
+    "allocated": 150,
+    "available": 600,
+    "lastMovementAt": "2026-05-22"
+  },
+  {
+    "id": "INV-0031",
+    "itemId": "ITM-0040",
+    "warehouseCode": "WH-MRO",
+    "stockOnHand": 12,
+    "allocated": 2,
+    "available": 10,
+    "lastMovementAt": "2026-05-12"
+  },
+  {
+    "id": "INV-0032",
+    "itemId": "ITM-0050",
+    "warehouseCode": "WH-P1-PM",
+    "stockOnHand": 9000,
+    "allocated": 1000,
+    "available": 8000,
+    "lastMovementAt": "2026-05-30"
+  },
+  {
+    "id": "INV-0033",
+    "itemId": "ITM-0060",
+    "warehouseCode": "WH-P1-FG",
+    "stockOnHand": 11000,
+    "allocated": 1500,
+    "available": 9500,
+    "lastMovementAt": "2026-05-29"
+  }
+]

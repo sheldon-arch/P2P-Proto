@@ -1,0 +1,256 @@
+{
+  "id": "12-analytics",
+  "file": "12-analytics.bpmn",
+  "name": "Spend Analytics, Supplier Scorecard and KPIs",
+  "lanes": [
+    {
+      "id": "L_sys",
+      "name": "Platform / System",
+      "role": "Platform / System"
+    },
+    {
+      "id": "L_buyer",
+      "name": "Procurement / Buyer",
+      "role": "Procurement / Buyer"
+    },
+    {
+      "id": "L_appr",
+      "name": "Approver",
+      "role": "Approver"
+    },
+    {
+      "id": "L_qc",
+      "name": "Quality",
+      "role": "Quality"
+    },
+    {
+      "id": "L_finmaker",
+      "name": "Finance - Maker",
+      "role": "Finance - Maker"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "BuyerView",
+      "type": "userTask",
+      "name": "Buyer reviews scorecard, spend, savings, forecast",
+      "lane": "Procurement / Buyer",
+      "documentation": "Buyer (analytics.view, scorecard.view, spend.view, forecast.manage, scorecard.configure) reviews supplier scorecards, spend cuts, savings, price-spike alerts, and maintains the manual forecast. Buyer can configure scorecard weights/bands and the AVL threshold (scorecard.configure). Actions feed sourcing decisions (preferred suppliers, AVL gating in diagram 04) and the CAPA/suspend loop (e04). [SCOR OE3 | source: role-permission-matrix buyer analytics/forecast/configure]"
+    },
+    {
+      "id": "MgmtView",
+      "type": "userTask",
+      "name": "Approver / Management performance view",
+      "lane": "Approver",
+      "documentation": "Approver in the Management view (analytics.view in-scope) sees aggregate performance: cycle times, approval SLA, spend-under-management, savings vs target, top suppliers/categories, exception trends. Read-only management dashboard; no edit of scorecards. [SCOR OE3 | source: role-permission-matrix mgmt analytics view]"
+    },
+    {
+      "id": "QcView",
+      "type": "userTask",
+      "name": "Quality reviews quality KPIs",
+      "lane": "Quality",
+      "documentation": "Quality (analytics.view C: quality KPIs) reviews PPM/defect/NCR trends, lot acceptance %, CAPA responsiveness, and the failure-reason breakdown per supplier. Recurring quality failures feed the NCR/CAPA loop (e04) and the suspend gate. [ISO 8.4.1 monitoring | source: role-permission-matrix quality KPIs]"
+    },
+    {
+      "id": "FinView",
+      "type": "userTask",
+      "name": "Finance reviews AP / match KPIs",
+      "lane": "Finance - Maker",
+      "documentation": "Finance-Maker (analytics.view, payments.analytics.view) reviews DPO, first-time-match / three-way-match exception rate, invoice accuracy, and creditor-ledger ageing (entries left / overdue). Match-exception trends feed back to the invoice/match flow (diagram 09 / e12). [SCOR CO | source: role-permission-matrix finance analytics + AB creditor ledger]"
+    },
+    {
+      "id": "Ingest",
+      "type": "serviceTask",
+      "name": "Ingest + cleanse facts (dedup, classify)",
+      "lane": "Platform / System",
+      "documentation": "Prerequisite step. Cleanse spend: dedup/normalize supplier names + roll up to parent hierarchy; classify every PO/invoice line to the category taxonomy (UNSPSC-style segment/subSegment). Track classification coverage % and unclassified-spend % as data-health KPIs (a cut cannot be trusted below a configurable coverage threshold). FX: every amount normalized to the configurable base/reporting currency via convertToBase (graceful degradation: on rate-fetch failure or invalid rate the original amount is carried unconverted, never throws). [SCOR OE4 | source: procurement-metrics-kpis spend-cleansing prerequisite + platform-services FX]"
+    },
+    {
+      "id": "WriteScorecard",
+      "type": "serviceTask",
+      "name": "Persist scorecard + AVL status + streak counters",
+      "lane": "Platform / System",
+      "documentation": "Persist the period scorecard, grade, AVL status {Approved | Conditional | Suspended | Disqualified | Preferred}, and update streak counters: consecutive-periods-at-or-above-threshold (feeds preferred qualification) and consecutive-below counter (triggers corrective action / probation, and at the configured count feeds the SUSPEND gate in e04). Two consecutive periods below target or a critical NCR are event triggers for early re-evaluation. SSE scorecard.updated emitted; audit logged. [SCOR OE3 | ISO 8.4.1 re-evaluation records | source: iso-supply-chain-standards AVL status set + procurement-metrics-kpis streaks]"
+    },
+    {
+      "id": "Dashboards",
+      "type": "serviceTask",
+      "name": "Publish dashboards + alerts (RBAC-scoped)",
+      "lane": "Platform / System",
+      "documentation": "Render role-scoped dashboards and fire alerts. Access is RBAC-scoped per analytics.view / scorecard.view / spend.view: Buyer sees full scorecard + spend + savings + forecast; Approver/Management sees the management performance view; Quality sees quality KPIs; Finance-Maker sees AP metrics (DPO, match-exception rate); Supplier sees only its own scorecard (C). Alerts: price-spike >5%, ETA/cert expiry, two-consecutive-below, SLA breach. SSE on update; clients re-query through the guarded REST endpoint (no data leaks over the stream). [SCOR OE3 | source: platform-services analytics + role-permission-matrix analytics/scorecard/spend view]"
+    },
+    {
+      "id": "Normalize",
+      "type": "businessRuleTask",
+      "name": "Stage 1: normalize each metric to 0-100",
+      "lane": "Platform / System",
+      "documentation": "Two-stage scoring, stage 1. Each raw supplier metric for the period is normalized to a 0-100 sub-score against configurable threshold bands (bands are tenant config, defaults below). Quality: defect rate % = defective/total-received x100 (target <=1%); PPM/DPPM = rejects/inspected x1,000,000 (denominator = inspected, not received, under AQL sampling; automotive band 50-500, food/bev <=1000; note DPPM != DPMO, do not conflate); NCR count / non-conformance rate %. Delivery: OTD % = on-time/total x100 (band >=95 green / 90-94 amber / <90 red); fill rate % = delivered/ordered x100 (>=98). Cost: PPV = (actual price - baseline price) x qty, PPV% = (actual-baseline)/baseline x100 (negative = favorable); baseline = last purchase price (AB). Responsiveness: RFQ turnaround = quote-returned - RFQ-issued (days); CAPA responsiveness = avg days to close a CAPA. Each metric maps onto its band -> 0-100. [SCOR RL/RS/CO | ISO 8.4.1 | source: procurement-metrics-kpis formulas + platform-services two-stage scoring]"
+    },
+    {
+      "id": "Delivery2v4",
+      "type": "businessRuleTask",
+      "name": "Compute OTIF (2-factor) AND perfect-order (4-factor) distinctly",
+      "lane": "Platform / System",
+      "documentation": "Delivery sub-scores computed and LABELLED distinctly, never conflated. Two-factor OTIF % = orders (grain: per ORDER LINE, fixed + disclosed) delivered on-time AND in-full / total x100 - the intersection, all-or-nothing: on-time-but-short fails, complete-but-late fails (RA e07 streak uses this two-factor metric for the operational dashboard). Four-factor perfect order = on-time AND in-full AND damage-free AND documentation-accurate (SCOR RL.1.2 Perfect Supplier Order Fulfillment; components RL.2.6 on-time, RL.2.5 in-full, RL.3.22-24 damage-free, RL.2.7/RL.3.17-20 documentation-accurate). The supplier RE-QUALIFICATION gate uses the four-factor perfect-order metric; the operational dashboard streak uses two-factor OTIF. Both stored per period. [SCOR RL.1.2 | source: data-model OTIF/perfect-order clarification + procurement-metrics-kpis]"
+    },
+    {
+      "id": "Composite",
+      "type": "businessRuleTask",
+      "name": "Stage 2: weighted composite per supplier per period",
+      "lane": "Platform / System",
+      "documentation": "Two-stage scoring, stage 2. composite = sum(sub-score x weight) over the four scored dimensions. Weights are configurable, sum to 100; defaults = delivery 40 / quality 30 / cost 20 / service(responsiveness) 10 (pharma/food raises quality). Compliance is NOT a weighted input - it is a separate hard GATE (next step). Composite stored on SupplierScorecard {supplierId, period, dimensionScores, composite, grade}. Time-series maintained: rolling average, trend slope, variance, and failure-reason breakdown (late vs short vs wrong-SKU vs damaged). [SCOR OE3 | ISO 8.4.1 | source: platform-services weighted roll-up + procurement-metrics-kpis weighting]"
+    },
+    {
+      "id": "ComplianceGate",
+      "type": "businessRuleTask",
+      "name": "Compliance GATE (cert validity, doc completeness)",
+      "lane": "Platform / System",
+      "documentation": "Compliance is modelled as an eligibility GATE layered on the composite, not a weighted score. certification validity % = binary per cert, must be 100% (any expired/missing mandatory cert -> gate FAIL regardless of composite); documentation completeness % (ASN/CoC/CoA/packing/customs present). A gate fail caps the supplier's effective standing (cannot be AVL/Preferred) even with a high composite. ISO 9001 8.4.1 requires certs/AVL records; expiry alerts fire on selection and >=1 week before expiry. [ISO 8.4.1 + 7.5 records | source: procurement-metrics-kpis compliance-as-gate + platform-services document expiry]"
+    },
+    {
+      "id": "CycleKpis",
+      "type": "businessRuleTask",
+      "name": "Compute cycle / process KPIs",
+      "lane": "Platform / System",
+      "documentation": "Process KPIs computed for the period: requisition-to-PO cycle time (SLA 7-10 days, both companies; APQC top ~5h / poor ~48h reference); approval SLA = avg approval time + % within SLA; PPV (above); spend-under-management % = (approved spend - maverick)/total x100 (mature 80%+); three-way-match exception rate % = 100 - first-time-match rate; DPO = avg AP / COGS x365; invoice accuracy / first-time-match rate %; emergency/rush purchase ratio %. [SCOR RS/CO | source: procurement-metrics-kpis cycle/process KPIs]"
+    },
+    {
+      "id": "SpendCuts",
+      "type": "businessRuleTask",
+      "name": "Compute spend cuts + savings + price-spike",
+      "lane": "Platform / System",
+      "documentation": "Spend analytics. Cuts: by category (taxonomy), by supplier (+ parent hierarchy = concentration/risk), by department/cost-center, by region/plant; tail spend (~20% of spend across ~80% of suppliers); contract compliance/utilization % = on-contract/addressable x100 (inverse of maverick). Savings (AB two-layer): baseline = last purchase price; negotiation layer (quoted-increase vs negotiated-increase) + comparison layer (selected vs alternative quotes); hard savings = baseline - actual; cost avoidance reported SEPARATELY, never summed with hard savings; savings can be negative (extra expense). Abnormal price spike flag: unit price > 5% above baseline (AB threshold, configurable) raises a market-price-watch alert to the buyer. Forecasting (AB, procurement-only, manual): month/quarter x quantity entries; variance flag when actual deviates from forecast beyond a configurable band. [SCOR CO / P3 Plan Source | source: procurement-metrics-kpis spend cuts + AB savings/spike/forecast]"
+    },
+    {
+      "id": "GwGrade",
+      "type": "exclusiveGateway",
+      "name": "grade band? (composite vs A/B/C + gate)",
+      "lane": "Platform / System",
+      "documentation": "Grade assignment, exact bands: composite >= 90 -> Grade A; composite >= 70 AND < 90 -> Grade B; composite < 70 -> Grade C. AVL gate (eligible for the Approved Vendor List) = certs 100% (compliance gate PASS) AND composite >= configurable threshold (default 70). Preferred status = sustained Grade A over multiple consecutive periods AND no single red dimension AND low risk tier AND competitive TCO. A compliance-gate FAIL forces status to at most Conditional/Suspended irrespective of grade. [SCOR OE3 / ISO 8.4.1 | source: procurement-metrics-kpis grade bands A>=90/B>=70/C<70 + AVL gate]"
+    },
+    {
+      "id": "Start",
+      "type": "startEvent",
+      "name": "Period close / on-commit event",
+      "lane": "Platform / System",
+      "documentation": "Trigger. The analytics engine runs (a) on every committed transaction (incremental, via the same post-commit SSE hook, so live tiles stay current) and (b) on a scheduled period close (month / quarter) for the full scorecard roll-up. Canonical grain: PO header, PO line, goods-receipt line, invoice line, payment. OTD/OTIF/quality measured at GR line; cost/PPV at PO line; AP metrics at invoice line. [SCOR OE3 Performance and Continuous Improvement | ISO 8.4.1 monitoring | source: platform-services analytics engine + procurement-metrics-kpis grain]"
+    },
+    {
+      "id": "End",
+      "type": "endEvent",
+      "name": "Analytics published",
+      "lane": "Platform / System",
+      "documentation": "Terminal for the cycle. Scorecards, KPIs, spend cuts, savings, forecasts, and alerts are published and consumed by role. Feeds sourcing (04 AVL/preferred), CAPA/suspend (e04), and overall continuous improvement (SCOR OE3). [SCOR OE3 | source: build-new]"
+    }
+  ],
+  "flows": [
+    {
+      "id": "f1",
+      "from": "Start",
+      "to": "Ingest",
+      "guard": ""
+    },
+    {
+      "id": "f2",
+      "from": "Ingest",
+      "to": "Normalize",
+      "guard": ""
+    },
+    {
+      "id": "f3",
+      "from": "Normalize",
+      "to": "Delivery2v4",
+      "guard": ""
+    },
+    {
+      "id": "f4",
+      "from": "Delivery2v4",
+      "to": "Composite",
+      "guard": ""
+    },
+    {
+      "id": "f5",
+      "from": "Composite",
+      "to": "ComplianceGate",
+      "guard": ""
+    },
+    {
+      "id": "f6",
+      "from": "ComplianceGate",
+      "to": "GwGrade",
+      "guard": ""
+    },
+    {
+      "id": "f7",
+      "from": "GwGrade",
+      "to": "WriteScorecard",
+      "guard": "grade A/B/C assigned + AVL gate applied"
+    },
+    {
+      "id": "f8",
+      "from": "WriteScorecard",
+      "to": "CycleKpis",
+      "guard": ""
+    },
+    {
+      "id": "f9",
+      "from": "CycleKpis",
+      "to": "SpendCuts",
+      "guard": ""
+    },
+    {
+      "id": "f10",
+      "from": "SpendCuts",
+      "to": "Dashboards",
+      "guard": ""
+    },
+    {
+      "id": "f11",
+      "from": "Dashboards",
+      "to": "BuyerView",
+      "guard": ""
+    },
+    {
+      "id": "f12",
+      "from": "Dashboards",
+      "to": "MgmtView",
+      "guard": ""
+    },
+    {
+      "id": "f13",
+      "from": "Dashboards",
+      "to": "QcView",
+      "guard": ""
+    },
+    {
+      "id": "f14",
+      "from": "Dashboards",
+      "to": "FinView",
+      "guard": ""
+    },
+    {
+      "id": "f15",
+      "from": "BuyerView",
+      "to": "End",
+      "guard": ""
+    },
+    {
+      "id": "f16",
+      "from": "MgmtView",
+      "to": "End",
+      "guard": ""
+    },
+    {
+      "id": "f17",
+      "from": "QcView",
+      "to": "End",
+      "guard": ""
+    },
+    {
+      "id": "f18",
+      "from": "FinView",
+      "to": "End",
+      "guard": ""
+    }
+  ]
+}

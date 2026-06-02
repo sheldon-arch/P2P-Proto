@@ -1,0 +1,242 @@
+{
+  "id": "e08-cash-float",
+  "file": "e08-cash-float.bpmn",
+  "name": "e08 - Cash Purchase and Float Reimbursement",
+  "lanes": [
+    {
+      "id": "L_buyer",
+      "name": "Procurement / Buyer",
+      "role": "Procurement / Buyer"
+    },
+    {
+      "id": "L_supplier",
+      "name": "Supplier / Vendor",
+      "role": "Supplier / Vendor"
+    },
+    {
+      "id": "L_recv",
+      "name": "Receiving / Warehouse",
+      "role": "Receiving / Warehouse"
+    },
+    {
+      "id": "L_finmaker",
+      "name": "Finance - Maker",
+      "role": "Finance - Maker"
+    },
+    {
+      "id": "L_finchecker",
+      "name": "Finance - Checker",
+      "role": "Finance - Checker"
+    },
+    {
+      "id": "L_sys",
+      "name": "Platform / System",
+      "role": "Platform / System"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "BuyOnFloat",
+      "type": "userTask",
+      "name": "Buy on cash float",
+      "lane": "Procurement / Buyer",
+      "documentation": "Cash buyer pays the showroom from the petty-cash float and collects the goods + cash receipt/voucher. Records purchase: item, quantity, cashPrice, vendor name, receipt attachment. Permission payments.cashFloat.manage (conditional: cash buyer). No PO is created. [SCOR S2.7 | source: AB cash buy]"
+    },
+    {
+      "id": "CashGRN",
+      "type": "userTask",
+      "name": "Raise cash GRN (NO PO ref)",
+      "lane": "Receiving / Warehouse",
+      "documentation": "Stores raise a cash GRN to bring the goods into inventory WITHOUT a PO reference (the distinguishing feature of the cash branch: poId = null). GRN fields: item, quantity, vendor, cashReceiptRef, actualDeliveryDate, valuation = cashPrice. grn.raise permission. QC applies if the item requires it (same hard block as credit). [SCOR S2.4 | ISO 8.6 | source: AB cash GRN no PO ref]"
+    },
+    {
+      "id": "RequestReimb",
+      "type": "userTask",
+      "name": "Request float reimbursement",
+      "lane": "Procurement / Buyer",
+      "documentation": "Cash buyer raises a reimbursement request = sum of spent vouchers since last top-up (to restore the float to its allotment). Attaches all cash receipts/vouchers as evidence. permission payments.cashFloat.manage. [SCOR S2.7 | source: AB reimbursement request]"
+    },
+    {
+      "id": "FinPrepare",
+      "type": "userTask",
+      "name": "Finance prepares reimbursement (maker)",
+      "lane": "Finance - Maker",
+      "documentation": "Finance-Maker verifies the vouchers against the cash GRNs and float ledger, prepares the reimbursement (amount = allotment - currentBalance). permission payments.cashFloat.manage (reimburse). Maker prepares but does not release (SoD). [SCOR S2.7 | source: AB + maker/checker SoD]"
+    },
+    {
+      "id": "FinApprove",
+      "type": "userTask",
+      "name": "Finance approves reimbursement (checker)",
+      "lane": "Finance - Checker",
+      "documentation": "Finance-Checker (Chief Accountant) reviews and approves the reimbursement before disbursement; maker != checker (financial-control SoD per SOX/COSO + ISO 37001). permission payments.cashFloat.manage (approve). Hold-with-reason if vouchers do not reconcile. [SCOR S2.7 | source: AB approval + SoD]"
+    },
+    {
+      "id": "LogDeduct",
+      "type": "serviceTask",
+      "name": "Log receipt + deduct from float balance",
+      "lane": "Platform / System",
+      "documentation": "System logs the cash receipt against the cash GRN and deducts cashFloat.balance -= cashPrice. Writes an audit entry (category payment/cash); the cash spend is tagged so analytics can report it ALONGSIDE credit spend (unified spend view). Emits SSE. [SCOR S2.7/OE4 | source: AB cash log + deduct + unified reporting]"
+    },
+    {
+      "id": "TopUp",
+      "type": "serviceTask",
+      "name": "Top up float to allotment",
+      "lane": "Platform / System",
+      "documentation": "System disburses the reimbursement and sets cashFloat.balance += reimbursementAmount (restored to allotment). Audit entry (category payment), SSE; reports update the unified cash-vs-credit spend view. [SCOR S2.7/OE4 | source: AB top-up + reporting]"
+    },
+    {
+      "id": "InquireAvailability",
+      "type": "sendTask",
+      "name": "Inquire showroom availability",
+      "lane": "Procurement / Buyer",
+      "documentation": "Cash buyer contacts the showroom/vendor to confirm the item is in stock and the price. Captures item, quantity, expected cash price. No RFQ, no quote comparison (cash buys are small and immediate). [SCOR S1.2 | source: AB showroom inquiry]"
+    },
+    {
+      "id": "ConfirmStock",
+      "type": "receiveTask",
+      "name": "Confirm stock + price",
+      "lane": "Supplier / Vendor",
+      "documentation": "Showroom/vendor confirms availability and the cash price. If not available the buyer tries another showroom or escalates to the Head to switch to credit. [SCOR S1.2 | source: AB]"
+    },
+    {
+      "id": "GwCashCredit",
+      "type": "exclusiveGateway",
+      "name": "Head assigns cash or credit?",
+      "lane": "Procurement / Buyer",
+      "documentation": "Expression: purchaseMode == CASH (Head set it at assignment) AND purchaseType == Local. CASH -> petty-cash float branch (this diagram), small/urgent showroom buys with no PO. CREDIT -> normal PO branch (overview + 05). Only the Head sets the mode; the cash buyer cannot self-elect cash. [SCOR S1.1 | source: AB head decides cash vs credit]"
+    },
+    {
+      "id": "GwFloatSufficient",
+      "type": "exclusiveGateway",
+      "name": "Cash price <= available float balance?",
+      "lane": "Procurement / Buyer",
+      "documentation": "Expression: cashPrice <= cashFloat.balance. The cash float is a configurable petty-cash allotment per cash buyer (e.g. OMR 300; amount configurable per tenant/buyer). True -> buy on float. False -> cannot buy on float; request a reimbursement/top-up first or route the buy to credit. [SCOR S2.7 | source: AB cash float configurable amount]"
+    },
+    {
+      "id": "GwFloatLow",
+      "type": "exclusiveGateway",
+      "name": "Float low (<= ~1/3 of allotment)?",
+      "lane": "Procurement / Buyer",
+      "documentation": "Expression: cashFloat.balance <= cashFloat.allotment * (1/3) (configurable low-water threshold, default one third remaining, e.g. <= OMR 100 of a 300 allotment). True -> request reimbursement to top the float back up. False -> done for this buy; the buyer continues with the remaining float. [SCOR S2.7 | source: AB float-low ~1/3 reimbursement trigger]"
+    },
+    {
+      "id": "Start",
+      "type": "startEvent",
+      "name": "Approved local need to fulfil",
+      "lane": "Procurement / Buyer",
+      "documentation": "Trigger: an approved local-purchase need is assigned for fulfilment. This branch is LOCAL ONLY (no import; imports always go credit + PO). The decision cash-vs-credit is made by the Purchase Head at assignment. [SCOR S1.1 | source: AB local purchase cash branch]"
+    },
+    {
+      "id": "End",
+      "type": "endEvent",
+      "name": "Goods in stock; float maintained; spend reported",
+      "lane": "Platform / System",
+      "documentation": "Cash buy complete: goods received via cash GRN (no PO), float deducted and (if low) reimbursed and topped up, cash spend reported alongside credit spend. [SCOR S2.7 | source: AB]"
+    },
+    {
+      "id": "CreditExit",
+      "type": "endEvent",
+      "name": "Route to credit / PO branch (out of scope here)",
+      "lane": "Procurement / Buyer",
+      "documentation": "Expression: purchaseMode == CREDIT. The buy follows the normal sourcing + PO branch (overview, 04, 05): RFQ/award (or framework call-off), PO issued with budget hard-commit, GRN against the PO, three-way match. Shown here only as the alternative branch of the Head's cash-vs-credit decision; detailed elsewhere. [SCOR S1.2-S2.1 | source: AB credit branch]"
+    }
+  ],
+  "flows": [
+    {
+      "id": "f1",
+      "from": "Start",
+      "to": "GwCashCredit",
+      "guard": ""
+    },
+    {
+      "id": "f2",
+      "from": "GwCashCredit",
+      "to": "InquireAvailability",
+      "guard": "CASH (local)"
+    },
+    {
+      "id": "f2b",
+      "from": "GwCashCredit",
+      "to": "CreditExit",
+      "guard": "CREDIT -> PO branch"
+    },
+    {
+      "id": "f3",
+      "from": "InquireAvailability",
+      "to": "ConfirmStock",
+      "guard": ""
+    },
+    {
+      "id": "f4",
+      "from": "ConfirmStock",
+      "to": "GwFloatSufficient",
+      "guard": ""
+    },
+    {
+      "id": "f5",
+      "from": "GwFloatSufficient",
+      "to": "BuyOnFloat",
+      "guard": "cashPrice <= float balance"
+    },
+    {
+      "id": "f6",
+      "from": "GwFloatSufficient",
+      "to": "RequestReimb",
+      "guard": "insufficient: top up first"
+    },
+    {
+      "id": "f7",
+      "from": "BuyOnFloat",
+      "to": "CashGRN",
+      "guard": ""
+    },
+    {
+      "id": "f8",
+      "from": "CashGRN",
+      "to": "LogDeduct",
+      "guard": ""
+    },
+    {
+      "id": "f9",
+      "from": "LogDeduct",
+      "to": "GwFloatLow",
+      "guard": ""
+    },
+    {
+      "id": "f10",
+      "from": "GwFloatLow",
+      "to": "RequestReimb",
+      "guard": "balance <= allotment/3"
+    },
+    {
+      "id": "f11",
+      "from": "GwFloatLow",
+      "to": "End",
+      "guard": "float adequate"
+    },
+    {
+      "id": "f12",
+      "from": "RequestReimb",
+      "to": "FinPrepare",
+      "guard": ""
+    },
+    {
+      "id": "f13",
+      "from": "FinPrepare",
+      "to": "FinApprove",
+      "guard": ""
+    },
+    {
+      "id": "f14",
+      "from": "FinApprove",
+      "to": "TopUp",
+      "guard": ""
+    },
+    {
+      "id": "f15",
+      "from": "TopUp",
+      "to": "End",
+      "guard": ""
+    }
+  ]
+}

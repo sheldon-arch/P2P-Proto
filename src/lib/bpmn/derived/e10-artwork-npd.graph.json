@@ -1,0 +1,348 @@
+{
+  "id": "e10-artwork-npd",
+  "file": "e10-artwork-npd.bpmn",
+  "name": "e10 - Artwork and New-Product-Development Approval",
+  "lanes": [
+    {
+      "id": "L_req",
+      "name": "Requester",
+      "role": "Requester"
+    },
+    {
+      "id": "L_buyer",
+      "name": "Procurement / Buyer",
+      "role": "Procurement / Buyer"
+    },
+    {
+      "id": "L_supplier",
+      "name": "Supplier / Vendor",
+      "role": "Supplier / Vendor"
+    },
+    {
+      "id": "L_appr",
+      "name": "Approver",
+      "role": "Approver"
+    },
+    {
+      "id": "L_qc",
+      "name": "Quality",
+      "role": "Quality"
+    },
+    {
+      "id": "L_lang",
+      "name": "Reviewer (Language)",
+      "role": "Reviewer (Language)"
+    },
+    {
+      "id": "L_sys",
+      "name": "Platform / System",
+      "role": "Platform / System"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "ReviewSamples",
+      "type": "userTask",
+      "name": "Factory + marketing review samples",
+      "lane": "Approver",
+      "documentation": "Factory (fit/function/material) + marketing (look/positioning) review the samples. Decision dropdown {approve-into-flow | rework}. [SCOR S1.6/PLM | source: AB NPD review]"
+    },
+    {
+      "id": "ReviewFactoryMkt",
+      "type": "userTask",
+      "name": "Factory + marketing review",
+      "lane": "Approver",
+      "documentation": "Branch A. Factory checks dieline/fit; marketing checks branding/positioning. Expression for marketing engagement: isNewProduct == true -> marketing reviews; else factory only. Decision {approve | corrections}. [SCOR S1.10 | source: AB factory+marketing, marketing only if new]"
+    },
+    {
+      "id": "ReviewQuality",
+      "type": "userTask",
+      "name": "Quality review (English + structure)",
+      "lane": "Quality",
+      "documentation": "Branch B. Quality verifies English text accuracy, mandatory declarations, barcodes, dimensions, and structural correctness of the artwork. Decision {approve | corrections}. [SCOR S1.10 | ISO 8.6 | source: AB quality artwork review]"
+    },
+    {
+      "id": "ReviewLanguage",
+      "type": "userTask",
+      "name": "Language reviewer (Arabic text)",
+      "lane": "Reviewer (Language)",
+      "documentation": "Branch C. The language reviewer verifies the Arabic text (translation accuracy, script, right-to-left layout). Decision {approve | corrections}. A separate specialist lane because Arabic correctness is a distinct competency. [SCOR S1.10 | source: AB Arabic language reviewer]"
+    },
+    {
+      "id": "Corrections",
+      "type": "userTask",
+      "name": "Collate corrections; request revised proof",
+      "lane": "Procurement / Buyer",
+      "documentation": "Buyer collates the corrections from every reviewer into one markup and requests a revised proof from the supplier. The revised proof re-enters the parallel review (revised-proof loop). [SCOR S1.10 | source: AB revised-proof loop]"
+    },
+    {
+      "id": "Print",
+      "type": "serviceTask",
+      "name": "Release to print; store last-approved artwork",
+      "lane": "Platform / System",
+      "documentation": "System releases the approved artwork to print and stores it as item.lastApprovedArtworkId (with version + approval record) so a future reorder can take the last-approved-artwork shortcut. Audit + SSE. The item then proceeds into the normal procurement/PO flow. [SCOR S1.10/OE4 | source: AB print release + last-approved store]"
+    },
+    {
+      "id": "RequestSamples",
+      "type": "sendTask",
+      "name": "Factory requests RM + artwork samples",
+      "lane": "Procurement / Buyer",
+      "documentation": "Buyer/factory requests raw-material samples and first-cut artwork samples from the supplier for the new product. Captures sampleType {RM|artwork}, quantity, target spec. [SCOR S1.6/PLM | source: AB NPD sample request]"
+    },
+    {
+      "id": "SupplierSamples",
+      "type": "sendTask",
+      "name": "Supplier sends samples",
+      "lane": "Supplier / Vendor",
+      "documentation": "Supplier sends the RM + artwork samples for evaluation. [SCOR S1.6 | source: AB]"
+    },
+    {
+      "id": "ForwardToPrint",
+      "type": "sendTask",
+      "name": "Forward customer artwork to supplier to print",
+      "lane": "Procurement / Buyer",
+      "documentation": "Customer-supplied print-ready artwork is sent to the supplier to print directly. No internal proof loop. [SCOR S1.10 | source: AB customer artwork direct]"
+    },
+    {
+      "id": "SubmitProof",
+      "type": "sendTask",
+      "name": "Supplier submits proof (1-up / 2-up / 10-up)",
+      "lane": "Supplier / Vendor",
+      "documentation": "For own-brand artwork the supplier submits a proof at the agreed imposition: 1-up (single), 2-up, or 10-up (multiple repeats per sheet, dropdown {1-up|2-up|10-up}). The proof enters the parallel internal review. [SCOR S1.10 | source: AB proof 1-up/2-up/10-up]"
+    },
+    {
+      "id": "GwNpd",
+      "type": "exclusiveGateway",
+      "name": "New product development needed?",
+      "lane": "Requester",
+      "documentation": "Expression: isNewProduct == true (a product not previously made). True -> run the NPD sample loop first (RM + artwork samples reviewed by factory + marketing). False -> go straight to the artwork decision for an existing product. [SCOR S1.1 | source: AB NPD]"
+    },
+    {
+      "id": "GwSampleOk",
+      "type": "exclusiveGateway",
+      "name": "Samples approved?",
+      "lane": "Approver",
+      "documentation": "Expression: sampleDecision == approve. True -> the new product enters the normal flow and proceeds to the artwork decision. False -> rework: loop back to request revised samples from the supplier. [SCOR S1.6 | source: AB sample loop]"
+    },
+    {
+      "id": "GwPrinted",
+      "type": "exclusiveGateway",
+      "name": "Item is printed?",
+      "lane": "Requester",
+      "documentation": "Expression: item.isPrinted == true (label/carton/sleeve carrying artwork). True -> artwork approval path. False (unprinted item) -> no artwork needed, exit to normal procurement. [SCOR S1.1 | source: AB printed-item]"
+    },
+    {
+      "id": "GwReorder",
+      "type": "exclusiveGateway",
+      "name": "Reorder of last-approved artwork?",
+      "lane": "Procurement / Buyer",
+      "documentation": "Expression: item.lastApprovedArtworkId != null AND noArtworkChange == true. True -> SHORTCUT: reuse the last-approved artwork, skip the proof + review loop, print directly (reorder). False -> new or changed artwork needs proofing. [SCOR S1.10 | source: AB last-approved-artwork reorder shortcut]"
+    },
+    {
+      "id": "GwArtworkOrigin",
+      "type": "exclusiveGateway",
+      "name": "Customer-supplied or own-brand artwork?",
+      "lane": "Procurement / Buyer",
+      "documentation": "Expression: artworkOrigin == customer-supplied. customer-supplied -> the customer's print-ready artwork is forwarded to the supplier to print DIRECTLY (no internal proof review; the customer owns it). own-brand -> the supplier submits a proof for internal parallel review. [SCOR S1.10 | source: AB customer vs own-brand artwork]"
+    },
+    {
+      "id": "GwAllApproved",
+      "type": "exclusiveGateway",
+      "name": "All reviewers approved?",
+      "lane": "Platform / System",
+      "documentation": "Expression: reviewA == approve AND reviewB == approve AND reviewC == approve. True -> release to print. False -> any branch raised corrections; collate corrections and loop back to the supplier for a revised proof. [SCOR S1.10 | source: AB all-approved gate]"
+    },
+    {
+      "id": "ForkReview",
+      "type": "parallelGateway",
+      "name": "Parallel proof review",
+      "lane": "Platform / System",
+      "documentation": "Parallel split: the proof is reviewed simultaneously by (A) factory + marketing [marketing engaged ONLY if the product is new], (B) quality [English text + structural correctness], and (C) the language reviewer [Arabic text]. All three branches must complete and approve before print. [SCOR S1.10/PLM | source: AB parallel artwork review]"
+    },
+    {
+      "id": "JoinReview",
+      "type": "parallelGateway",
+      "name": "Join: all reviews returned",
+      "lane": "Platform / System",
+      "documentation": "Parallel join: waits for all engaged branches (A, B, C) to return. Then evaluate whether ALL approved. [SCOR S1.10 | source: AB parallel join]"
+    },
+    {
+      "id": "Start",
+      "type": "startEvent",
+      "name": "New product / printed item need",
+      "lane": "Requester",
+      "documentation": "Trigger: a need for a new product (NPD) and/or a printed packaging item (label, carton, sleeve). Two intertwined loops follow: the NPD sample loop (raw-material + artwork samples) and the artwork-proof approval loop. [SCOR S1.1/PLM | source: AB NPD + artwork]"
+    },
+    {
+      "id": "End",
+      "type": "endEvent",
+      "name": "Artwork approved / printed; into normal flow",
+      "lane": "Platform / System",
+      "documentation": "NPD samples approved (if applicable) and artwork approved/printed (customer-direct, reorder shortcut, or full parallel review). The item joins the normal sourcing/PO cycle. [SCOR S1.10 | source: AB]"
+    }
+  ],
+  "flows": [
+    {
+      "id": "f1",
+      "from": "Start",
+      "to": "GwNpd",
+      "guard": ""
+    },
+    {
+      "id": "f2",
+      "from": "GwNpd",
+      "to": "RequestSamples",
+      "guard": "new product"
+    },
+    {
+      "id": "f3",
+      "from": "GwNpd",
+      "to": "GwPrinted",
+      "guard": "existing product"
+    },
+    {
+      "id": "f4",
+      "from": "RequestSamples",
+      "to": "SupplierSamples",
+      "guard": ""
+    },
+    {
+      "id": "f5",
+      "from": "SupplierSamples",
+      "to": "ReviewSamples",
+      "guard": ""
+    },
+    {
+      "id": "f6",
+      "from": "ReviewSamples",
+      "to": "GwSampleOk",
+      "guard": ""
+    },
+    {
+      "id": "f7",
+      "from": "GwSampleOk",
+      "to": "GwPrinted",
+      "guard": "approve into flow"
+    },
+    {
+      "id": "f8",
+      "from": "GwSampleOk",
+      "to": "RequestSamples",
+      "guard": "rework -> revised samples"
+    },
+    {
+      "id": "f9",
+      "from": "GwPrinted",
+      "to": "GwReorder",
+      "guard": "printed item"
+    },
+    {
+      "id": "f10",
+      "from": "GwPrinted",
+      "to": "End",
+      "guard": "not printed -> normal flow"
+    },
+    {
+      "id": "f11",
+      "from": "GwReorder",
+      "to": "Print",
+      "guard": "reorder: reuse last-approved artwork"
+    },
+    {
+      "id": "f12",
+      "from": "GwReorder",
+      "to": "GwArtworkOrigin",
+      "guard": "new/changed artwork"
+    },
+    {
+      "id": "f13",
+      "from": "GwArtworkOrigin",
+      "to": "ForwardToPrint",
+      "guard": "customer-supplied"
+    },
+    {
+      "id": "f14",
+      "from": "GwArtworkOrigin",
+      "to": "SubmitProof",
+      "guard": "own-brand"
+    },
+    {
+      "id": "f15",
+      "from": "ForwardToPrint",
+      "to": "Print",
+      "guard": ""
+    },
+    {
+      "id": "f16",
+      "from": "SubmitProof",
+      "to": "ForkReview",
+      "guard": ""
+    },
+    {
+      "id": "f17",
+      "from": "ForkReview",
+      "to": "ReviewFactoryMkt",
+      "guard": "A: factory + marketing (mkt if new)"
+    },
+    {
+      "id": "f18",
+      "from": "ForkReview",
+      "to": "ReviewQuality",
+      "guard": "B: quality (English + structure)"
+    },
+    {
+      "id": "f19",
+      "from": "ForkReview",
+      "to": "ReviewLanguage",
+      "guard": "C: language (Arabic)"
+    },
+    {
+      "id": "f20",
+      "from": "ReviewFactoryMkt",
+      "to": "JoinReview",
+      "guard": ""
+    },
+    {
+      "id": "f21",
+      "from": "ReviewQuality",
+      "to": "JoinReview",
+      "guard": ""
+    },
+    {
+      "id": "f22",
+      "from": "ReviewLanguage",
+      "to": "JoinReview",
+      "guard": ""
+    },
+    {
+      "id": "f23",
+      "from": "JoinReview",
+      "to": "GwAllApproved",
+      "guard": ""
+    },
+    {
+      "id": "f24",
+      "from": "GwAllApproved",
+      "to": "Print",
+      "guard": "all approved"
+    },
+    {
+      "id": "f25",
+      "from": "GwAllApproved",
+      "to": "Corrections",
+      "guard": "any corrections"
+    },
+    {
+      "id": "f26",
+      "from": "Corrections",
+      "to": "SubmitProof",
+      "guard": "revised proof loop"
+    },
+    {
+      "id": "f27",
+      "from": "Print",
+      "to": "End",
+      "guard": ""
+    }
+  ]
+}

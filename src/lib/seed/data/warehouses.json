@@ -1,0 +1,44 @@
+[
+  {
+    "code": "WH-P1-RM",
+    "description": "Plant 1 Raw Material Store",
+    "transactionType": "INWARD",
+    "heizenPoType": "DIRECT",
+    "location": "Plant 1"
+  },
+  {
+    "code": "WH-P1-PM",
+    "description": "Plant 1 Packaging Store",
+    "transactionType": "INWARD",
+    "heizenPoType": "DIRECT",
+    "location": "Plant 1"
+  },
+  {
+    "code": "WH-P1-FG",
+    "description": "Plant 1 Finished Goods",
+    "transactionType": "OUTWARD",
+    "heizenPoType": "DIRECT",
+    "location": "Plant 1"
+  },
+  {
+    "code": "WH-P2-RM",
+    "description": "Plant 2 Raw Material Store",
+    "transactionType": "INWARD",
+    "heizenPoType": "IMPORT",
+    "location": "Plant 2"
+  },
+  {
+    "code": "WH-P2-BOND",
+    "description": "Plant 2 Bonded Warehouse",
+    "transactionType": "INWARD",
+    "heizenPoType": "IMPORT",
+    "location": "Plant 2"
+  },
+  {
+    "code": "WH-MRO",
+    "description": "MRO and Spares Store",
+    "transactionType": "INWARD",
+    "heizenPoType": "INDIRECT",
+    "location": "Plant 1"
+  }
+]
