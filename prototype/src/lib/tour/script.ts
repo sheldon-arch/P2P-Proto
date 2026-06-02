@@ -23,14 +23,14 @@ export const TOUR_STEPS_SHORT: TourStep[] = [
     id: "req", chapter: "1 · Requisition", persona: "requester", route: "/requisitions/TKT-HERO",
     anchor: "req.budget-banner",
     title: "Requester raises a requisition",
-    body: "An imported food ingredient plus printed cartons. It exceeds the quarter's budget, so a soft-budget warning shows with the logged override. The hard commit happens later at PO issue.",
+    body: "The requester captures the need: an imported food ingredient plus printed cartons, with quantity and need-by date. Any price here is just a budgetary estimate (pre-filled from the last purchase price); the firm price is set later at sourcing. This requisition exceeds the quarter's budget, so a soft-budget warning shows with the logged override. The hard commit happens at PO issue.",
     placement: "bottom",
   },
   {
     id: "req-lines", chapter: "1 · Requisition", persona: "requester", route: "/requisitions/TKT-HERO",
     anchor: "req.lines",
     title: "Category-adaptive lines",
-    body: "The import line surfaces an HS code automatically — the form adapts to the purchase type and category.",
+    body: "The import line surfaces an HS code automatically; the form adapts to the purchase type and category. The unit price column is an estimate only, used for the budget check. The binding price is discovered competitively from supplier quotes at sourcing.",
     placement: "top",
   },
   {
@@ -109,13 +109,13 @@ export const TOUR_STEPS_LONG: TourStep[] = [
   {
     id: "l-req", chapter: "2 · Requisition", persona: "requester", route: "/requisitions/TKT-HERO", anchor: "req.budget-banner",
     title: "A requisition with a budget warning",
-    body: "The hero requisition is over the quarter's available budget — a soft warning with a logged override at intake; the hard commit comes at PO issue.",
+    body: "The requester states the need (item, quantity, need-by date). Any unit price is an optional budgetary estimate, pre-filled from the last purchase price; the firm price is set at sourcing. The hero requisition is over the quarter's available budget, so a soft warning with a logged override shows at intake; the hard commit comes at PO issue.",
     placement: "bottom",
   },
   {
     id: "l-req-lines", chapter: "2 · Requisition", persona: "requester", route: "/requisitions/TKT-HERO", anchor: "req.lines",
     title: "Category-adaptive lines",
-    body: "Import lines show an HS code; the form adapts to category and purchase type.",
+    body: "Import lines show an HS code; the form adapts to category and purchase type. The unit price shown is an estimate used only for the budget check; the binding price is established competitively from supplier quotes at sourcing.",
     placement: "top",
   },
   {

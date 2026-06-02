@@ -11,7 +11,7 @@ const columns: Column<Line>[] = [
   { key: "quantity", header: "Qty", mono: true, className: "text-right" },
   { key: "unitOfMeasure", header: "UoM" },
   { key: "hsCode", header: "HS Code", mono: true, render: (r) => (r.hsCode ? String(r.hsCode) : "—") },
-  { key: "unitPrice", header: "Unit Price", mono: true, className: "text-right",
+  { key: "unitPrice", header: "Est. Unit Price", mono: true, className: "text-right",
     render: (r) => (r.unitPrice != null ? `$${Number(r.unitPrice).toLocaleString(undefined, { maximumFractionDigits: 3 })}` : "—") },
   { key: "needDate", header: "Need Date", mono: true },
 ];

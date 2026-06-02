@@ -18,11 +18,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, Info } from "lucide-react";
 import { useList, useCreate } from "@/queries/hooks";
 import { useSession } from "@/lib/session/SessionProvider";
 
-type LineDraft = { itemId: string; quantity: string; unitPrice: string; hsCode: string };
+// `priceAutoFilled` tracks whether the est. unit price was pre-filled from the
+// item master (vs typed by the requester). We only auto-fill while it is still
+// auto-filled/blank, so a value the requester edited is never clobbered.
+type LineDraft = { itemId: string; quantity: string; unitPrice: string; hsCode: string; priceAutoFilled: boolean };
 
 const CATEGORIES = ["Items", "Spares", "Services", "ProductDesign"];
 const DIRECTIONS = ["Direct", "Indirect"];
@@ -35,6 +38,10 @@ export default function NewRequisition() {
   const create = useCreate("tickets");
   const createLine = useCreate("requisitionLines");
   const { data: budgets } = useList<Record<string, unknown>>("budgets");
+  // Item master, used to pre-fill a budgetary estimate (lastPurchasePrice) when
+  // the requester picks a known item. The requester rarely knows the real price
+  // at intake; the binding price is established later at sourcing (see hint).
+  const { data: items } = useList<Record<string, unknown>>("items");
 
   const [category, setCategory] = useState("Items");
   const [direction, setDirection] = useState("Direct");
@@ -42,9 +49,16 @@ export default function NewRequisition() {
   const [priority, setPriority] = useState("Within1Week");
   const [budgetId, setBudgetId] = useState<string>("");
   const [justification, setJustification] = useState("");
-  const [lines, setLines] = useState<LineDraft[]>([{ itemId: "", quantity: "", unitPrice: "", hsCode: "" }]);
+  const [lines, setLines] = useState<LineDraft[]>([{ itemId: "", quantity: "", unitPrice: "", hsCode: "", priceAutoFilled: false }]);
 
   const isImport = purchaseType === "Import";
+
+  // Last purchase price for a typed item id (the budgetary estimate). Items are
+  // matched on `id` (e.g. "ITM-0006"); `code` is a non-unique structured string.
+  function estPriceFor(itemId: string): string {
+    const it = (items ?? []).find((x) => String(x.id) === itemId.trim());
+    return it && it.lastPurchasePrice != null ? String(Number(it.lastPurchasePrice)) : "";
+  }
 
   const total = useMemo(
     () => lines.reduce((s, l) => s + (Number(l.quantity) || 0) * (Number(l.unitPrice) || 0), 0),
@@ -65,7 +79,7 @@ export default function NewRequisition() {
       return;
     }
     if (overBudget && justification.trim() === "") {
-      toast.error("Over budget — a justification (override) is required.");
+      toast.error("Over budget: a justification (override) is required.");
       return;
     }
     try {
@@ -143,15 +157,37 @@ export default function NewRequisition() {
             <div key={i} className="grid grid-cols-12 items-end gap-2" data-testid="line-row">
               <div className="col-span-4">
                 <Label className="text-xs">Item code</Label>
-                <Input value={l.itemId} onChange={(e) => setLine(i, { itemId: e.target.value })} placeholder="ITM-0006 or free text" data-testid="line-item" />
+                <Input
+                  value={l.itemId}
+                  onChange={(e) => {
+                    const itemId = e.target.value;
+                    // Pre-fill the budgetary estimate from the item master, but
+                    // only while the price is still auto-filled or blank (never
+                    // overwrite a price the requester typed themselves).
+                    if (l.priceAutoFilled || l.unitPrice === "") {
+                      const est = estPriceFor(itemId);
+                      setLine(i, { itemId, unitPrice: est, priceAutoFilled: est !== "" });
+                    } else {
+                      setLine(i, { itemId });
+                    }
+                  }}
+                  placeholder="ITM-0006 or free text"
+                  data-testid="line-item"
+                />
               </div>
               <div className="col-span-2">
                 <Label className="text-xs">Qty</Label>
                 <Input value={l.quantity} onChange={(e) => setLine(i, { quantity: e.target.value })} inputMode="decimal" data-testid="line-qty" />
               </div>
               <div className="col-span-2">
-                <Label className="text-xs">Unit price</Label>
-                <Input value={l.unitPrice} onChange={(e) => setLine(i, { unitPrice: e.target.value })} inputMode="decimal" data-testid="line-price" />
+                <Label className="text-xs">Est. unit price</Label>
+                <Input
+                  value={l.unitPrice}
+                  onChange={(e) => setLine(i, { unitPrice: e.target.value, priceAutoFilled: false })}
+                  inputMode="decimal"
+                  placeholder="optional"
+                  data-testid="line-price"
+                />
               </div>
               {isImport && (
                 <div className="col-span-3">
@@ -166,18 +202,29 @@ export default function NewRequisition() {
               </div>
             </div>
           ))}
-          <Button variant="outline" size="sm" onClick={() => setLines((p) => [...p, { itemId: "", quantity: "", unitPrice: "", hsCode: "" }])} data-testid="add-line">
+          <Button variant="outline" size="sm" onClick={() => setLines((p) => [...p, { itemId: "", quantity: "", unitPrice: "", hsCode: "", priceAutoFilled: false }])} data-testid="add-line">
             <Plus className="mr-1 h-4 w-4" /> Add line
           </Button>
           <div className="flex justify-end pt-2 text-sm">
-            <span className="text-muted-foreground">Total:&nbsp;</span>
+            <span className="text-muted-foreground">Est. total:&nbsp;</span>
             <span className="font-mono font-semibold" data-testid="req-total">${total.toLocaleString()}</span>
+          </div>
+          <div
+            className="mt-1 flex items-start gap-2 rounded-md bg-muted/50 px-3 py-2 text-xs text-muted-foreground"
+            data-tour-id="req.price-note"
+            data-testid="req-price-note"
+          >
+            <Info className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+            <span>
+              Estimated price is optional and pre-filled from the item&apos;s last purchase price. It is used only for the
+              budget check. The firm price is set later, competitively, at sourcing.
+            </span>
           </div>
         </CardContent>
       </Card>
 
       {overBudget && (
-        <RuleBanner tone="warning" title="Over available budget — soft check" testId="budget-over-banner">
+        <RuleBanner tone="warning" title="Over available budget (soft check)" testId="budget-over-banner">
           Total ${total.toLocaleString()} exceeds the selected budget&apos;s available
           ${available?.toLocaleString()}. The soft check warns now; the hard commit is at PO issue.
           A justification (override) is required to submit.
