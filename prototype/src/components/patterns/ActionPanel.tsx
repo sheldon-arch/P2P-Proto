@@ -98,6 +98,7 @@ export function ActionPanel({
             disabled={transition.isPending}
             onClick={() => run(a)}
             data-testid={`action-${a}`}
+            data-tour-id={`action-${a}`}
           >
             {ACTIONS[a]?.label ?? a}
           </Button>

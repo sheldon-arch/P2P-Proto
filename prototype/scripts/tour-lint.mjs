@@ -40,6 +40,18 @@ function walk(dir) {
 }
 // The overlay anchors by data-tour-id, falling back to data-testid; accept both.
 const anchorDefs = new Set();
+// Some anchors are generated from a template literal: ActionPanel renders
+// `action-${a}` (data-tour-id) for each action in its ACTIONS map. The static
+// scan below can't see those literals, so derive the keys from ActionPanel's
+// ACTIONS object and register `action-<key>` for each — resolving anchors like
+// "action-issue" exactly as they resolve at runtime, with no duplicated list.
+{
+  const ap = readFileSync(join(ROOT, "src/components/patterns/ActionPanel.tsx"), "utf8");
+  const block = ap.match(/const ACTIONS[^{]*\{([\s\S]*?)\n\};/);
+  if (block) {
+    for (const m of block[1].matchAll(/^\s*(\w+):\s*\{/gm)) anchorDefs.add(`action-${m[1]}`);
+  }
+}
 for (const f of [...walk(join(ROOT, "src/app")), ...walk(join(ROOT, "src/components"))]) {
   const txt = readFileSync(f, "utf8");
   for (const m of txt.matchAll(/data-tour-id="([^"]+)"/g)) anchorDefs.add(m[1]);

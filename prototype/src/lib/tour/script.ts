@@ -158,11 +158,11 @@ export const TOUR_STEPS_LONG: TourStep[] = [
     placement: "bottom",
   },
   {
-    id: "l-award-try", chapter: "4 · Sourcing", persona: "buyer", route: "/sourcing/rfq/RFQ-MULTI", anchor: "multi-line-banner",
+    id: "l-award-try", chapter: "4 · Sourcing", persona: "buyer", route: "/sourcing/rfq/RFQ-MULTI", anchor: "award-submit",
     title: "Your turn — award the split", mode: "tryit", advanceWhen: "rfq.awarded",
-    hint: "Click “Award” to create one PO per supplier.",
+    hint: "Click the highlighted “Award” button to create one PO per supplier.",
     body: "The lowest-landed supplier is pre-selected per line. Award to split into two POs.",
-    placement: "bottom",
+    placement: "top",
   },
   // --- PO ---
   {
@@ -172,9 +172,9 @@ export const TOUR_STEPS_LONG: TourStep[] = [
     placement: "top",
   },
   {
-    id: "l-po-suspended", chapter: "5 · Purchase Order", persona: "buyer", route: "/purchase-orders/PO-SUSP-1", anchor: "action-panel",
+    id: "l-po-suspended", chapter: "5 · Purchase Order", persona: "buyer", route: "/purchase-orders/PO-SUSP-1", anchor: "action-issue",
     title: "A suspended supplier blocks issue",
-    body: "This draft PO is to a suspended supplier. Issuing is blocked until the supplier is reinstated — a quality and compliance control.",
+    body: "This draft PO is to a suspended supplier. Issuing is blocked until the supplier is reinstated — a quality and compliance control. Try Issue PO to see the block.",
     placement: "top",
   },
   // --- Receiving ---
