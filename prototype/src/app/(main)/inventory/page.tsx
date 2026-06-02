@@ -82,7 +82,7 @@ export default function InventoryPage() {
     <div>
       <PageHeader
         title="Inventory Reorder Worklist"
-        description="Items at or below reorder point — the demand signal for replenishment"
+        description="Items at or below reorder point: the demand signal for replenishment"
         actions={
           <div className="flex gap-2">
             <Button asChild variant="outline" data-testid="link-adjust"><Link href="/inventory/adjust"><SlidersHorizontal className="mr-1 h-4 w-4" /> Adjust</Link></Button>

@@ -173,7 +173,7 @@ export function buildReorderRequisition(params: {
       totalAmount: value,
       totalAmountInBase: value,
       reorderOrigin: true,
-      narrative: `Replenishment for ${row.itemCode} (${row.warehouseCode}) — available ${row.available} <= reorder point ${row.reorderPoint}.`,
+      narrative: `Replenishment for ${row.itemCode} (${row.warehouseCode}): available ${row.available} <= reorder point ${row.reorderPoint}.`,
     },
     line: {
       id: lineId,

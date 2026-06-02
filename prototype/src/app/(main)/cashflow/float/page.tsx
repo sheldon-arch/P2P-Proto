@@ -28,7 +28,7 @@ export default function CashFloat() {
     const v = Number(amount) || 0;
     if (v > balance) { toast.error("Insufficient float balance."); return; }
     setBalance((b) => Math.round((b - v) * 100) / 100);
-    toast.success(`Cash buy $${v} — cash GRN raised (no PO)`);
+    toast.success(`Cash buy $${v}: cash GRN raised (no PO)`);
   }
   function reimburse() {
     setBalance(CEILING);
@@ -58,7 +58,7 @@ export default function CashFloat() {
       </Card>
 
       {isLow && (
-        <RuleBanner tone="warning" title="Float low — reimbursement needed" testId="float-low">
+        <RuleBanner tone="warning" title="Float low: reimbursement needed" testId="float-low">
           The float is at or below a third of its ceiling. A maker/checker-approved reimbursement
           tops it back to ${CEILING}.
           <div className="mt-2">

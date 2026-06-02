@@ -43,7 +43,7 @@ export default function ReceivePage({ params }: { params: Promise<{ id: string }
 
   async function post() {
     if (overTolerance) {
-      toast.error(`Received qty is ${overPct.toFixed(1)}% over — exceeds the ±${QTY_TOLERANCE_PERCENT}% tolerance.`);
+      toast.error(`Received qty is ${overPct.toFixed(1)}% over: exceeds the ±${QTY_TOLERANCE_PERCENT}% tolerance.`);
       return;
     }
     if (coaBlocked) {

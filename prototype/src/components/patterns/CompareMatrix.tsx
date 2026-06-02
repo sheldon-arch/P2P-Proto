@@ -102,8 +102,8 @@ export function CompareMatrix({ rfqId }: { rfqId: string }) {
       setAwardedPoIds(res.poIds);
       toast.success(
         res.supplierCount > 1
-          ? `Awarded across ${res.supplierCount} suppliers — ${res.poIds.length} POs created`
-          : `Awarded — PO created`,
+          ? `Awarded across ${res.supplierCount} suppliers: ${res.poIds.length} POs created`
+          : `Awarded: PO created`,
       );
     } catch (e) {
       toast.error((e as Error).message);
@@ -119,7 +119,7 @@ export function CompareMatrix({ rfqId }: { rfqId: string }) {
         </RuleBanner>
       )}
       {isMultiLine && (
-        <RuleBanner tone="info" title="Multi-line RFQ — award per line" testId="multi-line-banner">
+        <RuleBanner tone="info" title="Multi-line RFQ: award per line" testId="multi-line-banner">
           This RFQ covers multiple lines. Pick the winning supplier per line; awarding creates one
           purchase order per distinct supplier. Current selection: {distinctSuppliers} supplier
           {distinctSuppliers > 1 ? "s" : ""} → {distinctSuppliers} PO{distinctSuppliers > 1 ? "s" : ""}.
@@ -127,7 +127,7 @@ export function CompareMatrix({ rfqId }: { rfqId: string }) {
       )}
 
       {awardedPoIds && (
-        <RuleBanner tone="success" title={`Awarded — ${awardedPoIds.length} PO${awardedPoIds.length > 1 ? "s" : ""} created`} testId="award-result">
+        <RuleBanner tone="success" title={`Awarded: ${awardedPoIds.length} PO${awardedPoIds.length > 1 ? "s" : ""} created`} testId="award-result">
           {awardedPoIds.map((id) => (
             <Button key={id} variant="link" className="h-auto p-0 text-sm" data-testid={`go-po-${id}`} onClick={() => router.push(`/purchase-orders/${id}`)}>
               {id}
@@ -142,7 +142,7 @@ export function CompareMatrix({ rfqId }: { rfqId: string }) {
           <Card className="mt-4" key={line.lineId} data-testid={`compare-line-${line.lineId}`}>
             <CardHeader>
               <CardTitle className="text-base">
-                {isMultiLine ? `Line ${line.itemId}` : "Landed-cost comparison"} — pick a supplier
+                {isMultiLine ? `Line ${line.itemId}` : "Landed-cost comparison"}: pick a supplier
               </CardTitle>
             </CardHeader>
             <CardContent className="overflow-x-auto">

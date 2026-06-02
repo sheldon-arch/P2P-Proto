@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { RuleBanner } from "@/components/patterns/RuleBanner";
+import { eventBus } from "@/lib/events/event-bus";
 
 export default function AutoCreate() {
   const [text, setText] = useState("");
@@ -27,8 +28,12 @@ export default function AutoCreate() {
       setResult({ kind: "existing", code: text });
       toast.success("Resolved to existing master record");
     } else {
-      setResult({ kind: "auto-created", code: "ITM-NEW-0001" });
+      const code = "ITM-NEW-0001";
+      setResult({ kind: "auto-created", code });
       toast.success("Auto-created new item (Pending Onboarding)");
+      // Lets the guided tour's Try-it step advance once the free-text item is
+      // auto-created (the page is otherwise local state, no transition fires).
+      eventBus.emit({ type: "item.autocreated", entity: "items", entityId: code, payload: { freeText: text } });
     }
   }
 
@@ -49,7 +54,7 @@ export default function AutoCreate() {
             </RuleBanner>
           )}
           {result?.kind === "auto-created" && (
-            <RuleBanner tone="info" title="Auto-created — requisition not blocked" testId="autocreate-new">
+            <RuleBanner tone="info" title="Auto-created: requisition not blocked" testId="autocreate-new">
               No master match. A new item ({result.code}) was auto-created in PENDING_ONBOARDING with
               the free text as its description; it enters the item onboarding lifecycle while the
               requisition proceeds.

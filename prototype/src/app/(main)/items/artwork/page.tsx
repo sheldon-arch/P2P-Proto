@@ -35,7 +35,7 @@ export default function ArtworkNpd() {
     <div>
       <PageHeader title="Artwork / NPD Approval" description="Parallel multi-reviewer artwork approval (e10)" />
 
-      <RuleBanner tone="info" title="Parallel approval — all reviewers must approve" testId="artwork-parallel">
+      <RuleBanner tone="info" title="Parallel approval: all reviewers must approve" testId="artwork-parallel">
         New own-brand packaging artwork is reviewed concurrently by Marketing, Quality, and the
         Language reviewer. The reviews are independent; the artwork is released only when all three
         approve. This follows the NPD sample loop.

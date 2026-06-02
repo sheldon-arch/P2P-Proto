@@ -15,7 +15,7 @@ export const TOUR_STEPS_SHORT: TourStep[] = [
   {
     id: "intro", chapter: "Welcome", persona: "buyer", route: "/dashboard",
     anchor: "dashboard.kpis",
-    title: "Harvest Foods — Procure-to-Pay",
+    title: "Harvest Foods: Procure-to-Pay",
     body: "A walk through one purchase, end to end, across every role. Click Next to begin. Each step switches to the person doing the work.",
     placement: "bottom",
   },
@@ -44,28 +44,28 @@ export const TOUR_STEPS_SHORT: TourStep[] = [
     id: "compare", chapter: "3 · Sourcing", persona: "buyer", route: "/sourcing/rfq/RFQ-HERO",
     anchor: "sourcing.compare",
     title: "Landed-cost reorders the recommendation",
-    body: "Three suppliers quote. The cheapest unit price is not the lowest landed cost — once freight and duty are normalized, the recommended award changes. One quote is flagged for a price spike.",
+    body: "Three suppliers quote. The cheapest unit price is not the lowest landed cost: once freight and duty are normalized, the recommended award changes. One quote is flagged for a price spike.",
     placement: "bottom",
   },
   {
     id: "po", chapter: "4 · Purchase Order", persona: "buyer", route: "/purchase-orders/PO-HERO",
     anchor: "po.budget-impact",
     title: "PO issue commits the budget",
-    body: "Issuing the PO is a hard budget commit. This order exceeds the available budget, so it is blocked unless an override is approved — a real financial control.",
+    body: "Issuing the PO is a hard budget commit. This order exceeds the available budget, so it is blocked unless an override is approved: a real financial control.",
     placement: "top",
   },
   {
     id: "receive", chapter: "5 · Receiving", persona: "receiving", route: "/deliveries/PO-LV-3/receive",
     anchor: "receive.qty",
     title: "Receiving with tolerance & COA gate",
-    body: "A carton delivery arrives a few percent over — within tolerance, so the PO quantity is amended before receipt. Quality-sensitive imports are blocked until the Certificate of Analysis is on file.",
+    body: "A carton delivery arrives a few percent over: within tolerance, so the PO quantity is amended before receipt. Quality-sensitive imports are blocked until the Certificate of Analysis is on file.",
     placement: "bottom",
   },
   {
     id: "capa", chapter: "6 · Quality loop", persona: "quality", route: "/quality/ncr/NCR-LV-1",
     anchor: "ncr.actions",
     title: "Non-conformance closes the loop",
-    body: "A failed lot raises an NCR and a CAPA. Closing the CAPA feeds the supplier re-evaluation — repeated non-conformance drops the grade and can suspend the supplier from new awards.",
+    body: "A failed lot raises an NCR and a CAPA. Closing the CAPA feeds the supplier re-evaluation: repeated non-conformance drops the grade and can suspend the supplier from new awards.",
     placement: "top",
   },
   {
@@ -89,7 +89,7 @@ export const TOUR_STEPS_LONG: TourStep[] = [
   {
     id: "l-intro", chapter: "Welcome", persona: "buyer", route: "/dashboard", anchor: "dashboard.kpis",
     title: "The full source-to-pay walkthrough",
-    body: "This longer tour covers every flow, the hard edge cases, the supplier side, and admin — across all the roles. At a few points it hands you the controls. Click Next to begin.",
+    body: "This longer tour covers every flow, the hard edge cases, the supplier side, and admin: across all the roles. At a few points it hands you the controls. Click Next to begin.",
     placement: "bottom",
   },
   {
@@ -100,7 +100,7 @@ export const TOUR_STEPS_LONG: TourStep[] = [
   },
   {
     id: "l-reorder-try", chapter: "1 · Demand", persona: "inventory_manager", route: "/inventory", anchor: "inventory.worklist",
-    title: "Your turn — raise a replenishment", mode: "tryit", advanceWhen: "reorder.raised",
+    title: "Your turn: raise a replenishment", mode: "tryit", advanceWhen: "reorder.raised",
     hint: "Click “Raise requisition” on any worklist row.",
     body: "Raising a requisition from a worklist row creates a pre-filled draft and joins the standard approval-to-PO flow.",
     placement: "bottom",
@@ -120,8 +120,9 @@ export const TOUR_STEPS_LONG: TourStep[] = [
   },
   {
     id: "l-autocreate", chapter: "2 · Requisition", persona: "requester", route: "/requisitions/auto-create", anchor: "autocreate-input",
-    title: "Free-text items auto-create",
-    body: "Type an item that is not in the master and the system auto-creates it (pending onboarding) so the requisition is never blocked.",
+    title: "Your turn: type a free-text item", mode: "tryit", advanceWhen: "item.autocreated",
+    hint: "Type any item that is not in the master (e.g. “organic cane sugar”), then click Resolve.",
+    body: "An item not in the master is auto-created (pending onboarding) so the requisition is never blocked.",
     placement: "bottom",
   },
   // --- Approval ---
@@ -132,9 +133,9 @@ export const TOUR_STEPS_LONG: TourStep[] = [
     placement: "top",
   },
   {
-    id: "l-approve-try", chapter: "3 · Approval", persona: "approver", route: "/requisitions/TKT-LV-002", anchor: "req.approval-panel",
-    title: "Your turn — approve a stage", mode: "tryit", advanceWhen: "approvalstagecompletion.approve",
-    hint: "Click “Approve stage” in the approval chain.",
+    id: "l-approve-try", chapter: "3 · Approval", persona: "approver", route: "/requisitions/TKT-LV-002", anchor: "approve-btn",
+    title: "Your turn: approve a stage", mode: "tryit", advanceWhen: "approvalstagecompletion.approve",
+    hint: "Click the highlighted “Approve stage” button.",
     body: "Approving advances the requisition. Try it on this requisition you do not own.",
     placement: "top",
   },
@@ -154,12 +155,12 @@ export const TOUR_STEPS_LONG: TourStep[] = [
   {
     id: "l-multi", chapter: "4 · Sourcing", persona: "buyer", route: "/sourcing/rfq/RFQ-MULTI", anchor: "multi-line-banner",
     title: "Split one requisition across suppliers",
-    body: "A multi-line RFQ can award each line to a different supplier — the system creates one purchase order per supplier.",
+    body: "A multi-line RFQ can award each line to a different supplier: the system creates one purchase order per supplier.",
     placement: "bottom",
   },
   {
     id: "l-award-try", chapter: "4 · Sourcing", persona: "buyer", route: "/sourcing/rfq/RFQ-MULTI", anchor: "award-submit",
-    title: "Your turn — award the split", mode: "tryit", advanceWhen: "rfq.awarded",
+    title: "Your turn: award the split", mode: "tryit", advanceWhen: "rfq.awarded",
     hint: "Click the highlighted “Award” button to create one PO per supplier.",
     body: "The lowest-landed supplier is pre-selected per line. Award to split into two POs.",
     placement: "top",
@@ -174,7 +175,7 @@ export const TOUR_STEPS_LONG: TourStep[] = [
   {
     id: "l-po-suspended", chapter: "5 · Purchase Order", persona: "buyer", route: "/purchase-orders/PO-SUSP-1", anchor: "action-issue",
     title: "A suspended supplier blocks issue",
-    body: "This draft PO is to a suspended supplier. Issuing is blocked until the supplier is reinstated — a quality and compliance control. Try Issue PO to see the block.",
+    body: "This draft PO is to a suspended supplier. Issuing is blocked until the supplier is reinstated: a quality and compliance control. Try Issue PO to see the block.",
     placement: "top",
   },
   // --- Receiving ---
@@ -198,9 +199,9 @@ export const TOUR_STEPS_LONG: TourStep[] = [
     placement: "top",
   },
   {
-    id: "l-capa-try", chapter: "7 · Quality", persona: "quality", route: "/quality/ncr/NCR-LV-1", anchor: "ncr.actions",
-    title: "Your turn — close the CAPA", mode: "tryit", advanceWhen: "supplier.suspended",
-    hint: "Click “Close CAPA”.",
+    id: "l-capa-try", chapter: "7 · Quality", persona: "quality", route: "/quality/ncr/NCR-LV-1", anchor: "action-closeCapa",
+    title: "Your turn: close the CAPA", mode: "tryit", advanceWhen: "supplier.suspended",
+    hint: "Click the highlighted “Close CAPA” button.",
     body: "Closing this CAPA crosses the supplier's below-threshold streak and suspends them from new awards.",
     placement: "top",
   },
@@ -240,7 +241,7 @@ export const TOUR_STEPS_LONG: TourStep[] = [
   {
     id: "l-portal", chapter: "11 · Supplier portal", persona: "supplier", route: "/portal", anchor: "portal-home",
     title: "The supplier's own view",
-    body: "Suppliers have their own portal: respond to RFQs, acknowledge POs, and submit invoices — the same records the buyer and finance see.",
+    body: "Suppliers have their own portal: respond to RFQs, acknowledge POs, and submit invoices: the same records the buyer and finance see.",
     placement: "bottom",
   },
   // --- Items & masters ---
@@ -260,7 +261,7 @@ export const TOUR_STEPS_LONG: TourStep[] = [
   {
     id: "l-routing", chapter: "13 · Admin", persona: "administrator", route: "/admin/routing-rules", anchor: "routing-rules-info",
     title: "Configurable approval routing",
-    body: "Verticals, limits, and the nearest-bucket rule are all configurable — the routing you saw earlier is data, not code.",
+    body: "Verticals, limits, and the nearest-bucket rule are all configurable: the routing you saw earlier is data, not code.",
     placement: "bottom",
   },
   {

@@ -49,12 +49,12 @@ export default function BulkImport() {
             <Button variant="outline" onClick={() => setScenario("errors")} data-testid="upload-errors"><Upload className="mr-1 h-4 w-4" /> Upload file with errors</Button>
           </div>
           {scenario === "clean" && (
-            <RuleBanner tone="success" title="Validation passed — 42 rows ready" testId="import-valid">
+            <RuleBanner tone="success" title="Validation passed: 42 rows ready" testId="import-valid">
               All rows valid against the {master} template. Importing upserts by natural key.
             </RuleBanner>
           )}
           {scenario === "errors" && (
-            <RuleBanner tone="danger" title="3 row errors — file rejected (all-or-nothing)" testId="import-errors">
+            <RuleBanner tone="danger" title="3 row errors: file rejected (all-or-nothing)" testId="import-errors">
               Row 7: missing required column &quot;UoM&quot;. Row 12: duplicate natural key. Row 28:
               invalid currency code. No rows are imported until every error is fixed.
             </RuleBanner>

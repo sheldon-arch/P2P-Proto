@@ -82,6 +82,14 @@ for (const variant of ["short", "long"] as const) {
 
 // Try any known Try-it action that is present on the current screen.
 async function tryAny(page: Page): Promise<boolean> {
+  // Free-text auto-create Try-it: type a non-master item, then Resolve (emits
+  // item.autocreated which advances the tour). Handle first since it needs input.
+  const freeText = page.getByTestId("autocreate-input");
+  if ((await freeText.count()) > 0 && (await freeText.isVisible())) {
+    await freeText.fill("organic cane sugar");
+    await page.getByTestId("autocreate-resolve").click();
+    return true;
+  }
   const candidates = [
     '[data-testid^="raise-"]',
     '[data-testid="approve-btn"]',

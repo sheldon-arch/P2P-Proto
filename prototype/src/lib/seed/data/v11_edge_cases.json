@@ -12,7 +12,7 @@
       "poValueInBase": 24000,
       "incoterm": "FOB",
       "contractQty": 1200,
-      "note": "Draft PO to a suspended supplier — issue is blocked until the supplier is reinstated."
+      "note": "Draft PO to a suspended supplier: issue is blocked until the supplier is reinstated."
     }
   ],
   "returns": [

@@ -30,7 +30,7 @@ export default function PermitExpiry() {
   return (
     <div>
       <PageHeader title="Permit & Document Expiry" description="Expiry and quantity tracking for regulated items (e11)" />
-      <RuleBanner tone="warning" title="Expiry alerts — PO blocked without a valid permit" testId="permit-expiry-rule">
+      <RuleBanner tone="warning" title="Expiry alerts: PO blocked without a valid permit" testId="permit-expiry-rule">
         Permits and certificates are tracked by expiry date and remaining quantity. An alert fires
         about a week before expiry (or when quantity runs low). A purchase order for the item is
         blocked until a valid permit is attached.

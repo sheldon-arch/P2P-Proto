@@ -28,7 +28,7 @@ export default function PortalInvoice() {
         invoiceDate: "2026-06-01", amount: Number(f.amount), taxAmount: Number(f.taxAmount) || 0,
         currency: f.currency, matchType: "THREE_WAY", matchStatus: "unmatched",
       });
-      toast.success("Invoice submitted — entering match flow");
+      toast.success("Invoice submitted: entering match flow");
       router.push("/portal");
     } catch (e) {
       toast.error((e as Error).message);

@@ -86,7 +86,7 @@ export function InvoiceMatch({ invoice }: { invoice: Invoice }) {
           </p>
 
           {onHold && (
-            <RuleBanner tone="danger" title="Duplicate invoice — held, no payable created" testId="duplicate-hold">
+            <RuleBanner tone="danger" title="Duplicate invoice: held, no payable created" testId="duplicate-hold">
               This invoice matches an existing supplier + invoice number + amount. It is held and no
               payable is posted until reviewed. Resolve as reject (confirmed duplicate) or accept
               (false positive, with an override note).
@@ -118,7 +118,7 @@ export function InvoiceMatch({ invoice }: { invoice: Invoice }) {
           )}
 
           {!isException && matchStatus !== "rejected" && (
-            <RuleBanner tone="success" title="Matched — cleared to pay" testId="matched-banner">
+            <RuleBanner tone="success" title="Matched: cleared to pay" testId="matched-banner">
               Within tolerance on price, quantity, and amount (incl. tax). GR/IR relieved; payable
               posted to the creditor ledger.
             </RuleBanner>

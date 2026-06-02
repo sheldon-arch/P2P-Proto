@@ -51,7 +51,7 @@ export default function CurrencyDemo() {
               {amt.toLocaleString()} {ccy} × {rate} = ${converted.toLocaleString()} {BASE_CURRENCY}.
             </RuleBanner>
           ) : (
-            <RuleBanner tone="warning" title="No valid rate — graceful degradation" testId="fx-degrade">
+            <RuleBanner tone="warning" title="No valid rate: graceful degradation" testId="fx-degrade">
               No usable rate for {ccy}. The system logs the issue and returns the original amount
               unconverted (${amt.toLocaleString()}) rather than failing.
             </RuleBanner>

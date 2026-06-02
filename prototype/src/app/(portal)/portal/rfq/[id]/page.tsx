@@ -46,7 +46,7 @@ export default function PortalRfq({ params }: { params: Promise<{ id: string }> 
 
   return (
     <div>
-      <PageHeader title={`Submit quote — ${(rfq?.reference as string) ?? id}`} description="Respond to the RFQ from Harvest Foods" />
+      <PageHeader title={`Submit quote: ${(rfq?.reference as string) ?? id}`} description="Respond to the RFQ from Harvest Foods" />
       <Card className="max-w-xl">
         <CardHeader><CardTitle className="text-base">Your quotation</CardTitle></CardHeader>
         <CardContent className="grid grid-cols-2 gap-3">

@@ -18,7 +18,7 @@
     "totalAmount": 21500,
     "totalAmountInBase": 21500,
     "createdAt": "2026-05-29",
-    "narrative": "Two-line requisition: an emulsifier and printed film, each best-sourced from a different supplier — awarding splits into two POs."
+    "narrative": "Two-line requisition: an emulsifier and printed film, each best-sourced from a different supplier: awarding splits into two POs."
   },
   "lines": [
     { "id": "TL-MULTI-1", "ticketId": "TKT-MULTI", "itemId": "ITM-0010", "quantity": 1000, "unitOfMeasure": "KG", "unitPrice": 12.5, "needDate": "2026-07-01" },

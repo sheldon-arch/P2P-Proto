@@ -27,7 +27,7 @@ export default function PortalPo({ params }: { params: Promise<{ id: string }> }
   async function acknowledge() {
     try {
       await transition.mutateAsync({ id, action: "acknowledge", payload: {} });
-      toast.success("PO acknowledged — advance payment triggered per terms");
+      toast.success("PO acknowledged: advance payment triggered per terms");
     } catch (e) {
       toast.error((e as Error).message);
     }
@@ -35,7 +35,7 @@ export default function PortalPo({ params }: { params: Promise<{ id: string }> }
   async function dispatch() {
     try {
       await update.mutateAsync({ id, body: { dispatched: true, dispatchedAt: "2026-06-01" } });
-      toast.success("Marked dispatched — shipment documents shared");
+      toast.success("Marked dispatched: shipment documents shared");
     } catch (e) {
       toast.error((e as Error).message);
     }

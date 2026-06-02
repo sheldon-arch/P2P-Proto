@@ -42,18 +42,41 @@ export function TourOverlay() {
       : null;
     const deadline = Date.now() + 4000;
 
+    let anchorEl: HTMLElement | null = null;
+    let raf = 0;
+    const measure = (el: HTMLElement) => {
+      const r = el.getBoundingClientRect();
+      setRect({ top: r.top, left: r.left, width: r.width, height: r.height });
+    };
+    // Once anchored, KEEP the spotlight synced to the element. scrollIntoView and
+    // late layout (data loading, fonts, route paint) move the target after the
+    // first measure; without tracking, the spotlight ring lands on stale, empty
+    // space (the "nothing is highlighted" bug). We re-measure for a short window
+    // and on scroll/resize so the ring follows the control to its final spot.
+    const sync = () => { if (!cancelled && anchorEl) measure(anchorEl); };
+
     function attempt() {
       if (cancelled) return;
       const el = selector ? (document.querySelector(selector) as HTMLElement | null) : null;
       if (el) {
+        anchorEl = el;
         el.scrollIntoView({ block: "center", behavior: "instant" as ScrollBehavior });
-        const r = el.getBoundingClientRect();
-        setRect({ top: r.top, left: r.left, width: r.width, height: r.height });
+        measure(el);
         setResolved(true);
+        // track to final position: re-measure every frame for ~600ms, then stop.
+        const trackUntil = Date.now() + 600;
+        const tick = () => {
+          if (cancelled || !anchorEl) return;
+          measure(anchorEl);
+          if (Date.now() < trackUntil) raf = requestAnimationFrame(tick);
+        };
+        raf = requestAnimationFrame(tick);
+        window.addEventListener("scroll", sync, true);
+        window.addEventListener("resize", sync);
         return;
       }
       if (Date.now() < deadline) {
-        requestAnimationFrame(() => setTimeout(attempt, 80));
+        raf = requestAnimationFrame(() => setTimeout(attempt, 80));
       } else {
         // anchor never appeared -> centered fallback (no spotlight)
         setRect(null);
@@ -62,7 +85,13 @@ export function TourOverlay() {
     }
     // give the route a tick to render
     const t = setTimeout(attempt, 120);
-    return () => { cancelled = true; clearTimeout(t); };
+    return () => {
+      cancelled = true;
+      clearTimeout(t);
+      if (raf) cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", sync, true);
+      window.removeEventListener("resize", sync);
+    };
   }, [step.anchor, step.route, index]);
 
   // 2) position the coach-mark with floating-ui (anchored or centered).
