@@ -1,0 +1,18 @@
+[
+  {
+    "id": "RMA-LV-1",
+    "rmaNumber": "RMA-2026-018",
+    "sourceOrderId": "TKT-LV-021",
+    "supplierId": "SUP-0009",
+    "reason": "defective",
+    "productCondition": "rejected at inspection",
+    "authorizationStatus": "AUTHORIZED",
+    "closureStatus": "SHIPMENT_SCHEDULED",
+    "linkedNcrId": null,
+    "shipment": {
+      "carrier": "DHL",
+      "label": "issued",
+      "date": "2026-05-30"
+    }
+  }
+]

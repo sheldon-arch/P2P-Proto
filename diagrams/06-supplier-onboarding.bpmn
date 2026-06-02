@@ -1,0 +1,517 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+                  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+                  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+                  id="Definitions_SupplierOnboarding" targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:collaboration id="Collaboration_SupplierOnboarding">
+    <bpmn:participant id="Participant_SupplierOnboarding" name="Unified P2P - 06 Supplier Onboarding and Qualification (Single, Bulk, Qualify, Approve, Suspend, Offboard)" processRef="Process_SupplierOnboarding" />
+  </bpmn:collaboration>
+  <bpmn:process id="Process_SupplierOnboarding" isExecutable="false">
+    <bpmn:laneSet id="LaneSet_SupplierOnboarding">
+      <bpmn:lane id="L_buyer" name="Procurement / Buyer">
+        <bpmn:flowNodeRef>Start</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GwPath</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>CreateSupplier</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>QualDocs</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>RequestApproval</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>EditSupplier</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Offboard</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>UploadFile</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>JoinImport</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_supplier" name="Supplier / Vendor">
+      </bpmn:lane>
+      <bpmn:lane id="L_appr" name="Approver">
+        <bpmn:flowNodeRef>ApproveGw</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ApproveSupplier</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_qc" name="Quality">
+        <bpmn:flowNodeRef>AVL</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ReviewQualify</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Suspend</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ResolveSuspend</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_tax" name="Tax / Compliance">
+        <bpmn:flowNodeRef>TaxDetails</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>IsoAttributes</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_sys" name="Platform / System">
+        <bpmn:flowNodeRef>SyncErp</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>OnboardedGw</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Restore</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Active</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ValidateImport</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ImportGw</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>CommitImport</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="Start" name="New supplier needed">
+      <bpmn:documentation>Trigger: sourcing (Diagram 04) needs a supplier not yet in the master, or an admin/buyer adds one proactively, or a supplier inquiry is recorded. A supplier must reach status ONBOARDED before any RFQ award or PO (gates Diagram 05). [SCOR S1.6 Prequalify Suppliers | ISO 8.4.1 evaluation | source: AB qualification + RA lifecycle]</bpmn:documentation>
+      <bpmn:outgoing>f1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:exclusiveGateway id="GwPath" name="Single record or bulk import?">
+      <bpmn:documentation>Expression: if the operator chooses single-record entry (one supplier via the form, permission suppliers.create) -&gt; SINGLE branch. If a file of many suppliers is uploaded (permission suppliers.import, POST /api/suppliers/import) -&gt; BULK branch. Both converge on the same lifecycle (records default PENDING_ONBOARDING). [source: RA single + bulk paths]</bpmn:documentation>
+      <bpmn:incoming>f1</bpmn:incoming>
+      <bpmn:outgoing>f2</bpmn:outgoing>
+      <bpmn:outgoing>f3</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="CreateSupplier" name="Create supplier profile (PENDING_ONBOARDING)">
+      <bpmn:documentation>Buyer/Admin (permission suppliers.create) creates the supplier. CORE FIELDS: code (string, AUTO-generated, pattern S/##### = 'S/' + 5-digit zero-padded counter from highest existing + 1; first = S/00001; configurable prefix/width; immutable; natural key for upsert/import); name (text, mandatory); currency (dropdown, default first-currency configurable - generalized from RA INR, value set {USD|OMR|SAR|AED|EUR|CHF|INR}); dealCurrency (dropdown, default = currency); classification (dropdown, mandatory, value set {Internal | External} - constants only); group (reference to SupplierGroup master, optional, natural key = name); minimumOrderValue (decimal, default 1); advancePayable (boolean, default false); advanceTolerance (decimal, default 0); autoInvoicing (boolean, default false); isErpSynced (boolean, default false, generalized from isRamcoSynced, may be toggled only when ONBOARDED). ADDRESSES (child SupplierAddress[], at least one): line, city, country, state/region code (padded to 2 digits); each with SupplierAddressTaxDetail[] (REPLACE-on-update: delete tax details then addresses, recreate, transactional). On create, status = PENDING_ONBOARDING (default). [SCOR S1.6 | ISO 8.4.1 | source: RA supplier create + data-model Supplier]</bpmn:documentation>
+      <bpmn:incoming>f2</bpmn:incoming>
+      <bpmn:outgoing>f4</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="TaxDetails" name="Capture tax + registration details">
+      <bpmn:documentation>Tax/Compliance (or buyer with later compliance.review) records tax registration on the supplier addresses. FIELDS: gstNumber (string, optional, validated ONLY when supplied against regex ^\d{2}[A-Z]{5}\d{4}[A-Z][A-Z\d]Z[A-Z\d]$ - India GST); panNumber (string, optional, validated ONLY when supplied against regex ^[A-Z]{5}\d{4}[A-Z]$ - India PAN); vatNumber / taxRegistrationNumber (string, optional, per jurisdiction e.g. Oman VAT); taxRegion / stateCode (padded to 2 digits); recoverable-tax eligibility flag (boolean). Invalid format on a supplied value blocks save with a field error. Tax details attach per address (SupplierAddressTaxDetail). [ISO 8.4.1 records | source: RA GST/PAN regex + data-model tax + multi-country build-new]</bpmn:documentation>
+      <bpmn:incoming>f4</bpmn:incoming>
+      <bpmn:outgoing>f5</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="QualDocs" name="Upload qualification documents + certifications">
+      <bpmn:documentation>Buyer/Supplier uploads qualification evidence (permanent documents against the supplier - AB two-level model). FIELDS: vendorRegistration (file, mandatory, the completed onboarding/registration form returned via email+OTP); threeBatchCOA (file[], mandatory for OTC/pharma-grade RM and PM = three batches' Certificates of Analysis + samples - AB); certifications (Certification[], each: certType dropdown {ISO 9001 | ISO 14001 | ISO 45001 | ISO 22000/HACCP | GMP | other}, certNumber, issuingBody, issueDate, expiryDate mandatory, evidence file; expiry tracked with alerts on selection and &gt;=1 week before expiry); MSDS (file, for chemicals); other permits (file[], regulated chemicals: ministry permits with expiry + quantity). Documents stored via document storage service with expiry + quantity tracking. [ISO 8.4.1 + 7.5 records, 8.4 certifications hard-gate | source: AB COA/AVL/certs + platform-services 8]</bpmn:documentation>
+      <bpmn:incoming>f5</bpmn:incoming>
+      <bpmn:incoming>f12</bpmn:incoming>
+      <bpmn:incoming>f30</bpmn:incoming>
+      <bpmn:outgoing>f6</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="AVL" name="Set AVL scope-of-approval + grade">
+      <bpmn:documentation>Quality sets the Approved Vendor List entry (permission supplier.qualify, condition: quality criteria). FIELDS: avlStatus (dropdown {Approved | Conditional | Suspended | Disqualified | Preferred}, default Conditional until scored); scopeOfApproval (text, mandatory = the categories/items the supplier is approved to supply - AB scope-of-approval); grade (dropdown {A | B | C | D | F}, default from composite scorecard band A&gt;=90 / B&gt;=80 / C&gt;=70 / D&gt;=60 / F&lt;=59, configurable); approvalDate (date); nextReEvalDate (date, cadence risk-based: monthly KPI / quarterly review / annual re-approval, configurable). AVL gate rule: certifications 100% valid AND composite score &gt;= threshold (~80, configurable) qualifies; preferred = sustained Grade A. [ISO 8.4.1 AVL + 9001 8.4 | SCOR BP.097 Supplier Appraisal | source: AB AVL scope/grade + iso-supply-chain-standards]</bpmn:documentation>
+      <bpmn:incoming>f6</bpmn:incoming>
+      <bpmn:outgoing>f7</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="IsoAttributes" name="Set ISO risk/security/continuity/ESG/infosec/anti-bribery attributes">
+      <bpmn:documentation>Tax/Compliance + Quality + Buyer populate the cross-standard supplier criteria (permission supplier.riskAssess + compliance.review). Each attribute group carries lastAssessedDate, nextDueDate, evidence/cert attachment + expiry, and a corrective-action log. RISK (ISO 31000): riskCategory, likelihood, impact, inherentVsResidual, riskScore (composite), riskTier (dropdown {low | medium | high | critical}, drives review cadence), treatment, owner. SECURITY (ISO 28000): securityRiskRating, facilityScreening, tradeProgram (dropdown {none | C-TPAT | AEO | TAPA} + cert# + expiry), sealIntegrity (ISO 17712), incidentRegister. CONTINUITY (ISO 22301): criticalityFlag, ownBcms (boolean), bcPlan (file), lastTestDate, MTPD, RTO, MBCO, RPO, backupSupplierRegister, dualSourcingCoverage. SUSTAINABILITY/ESG (ISO 20400 + 14001): iso14001Status (boolean + expiry + scope), ecoVadis/CDP scores, ghgData, modernSlaveryStatement, codeOfConductSignoff, conflictMinerals. INFOSEC (ISO 27001): dataClassificationAccessed, securityCertStatus + expiry, dpaStatus (boolean), incidentLog, cloudAttestations (27017/27018/SOC2). ANTI-BRIBERY (ISO 37001): briberyRiskRating, dueDiligenceStatus + date, beneficialOwnership/PEP/sanctions screening result, antiBriberyClauseSignoff, reScreeningCadence by tier, redFlagLog. All thresholds/scales are configurable defaults (ISO prescribes none). [ISO 31000/28000/22301/20400/14001/27001/37001 | SCOR OE9 Risk / OE10 ESG | source: iso-supply-chain-standards + data-model Supplier attributes, build-new]</bpmn:documentation>
+      <bpmn:incoming>f7</bpmn:incoming>
+      <bpmn:outgoing>f8</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="RequestApproval" name="Request approval (PENDING_ONBOARDING -&gt; PENDING_APPROVAL)">
+      <bpmn:documentation>Buyer submits the supplier for approval (permission suppliers.update, POST /api/suppliers/{id}/request-approval). GUARD: status MUST be PENDING_ONBOARDING (wrong status -&gt; BadRequestException, record unchanged). On success: status PENDING_ONBOARDING -&gt; PENDING_APPROVAL; the SUPPLIER_APPROVAL_REQUESTED notification is emitted (ONLY here, not at approve/offboard); audit category SUPPLIER (carries supplierId). [SCOR S1.6 | ISO 8.4.1 | source: RA request-approval guard + notification]</bpmn:documentation>
+      <bpmn:incoming>f8</bpmn:incoming>
+      <bpmn:incoming>f19</bpmn:incoming>
+      <bpmn:outgoing>f9</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="ReviewQualify" name="Review qualification (Quality + Tax/Compliance)">
+      <bpmn:documentation>Quality and Tax/Compliance review the qualification package before approval. Quality verifies certifications validity, 3-batch COA for OTC/pharma, AVL scope/grade, COA/MSDS for regulated items; Compliance verifies sanctions/anti-bribery screening, tax registration, ISO risk/ESG attributes. For regulated chemical items, QC must approve COA/MSDS as a gate before the supplier can be selected (Diagram 04). Either may flag deficiencies returning the record to the buyer/supplier to complete (back to QualDocs). [ISO 8.4.1 monitoring + 8.4 certifications gate | SCOR S1.6 | source: AB QC COA gate + role-permission-matrix conditional suspend]</bpmn:documentation>
+      <bpmn:incoming>f9</bpmn:incoming>
+      <bpmn:outgoing>f10</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="ApproveGw" name="Qualification complete + approved?">
+      <bpmn:documentation>Expression: APPROVE iff status = PENDING_APPROVAL AND qualification complete (vendorRegistration present AND required certs valid/unexpired AND 3-batch COA present for OTC/pharma AND AVL scope/grade set AND sanctions/anti-bribery screening clear AND required ISO attributes populated for the supplier's risk tier). Else -&gt; RETURN branch to complete the package (back to QualDocs/IsoAttributes), record stays PENDING_APPROVAL. [ISO 8.4.1 selection | SCOR S1.6 | source: RA approve guard + iso gates]</bpmn:documentation>
+      <bpmn:incoming>f10</bpmn:incoming>
+      <bpmn:outgoing>f11</bpmn:outgoing>
+      <bpmn:outgoing>f12</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="ApproveSupplier" name="Approve supplier (PENDING_APPROVAL -&gt; ONBOARDED)">
+      <bpmn:documentation>Approver (permission suppliers.approve; Buyer recommends, Approver/Admin approves; condition: if supplier-approval stage configured) approves. GUARD: status MUST be PENDING_APPROVAL (else BadRequestException). On success: status PENDING_APPROVAL -&gt; ONBOARDED. No notification emitted at approve (only at request-approval). Audit category SUPPLIER. The supplier may now be awarded RFQs and issued POs (Diagram 05 gate satisfied). [SCOR S1.6 | ISO 8.4.1 selection records | source: RA approve guard + role-permission-matrix]</bpmn:documentation>
+      <bpmn:incoming>f11</bpmn:incoming>
+      <bpmn:outgoing>f13</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="SyncErp" name="Mark onboarded, optional ERP sync">
+      <bpmn:documentation>System finalizes the ONBOARDED supplier. ERP-sync toggle (isErpSynced, generalized from isRamcoSynced) is allowed ONLY when status = ONBOARDED; toggling logs audit activity 'ERP Synced' / 'Not ERP Synced' and pushes master data to the external system of record (boundary integration, outbound hook). IMPORTANT: any later edit to an ONBOARDED supplier reverts status to PENDING_APPROVAL and resets isErpSynced = false (see EditSupplier). Audit + SSE emitted. [SCOR OE4 integration boundary | source: RA isRamcoSynced + platform-services 13]</bpmn:documentation>
+      <bpmn:incoming>f13</bpmn:incoming>
+      <bpmn:outgoing>f14</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="OnboardedGw" name="Post-onboarding lifecycle event">
+      <bpmn:documentation>Routing of post-onboarding events. Expression: EDIT (any field update) -&gt; revert to PENDING_APPROVAL; SUSPEND (failed audit / quality stop / expired ISO cert / sanctions hit / active CAPA) -&gt; SUSPENDED; OFFBOARD (end of relationship) -&gt; OFFBOARDED; otherwise the supplier stays ONBOARDED and active (terminal-active for this diagram). [source: RA lifecycle + review SUSPENDED addition + data-model state machine]</bpmn:documentation>
+      <bpmn:incoming>f14</bpmn:incoming>
+      <bpmn:incoming>f23</bpmn:incoming>
+      <bpmn:outgoing>f15</bpmn:outgoing>
+      <bpmn:outgoing>f16</bpmn:outgoing>
+      <bpmn:outgoing>f17</bpmn:outgoing>
+      <bpmn:outgoing>f18</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="EditSupplier" name="Edit supplier (reverts to PENDING_APPROVAL)">
+      <bpmn:documentation>Buyer/Admin edits an ONBOARDED supplier (permission suppliers.update). RULE: ONBOARDED or PENDING_APPROVAL -&gt; recomputed to PENDING_APPROVAL (an edit to an approved record pulls it back into the approval queue); PENDING_ONBOARDING stays PENDING_ONBOARDING. isErpSynced reset to false on every update. Address update is REPLACE-on-update (transactional delete-then-recreate of tax details + addresses). Re-enters the approval path (back to RequestApproval/ReviewQualify). [source: RA edit-reverts-to-pending + data-model]</bpmn:documentation>
+      <bpmn:incoming>f15</bpmn:incoming>
+      <bpmn:outgoing>f19</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Suspend" name="Suspend supplier (ONBOARDED -&gt; SUSPENDED)">
+      <bpmn:documentation>Suspension is split by trigger (role-permission-matrix): Quality suspends on a quality stop / failed audit / active CAPA (permission suppliers.suspend, condition quality); Tax/Compliance suspends on a sanctions or compliance hit / expired ISO cert (condition compliance); Admin always. GUARD: status = ONBOARDED. FIELDS: suspendReason (text, mandatory); suspendCategory (dropdown {quality | compliance | expired-cert | sanctions | active-CAPA}); reviewDate (date). EFFECT: status ONBOARDED -&gt; SUSPENDED; SUSPENDED BLOCKS new POs (Diagram 05 gate fails) without offboarding the record. Resolution returns to ONBOARDED. Driven by the CAPA-to-re-evaluation loop (Diagram 11). [ISO 8.4.1 re-evaluation | SCOR OE3 | source: review SUSPENDED state + data-model]</bpmn:documentation>
+      <bpmn:incoming>f16</bpmn:incoming>
+      <bpmn:outgoing>f20</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="ResolveSuspend" name="Suspension resolved?">
+      <bpmn:documentation>Expression: if the suspension cause is cleared (CAPA effectiveness verified / cert renewed / sanctions cleared / audit passed) -&gt; RESTORE to ONBOARDED. Else if the relationship is to be terminated -&gt; OFFBOARD. [ISO 10.2 effectiveness review -&gt; 8.4.1 | source: build-new loop]</bpmn:documentation>
+      <bpmn:incoming>f20</bpmn:incoming>
+      <bpmn:outgoing>f21</bpmn:outgoing>
+      <bpmn:outgoing>f22</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="Restore" name="Restore to ONBOARDED">
+      <bpmn:documentation>System returns SUSPENDED -&gt; ONBOARDED on resolution; re-enables PO eligibility; audit entry records the resolution + linked CAPA/cert/screening evidence. [ISO 8.4.1 | source: build-new]</bpmn:documentation>
+      <bpmn:incoming>f21</bpmn:incoming>
+      <bpmn:outgoing>f23</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="Offboard" name="Offboard supplier (-&gt; OFFBOARDED, terminal)">
+      <bpmn:documentation>Buyer/Admin offboards (permission suppliers.offboard). GUARD: status = ONBOARDED (or from SUSPENDED via the resolve gate). EFFECT: status -&gt; OFFBOARDED, which is TERMINAL (soft-delete; record retained for history + referencing POs/tickets; no documented reactivation). No new POs possible. No notification at offboard. Audit category SUPPLIER. [SCOR S1.6 | ISO 8.4.1 records retention 7.5 | source: RA offboard guard]</bpmn:documentation>
+      <bpmn:incoming>f17</bpmn:incoming>
+      <bpmn:incoming>f22</bpmn:incoming>
+      <bpmn:outgoing>f24</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="Active" name="Supplier ONBOARDED / OFFBOARDED">
+      <bpmn:documentation>Terminal for this diagram: supplier is ONBOARDED (orderable), SUSPENDED-then-restored (orderable), or OFFBOARDED (terminal, not orderable). ONBOARDED suppliers feed Diagram 04 (sourcing) and Diagram 05 (PO). [source: build-new]</bpmn:documentation>
+      <bpmn:incoming>f18</bpmn:incoming>
+      <bpmn:incoming>f24</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="UploadFile" name="Upload supplier import file">
+      <bpmn:documentation>BULK branch. Buyer/Admin uploads an XLSX/CSV of suppliers (permission suppliers.import). One generic import pipeline (shared across all masters). The file is parsed: file readable? sheet present? has data rows? (no file -&gt; 'No file uploaded'; header-only -&gt; 'No valid data found'). [source: RA bulk import + platform-services 7]</bpmn:documentation>
+      <bpmn:incoming>f3</bpmn:incoming>
+      <bpmn:incoming>f28</bpmn:incoming>
+      <bpmn:outgoing>f25</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="ValidateImport" name="Validate header + rows (accumulate all errors)">
+      <bpmn:documentation>System validates the import. STEPS: validate header EXACTLY (no missing, no extra columns; order-insensitive); iterate rows tracking rowNumber (header = row 1, first data row = row 2); per row validate fields/types/enums (purchaseType lo/local -&gt; LOCAL, im/import -&gt; IMPORT; phone stripped to digits; state codes padded to 2 digits; GST/PAN validated when supplied) and resolve foreign refs by natural key (group, currency); ACCUMULATE ALL row errors (never fail-fast). Natural key for upsert = code. [source: RA bulk import e06 + platform-services 7]</bpmn:documentation>
+      <bpmn:incoming>f25</bpmn:incoming>
+      <bpmn:outgoing>f26</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="ImportGw" name="All rows valid?">
+      <bpmn:documentation>Expression: if zero accumulated errors -&gt; COMMIT branch. If any error -&gt; throw ONE BadRequestException listing every {rowNumber, reason}, write NOTHING (all-or-nothing); operator fixes the file and re-uploads. Even valid rows are not saved when any row fails. [source: RA e06 all-or-nothing]</bpmn:documentation>
+      <bpmn:incoming>f26</bpmn:incoming>
+      <bpmn:outgoing>f27</bpmn:outgoing>
+      <bpmn:outgoing>f28</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="CommitImport" name="Upsert by code in one transaction (PENDING_ONBOARDING)">
+      <bpmn:documentation>System opens ONE prisma.$transaction and upserts each row by natural key code (match -&gt; update; else create with generated S/##### code). Duplicate natural keys within one file resolve last-wins. Commit-all or roll-back-all (late DB failure rolls back fully, audit NOT emitted). Imported records default status = PENDING_ONBOARDING and isErpSynced = false. On success: audit emitted, returns {created, updated}. Imported suppliers then follow the SAME approval lifecycle (request-approval -&gt; review -&gt; approve). [source: RA e06 + platform-services 7]</bpmn:documentation>
+      <bpmn:incoming>f27</bpmn:incoming>
+      <bpmn:outgoing>f29</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="JoinImport" name="Imported records join lifecycle">
+      <bpmn:documentation>Imported suppliers (PENDING_ONBOARDING) merge into the single-record lifecycle: each still requires qualification docs + ISO attributes + request-approval -&gt; review -&gt; approve to reach ONBOARDED. Convenience routing node; no decision logic beyond joining the happy path. [source: RA bulk + lifecycle convergence]</bpmn:documentation>
+      <bpmn:incoming>f29</bpmn:incoming>
+      <bpmn:outgoing>f30</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="f1" sourceRef="Start" targetRef="GwPath" />
+    <bpmn:sequenceFlow id="f2" name="single record" sourceRef="GwPath" targetRef="CreateSupplier" />
+    <bpmn:sequenceFlow id="f3" name="bulk import" sourceRef="GwPath" targetRef="UploadFile" />
+    <bpmn:sequenceFlow id="f4" sourceRef="CreateSupplier" targetRef="TaxDetails" />
+    <bpmn:sequenceFlow id="f5" sourceRef="TaxDetails" targetRef="QualDocs" />
+    <bpmn:sequenceFlow id="f6" sourceRef="QualDocs" targetRef="AVL" />
+    <bpmn:sequenceFlow id="f7" sourceRef="AVL" targetRef="IsoAttributes" />
+    <bpmn:sequenceFlow id="f8" sourceRef="IsoAttributes" targetRef="RequestApproval" />
+    <bpmn:sequenceFlow id="f9" sourceRef="RequestApproval" targetRef="ReviewQualify" />
+    <bpmn:sequenceFlow id="f10" sourceRef="ReviewQualify" targetRef="ApproveGw" />
+    <bpmn:sequenceFlow id="f11" name="complete + approve" sourceRef="ApproveGw" targetRef="ApproveSupplier" />
+    <bpmn:sequenceFlow id="f12" name="incomplete, return" sourceRef="ApproveGw" targetRef="QualDocs" />
+    <bpmn:sequenceFlow id="f13" sourceRef="ApproveSupplier" targetRef="SyncErp" />
+    <bpmn:sequenceFlow id="f14" sourceRef="SyncErp" targetRef="OnboardedGw" />
+    <bpmn:sequenceFlow id="f15" name="edit" sourceRef="OnboardedGw" targetRef="EditSupplier" />
+    <bpmn:sequenceFlow id="f16" name="suspend" sourceRef="OnboardedGw" targetRef="Suspend" />
+    <bpmn:sequenceFlow id="f17" name="offboard" sourceRef="OnboardedGw" targetRef="Offboard" />
+    <bpmn:sequenceFlow id="f18" name="stay onboarded" sourceRef="OnboardedGw" targetRef="Active" />
+    <bpmn:sequenceFlow id="f19" name="reverts to PENDING_APPROVAL" sourceRef="EditSupplier" targetRef="RequestApproval" />
+    <bpmn:sequenceFlow id="f20" sourceRef="Suspend" targetRef="ResolveSuspend" />
+    <bpmn:sequenceFlow id="f21" name="resolved" sourceRef="ResolveSuspend" targetRef="Restore" />
+    <bpmn:sequenceFlow id="f22" name="terminate" sourceRef="ResolveSuspend" targetRef="Offboard" />
+    <bpmn:sequenceFlow id="f23" sourceRef="Restore" targetRef="OnboardedGw" />
+    <bpmn:sequenceFlow id="f24" sourceRef="Offboard" targetRef="Active" />
+    <bpmn:sequenceFlow id="f25" sourceRef="UploadFile" targetRef="ValidateImport" />
+    <bpmn:sequenceFlow id="f26" sourceRef="ValidateImport" targetRef="ImportGw" />
+    <bpmn:sequenceFlow id="f27" name="all rows valid" sourceRef="ImportGw" targetRef="CommitImport" />
+    <bpmn:sequenceFlow id="f28" name="errors, fix + re-upload" sourceRef="ImportGw" targetRef="UploadFile" />
+    <bpmn:sequenceFlow id="f29" sourceRef="CommitImport" targetRef="JoinImport" />
+    <bpmn:sequenceFlow id="f30" sourceRef="JoinImport" targetRef="QualDocs" />
+    <bpmn:textAnnotation id="NoteLifecycle">
+      <bpmn:text>Lifecycle: PENDING_ONBOARDING -&gt; (request-approval; guard status=PENDING_ONBOARDING) -&gt; PENDING_APPROVAL -&gt; (approve; guard status=PENDING_APPROVAL + qualification complete) -&gt; ONBOARDED -&gt; (offboard; guard status=ONBOARDED) -&gt; OFFBOARDED (terminal). Edit on ONBOARDED/PENDING_APPROVAL reverts to PENDING_APPROVAL; isErpSynced reset to false on every update; ERP-sync toggle allowed only when ONBOARDED. ONBOARDED -&gt; SUSPENDED on failed audit / quality stop / expired ISO cert / sanctions hit / active CAPA (blocks new POs without offboarding); SUSPENDED -&gt; ONBOARDED on resolution. SUPPLIER_APPROVAL_REQUESTED notification fires only at request-approval. Wrong-status transitions -&gt; BadRequestException, record unchanged.</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Assoc_SupplierOnboarding_1" sourceRef="SyncErp" targetRef="NoteLifecycle" />
+    <bpmn:textAnnotation id="NoteImport">
+      <bpmn:text>Bulk import: exact header (no missing/extra, order-insensitive); per-row validate + resolve refs; ACCUMULATE all errors (never fail-fast); all-or-nothing single transaction; upsert by natural key = code; duplicate keys last-wins; imported records default PENDING_ONBOARDING; audit only on successful commit; row numbering header=1, first data=2. ISO attribute groups (risk 31000, security 28000, continuity 22301, ESG 20400/14001, infosec 27001, anti-bribery 37001) each carry last-assessed / next-due / evidence+expiry / corrective-action log; all thresholds are configurable defaults (ISO prescribes none).</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Assoc_SupplierOnboarding_2" sourceRef="CommitImport" targetRef="NoteImport" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagram_SupplierOnboarding">
+    <bpmndi:BPMNPlane id="Plane_SupplierOnboarding" bpmnElement="Collaboration_SupplierOnboarding">
+      <bpmndi:BPMNShape id="Participant_SupplierOnboarding_di" bpmnElement="Participant_SupplierOnboarding" isHorizontal="true">
+        <dc:Bounds x="160" y="80" width="3300" height="960" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_buyer_di" bpmnElement="L_buyer" isHorizontal="true">
+        <dc:Bounds x="190" y="80" width="3270" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_supplier_di" bpmnElement="L_supplier" isHorizontal="true">
+        <dc:Bounds x="190" y="240" width="3270" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_appr_di" bpmnElement="L_appr" isHorizontal="true">
+        <dc:Bounds x="190" y="400" width="3270" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_qc_di" bpmnElement="L_qc" isHorizontal="true">
+        <dc:Bounds x="190" y="560" width="3270" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_tax_di" bpmnElement="L_tax" isHorizontal="true">
+        <dc:Bounds x="190" y="720" width="3270" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_sys_di" bpmnElement="L_sys" isHorizontal="true">
+        <dc:Bounds x="190" y="880" width="3270" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Start_di" bpmnElement="Start">
+        <dc:Bounds x="267" y="142" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="257" y="182" width="56" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GwPath_di" bpmnElement="GwPath" isMarkerVisible="true">
+        <dc:Bounds x="450" y="135" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="440" y="189" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CreateSupplier_di" bpmnElement="CreateSupplier">
+        <dc:Bounds x="605" y="120" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TaxDetails_di" bpmnElement="TaxDetails">
+        <dc:Bounds x="795" y="760" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="QualDocs_di" bpmnElement="QualDocs">
+        <dc:Bounds x="985" y="120" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="AVL_di" bpmnElement="AVL">
+        <dc:Bounds x="1175" y="600" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="IsoAttributes_di" bpmnElement="IsoAttributes">
+        <dc:Bounds x="1365" y="760" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="RequestApproval_di" bpmnElement="RequestApproval">
+        <dc:Bounds x="1555" y="120" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ReviewQualify_di" bpmnElement="ReviewQualify">
+        <dc:Bounds x="1745" y="600" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ApproveGw_di" bpmnElement="ApproveGw" isMarkerVisible="true">
+        <dc:Bounds x="1970" y="455" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1960" y="509" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ApproveSupplier_di" bpmnElement="ApproveSupplier">
+        <dc:Bounds x="2125" y="440" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SyncErp_di" bpmnElement="SyncErp">
+        <dc:Bounds x="2315" y="920" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="OnboardedGw_di" bpmnElement="OnboardedGw" isMarkerVisible="true">
+        <dc:Bounds x="2540" y="935" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2530" y="989" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EditSupplier_di" bpmnElement="EditSupplier">
+        <dc:Bounds x="2695" y="120" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Suspend_di" bpmnElement="Suspend">
+        <dc:Bounds x="2695" y="600" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ResolveSuspend_di" bpmnElement="ResolveSuspend" isMarkerVisible="true">
+        <dc:Bounds x="2920" y="615" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2910" y="669" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Restore_di" bpmnElement="Restore">
+        <dc:Bounds x="3075" y="920" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Offboard_di" bpmnElement="Offboard">
+        <dc:Bounds x="2885" y="120" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Active_di" bpmnElement="Active">
+        <dc:Bounds x="3307" y="942" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3297" y="982" width="56" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UploadFile_di" bpmnElement="UploadFile">
+        <dc:Bounds x="795" y="120" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ValidateImport_di" bpmnElement="ValidateImport">
+        <dc:Bounds x="795" y="920" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ImportGw_di" bpmnElement="ImportGw" isMarkerVisible="true">
+        <dc:Bounds x="1020" y="935" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1010" y="989" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CommitImport_di" bpmnElement="CommitImport">
+        <dc:Bounds x="1175" y="920" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="JoinImport_di" bpmnElement="JoinImport" isMarkerVisible="true">
+        <dc:Bounds x="1400" y="135" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1390" y="189" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="f1_di" bpmnElement="f1">
+        <di:waypoint x="303" y="160" />
+        <di:waypoint x="450" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f2_di" bpmnElement="f2">
+        <di:waypoint x="500" y="160" />
+        <di:waypoint x="605" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f3_di" bpmnElement="f3">
+        <di:waypoint x="500" y="160" />
+        <di:waypoint x="795" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f4_di" bpmnElement="f4">
+        <di:waypoint x="725" y="160" />
+        <di:waypoint x="760" y="160" />
+        <di:waypoint x="760" y="800" />
+        <di:waypoint x="795" y="800" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f5_di" bpmnElement="f5">
+        <di:waypoint x="915" y="800" />
+        <di:waypoint x="950" y="800" />
+        <di:waypoint x="950" y="160" />
+        <di:waypoint x="985" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f6_di" bpmnElement="f6">
+        <di:waypoint x="1105" y="160" />
+        <di:waypoint x="1140" y="160" />
+        <di:waypoint x="1140" y="640" />
+        <di:waypoint x="1175" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f7_di" bpmnElement="f7">
+        <di:waypoint x="1295" y="640" />
+        <di:waypoint x="1330" y="640" />
+        <di:waypoint x="1330" y="800" />
+        <di:waypoint x="1365" y="800" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f8_di" bpmnElement="f8">
+        <di:waypoint x="1485" y="800" />
+        <di:waypoint x="1520" y="800" />
+        <di:waypoint x="1520" y="160" />
+        <di:waypoint x="1555" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f9_di" bpmnElement="f9">
+        <di:waypoint x="1675" y="160" />
+        <di:waypoint x="1710" y="160" />
+        <di:waypoint x="1710" y="640" />
+        <di:waypoint x="1745" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f10_di" bpmnElement="f10">
+        <di:waypoint x="1865" y="640" />
+        <di:waypoint x="1918" y="640" />
+        <di:waypoint x="1918" y="480" />
+        <di:waypoint x="1970" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f11_di" bpmnElement="f11">
+        <di:waypoint x="2020" y="480" />
+        <di:waypoint x="2125" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f12_di" bpmnElement="f12">
+        <di:waypoint x="1970" y="480" />
+        <di:waypoint x="1538" y="480" />
+        <di:waypoint x="1538" y="160" />
+        <di:waypoint x="1105" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f13_di" bpmnElement="f13">
+        <di:waypoint x="2245" y="480" />
+        <di:waypoint x="2280" y="480" />
+        <di:waypoint x="2280" y="960" />
+        <di:waypoint x="2315" y="960" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f14_di" bpmnElement="f14">
+        <di:waypoint x="2435" y="960" />
+        <di:waypoint x="2540" y="960" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f15_di" bpmnElement="f15">
+        <di:waypoint x="2590" y="960" />
+        <di:waypoint x="2643" y="960" />
+        <di:waypoint x="2643" y="160" />
+        <di:waypoint x="2695" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f16_di" bpmnElement="f16">
+        <di:waypoint x="2590" y="960" />
+        <di:waypoint x="2643" y="960" />
+        <di:waypoint x="2643" y="640" />
+        <di:waypoint x="2695" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f17_di" bpmnElement="f17">
+        <di:waypoint x="2590" y="960" />
+        <di:waypoint x="2738" y="960" />
+        <di:waypoint x="2738" y="160" />
+        <di:waypoint x="2885" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f18_di" bpmnElement="f18">
+        <di:waypoint x="2590" y="960" />
+        <di:waypoint x="3307" y="960" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f19_di" bpmnElement="f19">
+        <di:waypoint x="2755" y="200" />
+        <di:waypoint x="2755" y="230" />
+        <di:waypoint x="1615" y="230" />
+        <di:waypoint x="1615" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f20_di" bpmnElement="f20">
+        <di:waypoint x="2815" y="640" />
+        <di:waypoint x="2920" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f21_di" bpmnElement="f21">
+        <di:waypoint x="2970" y="640" />
+        <di:waypoint x="3023" y="640" />
+        <di:waypoint x="3023" y="960" />
+        <di:waypoint x="3075" y="960" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f22_di" bpmnElement="f22">
+        <di:waypoint x="2970" y="640" />
+        <di:waypoint x="2990" y="640" />
+        <di:waypoint x="2990" y="160" />
+        <di:waypoint x="2885" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f23_di" bpmnElement="f23">
+        <di:waypoint x="3135" y="1000" />
+        <di:waypoint x="3135" y="1030" />
+        <di:waypoint x="2565" y="1030" />
+        <di:waypoint x="2565" y="985" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f24_di" bpmnElement="f24">
+        <di:waypoint x="3005" y="160" />
+        <di:waypoint x="3156" y="160" />
+        <di:waypoint x="3156" y="960" />
+        <di:waypoint x="3307" y="960" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f25_di" bpmnElement="f25">
+        <di:waypoint x="915" y="160" />
+        <di:waypoint x="935" y="160" />
+        <di:waypoint x="935" y="960" />
+        <di:waypoint x="795" y="960" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f26_di" bpmnElement="f26">
+        <di:waypoint x="915" y="960" />
+        <di:waypoint x="1020" y="960" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f27_di" bpmnElement="f27">
+        <di:waypoint x="1070" y="960" />
+        <di:waypoint x="1175" y="960" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f28_di" bpmnElement="f28">
+        <di:waypoint x="1020" y="960" />
+        <di:waypoint x="968" y="960" />
+        <di:waypoint x="968" y="160" />
+        <di:waypoint x="915" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f29_di" bpmnElement="f29">
+        <di:waypoint x="1295" y="960" />
+        <di:waypoint x="1348" y="960" />
+        <di:waypoint x="1348" y="160" />
+        <di:waypoint x="1400" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f30_di" bpmnElement="f30">
+        <di:waypoint x="1425" y="185" />
+        <di:waypoint x="1425" y="215" />
+        <di:waypoint x="1045" y="215" />
+        <di:waypoint x="1045" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="NoteLifecycle_di" bpmnElement="NoteLifecycle">
+        <dc:Bounds x="160" y="1080" width="1600" height="100" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Assoc_SupplierOnboarding_1_di" bpmnElement="Assoc_SupplierOnboarding_1">
+        <di:waypoint x="2375" y="1000" />
+        <di:waypoint x="260" y="1080" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="NoteImport_di" bpmnElement="NoteImport">
+        <dc:Bounds x="160" y="1190" width="1600" height="100" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Assoc_SupplierOnboarding_2_di" bpmnElement="Assoc_SupplierOnboarding_2">
+        <di:waypoint x="1235" y="1000" />
+        <di:waypoint x="260" y="1190" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

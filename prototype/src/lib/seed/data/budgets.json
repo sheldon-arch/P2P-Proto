@@ -1,0 +1,398 @@
+[
+  {
+    "id": "BUD-0001",
+    "projectId": "PRJ-001",
+    "period": "2025-Q3",
+    "amount": 600000.0,
+    "availableAmount": 36000.0,
+    "committedAmount": 0.0,
+    "actualAmount": 564000.0
+  },
+  {
+    "id": "BUD-0002",
+    "projectId": "PRJ-001",
+    "period": "2025-Q4",
+    "amount": 600000.0,
+    "availableAmount": 54000.0,
+    "committedAmount": 0.0,
+    "actualAmount": 546000.0
+  },
+  {
+    "id": "BUD-0003",
+    "projectId": "PRJ-001",
+    "period": "2026-Q1",
+    "amount": 600000.0,
+    "availableAmount": 72000.0,
+    "committedAmount": 0.0,
+    "actualAmount": 528000.0
+  },
+  {
+    "id": "BUD-0004",
+    "projectId": "PRJ-001",
+    "period": "2026-Q2",
+    "amount": 600000.0,
+    "availableAmount": 162000.0,
+    "committedAmount": 186000.0,
+    "actualAmount": 252000.0
+  },
+  {
+    "id": "BUD-0005",
+    "projectId": "PRJ-002",
+    "period": "2025-Q3",
+    "amount": 475000.0,
+    "availableAmount": 28500.0,
+    "committedAmount": 0.0,
+    "actualAmount": 446500.0
+  },
+  {
+    "id": "BUD-0006",
+    "projectId": "PRJ-002",
+    "period": "2025-Q4",
+    "amount": 475000.0,
+    "availableAmount": 42750.0,
+    "committedAmount": 0.0,
+    "actualAmount": 432250.0
+  },
+  {
+    "id": "BUD-0007",
+    "projectId": "PRJ-002",
+    "period": "2026-Q1",
+    "amount": 475000.0,
+    "availableAmount": 57000.0,
+    "committedAmount": 0.0,
+    "actualAmount": 418000.0
+  },
+  {
+    "id": "BUD-0008",
+    "projectId": "PRJ-002",
+    "period": "2026-Q2",
+    "amount": 475000.0,
+    "availableAmount": 128250.0,
+    "committedAmount": 147250.0,
+    "actualAmount": 199500.0
+  },
+  {
+    "id": "BUD-0009",
+    "projectId": "PRJ-003",
+    "period": "2025-Q3",
+    "amount": 162500.0,
+    "availableAmount": 9750.0,
+    "committedAmount": 0.0,
+    "actualAmount": 152750.0
+  },
+  {
+    "id": "BUD-0010",
+    "projectId": "PRJ-003",
+    "period": "2025-Q4",
+    "amount": 162500.0,
+    "availableAmount": 14625.0,
+    "committedAmount": 0.0,
+    "actualAmount": 147875.0
+  },
+  {
+    "id": "BUD-0011",
+    "projectId": "PRJ-003",
+    "period": "2026-Q1",
+    "amount": 162500.0,
+    "availableAmount": 19500.0,
+    "committedAmount": 0.0,
+    "actualAmount": 143000.0
+  },
+  {
+    "id": "BUD-0012",
+    "projectId": "PRJ-003",
+    "period": "2026-Q2",
+    "amount": 162500.0,
+    "availableAmount": 43875.0,
+    "committedAmount": 50375.0,
+    "actualAmount": 68250.0
+  },
+  {
+    "id": "BUD-0013",
+    "projectId": "PRJ-004",
+    "period": "2025-Q3",
+    "amount": 120000.0,
+    "availableAmount": 7200.0,
+    "committedAmount": 0.0,
+    "actualAmount": 112800.0
+  },
+  {
+    "id": "BUD-0014",
+    "projectId": "PRJ-004",
+    "period": "2025-Q4",
+    "amount": 120000.0,
+    "availableAmount": 10800.0,
+    "committedAmount": 0.0,
+    "actualAmount": 109200.0
+  },
+  {
+    "id": "BUD-0015",
+    "projectId": "PRJ-004",
+    "period": "2026-Q1",
+    "amount": 120000.0,
+    "availableAmount": 14400.0,
+    "committedAmount": 0.0,
+    "actualAmount": 105600.0
+  },
+  {
+    "id": "BUD-0016",
+    "projectId": "PRJ-004",
+    "period": "2026-Q2",
+    "amount": 120000.0,
+    "availableAmount": 32400.0,
+    "committedAmount": 37200.0,
+    "actualAmount": 50400.0
+  },
+  {
+    "id": "BUD-0017",
+    "projectId": "PRJ-005",
+    "period": "2025-Q3",
+    "amount": 80000.0,
+    "availableAmount": 4800.0,
+    "committedAmount": 0.0,
+    "actualAmount": 75200.0
+  },
+  {
+    "id": "BUD-0018",
+    "projectId": "PRJ-005",
+    "period": "2025-Q4",
+    "amount": 80000.0,
+    "availableAmount": 7200.0,
+    "committedAmount": 0.0,
+    "actualAmount": 72800.0
+  },
+  {
+    "id": "BUD-0019",
+    "projectId": "PRJ-005",
+    "period": "2026-Q1",
+    "amount": 80000.0,
+    "availableAmount": 9600.0,
+    "committedAmount": 0.0,
+    "actualAmount": 70400.0
+  },
+  {
+    "id": "BUD-0020",
+    "projectId": "PRJ-005",
+    "period": "2026-Q2",
+    "amount": 80000.0,
+    "availableAmount": 21600.0,
+    "committedAmount": 24800.0,
+    "actualAmount": 33600.0
+  },
+  {
+    "id": "BUD-0021",
+    "projectId": "PRJ-006",
+    "period": "2025-Q3",
+    "amount": 102500.0,
+    "availableAmount": 6150.0,
+    "committedAmount": 0.0,
+    "actualAmount": 96350.0
+  },
+  {
+    "id": "BUD-0022",
+    "projectId": "PRJ-006",
+    "period": "2025-Q4",
+    "amount": 102500.0,
+    "availableAmount": 9225.0,
+    "committedAmount": 0.0,
+    "actualAmount": 93275.0
+  },
+  {
+    "id": "BUD-0023",
+    "projectId": "PRJ-006",
+    "period": "2026-Q1",
+    "amount": 102500.0,
+    "availableAmount": 12300.0,
+    "committedAmount": 0.0,
+    "actualAmount": 90200.0
+  },
+  {
+    "id": "BUD-0024",
+    "projectId": "PRJ-006",
+    "period": "2026-Q2",
+    "amount": 102500.0,
+    "availableAmount": 27675.0,
+    "committedAmount": 31775.0,
+    "actualAmount": 43050.0
+  },
+  {
+    "id": "BUD-0025",
+    "projectId": "PRJ-007",
+    "period": "2025-Q3",
+    "amount": 300000.0,
+    "availableAmount": 18000.0,
+    "committedAmount": 0.0,
+    "actualAmount": 282000.0
+  },
+  {
+    "id": "BUD-0026",
+    "projectId": "PRJ-007",
+    "period": "2025-Q4",
+    "amount": 300000.0,
+    "availableAmount": 27000.0,
+    "committedAmount": 0.0,
+    "actualAmount": 273000.0
+  },
+  {
+    "id": "BUD-0027",
+    "projectId": "PRJ-007",
+    "period": "2026-Q1",
+    "amount": 300000.0,
+    "availableAmount": 36000.0,
+    "committedAmount": 0.0,
+    "actualAmount": 264000.0
+  },
+  {
+    "id": "BUD-0028",
+    "projectId": "PRJ-007",
+    "period": "2026-Q2",
+    "amount": 300000.0,
+    "availableAmount": 81000.0,
+    "committedAmount": 93000.0,
+    "actualAmount": 126000.0
+  },
+  {
+    "id": "BUD-0029",
+    "projectId": "PRJ-008",
+    "period": "2025-Q3",
+    "amount": 70000.0,
+    "availableAmount": 4200.0,
+    "committedAmount": 0.0,
+    "actualAmount": 65800.0
+  },
+  {
+    "id": "BUD-0030",
+    "projectId": "PRJ-008",
+    "period": "2025-Q4",
+    "amount": 70000.0,
+    "availableAmount": 6300.0,
+    "committedAmount": 0.0,
+    "actualAmount": 63700.0
+  },
+  {
+    "id": "BUD-0031",
+    "projectId": "PRJ-008",
+    "period": "2026-Q1",
+    "amount": 70000.0,
+    "availableAmount": 8400.0,
+    "committedAmount": 0.0,
+    "actualAmount": 61600.0
+  },
+  {
+    "id": "BUD-0032",
+    "projectId": "PRJ-008",
+    "period": "2026-Q2",
+    "amount": 70000.0,
+    "availableAmount": 18900.0,
+    "committedAmount": 21700.0,
+    "actualAmount": 29400.0
+  },
+  {
+    "id": "BUD-0033",
+    "projectId": "PRJ-009",
+    "period": "2025-Q3",
+    "amount": 90000.0,
+    "availableAmount": 5400.0,
+    "committedAmount": 0.0,
+    "actualAmount": 84600.0
+  },
+  {
+    "id": "BUD-0034",
+    "projectId": "PRJ-009",
+    "period": "2025-Q4",
+    "amount": 90000.0,
+    "availableAmount": 8100.0,
+    "committedAmount": 0.0,
+    "actualAmount": 81900.0
+  },
+  {
+    "id": "BUD-0035",
+    "projectId": "PRJ-009",
+    "period": "2026-Q1",
+    "amount": 90000.0,
+    "availableAmount": 10800.0,
+    "committedAmount": 0.0,
+    "actualAmount": 79200.0
+  },
+  {
+    "id": "BUD-0036",
+    "projectId": "PRJ-009",
+    "period": "2026-Q2",
+    "amount": 90000.0,
+    "availableAmount": 24300.0,
+    "committedAmount": 27900.0,
+    "actualAmount": 37800.0
+  },
+  {
+    "id": "BUD-0037",
+    "projectId": "PRJ-010",
+    "period": "2025-Q3",
+    "amount": 47500.0,
+    "availableAmount": 2850.0,
+    "committedAmount": 0.0,
+    "actualAmount": 44650.0
+  },
+  {
+    "id": "BUD-0038",
+    "projectId": "PRJ-010",
+    "period": "2025-Q4",
+    "amount": 47500.0,
+    "availableAmount": 4275.0,
+    "committedAmount": 0.0,
+    "actualAmount": 43225.0
+  },
+  {
+    "id": "BUD-0039",
+    "projectId": "PRJ-010",
+    "period": "2026-Q1",
+    "amount": 47500.0,
+    "availableAmount": 5700.0,
+    "committedAmount": 0.0,
+    "actualAmount": 41800.0
+  },
+  {
+    "id": "BUD-0040",
+    "projectId": "PRJ-010",
+    "period": "2026-Q2",
+    "amount": 47500.0,
+    "availableAmount": 12825.0,
+    "committedAmount": 14725.0,
+    "actualAmount": 19950.0
+  },
+  {
+    "id": "BUD-0041",
+    "projectId": "PRJ-011",
+    "period": "2025-Q3",
+    "amount": 37500.0,
+    "availableAmount": 2250.0,
+    "committedAmount": 0.0,
+    "actualAmount": 35250.0
+  },
+  {
+    "id": "BUD-0042",
+    "projectId": "PRJ-011",
+    "period": "2025-Q4",
+    "amount": 37500.0,
+    "availableAmount": 3375.0,
+    "committedAmount": 0.0,
+    "actualAmount": 34125.0
+  },
+  {
+    "id": "BUD-0043",
+    "projectId": "PRJ-011",
+    "period": "2026-Q1",
+    "amount": 37500.0,
+    "availableAmount": 4500.0,
+    "committedAmount": 0.0,
+    "actualAmount": 33000.0
+  },
+  {
+    "id": "BUD-0044",
+    "projectId": "PRJ-011",
+    "period": "2026-Q2",
+    "amount": 37500.0,
+    "availableAmount": 10125.0,
+    "committedAmount": 11625.0,
+    "actualAmount": 15750.0
+  }
+]

@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+                  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+                  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+                  id="Definitions_E08CashFloat" targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:collaboration id="Collaboration_E08CashFloat">
+    <bpmn:participant id="Participant_E08CashFloat" name="e08 - Cash Purchase and Float Reimbursement" processRef="Process_E08CashFloat" />
+  </bpmn:collaboration>
+  <bpmn:process id="Process_E08CashFloat" isExecutable="false">
+    <bpmn:laneSet id="LaneSet_E08CashFloat">
+      <bpmn:lane id="L_buyer" name="Procurement / Buyer">
+        <bpmn:flowNodeRef>Start</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GwCashCredit</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>InquireAvailability</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GwFloatSufficient</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>BuyOnFloat</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GwFloatLow</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>RequestReimb</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>CreditExit</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_supplier" name="Supplier / Vendor">
+        <bpmn:flowNodeRef>ConfirmStock</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_recv" name="Receiving / Warehouse">
+        <bpmn:flowNodeRef>CashGRN</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_finmaker" name="Finance - Maker">
+        <bpmn:flowNodeRef>FinPrepare</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_finchecker" name="Finance - Checker">
+        <bpmn:flowNodeRef>FinApprove</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_sys" name="Platform / System">
+        <bpmn:flowNodeRef>LogDeduct</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>TopUp</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>End</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="Start" name="Approved local need to fulfil">
+      <bpmn:documentation>Trigger: an approved local-purchase need is assigned for fulfilment. This branch is LOCAL ONLY (no import; imports always go credit + PO). The decision cash-vs-credit is made by the Purchase Head at assignment. [SCOR S1.1 | source: AB local purchase cash branch]</bpmn:documentation>
+      <bpmn:outgoing>f1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:exclusiveGateway id="GwCashCredit" name="Head assigns cash or credit?">
+      <bpmn:documentation>Expression: purchaseMode == CASH (Head set it at assignment) AND purchaseType == Local. CASH -&gt; petty-cash float branch (this diagram), small/urgent showroom buys with no PO. CREDIT -&gt; normal PO branch (overview + 05). Only the Head sets the mode; the cash buyer cannot self-elect cash. [SCOR S1.1 | source: AB head decides cash vs credit]</bpmn:documentation>
+      <bpmn:incoming>f1</bpmn:incoming>
+      <bpmn:outgoing>f2</bpmn:outgoing>
+      <bpmn:outgoing>f2b</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sendTask id="InquireAvailability" name="Inquire showroom availability">
+      <bpmn:documentation>Cash buyer contacts the showroom/vendor to confirm the item is in stock and the price. Captures item, quantity, expected cash price. No RFQ, no quote comparison (cash buys are small and immediate). [SCOR S1.2 | source: AB showroom inquiry]</bpmn:documentation>
+      <bpmn:incoming>f2</bpmn:incoming>
+      <bpmn:outgoing>f3</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:receiveTask id="ConfirmStock" name="Confirm stock + price">
+      <bpmn:documentation>Showroom/vendor confirms availability and the cash price. If not available the buyer tries another showroom or escalates to the Head to switch to credit. [SCOR S1.2 | source: AB]</bpmn:documentation>
+      <bpmn:incoming>f3</bpmn:incoming>
+      <bpmn:outgoing>f4</bpmn:outgoing>
+    </bpmn:receiveTask>
+    <bpmn:exclusiveGateway id="GwFloatSufficient" name="Cash price &lt;= available float balance?">
+      <bpmn:documentation>Expression: cashPrice &lt;= cashFloat.balance. The cash float is a configurable petty-cash allotment per cash buyer (e.g. OMR 300; amount configurable per tenant/buyer). True -&gt; buy on float. False -&gt; cannot buy on float; request a reimbursement/top-up first or route the buy to credit. [SCOR S2.7 | source: AB cash float configurable amount]</bpmn:documentation>
+      <bpmn:incoming>f4</bpmn:incoming>
+      <bpmn:outgoing>f5</bpmn:outgoing>
+      <bpmn:outgoing>f6</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="BuyOnFloat" name="Buy on cash float">
+      <bpmn:documentation>Cash buyer pays the showroom from the petty-cash float and collects the goods + cash receipt/voucher. Records purchase: item, quantity, cashPrice, vendor name, receipt attachment. Permission payments.cashFloat.manage (conditional: cash buyer). No PO is created. [SCOR S2.7 | source: AB cash buy]</bpmn:documentation>
+      <bpmn:incoming>f5</bpmn:incoming>
+      <bpmn:outgoing>f7</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="CashGRN" name="Raise cash GRN (NO PO ref)">
+      <bpmn:documentation>Stores raise a cash GRN to bring the goods into inventory WITHOUT a PO reference (the distinguishing feature of the cash branch: poId = null). GRN fields: item, quantity, vendor, cashReceiptRef, actualDeliveryDate, valuation = cashPrice. grn.raise permission. QC applies if the item requires it (same hard block as credit). [SCOR S2.4 | ISO 8.6 | source: AB cash GRN no PO ref]</bpmn:documentation>
+      <bpmn:incoming>f7</bpmn:incoming>
+      <bpmn:outgoing>f8</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="LogDeduct" name="Log receipt + deduct from float balance">
+      <bpmn:documentation>System logs the cash receipt against the cash GRN and deducts cashFloat.balance -= cashPrice. Writes an audit entry (category payment/cash); the cash spend is tagged so analytics can report it ALONGSIDE credit spend (unified spend view). Emits SSE. [SCOR S2.7/OE4 | source: AB cash log + deduct + unified reporting]</bpmn:documentation>
+      <bpmn:incoming>f8</bpmn:incoming>
+      <bpmn:outgoing>f9</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="GwFloatLow" name="Float low (&lt;= ~1/3 of allotment)?">
+      <bpmn:documentation>Expression: cashFloat.balance &lt;= cashFloat.allotment * (1/3) (configurable low-water threshold, default one third remaining, e.g. &lt;= OMR 100 of a 300 allotment). True -&gt; request reimbursement to top the float back up. False -&gt; done for this buy; the buyer continues with the remaining float. [SCOR S2.7 | source: AB float-low ~1/3 reimbursement trigger]</bpmn:documentation>
+      <bpmn:incoming>f9</bpmn:incoming>
+      <bpmn:outgoing>f10</bpmn:outgoing>
+      <bpmn:outgoing>f11</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="RequestReimb" name="Request float reimbursement">
+      <bpmn:documentation>Cash buyer raises a reimbursement request = sum of spent vouchers since last top-up (to restore the float to its allotment). Attaches all cash receipts/vouchers as evidence. permission payments.cashFloat.manage. [SCOR S2.7 | source: AB reimbursement request]</bpmn:documentation>
+      <bpmn:incoming>f6</bpmn:incoming>
+      <bpmn:incoming>f10</bpmn:incoming>
+      <bpmn:outgoing>f12</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="FinPrepare" name="Finance prepares reimbursement (maker)">
+      <bpmn:documentation>Finance-Maker verifies the vouchers against the cash GRNs and float ledger, prepares the reimbursement (amount = allotment - currentBalance). permission payments.cashFloat.manage (reimburse). Maker prepares but does not release (SoD). [SCOR S2.7 | source: AB + maker/checker SoD]</bpmn:documentation>
+      <bpmn:incoming>f12</bpmn:incoming>
+      <bpmn:outgoing>f13</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="FinApprove" name="Finance approves reimbursement (checker)">
+      <bpmn:documentation>Finance-Checker (Chief Accountant) reviews and approves the reimbursement before disbursement; maker != checker (financial-control SoD per SOX/COSO + ISO 37001). permission payments.cashFloat.manage (approve). Hold-with-reason if vouchers do not reconcile. [SCOR S2.7 | source: AB approval + SoD]</bpmn:documentation>
+      <bpmn:incoming>f13</bpmn:incoming>
+      <bpmn:outgoing>f14</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="TopUp" name="Top up float to allotment">
+      <bpmn:documentation>System disburses the reimbursement and sets cashFloat.balance += reimbursementAmount (restored to allotment). Audit entry (category payment), SSE; reports update the unified cash-vs-credit spend view. [SCOR S2.7/OE4 | source: AB top-up + reporting]</bpmn:documentation>
+      <bpmn:incoming>f14</bpmn:incoming>
+      <bpmn:outgoing>f15</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="End" name="Goods in stock; float maintained; spend reported">
+      <bpmn:documentation>Cash buy complete: goods received via cash GRN (no PO), float deducted and (if low) reimbursed and topped up, cash spend reported alongside credit spend. [SCOR S2.7 | source: AB]</bpmn:documentation>
+      <bpmn:incoming>f11</bpmn:incoming>
+      <bpmn:incoming>f15</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="CreditExit" name="Route to credit / PO branch (out of scope here)">
+      <bpmn:documentation>Expression: purchaseMode == CREDIT. The buy follows the normal sourcing + PO branch (overview, 04, 05): RFQ/award (or framework call-off), PO issued with budget hard-commit, GRN against the PO, three-way match. Shown here only as the alternative branch of the Head's cash-vs-credit decision; detailed elsewhere. [SCOR S1.2-S2.1 | source: AB credit branch]</bpmn:documentation>
+      <bpmn:incoming>f2b</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="f1" sourceRef="Start" targetRef="GwCashCredit" />
+    <bpmn:sequenceFlow id="f2" name="CASH (local)" sourceRef="GwCashCredit" targetRef="InquireAvailability" />
+    <bpmn:sequenceFlow id="f2b" name="CREDIT -&gt; PO branch" sourceRef="GwCashCredit" targetRef="CreditExit" />
+    <bpmn:sequenceFlow id="f3" sourceRef="InquireAvailability" targetRef="ConfirmStock" />
+    <bpmn:sequenceFlow id="f4" sourceRef="ConfirmStock" targetRef="GwFloatSufficient" />
+    <bpmn:sequenceFlow id="f5" name="cashPrice &lt;= float balance" sourceRef="GwFloatSufficient" targetRef="BuyOnFloat" />
+    <bpmn:sequenceFlow id="f6" name="insufficient: top up first" sourceRef="GwFloatSufficient" targetRef="RequestReimb" />
+    <bpmn:sequenceFlow id="f7" sourceRef="BuyOnFloat" targetRef="CashGRN" />
+    <bpmn:sequenceFlow id="f8" sourceRef="CashGRN" targetRef="LogDeduct" />
+    <bpmn:sequenceFlow id="f9" sourceRef="LogDeduct" targetRef="GwFloatLow" />
+    <bpmn:sequenceFlow id="f10" name="balance &lt;= allotment/3" sourceRef="GwFloatLow" targetRef="RequestReimb" />
+    <bpmn:sequenceFlow id="f11" name="float adequate" sourceRef="GwFloatLow" targetRef="End" />
+    <bpmn:sequenceFlow id="f12" sourceRef="RequestReimb" targetRef="FinPrepare" />
+    <bpmn:sequenceFlow id="f13" sourceRef="FinPrepare" targetRef="FinApprove" />
+    <bpmn:sequenceFlow id="f14" sourceRef="FinApprove" targetRef="TopUp" />
+    <bpmn:sequenceFlow id="f15" sourceRef="TopUp" targetRef="End" />
+    <bpmn:textAnnotation id="NoteCash">
+      <bpmn:text>Cash branch is LOCAL ONLY; the Purchase Head decides cash vs credit at assignment. Cash buys have NO PO: the buyer inquires showroom availability, pays from a configurable petty-cash float (e.g. OMR 300), and stores raise a cash GRN with no PO reference. The system logs the receipt and deducts the float. When the balance falls to about one third of the allotment, the buyer requests reimbursement; Finance maker prepares and checker approves (SoD), and the float is topped back up to its allotment. Cash spend is reported alongside credit spend in one unified view.</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Assoc_E08CashFloat_1" sourceRef="CashGRN" targetRef="NoteCash" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagram_E08CashFloat">
+    <bpmndi:BPMNPlane id="Plane_E08CashFloat" bpmnElement="Collaboration_E08CashFloat">
+      <bpmndi:BPMNShape id="Participant_E08CashFloat_di" bpmnElement="Participant_E08CashFloat" isHorizontal="true">
+        <dc:Bounds x="160" y="80" width="2730" height="960" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_buyer_di" bpmnElement="L_buyer" isHorizontal="true">
+        <dc:Bounds x="190" y="80" width="2700" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_supplier_di" bpmnElement="L_supplier" isHorizontal="true">
+        <dc:Bounds x="190" y="240" width="2700" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_recv_di" bpmnElement="L_recv" isHorizontal="true">
+        <dc:Bounds x="190" y="400" width="2700" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_finmaker_di" bpmnElement="L_finmaker" isHorizontal="true">
+        <dc:Bounds x="190" y="560" width="2700" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_finchecker_di" bpmnElement="L_finchecker" isHorizontal="true">
+        <dc:Bounds x="190" y="720" width="2700" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_sys_di" bpmnElement="L_sys" isHorizontal="true">
+        <dc:Bounds x="190" y="880" width="2700" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Start_di" bpmnElement="Start">
+        <dc:Bounds x="267" y="142" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="257" y="182" width="56" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GwCashCredit_di" bpmnElement="GwCashCredit" isMarkerVisible="true">
+        <dc:Bounds x="450" y="135" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="440" y="189" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="InquireAvailability_di" bpmnElement="InquireAvailability">
+        <dc:Bounds x="605" y="120" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ConfirmStock_di" bpmnElement="ConfirmStock">
+        <dc:Bounds x="795" y="280" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GwFloatSufficient_di" bpmnElement="GwFloatSufficient" isMarkerVisible="true">
+        <dc:Bounds x="1020" y="135" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1010" y="189" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BuyOnFloat_di" bpmnElement="BuyOnFloat">
+        <dc:Bounds x="1175" y="120" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CashGRN_di" bpmnElement="CashGRN">
+        <dc:Bounds x="1365" y="440" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="LogDeduct_di" bpmnElement="LogDeduct">
+        <dc:Bounds x="1555" y="920" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GwFloatLow_di" bpmnElement="GwFloatLow" isMarkerVisible="true">
+        <dc:Bounds x="1780" y="135" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1770" y="189" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="RequestReimb_di" bpmnElement="RequestReimb">
+        <dc:Bounds x="1935" y="120" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="FinPrepare_di" bpmnElement="FinPrepare">
+        <dc:Bounds x="2125" y="600" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="FinApprove_di" bpmnElement="FinApprove">
+        <dc:Bounds x="2315" y="760" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TopUp_di" bpmnElement="TopUp">
+        <dc:Bounds x="2505" y="920" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_di" bpmnElement="End">
+        <dc:Bounds x="2737" y="942" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2727" y="982" width="56" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CreditExit_di" bpmnElement="CreditExit">
+        <dc:Bounds x="837" y="142" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="827" y="182" width="56" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="f1_di" bpmnElement="f1">
+        <di:waypoint x="303" y="160" />
+        <di:waypoint x="450" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f2_di" bpmnElement="f2">
+        <di:waypoint x="500" y="160" />
+        <di:waypoint x="605" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f2b_di" bpmnElement="f2b">
+        <di:waypoint x="500" y="160" />
+        <di:waypoint x="837" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f3_di" bpmnElement="f3">
+        <di:waypoint x="725" y="160" />
+        <di:waypoint x="760" y="160" />
+        <di:waypoint x="760" y="320" />
+        <di:waypoint x="795" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f4_di" bpmnElement="f4">
+        <di:waypoint x="915" y="320" />
+        <di:waypoint x="968" y="320" />
+        <di:waypoint x="968" y="160" />
+        <di:waypoint x="1020" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f5_di" bpmnElement="f5">
+        <di:waypoint x="1070" y="160" />
+        <di:waypoint x="1175" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f6_di" bpmnElement="f6">
+        <di:waypoint x="1070" y="160" />
+        <di:waypoint x="1935" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f7_di" bpmnElement="f7">
+        <di:waypoint x="1295" y="160" />
+        <di:waypoint x="1330" y="160" />
+        <di:waypoint x="1330" y="480" />
+        <di:waypoint x="1365" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f8_di" bpmnElement="f8">
+        <di:waypoint x="1485" y="480" />
+        <di:waypoint x="1520" y="480" />
+        <di:waypoint x="1520" y="960" />
+        <di:waypoint x="1555" y="960" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f9_di" bpmnElement="f9">
+        <di:waypoint x="1675" y="960" />
+        <di:waypoint x="1728" y="960" />
+        <di:waypoint x="1728" y="160" />
+        <di:waypoint x="1780" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f10_di" bpmnElement="f10">
+        <di:waypoint x="1830" y="160" />
+        <di:waypoint x="1935" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f11_di" bpmnElement="f11">
+        <di:waypoint x="1830" y="160" />
+        <di:waypoint x="2284" y="160" />
+        <di:waypoint x="2284" y="960" />
+        <di:waypoint x="2737" y="960" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f12_di" bpmnElement="f12">
+        <di:waypoint x="2055" y="160" />
+        <di:waypoint x="2090" y="160" />
+        <di:waypoint x="2090" y="640" />
+        <di:waypoint x="2125" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f13_di" bpmnElement="f13">
+        <di:waypoint x="2245" y="640" />
+        <di:waypoint x="2280" y="640" />
+        <di:waypoint x="2280" y="800" />
+        <di:waypoint x="2315" y="800" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f14_di" bpmnElement="f14">
+        <di:waypoint x="2435" y="800" />
+        <di:waypoint x="2470" y="800" />
+        <di:waypoint x="2470" y="960" />
+        <di:waypoint x="2505" y="960" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f15_di" bpmnElement="f15">
+        <di:waypoint x="2625" y="960" />
+        <di:waypoint x="2737" y="960" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="NoteCash_di" bpmnElement="NoteCash">
+        <dc:Bounds x="160" y="1080" width="1600" height="100" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Assoc_E08CashFloat_1_di" bpmnElement="Assoc_E08CashFloat_1">
+        <di:waypoint x="1425" y="520" />
+        <di:waypoint x="260" y="1080" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

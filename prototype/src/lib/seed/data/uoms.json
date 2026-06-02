@@ -1,0 +1,152 @@
+[
+  {
+    "uom": "KG",
+    "uomDesc": "Kilogram",
+    "uomClass": "WEIGHT",
+    "uomClassDesc": "Weight"
+  },
+  {
+    "uom": "G",
+    "uomDesc": "Gram",
+    "uomClass": "WEIGHT",
+    "uomClassDesc": "Weight"
+  },
+  {
+    "uom": "L",
+    "uomDesc": "Litre",
+    "uomClass": "VOLUME",
+    "uomClassDesc": "Volume"
+  },
+  {
+    "uom": "ML",
+    "uomDesc": "Millilitre",
+    "uomClass": "VOLUME",
+    "uomClassDesc": "Volume"
+  },
+  {
+    "uom": "EA",
+    "uomDesc": "Each",
+    "uomClass": "COUNT",
+    "uomClassDesc": "Count"
+  },
+  {
+    "uom": "BOX",
+    "uomDesc": "Box",
+    "uomClass": "COUNT",
+    "uomClassDesc": "Count"
+  },
+  {
+    "uom": "CTN",
+    "uomDesc": "Carton",
+    "uomClass": "COUNT",
+    "uomClassDesc": "Count"
+  },
+  {
+    "uom": "PAL",
+    "uomDesc": "Pallet",
+    "uomClass": "COUNT",
+    "uomClassDesc": "Count"
+  },
+  {
+    "uom": "ROLL",
+    "uomDesc": "Roll",
+    "uomClass": "COUNT",
+    "uomClassDesc": "Count"
+  },
+  {
+    "uom": "M",
+    "uomDesc": "Metre",
+    "uomClass": "LENGTH",
+    "uomClassDesc": "Length"
+  },
+  {
+    "uom": "DRUM",
+    "uomDesc": "Drum",
+    "uomClass": "COUNT",
+    "uomClassDesc": "Count"
+  },
+  {
+    "uom": "BAG",
+    "uomDesc": "Bag",
+    "uomClass": "COUNT",
+    "uomClassDesc": "Count"
+  },
+  {
+    "uom": "PCS",
+    "uomDesc": "Pieces",
+    "uomClass": "COUNT",
+    "uomClassDesc": "Count"
+  },
+  {
+    "uom": "SET",
+    "uomDesc": "Set",
+    "uomClass": "COUNT",
+    "uomClassDesc": "Count"
+  },
+  {
+    "uom": "LOT",
+    "uomDesc": "Lot",
+    "uomClass": "COUNT",
+    "uomClassDesc": "Count"
+  },
+  {
+    "uom": "TUBE",
+    "uomDesc": "Tube",
+    "uomClass": "COUNT",
+    "uomClassDesc": "Count"
+  },
+  {
+    "uom": "BTL",
+    "uomDesc": "Bottle",
+    "uomClass": "COUNT",
+    "uomClassDesc": "Count"
+  },
+  {
+    "uom": "CAN",
+    "uomDesc": "Can",
+    "uomClass": "COUNT",
+    "uomClassDesc": "Count"
+  },
+  {
+    "uom": "SHT",
+    "uomDesc": "Sheet",
+    "uomClass": "COUNT",
+    "uomClassDesc": "Count"
+  },
+  {
+    "uom": "PK",
+    "uomDesc": "Pack",
+    "uomClass": "COUNT",
+    "uomClassDesc": "Count"
+  },
+  {
+    "uom": "HR",
+    "uomDesc": "Hour",
+    "uomClass": "TIME",
+    "uomClassDesc": "Time"
+  },
+  {
+    "uom": "DAY",
+    "uomDesc": "Day",
+    "uomClass": "TIME",
+    "uomClassDesc": "Time"
+  },
+  {
+    "uom": "JOB",
+    "uomDesc": "Job",
+    "uomClass": "SERVICE",
+    "uomClassDesc": "Service"
+  },
+  {
+    "uom": "M2",
+    "uomDesc": "Square Metre",
+    "uomClass": "AREA",
+    "uomClassDesc": "Area"
+  },
+  {
+    "uom": "TON",
+    "uomDesc": "Tonne",
+    "uomClass": "WEIGHT",
+    "uomClassDesc": "Weight"
+  }
+]

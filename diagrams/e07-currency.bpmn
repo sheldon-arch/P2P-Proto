@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+                  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+                  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+                  id="Definitions_E07Currency" targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:collaboration id="Collaboration_E07Currency">
+    <bpmn:participant id="Participant_E07Currency" name="e07 - Currency Conversion and Graceful Degradation" processRef="Process_E07Currency" />
+  </bpmn:collaboration>
+  <bpmn:process id="Process_E07Currency" isExecutable="false">
+    <bpmn:laneSet id="LaneSet_E07Currency">
+      <bpmn:lane id="L_buyer" name="Procurement / Buyer">
+        <bpmn:flowNodeRef>GwOverride</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_finmaker" name="Finance - Maker">
+        <bpmn:flowNodeRef>RealizedFx</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_sys" name="Platform / System">
+        <bpmn:flowNodeRef>Start</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ApplyOverride</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GwBaseOrNull</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>FetchRate</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GwFetchOk</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GwRateValid</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Convert</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Degrade</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Persist</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>End</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="Start" name="Amount needs base-currency value">
+      <bpmn:documentation>Trigger: any transaction amount (requisition total, quote price, PO line value, invoice amount, payment) needs its base-currency equivalent for thresholds, landed-cost comparison, and analytics. Entry point convertToBase(amount, currency). The base/reporting currency is configurable per tenant (NOT hard-coded INR or OMR). [SCOR OE4 | source: platform-services FX + RA e08]</bpmn:documentation>
+      <bpmn:outgoing>f1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:exclusiveGateway id="GwOverride" name="Per-PO manual exchange rate set?">
+      <bpmn:documentation>Expression: PO.exchangeRate != null (buyer set a manual override on this PO). True -&gt; use the manual rate directly (baseAmount = round(amount * PO.exchangeRate, 2)), skip the live fetch; the override carries its own rate date + source = 'manual'. False -&gt; call the FX service. The override exists for contracts that fix a rate or where the buyer must match a bank rate (AB per-PO override). [SCOR OE4 | source: AB per-PO manual exchange-rate override]</bpmn:documentation>
+      <bpmn:incoming>f1</bpmn:incoming>
+      <bpmn:outgoing>f2</bpmn:outgoing>
+      <bpmn:outgoing>f3</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="ApplyOverride" name="Apply manual rate; record date + source = manual">
+      <bpmn:documentation>baseAmount = round(amount * PO.exchangeRate, 2). Persist the FX context on the line/PO: rate value, rate date (today or the buyer-entered date), source = 'manual', enteredBy. No external call. [SCOR OE4 | source: AB override + review FX-context]</bpmn:documentation>
+      <bpmn:incoming>f2</bpmn:incoming>
+      <bpmn:outgoing>f4</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="GwBaseOrNull" name="currency is base or null?">
+      <bpmn:documentation>Expression: currency == baseCurrency OR currency == null. True -&gt; return the amount UNCHANGED and make NO external call (no conversion needed; rate implicitly 1.0). False (a foreign currency) -&gt; fetch a live rate. This guard prevents needless calls and is the first branch of convertToBase. [SCOR OE4 | source: platform-services FX convertToBase base/null short-circuit]</bpmn:documentation>
+      <bpmn:incoming>f3</bpmn:incoming>
+      <bpmn:outgoing>f5</bpmn:outgoing>
+      <bpmn:outgoing>f6</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="FetchRate" name="Fetch live rate (Frankfurter)">
+      <bpmn:documentation>Call the FX provider (e.g. Frankfurter) for currency -&gt; baseCurrency. The call is wrapped so it NEVER throws to the caller; any transport/HTTP error is captured and turned into a fetch-failure flag. [SCOR OE4 | source: platform-services FX + RA e08 graceful degradation]</bpmn:documentation>
+      <bpmn:incoming>f6</bpmn:incoming>
+      <bpmn:outgoing>f7</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="GwFetchOk" name="Fetch succeeded?">
+      <bpmn:documentation>Expression: the provider returned a 2xx response with a parseable rate. False (timeout, non-2xx, network error, unparseable body) -&gt; LOG the failure and RETURN THE ORIGINAL amount unconverted (graceful degradation). True -&gt; validate the rate value. [SCOR OE4 | source: RA e08 fetch-failure -&gt; return original]</bpmn:documentation>
+      <bpmn:incoming>f7</bpmn:incoming>
+      <bpmn:outgoing>f8</bpmn:outgoing>
+      <bpmn:outgoing>f9</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="GwRateValid" name="Rate finite and &gt; 0?">
+      <bpmn:documentation>Expression: isFinite(rate) AND rate &gt; 0 (rejects 0, NaN, Infinity, negative). False -&gt; LOG the invalid rate and RETURN THE ORIGINAL amount unconverted. True -&gt; convert. This second guard catches a successful fetch that nonetheless yields a garbage rate. [SCOR OE4 | source: RA e08 invalid-rate guard]</bpmn:documentation>
+      <bpmn:incoming>f8</bpmn:incoming>
+      <bpmn:outgoing>f10</bpmn:outgoing>
+      <bpmn:outgoing>f11</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="Convert" name="baseAmount = round(amount * rate, 2)">
+      <bpmn:documentation>Convert: baseAmount = round(amount * rate, 2) (2 decimal places). Persist the FX context: rate value, rate date = fetch date, source = provider name (e.g. 'Frankfurter'). The base amount now drives approval thresholds, landed-cost comparison, and analytics. [SCOR OE4 | source: platform-services FX convert + review FX-context]</bpmn:documentation>
+      <bpmn:incoming>f10</bpmn:incoming>
+      <bpmn:outgoing>f12</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Degrade" name="Log + return original amount unconverted">
+      <bpmn:documentation>Graceful degradation: log the reason (fetch-failure | invalid-rate) and return the ORIGINAL amount unchanged; mark the FX context source = 'unconverted', rate = null so downstream knows the figure is not normalized. convertToBase NEVER throws; the cycle continues rather than blocking on an FX outage. A flagged unconverted amount can be re-converted later. [SCOR OE4 | source: RA e08 never-throws graceful degradation]</bpmn:documentation>
+      <bpmn:incoming>f9</bpmn:incoming>
+      <bpmn:incoming>f11</bpmn:incoming>
+      <bpmn:outgoing>f13</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Persist" name="Persist base amount + FX context (rate, date, source)">
+      <bpmn:documentation>Store totalAmountInBase (or line baseAmount), exchangeRate, fxRateDate, fxSource on the entity. The FX context is required so the realized FX gain/loss can later be computed PO-date-vs-payment-date. Emits SSE; the figure is now comparable across currencies. [SCOR OE4 | source: review FX gain/loss addition]</bpmn:documentation>
+      <bpmn:incoming>f4</bpmn:incoming>
+      <bpmn:incoming>f5</bpmn:incoming>
+      <bpmn:incoming>f12</bpmn:incoming>
+      <bpmn:incoming>f13</bpmn:incoming>
+      <bpmn:outgoing>f14</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="RealizedFx" name="Compute realized FX gain/loss at payment">
+      <bpmn:documentation>At payment time, Finance computes realized FX gain/loss = (PO-date base value) - (payment-date base value) for the same foreign amount, using each date's rate from the stored FX context. Posts the gain/loss to the ledger and surfaces it on the creditor ledger and analytics. This step only runs for foreign-currency settlements. [SCOR S2.7 | source: review realized FX gain/loss PO-vs-payment]</bpmn:documentation>
+      <bpmn:incoming>f14</bpmn:incoming>
+      <bpmn:outgoing>f15</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="End" name="Base value available (or original, flagged)">
+      <bpmn:documentation>Either a normalized base amount with full FX context, or (on degradation) the original amount flagged unconverted. Either way the call returned without throwing and the cycle proceeded. [SCOR OE4 | source: platform-services FX]</bpmn:documentation>
+      <bpmn:incoming>f15</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="f1" sourceRef="Start" targetRef="GwOverride" />
+    <bpmn:sequenceFlow id="f2" name="PO.exchangeRate != null" sourceRef="GwOverride" targetRef="ApplyOverride" />
+    <bpmn:sequenceFlow id="f3" name="no override -&gt; convertToBase" sourceRef="GwOverride" targetRef="GwBaseOrNull" />
+    <bpmn:sequenceFlow id="f4" sourceRef="ApplyOverride" targetRef="Persist" />
+    <bpmn:sequenceFlow id="f5" name="base or null: return unchanged, no call" sourceRef="GwBaseOrNull" targetRef="Persist" />
+    <bpmn:sequenceFlow id="f6" name="foreign currency" sourceRef="GwBaseOrNull" targetRef="FetchRate" />
+    <bpmn:sequenceFlow id="f7" sourceRef="FetchRate" targetRef="GwFetchOk" />
+    <bpmn:sequenceFlow id="f8" name="fetch ok" sourceRef="GwFetchOk" targetRef="GwRateValid" />
+    <bpmn:sequenceFlow id="f9" name="fetch failed -&gt; log, return original" sourceRef="GwFetchOk" targetRef="Degrade" />
+    <bpmn:sequenceFlow id="f10" name="isFinite(rate) AND rate &gt; 0" sourceRef="GwRateValid" targetRef="Convert" />
+    <bpmn:sequenceFlow id="f11" name="0 / NaN / Inf / negative -&gt; log, return original" sourceRef="GwRateValid" targetRef="Degrade" />
+    <bpmn:sequenceFlow id="f12" sourceRef="Convert" targetRef="Persist" />
+    <bpmn:sequenceFlow id="f13" sourceRef="Degrade" targetRef="Persist" />
+    <bpmn:sequenceFlow id="f14" sourceRef="Persist" targetRef="RealizedFx" />
+    <bpmn:sequenceFlow id="f15" sourceRef="RealizedFx" targetRef="End" />
+    <bpmn:textAnnotation id="NoteFx">
+      <bpmn:text>convertToBase(amount, currency): currency == base or null -&gt; return unchanged, NO call. Else fetch live rate (Frankfurter). Fetch failed -&gt; log + return original. Rate not finite or not &gt; 0 (0/NaN/Inf/negative) -&gt; log + return original. Else baseAmount = round(amount * rate, 2). The function NEVER throws; on any failure it degrades to the original amount so an FX outage never blocks the cycle. Per-PO manual override bypasses the fetch. Every conversion stores rate + date + source; realized FX gain/loss is computed PO-date vs payment-date.</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Assoc_E07Currency_1" sourceRef="Degrade" targetRef="NoteFx" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagram_E07Currency">
+    <bpmndi:BPMNPlane id="Plane_E07Currency" bpmnElement="Collaboration_E07Currency">
+      <bpmndi:BPMNShape id="Participant_E07Currency_di" bpmnElement="Participant_E07Currency" isHorizontal="true">
+        <dc:Bounds x="160" y="80" width="2160" height="480" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_buyer_di" bpmnElement="L_buyer" isHorizontal="true">
+        <dc:Bounds x="190" y="80" width="2130" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_finmaker_di" bpmnElement="L_finmaker" isHorizontal="true">
+        <dc:Bounds x="190" y="240" width="2130" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_sys_di" bpmnElement="L_sys" isHorizontal="true">
+        <dc:Bounds x="190" y="400" width="2130" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Start_di" bpmnElement="Start">
+        <dc:Bounds x="267" y="462" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="257" y="502" width="56" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GwOverride_di" bpmnElement="GwOverride" isMarkerVisible="true">
+        <dc:Bounds x="450" y="135" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="440" y="189" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ApplyOverride_di" bpmnElement="ApplyOverride">
+        <dc:Bounds x="605" y="440" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GwBaseOrNull_di" bpmnElement="GwBaseOrNull" isMarkerVisible="true">
+        <dc:Bounds x="1780" y="455" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1770" y="509" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="FetchRate_di" bpmnElement="FetchRate">
+        <dc:Bounds x="795" y="440" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GwFetchOk_di" bpmnElement="GwFetchOk" isMarkerVisible="true">
+        <dc:Bounds x="1020" y="455" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1010" y="509" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GwRateValid_di" bpmnElement="GwRateValid" isMarkerVisible="true">
+        <dc:Bounds x="1210" y="455" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1200" y="509" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Convert_di" bpmnElement="Convert">
+        <dc:Bounds x="1365" y="440" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Degrade_di" bpmnElement="Degrade">
+        <dc:Bounds x="2125" y="440" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Persist_di" bpmnElement="Persist">
+        <dc:Bounds x="1555" y="440" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="RealizedFx_di" bpmnElement="RealizedFx">
+        <dc:Bounds x="1745" y="280" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_di" bpmnElement="End">
+        <dc:Bounds x="1977" y="462" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1967" y="502" width="56" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="f1_di" bpmnElement="f1">
+        <di:waypoint x="303" y="480" />
+        <di:waypoint x="377" y="480" />
+        <di:waypoint x="377" y="160" />
+        <di:waypoint x="450" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f2_di" bpmnElement="f2">
+        <di:waypoint x="500" y="160" />
+        <di:waypoint x="553" y="160" />
+        <di:waypoint x="553" y="480" />
+        <di:waypoint x="605" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f3_di" bpmnElement="f3">
+        <di:waypoint x="500" y="160" />
+        <di:waypoint x="1140" y="160" />
+        <di:waypoint x="1140" y="480" />
+        <di:waypoint x="1780" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f4_di" bpmnElement="f4">
+        <di:waypoint x="725" y="480" />
+        <di:waypoint x="1555" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f5_di" bpmnElement="f5">
+        <di:waypoint x="1805" y="505" />
+        <di:waypoint x="1805" y="535" />
+        <di:waypoint x="1615" y="535" />
+        <di:waypoint x="1615" y="520" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f6_di" bpmnElement="f6">
+        <di:waypoint x="1805" y="505" />
+        <di:waypoint x="1805" y="535" />
+        <di:waypoint x="855" y="535" />
+        <di:waypoint x="855" y="520" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f7_di" bpmnElement="f7">
+        <di:waypoint x="915" y="480" />
+        <di:waypoint x="1020" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f8_di" bpmnElement="f8">
+        <di:waypoint x="1070" y="480" />
+        <di:waypoint x="1210" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f9_di" bpmnElement="f9">
+        <di:waypoint x="1070" y="480" />
+        <di:waypoint x="2125" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f10_di" bpmnElement="f10">
+        <di:waypoint x="1260" y="480" />
+        <di:waypoint x="1365" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f11_di" bpmnElement="f11">
+        <di:waypoint x="1260" y="480" />
+        <di:waypoint x="2125" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f12_di" bpmnElement="f12">
+        <di:waypoint x="1485" y="480" />
+        <di:waypoint x="1555" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f13_di" bpmnElement="f13">
+        <di:waypoint x="2185" y="520" />
+        <di:waypoint x="2185" y="550" />
+        <di:waypoint x="1615" y="550" />
+        <di:waypoint x="1615" y="520" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f14_di" bpmnElement="f14">
+        <di:waypoint x="1675" y="480" />
+        <di:waypoint x="1710" y="480" />
+        <di:waypoint x="1710" y="320" />
+        <di:waypoint x="1745" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f15_di" bpmnElement="f15">
+        <di:waypoint x="1865" y="320" />
+        <di:waypoint x="1921" y="320" />
+        <di:waypoint x="1921" y="480" />
+        <di:waypoint x="1977" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="NoteFx_di" bpmnElement="NoteFx">
+        <dc:Bounds x="160" y="600" width="1600" height="100" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Assoc_E07Currency_1_di" bpmnElement="Assoc_E07Currency_1">
+        <di:waypoint x="2185" y="520" />
+        <di:waypoint x="260" y="600" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

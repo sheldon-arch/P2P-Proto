@@ -1,0 +1,47 @@
+[
+  {
+    "id": "QT-HERO-01",
+    "rfqId": "RFQ-HERO",
+    "supplierId": "SUP-0003",
+    "itemId": "ITM-0006",
+    "unitPrice": 127.69,
+    "currency": "CHF",
+    "paymentTerms": "ADV100",
+    "incoterm": "CIF",
+    "freightPerUnit": 26.118,
+    "dutyPerUnit": 15.961,
+    "landedCostPerUnit": 169.769,
+    "priceSpikeFlag": false,
+    "priceSpikePct": null
+  },
+  {
+    "id": "QT-HERO-02",
+    "rfqId": "RFQ-HERO",
+    "supplierId": "SUP-0001",
+    "itemId": "ITM-0006",
+    "unitPrice": 139.298,
+    "currency": "INR",
+    "paymentTerms": "30-70",
+    "incoterm": "CIF",
+    "freightPerUnit": 7.255,
+    "dutyPerUnit": 8.706,
+    "landedCostPerUnit": 155.259,
+    "priceSpikeFlag": false,
+    "priceSpikePct": null
+  },
+  {
+    "id": "QT-HERO-03",
+    "rfqId": "RFQ-HERO",
+    "supplierId": "SUP-0002",
+    "itemId": "ITM-0006",
+    "unitPrice": 155.259,
+    "currency": "EUR",
+    "paymentTerms": "PA-DOC",
+    "incoterm": "CIF",
+    "freightPerUnit": 11.608,
+    "dutyPerUnit": 13.059,
+    "landedCostPerUnit": 179.926,
+    "priceSpikeFlag": true,
+    "priceSpikePct": 7.0
+  }
+]

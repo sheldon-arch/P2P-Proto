@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+                  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+                  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+                  id="Definitions_E11PermitExpiry" targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:collaboration id="Collaboration_E11PermitExpiry">
+    <bpmn:participant id="Participant_E11PermitExpiry" name="e11 - Permit and Document Expiry Tracking" processRef="Process_E11PermitExpiry" />
+  </bpmn:collaboration>
+  <bpmn:process id="Process_E11PermitExpiry" isExecutable="false">
+    <bpmn:laneSet id="LaneSet_E11PermitExpiry">
+      <bpmn:lane id="L_buyer" name="Procurement / Buyer">
+        <bpmn:flowNodeRef>Start</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>BlockPo</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>AttachPermit</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_qc" name="Quality">
+        <bpmn:flowNodeRef>GwRegulated</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_tax" name="Tax / Compliance">
+        <bpmn:flowNodeRef>GwCertExpiry</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>SuspendSupplier</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_sys" name="Platform / System">
+        <bpmn:flowNodeRef>SurfaceStatus</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GwPermitValid</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ExpiryTimer</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Audit</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>End</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="Start" name="Item selected on requisition / PO">
+      <bpmn:documentation>Trigger: a buyer selects an item on a requisition or PO. Documents attach at two levels: permanent against the supplier (MSDS, vendor registration, COA, certs) and per-item permits. Permits and certs carry BOTH an expiry date AND a quantity allowance. On selection, the system surfaces the item's permit/cert status inline. [SCOR OE4 | ISO 7.5 | source: AB document expiry + quantity, surface on selection]</bpmn:documentation>
+      <bpmn:outgoing>f1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="SurfaceStatus" name="Surface permit / cert status on selection">
+      <bpmn:documentation>System computes and displays each attached permit/cert: status {valid | expiring-soon | expired | quantity-exhausted}, remainingQuantity, expiryDate, daysToExpiry. Emits an alert ON SELECTION (the first of two alert triggers). [SCOR OE4 | ISO 7.5 | source: AB surface-on-selection alert]</bpmn:documentation>
+      <bpmn:incoming>f1</bpmn:incoming>
+      <bpmn:outgoing>f2</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="GwRegulated" name="Regulated chemical (solvent / pesticide)?">
+      <bpmn:documentation>Expression: item.regulatoryClass in {solvent, pesticide, controlled-chemical}. True -&gt; a ministry permit MUST be attached to the PO before it can issue (hard requirement). False -&gt; standard documents only (cert/COA recommended, not a PO-blocking ministry permit). [SCOR OE4 | ISO 8.4.3 | source: AB regulated-chemical ministry permit]</bpmn:documentation>
+      <bpmn:incoming>f2</bpmn:incoming>
+      <bpmn:outgoing>f3</bpmn:outgoing>
+      <bpmn:outgoing>f4</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="GwPermitValid" name="Permit valid by date AND quantity?">
+      <bpmn:documentation>Expression: today &lt;= permit.expiryDate AND permit.remainingQuantity &gt;= orderQuantity. A permit is consumed by QUANTITY OR DATE, whichever comes first: either condition failing makes it unusable. True -&gt; permit usable, attach to PO. False -&gt; permit expired or exhausted; block until a renewed/new permit is attached. [SCOR OE4 | ISO 8.4.3 | source: AB permit consumed by qty OR date, whichever first]</bpmn:documentation>
+      <bpmn:incoming>f3</bpmn:incoming>
+      <bpmn:outgoing>f5</bpmn:outgoing>
+      <bpmn:outgoing>f6</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="BlockPo" name="Block PO; require valid ministry permit">
+      <bpmn:documentation>PO issue is blocked for the regulated item until a valid ministry permit (within date AND with sufficient remaining quantity) is attached. Buyer must obtain/renew the permit and attach it. [SCOR OE4 | ISO 8.4.3 | source: AB hard permit requirement]</bpmn:documentation>
+      <bpmn:incoming>f6</bpmn:incoming>
+      <bpmn:outgoing>f7</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="AttachPermit" name="Attach ministry permit to PO; reserve quantity">
+      <bpmn:documentation>Buyer attaches the valid ministry permit to the PO. System reserves orderQuantity against permit.remainingQuantity (remainingQuantity -= orderQuantity on PO issue) so the permit is consumed by quantity as orders draw it down. Captures permitNumber, issuingMinistry, expiryDate, totalQuantity, remainingQuantity. [SCOR OE4 | ISO 8.4.3 | source: AB permit attach + quantity consumption]</bpmn:documentation>
+      <bpmn:incoming>f5</bpmn:incoming>
+      <bpmn:incoming>f7</bpmn:incoming>
+      <bpmn:outgoing>f8</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:intermediateCatchEvent id="ExpiryTimer" name="Expiry alert &gt;= 1 week before">
+      <bpmn:documentation>Timer: at &gt;= 1 week (7 days) before permit/cert expiryDate, fire the SECOND alert trigger to the handler (buyer) + head. Also fires if remainingQuantity falls below a configurable low threshold. Two alert triggers total: on item selection AND &gt;= 1 week before expiry. [SCOR OE4 | ISO 7.5 | source: AB alert on selection + &gt;=1 week before expiry, to handler + head]</bpmn:documentation>
+      <bpmn:incoming>f8</bpmn:incoming>
+      <bpmn:outgoing>f9</bpmn:outgoing>
+      <bpmn:timerEventDefinition />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:exclusiveGateway id="GwCertExpiry" name="Supplier cert expired?">
+      <bpmn:documentation>Expression: today &gt; supplierCert.expiryDate (an ISO/quality/trade cert on the supplier has lapsed). True -&gt; the cert expiry FEEDS supplier suspension. False -&gt; supplier remains usable; continue monitoring. Cert expiry is one of the suspension triggers (failed audit / expired cert / sanctions / active CAPA). [SCOR S1.6 | ISO 8.4.1 | source: AB cert expiry feeds suspension]</bpmn:documentation>
+      <bpmn:incoming>f4</bpmn:incoming>
+      <bpmn:incoming>f9</bpmn:incoming>
+      <bpmn:outgoing>f10</bpmn:outgoing>
+      <bpmn:outgoing>f11</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="SuspendSupplier" name="Suspend supplier (expired cert)">
+      <bpmn:documentation>Tax/Compliance (or Quality for a quality cert) suspends the supplier: status ONBOARDED -&gt; SUSPENDED. SUSPENDED blocks NEW POs without offboarding; existing commitments continue. permission suppliers.suspend (compliance/quality conditional). On cert renewal the supplier returns SUSPENDED -&gt; ONBOARDED. [SCOR S1.6 | ISO 8.4.1 | source: data-model SUSPENDED state + AB cert-to-suspension]</bpmn:documentation>
+      <bpmn:incoming>f10</bpmn:incoming>
+      <bpmn:outgoing>f12</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="Audit" name="Audit + notify (handler + head)">
+      <bpmn:documentation>System writes audit entries (category supplier/admin) for permit attach, quantity reservation, alerts, and any suspension; notifies handler + head; emits SSE. Document storage retains permits/certs with expiry + quantity per ISO 7.5 records. [SCOR OE4 | ISO 7.5 | source: platform-services audit + notifications + document storage]</bpmn:documentation>
+      <bpmn:incoming>f11</bpmn:incoming>
+      <bpmn:incoming>f12</bpmn:incoming>
+      <bpmn:outgoing>f13</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="End" name="Compliant item proceeds; alerts armed">
+      <bpmn:documentation>Item proceeds with a valid permit attached (where required), quantity reserved, expiry alerts armed (selection + 1-week), and supplier compliance enforced (suspension on lapsed cert). [SCOR OE4 | source: AB]</bpmn:documentation>
+      <bpmn:incoming>f13</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="f1" sourceRef="Start" targetRef="SurfaceStatus" />
+    <bpmn:sequenceFlow id="f2" sourceRef="SurfaceStatus" targetRef="GwRegulated" />
+    <bpmn:sequenceFlow id="f3" name="regulated: needs ministry permit" sourceRef="GwRegulated" targetRef="GwPermitValid" />
+    <bpmn:sequenceFlow id="f4" name="not regulated" sourceRef="GwRegulated" targetRef="GwCertExpiry" />
+    <bpmn:sequenceFlow id="f5" name="valid by date AND quantity" sourceRef="GwPermitValid" targetRef="AttachPermit" />
+    <bpmn:sequenceFlow id="f6" name="expired OR quantity exhausted" sourceRef="GwPermitValid" targetRef="BlockPo" />
+    <bpmn:sequenceFlow id="f7" name="renewed permit obtained" sourceRef="BlockPo" targetRef="AttachPermit" />
+    <bpmn:sequenceFlow id="f8" sourceRef="AttachPermit" targetRef="ExpiryTimer" />
+    <bpmn:sequenceFlow id="f9" sourceRef="ExpiryTimer" targetRef="GwCertExpiry" />
+    <bpmn:sequenceFlow id="f10" name="cert expired -&gt; suspend" sourceRef="GwCertExpiry" targetRef="SuspendSupplier" />
+    <bpmn:sequenceFlow id="f11" name="cert valid" sourceRef="GwCertExpiry" targetRef="Audit" />
+    <bpmn:sequenceFlow id="f12" sourceRef="SuspendSupplier" targetRef="Audit" />
+    <bpmn:sequenceFlow id="f13" sourceRef="Audit" targetRef="End" />
+    <bpmn:textAnnotation id="NotePermit">
+      <bpmn:text>Permits and certs carry BOTH an expiry date AND a quantity allowance, and are consumed by quantity OR date, whichever comes first. On item selection the system surfaces permit/cert status. Two alert triggers: on selection AND at least one week before expiry, to handler + head. Regulated chemicals (solvents, pesticides) require a ministry permit attached to the PO before it can issue; the order quantity is reserved against the permit's remaining quantity. A lapsed supplier cert feeds supplier suspension (ONBOARDED -&gt; SUSPENDED), blocking new POs until renewed.</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Assoc_E11PermitExpiry_1" sourceRef="GwPermitValid" targetRef="NotePermit" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagram_E11PermitExpiry">
+    <bpmndi:BPMNPlane id="Plane_E11PermitExpiry" bpmnElement="Collaboration_E11PermitExpiry">
+      <bpmndi:BPMNShape id="Participant_E11PermitExpiry_di" bpmnElement="Participant_E11PermitExpiry" isHorizontal="true">
+        <dc:Bounds x="160" y="80" width="2160" height="640" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_buyer_di" bpmnElement="L_buyer" isHorizontal="true">
+        <dc:Bounds x="190" y="80" width="2130" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_qc_di" bpmnElement="L_qc" isHorizontal="true">
+        <dc:Bounds x="190" y="240" width="2130" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_tax_di" bpmnElement="L_tax" isHorizontal="true">
+        <dc:Bounds x="190" y="400" width="2130" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_sys_di" bpmnElement="L_sys" isHorizontal="true">
+        <dc:Bounds x="190" y="560" width="2130" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Start_di" bpmnElement="Start">
+        <dc:Bounds x="267" y="142" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="257" y="182" width="56" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SurfaceStatus_di" bpmnElement="SurfaceStatus">
+        <dc:Bounds x="415" y="600" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GwRegulated_di" bpmnElement="GwRegulated" isMarkerVisible="true">
+        <dc:Bounds x="640" y="295" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="630" y="349" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GwPermitValid_di" bpmnElement="GwPermitValid" isMarkerVisible="true">
+        <dc:Bounds x="830" y="615" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="820" y="669" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BlockPo_di" bpmnElement="BlockPo">
+        <dc:Bounds x="985" y="120" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="AttachPermit_di" bpmnElement="AttachPermit">
+        <dc:Bounds x="1175" y="120" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExpiryTimer_di" bpmnElement="ExpiryTimer">
+        <dc:Bounds x="1407" y="622" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1397" y="662" width="56" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GwCertExpiry_di" bpmnElement="GwCertExpiry" isMarkerVisible="true">
+        <dc:Bounds x="1590" y="455" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1580" y="509" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SuspendSupplier_di" bpmnElement="SuspendSupplier">
+        <dc:Bounds x="1745" y="440" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Audit_di" bpmnElement="Audit">
+        <dc:Bounds x="1935" y="600" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_di" bpmnElement="End">
+        <dc:Bounds x="2167" y="622" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2157" y="662" width="56" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="f1_di" bpmnElement="f1">
+        <di:waypoint x="303" y="160" />
+        <di:waypoint x="359" y="160" />
+        <di:waypoint x="359" y="640" />
+        <di:waypoint x="415" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f2_di" bpmnElement="f2">
+        <di:waypoint x="535" y="640" />
+        <di:waypoint x="588" y="640" />
+        <di:waypoint x="588" y="320" />
+        <di:waypoint x="640" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f3_di" bpmnElement="f3">
+        <di:waypoint x="690" y="320" />
+        <di:waypoint x="760" y="320" />
+        <di:waypoint x="760" y="640" />
+        <di:waypoint x="830" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f4_di" bpmnElement="f4">
+        <di:waypoint x="690" y="320" />
+        <di:waypoint x="1140" y="320" />
+        <di:waypoint x="1140" y="480" />
+        <di:waypoint x="1590" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f5_di" bpmnElement="f5">
+        <di:waypoint x="880" y="640" />
+        <di:waypoint x="1028" y="640" />
+        <di:waypoint x="1028" y="160" />
+        <di:waypoint x="1175" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f6_di" bpmnElement="f6">
+        <di:waypoint x="880" y="640" />
+        <di:waypoint x="933" y="640" />
+        <di:waypoint x="933" y="160" />
+        <di:waypoint x="985" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f7_di" bpmnElement="f7">
+        <di:waypoint x="1105" y="160" />
+        <di:waypoint x="1175" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f8_di" bpmnElement="f8">
+        <di:waypoint x="1295" y="160" />
+        <di:waypoint x="1351" y="160" />
+        <di:waypoint x="1351" y="640" />
+        <di:waypoint x="1407" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f9_di" bpmnElement="f9">
+        <di:waypoint x="1443" y="640" />
+        <di:waypoint x="1517" y="640" />
+        <di:waypoint x="1517" y="480" />
+        <di:waypoint x="1590" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f10_di" bpmnElement="f10">
+        <di:waypoint x="1640" y="480" />
+        <di:waypoint x="1745" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f11_di" bpmnElement="f11">
+        <di:waypoint x="1640" y="480" />
+        <di:waypoint x="1788" y="480" />
+        <di:waypoint x="1788" y="640" />
+        <di:waypoint x="1935" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f12_di" bpmnElement="f12">
+        <di:waypoint x="1865" y="480" />
+        <di:waypoint x="1900" y="480" />
+        <di:waypoint x="1900" y="640" />
+        <di:waypoint x="1935" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f13_di" bpmnElement="f13">
+        <di:waypoint x="2055" y="640" />
+        <di:waypoint x="2167" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="NotePermit_di" bpmnElement="NotePermit">
+        <dc:Bounds x="160" y="760" width="1600" height="100" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Assoc_E11PermitExpiry_1_di" bpmnElement="Assoc_E11PermitExpiry_1">
+        <di:waypoint x="855" y="665" />
+        <di:waypoint x="260" y="760" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

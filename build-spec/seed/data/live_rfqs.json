@@ -1,0 +1,18 @@
+[
+  {
+    "id": "RFQ-HERO",
+    "ticketId": "TKT-HERO",
+    "reference": "RFQ-2026-0042",
+    "requisitionLineId": "TL-HERO-API",
+    "invitedSupplierIds": [
+      "SUP-0001",
+      "SUP-0002",
+      "SUP-0003"
+    ],
+    "internalTargetPrice": 140.74894,
+    "sentDate": "2026-05-26",
+    "deadline": "2026-05-31",
+    "status": "RESPONDED",
+    "internalTargetPriceNote": "NEVER sent to supplier"
+  }
+]

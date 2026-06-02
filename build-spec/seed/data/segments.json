@@ -1,0 +1,191 @@
+[
+  {
+    "classType": "ITEM CATEGORY",
+    "classCode": "RM",
+    "classDesc": "Raw Material - Active",
+    "createdBy": "system",
+    "createdDate": "2025-01-01"
+  },
+  {
+    "classType": "ITEM CATEGORY",
+    "classCode": "RMEX",
+    "classDesc": "Raw Material - Excipient",
+    "createdBy": "system",
+    "createdDate": "2025-01-01"
+  },
+  {
+    "classType": "ITEM CATEGORY",
+    "classCode": "PMCTN",
+    "classDesc": "Packaging - Carton",
+    "createdBy": "system",
+    "createdDate": "2025-01-01"
+  },
+  {
+    "classType": "ITEM CATEGORY",
+    "classCode": "PMLBL",
+    "classDesc": "Packaging - Label",
+    "createdBy": "system",
+    "createdDate": "2025-01-01"
+  },
+  {
+    "classType": "ITEM CATEGORY",
+    "classCode": "PMBTL",
+    "classDesc": "Packaging - Bottle",
+    "createdBy": "system",
+    "createdDate": "2025-01-01"
+  },
+  {
+    "classType": "ITEM CATEGORY",
+    "classCode": "PMCLO",
+    "classDesc": "Packaging - Closure",
+    "createdBy": "system",
+    "createdDate": "2025-01-01"
+  },
+  {
+    "classType": "ITEM CATEGORY",
+    "classCode": "PMLFT",
+    "classDesc": "Packaging - Leaflet",
+    "createdBy": "system",
+    "createdDate": "2025-01-01"
+  },
+  {
+    "classType": "ITEM CATEGORY",
+    "classCode": "MRO",
+    "classDesc": "MRO and Spares",
+    "createdBy": "system",
+    "createdDate": "2025-01-01"
+  },
+  {
+    "classType": "ITEM CATEGORY",
+    "classCode": "SVC",
+    "classDesc": "Services",
+    "createdBy": "system",
+    "createdDate": "2025-01-01"
+  },
+  {
+    "classType": "ITEM CATEGORY",
+    "classCode": "LAB",
+    "classDesc": "Lab Consumables",
+    "createdBy": "system",
+    "createdDate": "2025-01-01"
+  },
+  {
+    "classType": "ITEM CATEGORY",
+    "classCode": "CAP",
+    "classDesc": "Capital Equipment",
+    "createdBy": "system",
+    "createdDate": "2025-01-01"
+  },
+  {
+    "classType": "ITEM CATEGORY",
+    "classCode": "CHEM",
+    "classDesc": "Process Chemicals",
+    "createdBy": "system",
+    "createdDate": "2025-01-01"
+  },
+  {
+    "classType": "Item SubCategory",
+    "classCode": "RM-API",
+    "classDesc": "API",
+    "createdBy": "system",
+    "createdDate": "2025-01-01"
+  },
+  {
+    "classType": "Item SubCategory",
+    "classCode": "RM-EXC",
+    "classDesc": "Excipient",
+    "createdBy": "system",
+    "createdDate": "2025-01-01"
+  },
+  {
+    "classType": "Item SubCategory",
+    "classCode": "RM-SOLV",
+    "classDesc": "Solvent",
+    "createdBy": "system",
+    "createdDate": "2025-01-01"
+  },
+  {
+    "classType": "Item SubCategory",
+    "classCode": "PM-FCTN",
+    "classDesc": "Folding Carton",
+    "createdBy": "system",
+    "createdDate": "2025-01-01"
+  },
+  {
+    "classType": "Item SubCategory",
+    "classCode": "PM-SHIP",
+    "classDesc": "Shipper",
+    "createdBy": "system",
+    "createdDate": "2025-01-01"
+  },
+  {
+    "classType": "Item SubCategory",
+    "classCode": "PM-PSL",
+    "classDesc": "Pressure-Sensitive Label",
+    "createdBy": "system",
+    "createdDate": "2025-01-01"
+  },
+  {
+    "classType": "Item SubCategory",
+    "classCode": "PM-HDPE",
+    "classDesc": "HDPE Bottle",
+    "createdBy": "system",
+    "createdDate": "2025-01-01"
+  },
+  {
+    "classType": "Item SubCategory",
+    "classCode": "PM-GLS",
+    "classDesc": "Glass Bottle",
+    "createdBy": "system",
+    "createdDate": "2025-01-01"
+  },
+  {
+    "classType": "Item SubCategory",
+    "classCode": "PM-CRC",
+    "classDesc": "Child-Resistant Closure",
+    "createdBy": "system",
+    "createdDate": "2025-01-01"
+  },
+  {
+    "classType": "Item SubCategory",
+    "classCode": "MRO-BRG",
+    "classDesc": "Bearings",
+    "createdBy": "system",
+    "createdDate": "2025-01-01"
+  },
+  {
+    "classType": "Item SubCategory",
+    "classCode": "MRO-FLT",
+    "classDesc": "Filters",
+    "createdBy": "system",
+    "createdDate": "2025-01-01"
+  },
+  {
+    "classType": "Item SubCategory",
+    "classCode": "MRO-ELC",
+    "classDesc": "Electrical",
+    "createdBy": "system",
+    "createdDate": "2025-01-01"
+  },
+  {
+    "classType": "Item SubCategory",
+    "classCode": "SVC-CAL",
+    "classDesc": "Calibration",
+    "createdBy": "system",
+    "createdDate": "2025-01-01"
+  },
+  {
+    "classType": "Item SubCategory",
+    "classCode": "SVC-MNT",
+    "classDesc": "Maintenance Contract",
+    "createdBy": "system",
+    "createdDate": "2025-01-01"
+  },
+  {
+    "classType": "Item SubCategory",
+    "classCode": "SVC-FRT",
+    "classDesc": "Freight",
+    "createdBy": "system",
+    "createdDate": "2025-01-01"
+  }
+]

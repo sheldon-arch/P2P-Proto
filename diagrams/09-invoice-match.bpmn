@@ -1,0 +1,487 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+                  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+                  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+                  id="Definitions_InvoiceCaptureMatching" targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:collaboration id="Collaboration_InvoiceCaptureMatching">
+    <bpmn:participant id="Participant_InvoiceCaptureMatching" name="09 - Invoice Capture and Matching" processRef="Process_InvoiceCaptureMatching" />
+  </bpmn:collaboration>
+  <bpmn:process id="Process_InvoiceCaptureMatching" isExecutable="false">
+    <bpmn:laneSet id="LaneSet_InvoiceCaptureMatching">
+      <bpmn:lane id="L_supplier" name="Supplier / Vendor">
+        <bpmn:flowNodeRef>Start</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>SubmitInvoice</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_finmaker" name="Finance - Maker">
+        <bpmn:flowNodeRef>CaptureInvoice</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>HoldDuplicate</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_buyer" name="Procurement / Buyer">
+        <bpmn:flowNodeRef>ResolvePrice</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_recv" name="Receiving / Warehouse">
+        <bpmn:flowNodeRef>ResolveQty</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_tax" name="Tax / Compliance">
+        <bpmn:flowNodeRef>ResolveTax</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_eng" name="Engineering">
+        <bpmn:flowNodeRef>MilestoneCheck</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_appr" name="Approver">
+        <bpmn:flowNodeRef>ApproveInvoice</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_sys" name="Platform / System">
+        <bpmn:flowNodeRef>GwDuplicate</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GwMatchType</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>TwoWayMatch</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ThreeWayMatch</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GwMatched</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ClearMatch</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GwException</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GwResolution</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>PostNote</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>RejectInvoice</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ToPayment</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>End</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="Start" name="Goods received / service accepted">
+      <bpmn:documentation>Entry trigger: a GRN was raised (materials, diagram 08) or a service/spares requisition was closed 'received as per order' (no GRN) or a service milestone was accepted. The supplier submits the invoice against the PO. [SCOR S2.7 Authorize Supplier Payment | source: build-new + AB invoice package]</bpmn:documentation>
+      <bpmn:outgoing>f1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:userTask id="SubmitInvoice" name="Submit invoice + supporting documents">
+      <bpmn:documentation>Supplier submits the invoice via the authenticated external form (email + OTP), scoped to own records. Fields: invoiceNumber (text, mandatory), invoiceDate (date, mandatory), poReference (ref PO, mandatory), currency (dropdown of configured currencies, default = PO currency), lines [{poLineId (ref), description (text), quantity (number&gt;0), unitPrice (number&gt;=0), taxCodeId (ref TaxCode), taxableAmount (number), taxAmount (number)}], invoiceTotalInclTax (number&gt;0, mandatory). Documents (AB package): invoice (mandatory), packingList, certificateOfOrigin, awbBl, bayan, healthCert, dgDeclaration (per import). Owning role: Supplier (invoice.capture submit). The buyer may assemble the package on the supplier's behalf (invoice.capture conditional). [SCOR S2.7 | ISO 7.5 records | source: AB invoice package + data-model Invoice]</bpmn:documentation>
+      <bpmn:incoming>f1</bpmn:incoming>
+      <bpmn:outgoing>f2</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="CaptureInvoice" name="Capture invoice in AP, normalize to base currency">
+      <bpmn:documentation>Finance-Maker captures/validates the invoice into accounts payable. The FX service normalizes invoiceTotalInclTax to base currency (convertToBase: base/null -&gt; unchanged; else live rate rounded 2dp; on failure return original unconverted, never throws). Tax is a first-class line attribute so the match reconciles amounts INCLUDING tax; reverse-charge / import VAT flagged for imports; input-VAT/GST credit tracked on recoverable tax. Owning role: Finance-Maker (invoice.capture). Captures realized-FX basis (PO date rate vs payment date rate computed later). [SCOR S2.7 | source: build-new + platform-services FX/tax]</bpmn:documentation>
+      <bpmn:incoming>f2</bpmn:incoming>
+      <bpmn:outgoing>f3</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="GwDuplicate" name="Duplicate invoice?">
+      <bpmn:documentation>Standard AP duplicate control. Branch expression: EXISTS another invoice with same (supplierId AND invoiceNumber AND amount) -&gt; DUPLICATE-INVOICE exception; else -&gt; proceed to match-type gateway. Detection key = supplier + invoice number + amount. [SCOR S2.7 | ISO 8.6 | source: data-model MatchException DUPLICATE-INVOICE]</bpmn:documentation>
+      <bpmn:incoming>f3</bpmn:incoming>
+      <bpmn:outgoing>f4</bpmn:outgoing>
+      <bpmn:outgoing>f5</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="GwMatchType" name="GRN exists for this PO/category?">
+      <bpmn:documentation>Match-type selector. Branch expression: a GRN exists for the PO/category (goods-receipt materials, S2 direct) -&gt; THREE_WAY (PO + GRN + Invoice); no GRN exists (services / freight / spares received by Engineering, S3/T2/T3) -&gt; TWO_WAY (PO + Invoice) plus milestone acceptance for service POs. Rule: three-way iff a GRN exists for the category, else two-way. [SCOR S2.7 | ISO 8.6 | source: data-model match logic two-way vs three-way]</bpmn:documentation>
+      <bpmn:incoming>f5</bpmn:incoming>
+      <bpmn:incoming>f20</bpmn:incoming>
+      <bpmn:outgoing>f6</bpmn:outgoing>
+      <bpmn:outgoing>f7</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="MilestoneCheck" name="Confirm service milestone acceptance">
+      <bpmn:documentation>Two-way path only. For service/contract POs, the PaymentMilestone acceptance replaces the GRN as the third leg's proxy: confirm milestoneId acceptanceStatus == accepted before clearing, so payment releases on acceptance. Fields: milestoneId (ref), acceptanceStatus (dropdown {pending|accepted|rejected}), paymentReleaseOnAcceptance (boolean). Owning role: Engineering / requester acceptance. If no milestone (simple service), proceeds straight to two-way match. [SCOR S2.7 | source: data-model PaymentMilestone + AB engineering completion]</bpmn:documentation>
+      <bpmn:incoming>f7</bpmn:incoming>
+      <bpmn:outgoing>f8</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="TwoWayMatch" name="Two-way match (PO + invoice, incl. tax)">
+      <bpmn:documentation>Match the invoice against the PO only (no GRN). Checks within configurable MatchTolerance: pricePercent = abs(invoiceUnitPrice - poAgreedPrice)/poAgreedPrice; qtyPercent = abs(invoiceQty - poQty)/poQty; absolute amount band on invoiceTotalInclTax vs PO value incl. tax. Within all bands -&gt; matched; outside any -&gt; exception. Defaults configurable per tenant. [SCOR S2.7 | ISO 8.6 | source: data-model MatchTolerance]</bpmn:documentation>
+      <bpmn:incoming>f8</bpmn:incoming>
+      <bpmn:outgoing>f9</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="ThreeWayMatch" name="Three-way match (PO + GRN + invoice, incl. tax)">
+      <bpmn:documentation>Match the invoice against PO AND GRN. Checks within configurable MatchTolerance: price variance pricePercent (invoice vs PO agreed price), quantity qtyPercent (invoice qty vs GRN accepted qty, NOT ordered qty), absolute amount band on invoiceTotalInclTax vs (GRN accepted qty x agreed price + tax). Within all bands -&gt; matched; outside any -&gt; exception. Tax amounts must reconcile (amounts INCLUDING tax). [SCOR S2.7 | ISO 8.6 | source: data-model MatchResult THREE_WAY]</bpmn:documentation>
+      <bpmn:incoming>f6</bpmn:incoming>
+      <bpmn:outgoing>f10</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="GwMatched" name="Within tolerance?">
+      <bpmn:documentation>Branch expression: pricePercent &lt;= tolerance.pricePercent AND qtyPercent &lt;= tolerance.qtyPercent AND abs(amountVariance) &lt;= tolerance.absolute (all incl. tax) -&gt; matchStatus = matched (auto-clear); else -&gt; matchStatus = exception with an exceptionReason. First-time-match rate and three-way-match exception rate are tracked KPIs. [SCOR S2.7 | ISO 8.6 | source: data-model Match state machine]</bpmn:documentation>
+      <bpmn:incoming>f9</bpmn:incoming>
+      <bpmn:incoming>f10</bpmn:incoming>
+      <bpmn:outgoing>f11</bpmn:outgoing>
+      <bpmn:outgoing>f12</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="ClearMatch" name="Auto-clear, relieve GR/IR">
+      <bpmn:documentation>On matched: set MatchResult.matchStatus = matched. For three-way, clear the GrIrEntry: GrIrEntry.invoiceId set, clearedAmount = matched amount, status -&gt; cleared (or partially-cleared for partial invoice), relieving the goods-received-not-invoiced liability. Posts the payable to the creditor ledger. For two-way there is no GR/IR to relieve; the payable posts directly. Emits audit + SSE. [SCOR S2.7 | ISO 8.6 | source: build-new GR/IR clearing]</bpmn:documentation>
+      <bpmn:incoming>f11</bpmn:incoming>
+      <bpmn:incoming>f23</bpmn:incoming>
+      <bpmn:outgoing>f24</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="GwException" name="Exception type -&gt; route to resolver">
+      <bpmn:documentation>Routes by MatchException.type. Branch expression: type == 'price-variance' -&gt; Buyer (price exceptions); type in {'qty-over','qty-under','missing-GR'} -&gt; Receiving (qty exceptions); type == 'tax-mismatch' -&gt; Tax/Compliance (tax exceptions); type == 'DUPLICATE-INVOICE' -&gt; Finance-Maker (hold/reject, no payable created). routedTo per data-model: buyer for price, receiving for qty, finance for tax. [SCOR S2.7 | ISO 8.6 | source: data-model MatchException routing]</bpmn:documentation>
+      <bpmn:incoming>f12</bpmn:incoming>
+      <bpmn:outgoing>f13</bpmn:outgoing>
+      <bpmn:outgoing>f14</bpmn:outgoing>
+      <bpmn:outgoing>f15</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="ResolvePrice" name="Buyer resolves price variance">
+      <bpmn:documentation>Buyer reviews a price-variance exception (invoice unit price differs from PO agreed price beyond tolerance). Resolution (dropdown, mandatory): accept (price valid, e.g. agreed change) | adjust (correct PO/invoice price within editable window) | credit-note (supplier reduces payable) | debit-note (buyer raises against supplier) | reject (send back to supplier). Owning role: Buyer (match.resolveException price; creditNote/debitNote.manage conditional). [SCOR S2.7 | ISO 8.6 | source: data-model resolution set]</bpmn:documentation>
+      <bpmn:incoming>f13</bpmn:incoming>
+      <bpmn:outgoing>f16</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="ResolveQty" name="Receiving resolves quantity / missing-GR">
+      <bpmn:documentation>Receiving reviews qty-over (invoice qty &gt; GRN accepted), qty-under (invoice qty &lt; GRN), or missing-GR (no GRN found for a goods invoice). Resolution (dropdown, mandatory): accept (e.g. raise/correct a GRN, then re-match) | adjust (correct received qty) | credit-note (over-billed qty) | debit-note | reject. missing-GR is resolved by raising the GRN (diagram 08) or confirming the line is two-way (service). Owning role: Receiving (match.resolveException qty). [SCOR S2.7 | ISO 8.6 | source: data-model qty routing]</bpmn:documentation>
+      <bpmn:incoming>f14</bpmn:incoming>
+      <bpmn:outgoing>f17</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="ResolveTax" name="Tax/Compliance resolves tax mismatch">
+      <bpmn:documentation>Tax/Compliance reviews a tax-mismatch (invoice tax code / rate / amount does not reconcile with the PO line tax or jurisdiction rule, including reverse-charge on imports). Resolution (dropdown, mandatory): accept (tax correct) | adjust (correct taxCodeId / taxAmount) | credit-note | debit-note | reject. Confirms recoverable input-VAT/GST credit eligibility. Owning role: Tax/Compliance (match.resolveException tax). [SCOR S2.7 | ISO 8.6 | source: data-model tax routing + tax service]</bpmn:documentation>
+      <bpmn:incoming>f15</bpmn:incoming>
+      <bpmn:outgoing>f18</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="HoldDuplicate" name="Hold / reject duplicate invoice">
+      <bpmn:documentation>Finance-Maker holds a DUPLICATE-INVOICE: no payable is created. Resolution (dropdown): reject (confirmed duplicate -&gt; closed, supplier notified) | accept (false positive: distinct invoice with coincidental key -&gt; override with note, re-route to match). No payment can be scheduled while a duplicate hold is open. Owning role: Finance-Maker. [SCOR S2.7 | ISO 8.6 | source: data-model DUPLICATE-INVOICE control]</bpmn:documentation>
+      <bpmn:incoming>f4</bpmn:incoming>
+      <bpmn:outgoing>f19</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="GwResolution" name="Resolution outcome?">
+      <bpmn:documentation>Branch expression on resolution: resolution in {accept, adjust} -&gt; re-run match (the corrected invoice/PO/GRN/tax re-enters matching); resolution in {credit-note, debit-note} -&gt; post the note to the creditor ledger then clear the adjusted payable; resolution == reject -&gt; return invoice to supplier (terminal for this invoice). credit-note reduces payable (supplier-issued, linkedInvoiceId/linkedMatchExceptionId); debit-note is buyer-raised. [SCOR S2.7 | ISO 8.6 | source: data-model resolution + credit/debit note]</bpmn:documentation>
+      <bpmn:incoming>f16</bpmn:incoming>
+      <bpmn:incoming>f17</bpmn:incoming>
+      <bpmn:incoming>f18</bpmn:incoming>
+      <bpmn:incoming>f19</bpmn:incoming>
+      <bpmn:outgoing>f20</bpmn:outgoing>
+      <bpmn:outgoing>f21</bpmn:outgoing>
+      <bpmn:outgoing>f22</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="PostNote" name="Post credit / debit note to creditor ledger">
+      <bpmn:documentation>Posts a CreditNote (supplier-issued, reduces payable) or DebitNote (buyer-raised) against the creditor ledger: fields linkedInvoiceId, linkedMatchExceptionId, amount, taxAmount, reason. The adjusted net payable then clears the GR/IR (three-way) or posts directly (two-way) and proceeds to approval. [SCOR S2.7 | ISO 8.6 | source: build-new credit/debit note]</bpmn:documentation>
+      <bpmn:incoming>f21</bpmn:incoming>
+      <bpmn:outgoing>f23</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sendTask id="RejectInvoice" name="Return invoice to supplier (rejected)">
+      <bpmn:documentation>Rejected invoice is returned to the supplier with the reason (notification on the order thread); no payable, no payment. Supplier may resubmit a corrected invoice, which re-enters at submit. Terminal for the current invoice. [SCOR S2.7 | source: data-model resolution reject]</bpmn:documentation>
+      <bpmn:incoming>f22</bpmn:incoming>
+      <bpmn:outgoing>f27</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:userTask id="ApproveInvoice" name="Approve invoice before accounts (SoD)">
+      <bpmn:documentation>Invoice approval before it flows to accounts/payment. The matched (or note-adjusted) invoice/package is approved by the configured approver (AB: Procurement Head / PO-head approves the invoice package). SoD: the approver must NOT be the receiver of the same goods (receiver != invoice approver); buyer approval is conditional and not allowed if the buyer was the receiver. Owning role: Approver (invoice.approve; conditional PO-head/buyer). Sets Invoice.approvedBy. [SCOR S2.7 | ISO 8.4 | source: AB invoice-package approval + role-matrix SoD]</bpmn:documentation>
+      <bpmn:incoming>f24</bpmn:incoming>
+      <bpmn:outgoing>f25</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="ToPayment" name="Release approved payable to payment (diagram 10)">
+      <bpmn:documentation>Approved, matched payable is released to the payment schedule (diagram 10). The creditor ledger reflects the net amount (after any credit/debit note and withholding). GR/IR is cleared for three-way lines. Emits audit + SSE. [SCOR S2.7 | source: build-new -&gt; diagram 10]</bpmn:documentation>
+      <bpmn:incoming>f25</bpmn:incoming>
+      <bpmn:outgoing>f26</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="End" name="Matched and approved -&gt; payment (diagram 10)">
+      <bpmn:documentation>Outcome: the invoice is matched (auto-cleared or resolved), approved, GR/IR relieved where applicable, payable posted to the creditor ledger, and handed to diagram 10 payments and installments. Rejected/duplicate invoices exit without a payable. [SCOR S2.7 | source: build-new]</bpmn:documentation>
+      <bpmn:incoming>f26</bpmn:incoming>
+      <bpmn:incoming>f27</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="f1" sourceRef="Start" targetRef="SubmitInvoice" />
+    <bpmn:sequenceFlow id="f2" sourceRef="SubmitInvoice" targetRef="CaptureInvoice" />
+    <bpmn:sequenceFlow id="f3" sourceRef="CaptureInvoice" targetRef="GwDuplicate" />
+    <bpmn:sequenceFlow id="f4" name="duplicate (supplier+invoice#+amount)" sourceRef="GwDuplicate" targetRef="HoldDuplicate" />
+    <bpmn:sequenceFlow id="f5" name="not duplicate" sourceRef="GwDuplicate" targetRef="GwMatchType" />
+    <bpmn:sequenceFlow id="f6" name="GRN exists -&gt; three-way" sourceRef="GwMatchType" targetRef="ThreeWayMatch" />
+    <bpmn:sequenceFlow id="f7" name="no GRN -&gt; two-way" sourceRef="GwMatchType" targetRef="MilestoneCheck" />
+    <bpmn:sequenceFlow id="f8" sourceRef="MilestoneCheck" targetRef="TwoWayMatch" />
+    <bpmn:sequenceFlow id="f9" sourceRef="TwoWayMatch" targetRef="GwMatched" />
+    <bpmn:sequenceFlow id="f10" sourceRef="ThreeWayMatch" targetRef="GwMatched" />
+    <bpmn:sequenceFlow id="f11" name="within tolerance" sourceRef="GwMatched" targetRef="ClearMatch" />
+    <bpmn:sequenceFlow id="f12" name="outside tolerance (exception)" sourceRef="GwMatched" targetRef="GwException" />
+    <bpmn:sequenceFlow id="f13" name="price-variance" sourceRef="GwException" targetRef="ResolvePrice" />
+    <bpmn:sequenceFlow id="f14" name="qty-over / qty-under / missing-GR" sourceRef="GwException" targetRef="ResolveQty" />
+    <bpmn:sequenceFlow id="f15" name="tax-mismatch" sourceRef="GwException" targetRef="ResolveTax" />
+    <bpmn:sequenceFlow id="f16" sourceRef="ResolvePrice" targetRef="GwResolution" />
+    <bpmn:sequenceFlow id="f17" sourceRef="ResolveQty" targetRef="GwResolution" />
+    <bpmn:sequenceFlow id="f18" sourceRef="ResolveTax" targetRef="GwResolution" />
+    <bpmn:sequenceFlow id="f19" sourceRef="HoldDuplicate" targetRef="GwResolution" />
+    <bpmn:sequenceFlow id="f20" name="accept / adjust -&gt; re-match" sourceRef="GwResolution" targetRef="GwMatchType" />
+    <bpmn:sequenceFlow id="f21" name="credit-note / debit-note" sourceRef="GwResolution" targetRef="PostNote" />
+    <bpmn:sequenceFlow id="f22" name="reject" sourceRef="GwResolution" targetRef="RejectInvoice" />
+    <bpmn:sequenceFlow id="f23" sourceRef="PostNote" targetRef="ClearMatch" />
+    <bpmn:sequenceFlow id="f24" sourceRef="ClearMatch" targetRef="ApproveInvoice" />
+    <bpmn:sequenceFlow id="f25" sourceRef="ApproveInvoice" targetRef="ToPayment" />
+    <bpmn:sequenceFlow id="f26" sourceRef="ToPayment" targetRef="End" />
+    <bpmn:sequenceFlow id="f27" name="no payable" sourceRef="RejectInvoice" targetRef="End" />
+    <bpmn:textAnnotation id="NoteMatchType">
+      <bpmn:text>Match type is decided by GRN existence, not by category name. GRN exists (materials, S2 direct) -&gt; THREE-WAY (PO + GRN + invoice), qty compared to GRN ACCEPTED qty not ordered qty. No GRN (services/spares received by Engineering, S3/T2/T3) -&gt; TWO-WAY (PO + invoice) plus milestone acceptance for service POs. All comparisons are amount-inclusive-of-tax; tax is a first-class line attribute and must reconcile (reverse-charge flagged for imports).</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Assoc_InvoiceCaptureMatching_1" sourceRef="GwMatchType" targetRef="NoteMatchType" />
+    <bpmn:textAnnotation id="NoteException">
+      <bpmn:text>Exception reasons and routing: price-variance -&gt; Buyer; qty-over / qty-under / missing-GR -&gt; Receiving; tax-mismatch -&gt; Tax/Compliance; DUPLICATE-INVOICE (supplier+invoice#+amount) -&gt; Finance-Maker hold. Resolutions: accept | adjust (both re-run the match) | credit-note (supplier, reduces payable) | debit-note (buyer-raised) | reject (return to supplier, no payable). Cleared three-way match relieves the GR/IR liability; two-way posts the payable directly.</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Assoc_InvoiceCaptureMatching_2" sourceRef="GwException" targetRef="NoteException" />
+    <bpmn:textAnnotation id="NoteSod">
+      <bpmn:text>Invoice approval precedes accounts. SoD: receiver != invoice approver; buyer approval is conditional and disallowed if the buyer received the goods. This is operational control, separate from the financial maker/checker SoD on the payment release in diagram 10.</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Assoc_InvoiceCaptureMatching_3" sourceRef="ApproveInvoice" targetRef="NoteSod" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagram_InvoiceCaptureMatching">
+    <bpmndi:BPMNPlane id="Plane_InvoiceCaptureMatching" bpmnElement="Collaboration_InvoiceCaptureMatching">
+      <bpmndi:BPMNShape id="Participant_InvoiceCaptureMatching_di" bpmnElement="Participant_InvoiceCaptureMatching" isHorizontal="true">
+        <dc:Bounds x="160" y="80" width="3110" height="1280" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_supplier_di" bpmnElement="L_supplier" isHorizontal="true">
+        <dc:Bounds x="190" y="80" width="3080" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_finmaker_di" bpmnElement="L_finmaker" isHorizontal="true">
+        <dc:Bounds x="190" y="240" width="3080" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_buyer_di" bpmnElement="L_buyer" isHorizontal="true">
+        <dc:Bounds x="190" y="400" width="3080" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_recv_di" bpmnElement="L_recv" isHorizontal="true">
+        <dc:Bounds x="190" y="560" width="3080" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_tax_di" bpmnElement="L_tax" isHorizontal="true">
+        <dc:Bounds x="190" y="720" width="3080" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_eng_di" bpmnElement="L_eng" isHorizontal="true">
+        <dc:Bounds x="190" y="880" width="3080" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_appr_di" bpmnElement="L_appr" isHorizontal="true">
+        <dc:Bounds x="190" y="1040" width="3080" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_sys_di" bpmnElement="L_sys" isHorizontal="true">
+        <dc:Bounds x="190" y="1200" width="3080" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Start_di" bpmnElement="Start">
+        <dc:Bounds x="267" y="142" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="257" y="182" width="56" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SubmitInvoice_di" bpmnElement="SubmitInvoice">
+        <dc:Bounds x="415" y="120" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CaptureInvoice_di" bpmnElement="CaptureInvoice">
+        <dc:Bounds x="605" y="280" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GwDuplicate_di" bpmnElement="GwDuplicate" isMarkerVisible="true">
+        <dc:Bounds x="830" y="1255" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="820" y="1309" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GwMatchType_di" bpmnElement="GwMatchType" isMarkerVisible="true">
+        <dc:Bounds x="1020" y="1255" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1010" y="1309" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="MilestoneCheck_di" bpmnElement="MilestoneCheck">
+        <dc:Bounds x="1175" y="920" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TwoWayMatch_di" bpmnElement="TwoWayMatch">
+        <dc:Bounds x="1365" y="1240" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ThreeWayMatch_di" bpmnElement="ThreeWayMatch">
+        <dc:Bounds x="1935" y="1240" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GwMatched_di" bpmnElement="GwMatched" isMarkerVisible="true">
+        <dc:Bounds x="1590" y="1255" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1580" y="1309" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ClearMatch_di" bpmnElement="ClearMatch">
+        <dc:Bounds x="1745" y="1240" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GwException_di" bpmnElement="GwException" isMarkerVisible="true">
+        <dc:Bounds x="2540" y="1255" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2530" y="1309" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ResolvePrice_di" bpmnElement="ResolvePrice">
+        <dc:Bounds x="1935" y="440" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ResolveQty_di" bpmnElement="ResolveQty">
+        <dc:Bounds x="1935" y="600" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ResolveTax_di" bpmnElement="ResolveTax">
+        <dc:Bounds x="1935" y="760" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="HoldDuplicate_di" bpmnElement="HoldDuplicate">
+        <dc:Bounds x="1935" y="280" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GwResolution_di" bpmnElement="GwResolution" isMarkerVisible="true">
+        <dc:Bounds x="2160" y="1255" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2150" y="1309" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="PostNote_di" bpmnElement="PostNote">
+        <dc:Bounds x="2315" y="1240" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="RejectInvoice_di" bpmnElement="RejectInvoice">
+        <dc:Bounds x="3075" y="1240" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ApproveInvoice_di" bpmnElement="ApproveInvoice">
+        <dc:Bounds x="2505" y="1080" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ToPayment_di" bpmnElement="ToPayment">
+        <dc:Bounds x="2695" y="1240" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_di" bpmnElement="End">
+        <dc:Bounds x="2927" y="1262" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2917" y="1302" width="56" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="f1_di" bpmnElement="f1">
+        <di:waypoint x="303" y="160" />
+        <di:waypoint x="415" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f2_di" bpmnElement="f2">
+        <di:waypoint x="535" y="160" />
+        <di:waypoint x="570" y="160" />
+        <di:waypoint x="570" y="320" />
+        <di:waypoint x="605" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f3_di" bpmnElement="f3">
+        <di:waypoint x="725" y="320" />
+        <di:waypoint x="778" y="320" />
+        <di:waypoint x="778" y="1280" />
+        <di:waypoint x="830" y="1280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f4_di" bpmnElement="f4">
+        <di:waypoint x="880" y="1280" />
+        <di:waypoint x="1408" y="1280" />
+        <di:waypoint x="1408" y="320" />
+        <di:waypoint x="1935" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f5_di" bpmnElement="f5">
+        <di:waypoint x="880" y="1280" />
+        <di:waypoint x="1020" y="1280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f6_di" bpmnElement="f6">
+        <di:waypoint x="1070" y="1280" />
+        <di:waypoint x="1935" y="1280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f7_di" bpmnElement="f7">
+        <di:waypoint x="1070" y="1280" />
+        <di:waypoint x="1123" y="1280" />
+        <di:waypoint x="1123" y="960" />
+        <di:waypoint x="1175" y="960" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f8_di" bpmnElement="f8">
+        <di:waypoint x="1295" y="960" />
+        <di:waypoint x="1330" y="960" />
+        <di:waypoint x="1330" y="1280" />
+        <di:waypoint x="1365" y="1280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f9_di" bpmnElement="f9">
+        <di:waypoint x="1485" y="1280" />
+        <di:waypoint x="1590" y="1280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f10_di" bpmnElement="f10">
+        <di:waypoint x="1995" y="1320" />
+        <di:waypoint x="1995" y="1350" />
+        <di:waypoint x="1615" y="1350" />
+        <di:waypoint x="1615" y="1305" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f11_di" bpmnElement="f11">
+        <di:waypoint x="1640" y="1280" />
+        <di:waypoint x="1745" y="1280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f12_di" bpmnElement="f12">
+        <di:waypoint x="1640" y="1280" />
+        <di:waypoint x="2540" y="1280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f13_di" bpmnElement="f13">
+        <di:waypoint x="2540" y="1280" />
+        <di:waypoint x="2298" y="1280" />
+        <di:waypoint x="2298" y="480" />
+        <di:waypoint x="2055" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f14_di" bpmnElement="f14">
+        <di:waypoint x="2540" y="1280" />
+        <di:waypoint x="2298" y="1280" />
+        <di:waypoint x="2298" y="640" />
+        <di:waypoint x="2055" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f15_di" bpmnElement="f15">
+        <di:waypoint x="2540" y="1280" />
+        <di:waypoint x="2298" y="1280" />
+        <di:waypoint x="2298" y="800" />
+        <di:waypoint x="2055" y="800" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f16_di" bpmnElement="f16">
+        <di:waypoint x="2055" y="480" />
+        <di:waypoint x="2108" y="480" />
+        <di:waypoint x="2108" y="1280" />
+        <di:waypoint x="2160" y="1280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f17_di" bpmnElement="f17">
+        <di:waypoint x="2055" y="640" />
+        <di:waypoint x="2108" y="640" />
+        <di:waypoint x="2108" y="1280" />
+        <di:waypoint x="2160" y="1280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f18_di" bpmnElement="f18">
+        <di:waypoint x="2055" y="800" />
+        <di:waypoint x="2108" y="800" />
+        <di:waypoint x="2108" y="1280" />
+        <di:waypoint x="2160" y="1280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f19_di" bpmnElement="f19">
+        <di:waypoint x="2055" y="320" />
+        <di:waypoint x="2108" y="320" />
+        <di:waypoint x="2108" y="1280" />
+        <di:waypoint x="2160" y="1280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f20_di" bpmnElement="f20">
+        <di:waypoint x="2185" y="1305" />
+        <di:waypoint x="2185" y="1335" />
+        <di:waypoint x="1045" y="1335" />
+        <di:waypoint x="1045" y="1305" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f21_di" bpmnElement="f21">
+        <di:waypoint x="2210" y="1280" />
+        <di:waypoint x="2315" y="1280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f22_di" bpmnElement="f22">
+        <di:waypoint x="2210" y="1280" />
+        <di:waypoint x="3075" y="1280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f23_di" bpmnElement="f23">
+        <di:waypoint x="2375" y="1320" />
+        <di:waypoint x="2375" y="1350" />
+        <di:waypoint x="1805" y="1350" />
+        <di:waypoint x="1805" y="1320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f24_di" bpmnElement="f24">
+        <di:waypoint x="1865" y="1280" />
+        <di:waypoint x="2185" y="1280" />
+        <di:waypoint x="2185" y="1120" />
+        <di:waypoint x="2505" y="1120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f25_di" bpmnElement="f25">
+        <di:waypoint x="2625" y="1120" />
+        <di:waypoint x="2660" y="1120" />
+        <di:waypoint x="2660" y="1280" />
+        <di:waypoint x="2695" y="1280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f26_di" bpmnElement="f26">
+        <di:waypoint x="2815" y="1280" />
+        <di:waypoint x="2927" y="1280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f27_di" bpmnElement="f27">
+        <di:waypoint x="3135" y="1320" />
+        <di:waypoint x="3135" y="1350" />
+        <di:waypoint x="2945" y="1350" />
+        <di:waypoint x="2945" y="1298" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="NoteMatchType_di" bpmnElement="NoteMatchType">
+        <dc:Bounds x="160" y="1400" width="1600" height="100" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Assoc_InvoiceCaptureMatching_1_di" bpmnElement="Assoc_InvoiceCaptureMatching_1">
+        <di:waypoint x="1045" y="1305" />
+        <di:waypoint x="260" y="1400" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="NoteException_di" bpmnElement="NoteException">
+        <dc:Bounds x="160" y="1510" width="1600" height="100" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Assoc_InvoiceCaptureMatching_2_di" bpmnElement="Assoc_InvoiceCaptureMatching_2">
+        <di:waypoint x="2565" y="1305" />
+        <di:waypoint x="260" y="1510" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="NoteSod_di" bpmnElement="NoteSod">
+        <dc:Bounds x="160" y="1620" width="1600" height="100" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Assoc_InvoiceCaptureMatching_3_di" bpmnElement="Assoc_InvoiceCaptureMatching_3">
+        <di:waypoint x="2565" y="1160" />
+        <di:waypoint x="260" y="1620" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

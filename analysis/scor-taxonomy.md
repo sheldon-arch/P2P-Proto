@@ -1,0 +1,1160 @@
+# SCOR DS Taxonomy (extracted verbatim from scordata.json)
+
+Source: ASCM/APICS SCOR Digital Standard, exported as scordata.json (1,640 sections, levels 0-2). This file reproduces the taxonomy (process-area codes, names, and L0->L1->L2 hierarchy) and the People/Practices lists VERBATIM. NOTE: the dataset carries STRUCTURE only (externalId, name, level, hierarchy); it contains no long-form prose process descriptions or metric formulas, so none are invented here.
+
+## Chapter 1: Processes
+
+### Orchestrate Supply Chain
+- L0 [OE] Orchestrate Supply Chain
+  - L1 [OE1] Supply Chain Strategy
+  - L1 [OE2] Business Rules
+  - L1 [OE3] Performance and Continuous Improvement
+  - L1 [OE4] Data, Information, and Technology
+  - L1 [OE5] Human Resources
+  - L1 [OE6] Contracts and Agreements
+  - L1 [OE7] Network Design
+  - L1 [OE8] Regulatory and Compliance
+  - L1 [OE9] Risk
+  - L1 [OE10] Environment, Social, and Governance
+  - L1 [OE11] Enterprise Business Planning
+  - L1 [OE12] Segmentation
+  - L1 [OE13] Circular Supply Chain Management
+    - L2 [OE1.1] Gather and Analyze Overall Organizational Strategy
+    - L2 [OE1.2] Define Strategic Supply Chain Context and Scope
+    - L2 [OE1.3] Gather and Analyze External Supply Chain Insights (Customer, Product, Services)
+    - L2 [OE1.4] Define and Prioritize Product and Service Supply Chain Segments
+    - L2 [OE1.5] Conduct Strategic Supply Chain Analysis, Benchmarking and Gather Insights (Stakeholders, Competitor, Industry, Markets, etc.)
+    - L2 [OE1.6] Conduct Internal Supply Chain Environment and Strategic Risk Assessment
+    - L2 [OE1.7] Develop Supply Chain Performance Objectives and Drivers of Strategic Performance Aligned to Strategic Plan
+    - L2 [OE1.8] Review and Validate Supply Chain Operating Model and Organizational Design to Align to Strategic Plan
+    - L2 [OE1.9] Coordinate and Align Supply Chain Functional and Process Strategies, Information and Data
+    - L2 [OE1.10] Communicate Strategic Goals and Initiatives for Implementation
+    - L2 [OE1.11] Execute, Monitor, and Measure Strategic Plan with Key Stakeholders
+    - L2 [OE2.1] Gather Business Rules
+    - L2 [OE2.2] Interpret Business Rules
+    - L2 [OE2.3] Document Business Rules
+    - L2 [OE2.4] Communicate Business Rules
+    - L2 [OE2.5] Approve and Publish Business Rules
+    - L2 [OE2.6] Retire or Reassess Business Rules
+    - L2 [OE3.1] Develop Balanced Scorecard
+    - L2 [OE3.2] Initiate Reports
+    - L2 [OE3.3] Analyze Data
+    - L2 [OE3.4] Identify the Gaps and Opportunities
+    - L2 [OE3.5] Develop Action Plan(s)
+    - L2 [OE3.6] Prioritize and Approve Action Plan(s)
+    - L2 [OE3.7] Validate Sustained Outcomes
+    - L2 [OE4.1] Define Supply Chain Data, Information and/or Technology Requirements
+    - L2 [OE4.2] Identify Technology Solution Alternatives
+    - L2 [OE4.3] Develop the Architecture Plan
+    - L2 [OE4.4] Select Preferred Technology Solution
+    - L2 [OE4.5] Plan and Approve an Implementation Roadmap
+    - L2 [OE4.6] Pilot and Deploy Technology Solution
+    - L2 [OE4.7] Maintain, Improve, or Retire Technology(ies)
+    - L2 [OE4.8] Govern Data Integrity and Accountability
+    - L2 [OE5.1] Identify Knowledge, Skill, and Resource Requirements
+    - L2 [OE5.2] Assess Available Knowledge, Skills and Resources
+    - L2 [OE5.3] Resource Gaps
+    - L2 [OE5.4] Determine Hiring and Redeployment Plan
+    - L2 [OE5.5] Determine Training Needs
+    - L2 [OE5.6] Approve, Prioritize, and Launch
+    - L2 [OE5.7] Monitor Performance of Skills Development Program and ROE (Return on Education)
+    - L2 [OE6.1] Create Contract and SLA
+    - L2 [OE6.2] Receive and Update
+    - L2 [OE6.3] Record and Distribute
+    - L2 [OE6.4] Activate or Archive
+    - L2 [OE6.5] Review Contract Performance
+    - L2 [OE6.6] Identify Performance Issues and Opportunities
+    - L2 [OE6.7] Identify Resolution and Improvements
+    - L2 [OE6.8] Select, Prioritize, and Distribute Resolutions
+    - L2 [OE7.1] Initiate Supply Chain Modeling (Optimization) Program
+    - L2 [OE7.2] Gather Inputs and Data
+    - L2 [OE7.3] Develop Scenarios
+    - L2 [OE7.4] Model and Simulate Scenarios
+    - L2 [OE7.5] Calculate and Assess Impact Projections
+    - L2 [OE7.6] Select and Approve Recommended Changes
+    - L2 [OE7.7] Develop Implementation Roadmap
+    - L2 [OE7.8] Propose Resource Plan and Gain Budget Approval (Including Change Management)
+    - L2 [OE7.9] Kick Off Project and Monitor Progress
+    - L2 [OE8.1] Determine Regulatory and Compliance Requirements that Apply to Business and Future Compliance Requirements
+    - L2 [OE8.2] Monitor Regulatory Environment
+    - L2 [OE8.3] Assess Regulatory Impact
+    - L2 [OE8.4] Identify Deficiencies / Gaps vs the New / Projected Regulations
+    - L2 [OE8.5] Define Remediation
+    - L2 [OE8.6] Verify that Remediation Steps Have Been Effective
+    - L2 [OE8.7] Publish and Adopt Remediation
+    - L2 [OE9.1] Scan Internal / External Risk Factors
+    - L2 [OE9.2] Identify Risk Event
+    - L2 [OE9.3] Quantify Risk Impact and Probability
+    - L2 [OE9.4] Evaluate Risks through Scenario Analysis
+    - L2 [OE9.5] Risk Resolution Strategy
+    - L2 [OE9.6] Publish and Communicate
+    - L2 [OE10.1] Align or Develop Sustainability Plan
+    - L2 [OE10.2] Align Plan with Supply Chain Processes, People, Performance, and Practices
+    - L2 [OE10.3] Develop Materiality Index at the Enterprise Level
+    - L2 [OE10.4] Identify and Address Risks Related to the Supply Chain's Economic, Ecological and Ethical Impact
+    - L2 [OE10.5] Strengthen the Supply Chain's Resilience to Disruptions
+    - L2 [OE10.6] Develop Integrated Reporting of the Supply Chain's Economic, Ecological and Ethical Impact
+    - L2 [OE11.1] Align Long-Term Financial Plan with Supply Chain Strategy
+    - L2 [OE11.2] Develop Scenarios to Achieve Business Objectives (Economic, Ecological, Ethical)
+    - L2 [OE11.3] Develop Tactical, Operational, and Supply Chain Plans
+    - L2 [OE11.4] Integrate Tactical, Operational, and Supply Chain Plans with Product Life Cycle Plans
+    - L2 [OE11.5] Enable Business Decisions to be Made Through Access to Cross-Functional BI Data
+    - L2 [OE12.1] Define Product and Customer within Supply Chain Definition Matrix
+    - L2 [OE12.2] Apply Applicable Differentiators to Segments
+    - L2 [OE12.3] Define Segments by Differentiators
+    - L2 [OE12.4] Group Segments with Similar Characteristics
+    - L2 [OE12.5] Competitive Requirements - Determine How Segment Competes
+    - L2 [OE12.6] Define Operating Model Considerations to Support Competitive Requirements
+    - L2 [OE12.7] Prepare Benchmark for Performance Comparative
+    - L2 [OE12.8] Submit Benchmark
+    - L2 [OE12.9] Set KPI Targets by Segment
+    - L2 [OE12.10] Establish Strategy to Meet KPI Targets
+    - L2 [OE13.1] Assess the Use of Materials, Water and Energy
+    - L2 [OE13.2] Minimize the Use of Materials, Water and Energy
+    - L2 [OE13.3] Increase the Efficient Use of Fixed Assets
+    - L2 [OE13.4] Reduce Waste
+    - L2 [OE13.5] Extend the Product Life Cycle and Circular Utility
+    - L2 [OE13.6] Maximize Recovery for Reuse and Repurpose
+
+### Plan
+- L0 [P] Plan
+  - L1 [P1] Plan Supply Chain
+  - L1 [P2] Plan Order
+  - L1 [P3] Plan Source
+  - L1 [P4] Plan Transform
+  - L1 [P5] Plan Fulfill
+  - L1 [P6] Plan Return
+    - L2 [P1.1] Capture External Market Signals
+    - L2 [P1.2] Aggregate Supply Chain Requirements
+    - L2 [P1.3] Assess and Create Supply Response
+    - L2 [P1.4] Balance External Market Signals, Supply Chain Requirements, and Supply Chain Response Using Supply Chain Modeling Techniques
+    - L2 [P1.5] Replan, Analyze, and Select Optimal Supply Chain Response
+    - L2 [P1.6] Communicate Plan to Execution Functions and Evaluate
+    - L2 [P2.1] Aggregate Customer Order Requirements
+    - L2 [P2.2] Assess and Create Initial Order Processing Response
+    - L2 [P2.3] Balance Requirements and Order Response
+    - L2 [P2.4] Replan, Analyze, and Select Optimal Order Response
+    - L2 [P2.5] Communicate Finalized Order Response Back to P1.3
+    - L2 [P3.1] Aggregate Source Requirements
+    - L2 [P3.2] Assess and Create Initial Source Response
+    - L2 [P3.3] Balance Requirements and Source Response
+    - L2 [P3.4] Replan, Analyze, and Select Optimal Source Response
+    - L2 [P3.5] Communicate Finalized Source Response Back to P1.3
+    - L2 [P4.1] Aggregate Transform Requirements
+    - L2 [P4.2] Assess and Create Initial Transform Response
+    - L2 [P4.3] Balance Requirements and Transform Response
+    - L2 [P4.4] Replan, Analyze, and Select Optimal Transform Response
+    - L2 [P4.5] Communicate Finalized Transform Response back to P1.3
+    - L2 [P5.1] Aggregate Fulfillment Requirements
+    - L2 [P5.2] Assess and Create Initial Fulfillment Response
+    - L2 [P5.3] Balance Requirements and Fulfillment Response
+    - L2 [P5.4] Replan, Analyze, and Select Optimal Fulfillment Response
+    - L2 [P5.5] Communicate Finalized Fulfillment Response Back to P1.3
+    - L2 [P6.1] Aggregate Return Requirements
+    - L2 [P6.2] Assess and Create Initial Return Response
+    - L2 [P6.3] Balance Requirements and Return Response
+    - L2 [P6.4] Replan, Analyze, and Select Optimal Return Response
+    - L2 [P6.5] Communicate Finalized Return Response Back to P1.3
+
+### Order
+- L0 [O] Order
+  - L1 [O1] Order B2C
+  - L1 [O2] Order B2B
+  - L1 [O3] Order Intra-Company
+    - L2 [O1.1] Receive Customer Information
+    - L2 [O1.2] Apply Customer Loyalty/Prioritization Status
+    - L2 [O1.3] Build Order
+    - L2 [O1.4] Process Payment
+    - L2 [O1.5] Generate Receipt and Shipping Date
+    - L2 [O1.6] Receipt and Process Cancellation
+    - L2 [O2.1] Process Inquiry and Quote
+    - L2 [O2.2] Receive, Enter, and Validate Order
+    - L2 [O2.3] Confirm Inventory Availability and Delivery Date
+    - L2 [O2.4] Apply Allocation Rules
+    - L2 [O2.5] Generate and Submit Order
+    - L2 [O2.6] Process Payment
+    - L2 [O2.7] Transmit Order
+    - L2 [O2.8] Receive and Process Cancellation
+    - L2 [O3.1] Generate Stock Transfer Order (STO)
+    - L2 [O3.2] Confirm Availability and Delivery Date
+    - L2 [O3.3] Apply Allocation Rules
+    - L2 [O3.4] Confirm Order
+    - L2 [O3.5] Transmit Order
+    - L2 [O3.6] Receive and Process Cancellation
+
+### Source
+- L0 [S] Source
+  - L1 [S1] Strategic Source
+  - L1 [S2] Direct Procure
+  - L1 [S3] Indirect Procure
+  - L1 [S4] Source Return
+    - L2 [S1.1] Define Business Need
+    - L2 [S1.2] Conduct Supply Market Analysis
+    - L2 [S1.3] Develop Sourcing Strategy
+    - L2 [S1.4] Pre-procurement Market Testing
+    - L2 [S1.5] Source the Supply Market
+    - L2 [S1.6] Prequalify Suppliers
+    - L2 [S1.7] Determine Level of Collaboration Arrangement
+    - L2 [S1.8] Invite to Tender/Request for Quotation
+    - L2 [S1.9] Analyze Offers and Select Suppliers
+    - L2 [S1.10] Negotiate and Award Contract
+    - L2 [S2.1] Establish Order Signal
+    - L2 [S2.2] Schedule Product Delivery
+    - L2 [S2.3] Manage Inbound Transport
+    - L2 [S2.4] Receive Product
+    - L2 [S2.5] Inspect and Verify
+    - L2 [S2.6] Transfer Product
+    - L2 [S2.7] Authorize Supplier Payment
+    - L2 [S3.1] Establish Order Signal
+    - L2 [S3.2] Schedule Product Delivery
+    - L2 [S3.3] Manage Inbound Transport
+    - L2 [S3.4] Receive Product
+    - L2 [S3.5] Inspect and Verify
+    - L2 [S3.6] Transfer Product
+    - L2 [S3.7] Authorize Supplier Payment
+    - L2 [S4.1] Initiate a Source Return
+    - L2 [S4.2] Request Authorize Product Return
+    - L2 [S4.3] Identify Product Condition/Return Reason
+    - L2 [S4.4] Schedule Product Shipment
+    - L2 [S4.5] Close or Adjust Return Order
+
+### Transform
+- L0 [T] Transform
+  - L1 [T1] Transform Product
+  - L1 [T2] Transform Service
+  - L1 [T3] Transform Maintenance, Repair, and Overhaul (MRO)
+    - L2 [T1.1] Finalize Production Engineering
+    - L2 [T1.2] Schedule Production Activities
+    - L2 [T1.3] Issue Raw Material or Components
+    - L2 [T1.4] Transform Product
+    - L2 [T1.5] Inspect and Test Product
+    - L2 [T1.6] Package Product
+    - L2 [T1.7] Release
+    - L2 [T1.8] Disposition Waste or Surplus (Scrap, Recycle, Repurpose)
+    - L2 [T1.9] Manage Transform Product Assets
+    - L2 [T2.1] Finalize Service Delivery System
+    - L2 [T2.2] Determine the Scope of Service Order and Associated SLAs
+    - L2 [T2.3] Check System Capacity
+    - L2 [T2.4] Check Resource Availability
+    - L2 [T2.5] Schedule Service Requests
+    - L2 [T2.6] Assign Resources and Service Components
+    - L2 [T2.7] Perform Service
+    - L2 [T2.8] Evaluate Service Provision
+    - L2 [T2.9] Receive Customer Acceptance
+    - L2 [T2.10] Invoice and Receive Payments
+    - L2 [T2.11] Terminate Contract Notices
+    - L2 [T2.12] Retrieve Resources and Service Components
+    - L2 [T2.13] Disposition Waste or Surplus
+    - L2 [T3.1] Receive MRO Asset from Return
+    - L2 [T3.2] Diagnose the Conditions and Determine Disposition
+    - L2 [T3.3] Open Request for Maintenance, Repair, or Overhaul
+    - L2 [T3.4] Check Availability of Resources
+    - L2 [T3.5] Schedule MRO
+    - L2 [T3.6] Issue Raw Material or Components or Subassemblies
+    - L2 [T3.7] Transform MRO
+    - L2 [T3.8] Inspect and/or Test Product
+    - L2 [T3.9] Package Product
+    - L2 [T3.10] Assemble Product Documentation
+    - L2 [T3.11] Disposition Waste or Surplus
+    - L2 [T3.12] Manage Transform MRO Assets
+
+### Fulfill
+- L0 [F] Fulfill
+  - L1 [F1] Fulfill B2C
+  - L1 [F2] Fulfill B2B
+  - L1 [F3] Fulfill Intra-company
+    - L2 [F1.1] Receive B2C Product from Source or Transform
+    - L2 [F1.2] Receive Order Signal
+    - L2 [F1.3] Pick Product
+    - L2 [F1.4] Pack Product
+    - L2 [F1.5] Stage Product
+    - L2 [F1.6] Schedule Transportation
+    - L2 [F1.7] Notify and Confirm Shipment Window
+    - L2 [F1.8] Load Vehicle and Generate Shipping Document
+    - L2 [F1.9] Ship Product
+    - L2 [F1.10] Assemble or Install Product
+    - L2 [F1.11] Obtain Proof of Delivery or Customer Acceptance
+    - L2 [F2.1] Receive B2B Product from Source or Transform
+    - L2 [F2.2] Receive Order Signal
+    - L2 [F2.3] Pick Product
+    - L2 [F2.4] Pack and/or Kit Product
+    - L2 [F2.5] Stage Product
+    - L2 [F2.6] Schedule Transportation
+    - L2 [F2.7] Notify and Confirm Dock Appointment
+    - L2 [F2.8] Load Vehicle and Generate Shipping Document
+    - L2 [F2.9] Invoice
+    - L2 [F2.10] Ship Product
+    - L2 [F2.11] Assemble or Install Product
+    - L2 [F2.12] Obtain Proof of Delivery or Customer Acceptance
+    - L2 [F3.1] Receive Intra-company Product from Source or Transform
+    - L2 [F3.2] Receive Order Signal
+    - L2 [F3.3] Pick Product
+    - L2 [F3.4] Pack and/or Kit Product
+    - L2 [F3.5] Stage Product
+    - L2 [F3.6] Schedule Transportation
+    - L2 [F3.7] Notify and Confirm Dock Appointment
+    - L2 [F3.8] Load Vehicle and Generate Shipping Document
+    - L2 [F3.9] Ship Product
+    - L2 [F3.10] Assemble or Install Product
+    - L2 [F3.11] Obtain Proof of Delivery or Customer Acceptance
+    - L2 [F3.12] Update Ledger/Invoice
+
+### Return
+- L0 [R] Return
+  - L1 [R1] Return Product
+  - L1 [R2] Return Service
+  - L1 [R3] Return MRO
+    - L2 [R1.1] Initiate, Authorize, Schedule, Verify Product Return
+    - L2 [R1.2] Receive Product, Rapid Repair/Update
+    - L2 [R1.3] RMA Close or Adjust Return Order
+    - L2 [R1.4] Diagnose and/or Test
+    - L2 [R1.5] Disposition Product
+    - L2 [R1.6] Create/Update Return Documents
+    - L2 [R1.7] Transfer Product
+    - L2 [R1.8] Adjust Financial/Contract/Service Agreement Terms
+    - L2 [R1.9] Storage
+    - L2 [R1.10] Receive Intra-company Product Transfer/Return
+    - L2 [R2.1] Initiate, Authorize, Schedule, Verify Service
+    - L2 [R2.2] Receive Service, Rapid Service Adjustment/Update
+    - L2 [R2.3] Adjust, Cancel, or Close Service
+    - L2 [R2.4] Diagnose Compliance to Service Specification
+    - L2 [R2.5] Adjust Financial/Contract/Service Agreement Terms
+    - L2 [R2.6] Create/Update Documentation
+    - L2 [R2.7] Transfer Service
+    - L2 [R3.1] Initiate, Authorize, Schedule, Verify MRO
+    - L2 [R3.2] Receive MRO, Rapid Repair/Update
+    - L2 [R3.3] Quote with Customer Verification/Authorization
+    - L2 [R3.4] Diagnose and/or Test MRO
+    - L2 [R3.5] Disposition MRO
+    - L2 [R3.6] Create/Update MRO Documents
+    - L2 [R3.7] Transfer MRO
+    - L2 [R3.8] Adjust Financial/Contract/Service Terms
+    - L2 [R3.9] Storage
+
+## Chapter 2: Performance (metric pillars)
+
+### Reliability
+  - L1 [RL.1.1] Perfect Customer Order Fulfillment
+  - L1 [RL.1.2] Perfect Supplier Order Fulfillment
+  - L1 [RL.1.3] Perfect Return Order Fulfillment
+  - L1 [RL] Level-3 Metrics
+    - L2 [RL.2.1] Percentage of Orders Delivered In Full to the Customer
+    - L2 [RL.2.2] Delivery Performance to Original Customer Commit Date
+    - L2 [RL.2.3] Customer Order Documentation Accuracy
+    - L2 [RL.2.4] Customer Order Perfect Condition
+    - L2 [RL.2.5] Percentage of Orders Delivered In Full from the Supplier
+    - L2 [RL.2.6] Delivery Performance to Original Supplier Commit Date
+    - L2 [RL.2.7] Supplier Order Documentation Accuracy
+    - L2 [RL.2.8] Supplier Order Perfect Condition
+    - L2 [RL.2.9] On Time
+    - L2 [RL.2.10] In Full (Correct Product)
+    - L2 [RL.2.11] Correct Documentation
+    - L2 [RL.2.12] Perfect Condition
+    - L2 [RL.3.1] Delivery Item Accuracy to the Customer
+    - L2 [RL.3.2] Delivery Quantity Accuracy to the Customer
+    - L2 [RL.3.3] Customer Commit Date Achievement
+    - L2 [RL.3.4] Delivery Customer Location Accuracy
+    - L2 [RL.3.5] Customer Order Compliance Documentation Accuracy
+    - L2 [RL.3.6] Customer Order Other Required Documentation Accuracy
+    - L2 [RL.3.7] Customer Order Payment Documentation Accuracy
+    - L2 [RL.3.8] Customer Order Shipping Documentation Accuracy
+    - L2 [RL.3.9] Customer Order Percentage of Faultless Installations
+    - L2 [RL.3.10] Percentage of Customer Orders or Lines Received Damage Free
+    - L2 [RL.3.11] Customer Orders Delivered Damage Free Conformance
+    - L2 [RL.3.12] Customer Orders Delivered Defect Free Conformance
+    - L2 [RL.3.13] Delivery Item Accuracy from the Supplier
+    - L2 [RL.3.14] Delivery Quantity Accuracy from the Supplier
+    - L2 [RL.3.15] Supplier Achievement to Original Organization Commit Date
+    - L2 [RL.3.16] Delivery Organization Location Accuracy
+    - L2 [RL.3.17] Supplier Order Compliance Documentation Accuracy
+    - L2 [RL.3.18] Supplier Order Other Required Documentation Accuracy
+    - L2 [RL.3.19] Supplier Order Payment Documentation Accuracy
+    - L2 [RL.3.20] Supplier Order Shipping Documentation Accuracy
+    - L2 [RL.3.21] Supplier Order Percentage of Faultless Installations
+    - L2 [RL.3.22] Percentage of Supplier Orders or Lines Received Damage Free
+    - L2 [RL.3.23] Supplier Orders Delivered Damage Free Conformance
+    - L2 [RL.3.24] Supplier Orders Delivered Defect Free Conformance
+    - L2 [RL.3.25] Warranty and Returns
+    - L2 [RL.3.26] Number of Record Keeping–Related NOVs
+    - L2 [RL.3.27] Percentage of Identified Maintenance, Repair and  
+Overhaul (MRO) Products Returned to Service
+    - L2 [RL.3.28] Percentage of Item Location Accuracy
+    - L2 [RL.3.29] Percentage of Excess Product Returns Delivered Complete to the Designated Return Center
+    - L2 [RL.3.30] Percentage of Faultless Invoices
+    - L2 [RL.3.31] Percentage of Maintenance, Repair and Overhaul (MRO) Returns Delivered to the Correct Service Provider Location
+    - L2 [RL.3.32] Percentage of Products Meeting Specified Environmental Performance Requirements
+    - L2 [RL.3.33] Percentage of Products with Proper Environmental Labeling
+    - L2 [RL.3.34] Percentage of Suppliers Meeting Environmental Metrics and Criteria
+    - L2 [RL.3.35] Percentage of Suppliers with ISO 14001 Certification
+    - L2 [RL.3.36] Percentage of Orders or Lines Processed Complete
+    - L2 [RL.3.37] Percentage of Orders or Lines Received Defect Free
+    - L2 [RL.3.38] Percentage of Orders or Lines Received On Time to Demand Requirement
+    - L2 [RL.3.39] Percentage of Orders or Lines Received with Correct Content
+    - L2 [RL.3.40] Percentage of Orders or Lines Received with Correct Packaging
+    - L2 [RL.3.41] Percentage of Orders or Lines Received with Correct Shipping Documents
+    - L2 [RL.3.42] Percentage of Product Transferred On Time to Demand Requirement
+    - L2 [RL.3.43] Percentage of Product Transferred without Transaction Errors
+    - L2 [RL.3.44] Percentage of Schedules Changed within Supplier’s Lead Time
+    - L2 [RL.3.45] Percentage of Shipping Schedules That Support Customer-Required Return-By Date
+    - L2 [RL.3.46] Fill Rate
+    - L2 [RL.3.47] Forecast Accuracy
+    - L2 [RL.3.48] Number of Occurrences of Incorrect Designated Return Center
+    - L2 [RL.3.49] Number of Occurrences When Excessive Inventory Is Returned and Followed
+    - L2 [RL.3.50] Return Shipments Shipped On Time
+    - L2 [RL.3.51] Schedule Achievement
+    - L2 [RL.3.52] Warranty Costs
+    - L2 [RL.3.53] Waste-Processing Errors
+    - L2 [RL.3.54] Yield
+    - L2 [RL.3.55] Yield Variability
+    - L2 [RL.3.56] Delivery Item Return Accuracy from the Customer
+    - L2 [RL.3.57] Delivery Item Return Quantity from the Customer
+    - L2 [RL.3.58] Uptime
+    - L2 [RL.3.59] Delivery Performance to Customer Request Date
+    - L2 [RL.3.60] Delivery Performance to Request Date
+
+### Responsiveness
+  - L1 [RS.1.1] Customer Order Fulfillment Cycle Time
+  - L1 [RS] Level-3 Metrics
+    - L2 [RS.2.1] Order Cycle Time
+    - L2 [RS.2.2] Source Cycle Time
+    - L2 [RS.2.3] Transform Cycle Time
+    - L2 [RS.2.4] Fulfill Cycle Time
+    - L2 [RS.2.5] Return Cycle Time
+    - L2 [RS.3.1] Percentage of Orders Booked/Managed Perfectly
+    - L2 [RS.3.2] Build Loads Cycle Time
+    - L2 [RS.3.3] Consolidate Orders Cycle Time
+    - L2 [RS.3.4] Receive, Configure, Enter, and Validate Order Cycle Time
+    - L2 [RS.3.5] Reserve Resources and Determine Delivery Date Cycle Time
+    - L2 [RS.3.6] Authorize Supplier Payment Cycle Time
+    - L2 [RS.3.7] Identify Sources of Supply Cycle Time
+    - L2 [RS.3.8] Receive Product Cycle Time
+    - L2 [RS.3.9] Schedule Fulfill Return Products Cycle Time
+    - L2 [RS.3.10] Select Supplier and Negotiate Cycle Time
+    - L2 [RS.3.11] Transfer Product Cycle Time
+    - L2 [RS.3.12] Verify Raw Material or Product Cycle Time
+    - L2 [RS.3.13] Finalize Production Engineering Cycle Time
+    - L2 [RS.3.14] Issue Material Cycle Time
+    - L2 [RS.3.15] Produce and Test Cycle Time
+    - L2 [RS.3.16] Release Finished Product to Fulfill Cycle Time
+    - L2 [RS.3.17] Schedule Production Activities Cycle Time
+    - L2 [RS.3.18] Stage Finished Product Cycle Time
+    - L2 [RS.3.19] Package Cycle Time
+    - L2 [RS.3.20] Install Product Cycle Time
+    - L2 [RS.3.21] Load Product & Generate Shipping Documents Cycle Time
+    - L2 [RS.3.22] Pack Product Cycle Time
+    - L2 [RS.3.23] Pick Product Cycle Time
+    - L2 [RS.3.24] Receive and Verify Product by Customer Cycle Time
+    - L2 [RS.3.25] Receive Product from Source or Transform Cycle Time
+    - L2 [RS.3.26] Route Shipments Cycle Time
+    - L2 [RS.3.27] Schedule Installation Cycle Time
+    - L2 [RS.3.28] Select Carriers and Rate Shipments Cycle Time
+    - L2 [RS.3.29] Ship Product Cycle Time
+    - L2 [RS.3.30] Assess Delivery Performance Cycle Time
+    - L2 [RS.3.31] Assess Supplier Performance Cycle Time
+    - L2 [RS.3.32] Asset Turns
+    - L2 [RS.3.33] Authorize Defective Product Return Cycle Time
+    - L2 [RS.3.34] Authorize Excess Product Return Cycle Time
+    - L2 [RS.3.35] Authorize Maintenance, Repair and Overhaul (MRO) Product Return Cycle Time
+    - L2 [RS.3.36] Average Days per Engineering Change
+    - L2 [RS.3.37] Average Days per Schedule Change
+    - L2 [RS.3.38] Average Release Cycle of Changes
+    - L2 [RS.3.39] Balance Product Resources with Product Requirements Cycle Time
+    - L2 [RS.3.40] Balance Production Resources with Production Requirements Cycle Time
+    - L2 [RS.3.41] Balance Return Resources with Return Requirements Cycle Time
+    - L2 [RS.3.42] Balance Supply Chain Resources with Supply Chain Requirements Cycle Time
+    - L2 [RS.3.43] Current Customer Return Order Cycle Time
+    - L2 [RS.3.44] Current Logistics Order Cycle Time
+    - L2 [RS.3.45] Current Manufacturing Order Cycle Time
+    - L2 [RS.3.46] Current Supplier Return Order Cycle Time
+    - L2 [RS.3.47] Fulfill and Install Cycle Time
+    - L2 [RS.3.48] Enter Order, Commit Resources and Launch Program Cycle Time
+    - L2 [RS.3.49] Establish and Communicate Return Plans Cycle Time
+    - L2 [RS.3.50] Establish Delivery Plans Cycle Time
+    - L2 [RS.3.51] Establish Production Plans Cycle Time
+    - L2 [RS.3.52] Establish Sourcing Plans Cycle Time
+    - L2 [RS.3.53] Establish Supply Chain Plans Cycle Time
+    - L2 [RS.3.54] Identify, Assess and Aggregate Production Resources Cycle Time
+    - L2 [RS.3.55] Identify, Assess and Aggregate Delivery Resources Cycle Time
+    - L2 [RS.3.56] Identify, Assess and Aggregate Product Resources Cycle Time
+    - L2 [RS.3.57] Identify, Assess and Aggregate Supply Chain Resources Cycle Time
+    - L2 [RS.3.58] Identify, Prioritize and Aggregate Delivery Requirements Cycle Time
+    - L2 [RS.3.59] Identify, Prioritize and Aggregate Product Requirements Cycle Time
+    - L2 [RS.3.60] Identify, Prioritize and Aggregate Production Requirements Cycle Time
+    - L2 [RS.3.61] Identify, Prioritize and Aggregate Return Requirements Cycle Time
+    - L2 [RS.3.62] Identify, Prioritize and Aggregate Supply Chain Requirements Cycle Time
+    - L2 [RS.3.63] In-Stock Percentage
+    - L2 [RS.3.64] Invoice Cycle Time
+    - L2 [RS.3.65] Issue Sourced and In-Process Product Cycle Time
+    - L2 [RS.3.66] Maintain Source Data Cycle Time
+    - L2 [RS.3.67] Manage Business Rules for Plan Processes Cycle Time
+    - L2 [RS.3.68] Manage Business Rules for Return Processes Cycle Time
+    - L2 [RS.3.69] Manage Capital Assets Cycle Time
+    - L2 [RS.3.70] Manage Fulfill Business Rules Cycle Time
+    - L2 [RS.3.71] Manage Fulfill Capital Assets Cycle Time
+    - L2 [RS.3.72] Manage Fulfill Information Cycle Time
+    - L2 [RS.3.73] Manage Import and Export Requirements Cycle
+    - L2 [RS.3.74] Manage Integrated Supply Chain Capital Assets Cycle Time
+    - L2 [RS.3.75] Manage Integrated Supply Chain Inventory Cycle Time
+    - L2 [RS.3.76] Manage Integrated Supply Chain Transportation Cycle Time
+    - L2 [RS.3.77] Manage Transform Equipment and Facilities Cycle Time
+    - L2 [RS.3.78] Manage Transform Information Cycle Time
+    - L2 [RS.3.79] Manage Performance of Return Processes Cycle Time
+    - L2 [RS.3.80] Manage Performance of Supply Chain Cycle Time
+    - L2 [RS.3.81] Manage Plan Data Collection Cycle Time
+    - L2 [RS.3.82] Manage Planning Configuration Cycle Time
+    - L2 [RS.3.83] Manage Production Network Cycle Time
+    - L2 [RS.3.84] Manage Production Performance Cycle Time
+    - L2 [RS.3.85] Manage Production Rules Cycle Time
+    - L2 [RS.3.86] Manage Return Capital Assets Cycle Time
+    - L2 [RS.3.87] Manage Return Data Collection Cycle Time
+    - L2 [RS.3.88] Manage Return Network Configuration Cycle Time
+    - L2 [RS.3.89] Manage Return Transportation Cycle Time
+    - L2 [RS.3.90] Manage Sourcing Business Rules Cycle Time
+    - L2 [RS.3.91] Manage Supplier Agreements Cycle Time
+    - L2 [RS.3.92] Manage Supplier Network Cycle Time
+    - L2 [RS.3.93] Manage Transportation for Work in Process Cycle Time
+    - L2 [RS.3.94] Manage Transportation Cycle Time
+    - L2 [RS.3.95] Negotiate and Receive Contract Cycle Time
+    - L2 [RS.3.96] Obtain and Respond to Requests for Proposal (RFPs) and Requests for Quote (RFQs) Cycle Time
+    - L2 [RS.3.97] Order Fulfillment Dwell Time
+    - L2 [RS.3.98] Plan Cycle Time
+    - L2 [RS.3.99] Plan Source Cycle Time
+    - L2 [RS.3.100] Process Inquiry and Quote Cycle Time
+    - L2 [RS.3.101] Receive and Verify Product Cycle Time
+    - L2 [RS.3.102] Receive Defective Product Cycle Time
+    - L2 [RS.3.103] Receive Excess Product Cycle Time
+    - L2 [RS.3.104] Receive Maintenance, Repair and Overhaul (MRO) Product Cycle Time
+    - L2 [RS.3.105] Receive Product from Transform or Source Cycle Time
+    - L2 [RS.3.106] Receive, Enter and Validate Order Cycle Time
+    - L2 [RS.3.107] Receiving Product Cycle Time
+    - L2 [RS.3.108] Reserve Inventory and Determine Delivery Date Cycle Time
+    - L2 [RS.3.109] Schedule Defective Return Receipt Cycle Time
+    - L2 [RS.3.110] Schedule Excess Return Receipt Cycle Time
+    - L2 [RS.3.111] Schedule Maintenance, Repair and Overhaul (MRO) Return Receipt Cycle Time
+    - L2 [RS.3.112] Source Return Cycle Time
+    - L2 [RS.3.113] Transfer Defective Product Cycle Time
+    - L2 [RS.3.114] Transfer Excess Product Cycle Time
+    - L2 [RS.3.115] Transfer Maintenance, Repair and Overhaul (MRO) Product Cycle Time
+    - L2 [RS.3.116] Waste Accumulation Time
+    - L2 [RS.3.117] Diagnostic Cycle Time
+    - L2 [RS.3.118] Mean Time to Repair
+
+### Agility
+  - L1 [AG.1.1] Supply Chain Agility
+  - L1 [AG] Level-3 Metrics
+    - L2 [AG.2.1] Order Agility
+    - L2 [AG.2.2] Source Agility
+    - L2 [AG.2.3] Transform Agility
+    - L2 [AG.2.4] Fulfill Agility
+    - L2 [AG.2.5] Return Agility
+    - L2 [AG.3.1] Overall Value at Risk (VAR)
+    - L2 [AG.3.2] Percentage of Labor Used in Logistics but Not Used in Direct Activity
+    - L2 [AG.3.3] Percentage of Labor Used in Manufacturing but Not Used in Direct Activity
+    - L2 [AG.3.4] Additional Fulfill Return Volume
+    - L2 [AG.3.5] Additional Delivery Volume
+    - L2 [AG.3.6] Additional Source Volumes Obtained in 30 Days
+    - L2 [AG.3.7] Current Fulfill Return Volume
+    - L2 [AG.3.8] Current Delivery Volume
+    - L2 [AG.3.9] Current Transform Volume
+    - L2 [AG.3.10] Current Purchase Order Cycle Times
+    - L2 [AG.3.11] Current Source Return Volume
+    - L2 [AG.3.12] Current Source Volume
+    - L2 [AG.3.13] Customer Return Order Cycle Time Reestablished and Sustained in 30 Days
+    - L2 [AG.3.14] Demand Sourcing — Supplier Constraints
+
+### Cost
+  - L1 [CO.1.1] Total Supply Chain Management Cost
+  - L1 [CO.1.2] Cost of Goods Sold (COGS)
+  - L1 [CO] Level-3 Metrics
+    - L2 [CO.2.1] Order Management Cost
+    - L2 [CO.2.2] Material Acquisition Cost
+    - L2 [CO.2.3] Inventory Carrying Cost
+    - L2 [CO.2.4] Supply Chain Finance & Planning Cost
+    - L2 [CO.2.5] Supply Chain IT Cost
+    - L2 [CO.2.6] Direct Material Cost
+    - L2 [CO.2.7] Direct Labor Cost
+    - L2 [CO.2.8] Indirect Cost Related to Production
+    - L2 [CO.3.1] New Product Release Phase-In and Maintenance
+    - L2 [CO.3.2] Create Customer Order
+    - L2 [CO.3.3] Order Entry and Maintenance
+    - L2 [CO.3.4] Contract/Program and Channel Management
+    - L2 [CO.3.5] Installation Planning
+    - L2 [CO.3.6] Order Fulfillment
+    - L2 [CO.3.7] Distribution
+    - L2 [CO.3.8] Transportation, Outbound Freight and Duties
+    - L2 [CO.3.9] Installation
+    - L2 [CO.3.10] Customer Invoicing/Accounting
+    - L2 [CO.3.11] Materials (Commodity) Management and Planning
+    - L2 [CO.3.12] Supplier Quality Engineering
+    - L2 [CO.3.13] Inbound Freight and Duties
+    - L2 [CO.3.14] Receiving and Material Storage
+    - L2 [CO.3.15] Incoming Inspection
+    - L2 [CO.3.16] Material Process and Component Engineering
+    - L2 [CO.3.17] Tooling
+    - L2 [CO.3.18] Opportunity
+    - L2 [CO.3.19] Shrinkage
+    - L2 [CO.3.20] Insurance and Taxes
+    - L2 [CO.3.21] Total Obsolescence for Raw Material, WIP, and Finished Goods Inventory
+    - L2 [CO.3.22] Channel Obsolescence
+    - L2 [CO.3.23] Field Service Parts Obsolescence
+    - L2 [CO.3.24] Supply-Chain Finance Costs
+    - L2 [CO.3.25] Demand/Supply Planning Costs
+    - L2 [CO.3.26] Tariffs as Percentage of COGS
+
+### Profit
+  - L1 [PR.1.1] Earnings Before Interest and Taxes (EBIT) as a Percent of Revenue
+  - L1 [PR.1.2] Effective Tax Rate
+
+### Assets
+  - L1 [AM.1.1] Cash-to-Cash Cycle Time
+  - L1 [AM.1.2] Return on Fixed Assets
+  - L1 [AM.1.3] Return on Working Capital
+  - L1 [AM] Level-3 Metrics
+    - L2 [AM.2.1] Days Sales Outstanding
+    - L2 [AM.2.2] Inventory Days of Supply
+    - L2 [AM.2.3] Days Payable Outstanding
+    - L2 [AM.2.4] Revenue
+    - L2 [AM.2.5] Fixed Assets
+    - L2 [AM.2.6] Accounts Payable
+    - L2 [AM.2.7] Accounts Receivable
+    - L2 [AM.2.8] Inventory
+    - L2 [AM.3.1] Inventory Days of Supply — Raw Material
+    - L2 [AM.3.2] Inventory Days of Supply — Work in Process (WIP)
+    - L2 [AM.3.3] Percentage of Defective Inventory
+    - L2 [AM.3.4] Percentage of Excess Inventory
+    - L2 [AM.3.5] Inventory Days of Supply — Finished Goods
+    - L2 [AM.3.6] Percentage of the Product Content That Has a Supplier Take-Back Program for Recycling or Reuse
+    - L2 [AM.3.7] Percentage of Materials That Are Recyclable or Reusable
+    - L2 [AM.3.8] Percentage of Packaging and Shipping Materials Reused Internally
+    - L2 [AM.3.9] Percentage of Production Materials Reused
+    - L2 [AM.3.10] Percentage of Products Consisting of Previously Used Components
+    - L2 [AM.3.11] Average Age of Excess Inventory
+    - L2 [AM.3.12] Capacity Utilization
+    - L2 [AM.3.13] Fulfill Return Cycle Time
+    - L2 [AM.3.14] Hazardous Materials Used During Production Process as a Percentage of All Materials
+    - L2 [AM.3.15] Hazardous Waste as Percentage of Total Waste
+    - L2 [AM.3.16] Packaging as a Percentage of Total Material
+    - L2 [AM.3.17] Rebuild or Recycle Rate
+    - L2 [AM.3.18] Recyclable Waste as Percentage of Total Waste
+    - L2 [AM.3.19] Return for Recycle Rate
+    - L2 [AM.3.20] Return Rate
+    - L2 [AM.3.21] Percentage of Defective Inventory in Disposition
+    - L2 [AM.3.22] Percentage of Defective Inventory in Return Authorization
+    - L2 [AM.3.23] Percentage of Defective Product Inventory in Transportation
+    - L2 [AM.3.24] Percentage of Defective Product Inventory in Scheduling
+    - L2 [AM.3.25] Percentage of Excess Inventory in Disposition
+    - L2 [AM.3.26] Percentage of Excess Inventory in Transportation
+    - L2 [AM.3.27] Percentage of Excess Inventory in Request Return Authorization
+    - L2 [AM.3.28] Percentage of Excess Inventory in Identification
+    - L2 [AM.3.29] Percentage of Excess Inventory in Scheduling
+    - L2 [AM.3.30] Percentage of Unserviceable Maintenance, Repair and Overhaul (MRO) Inventory in Disposition
+    - L2 [AM.3.31] Percentage of Unserviceable Maintenance, Repair and Overhaul (MRO) Inventory in Transportation
+    - L2 [AM.3.32] Percentage of Unserviceable Maintenance, Repair and Overhaul (MRO) Inventory in Return Authorization
+    - L2 [AM.3.33] Percentage of Unserviceable Maintenance, Repair and Overhaul (MRO) Inventory in Identification
+    - L2 [AM.3.34] Percentage of Unserviceable Maintenance, Repair and Overhaul (MRO) Inventory in Scheduling
+
+### Environmental
+  - L1 [EV.1.1] Materials Used
+  - L1 [EV.1.2] Energy Consumed
+  - L1 [EV.1.3] Water Consumed
+  - L1 [EV.1.4] GHG Emissions
+  - L1 [EV.1.5] Waste Generated
+  - L1 [EV] Level-3 Metrics
+    - L2 [EV.2.1] Renewable Materials Used
+    - L2 [EV.2.2] Nonrenewable Materials Used
+    - L2 [EV.2.3] Renewable Energy Consumed
+    - L2 [EV.2.4] Nonrenewable Energy Consumed
+    - L2 [EV.2.5] Water Withdrawal
+    - L2 [EV.2.6] Water Discharged
+    - L2 [EV.2.7] Direct (Scope 1) GHG Emissions
+    - L2 [EV.2.8] Energy Indirect (Scope 2) GHG Emissions
+    - L2 [EV.2.9] Other Indirect (Scope 3) GHG Emissions
+    - L2 [EV.2.10] Generated Waste Diverted from Disposal
+    - L2 [EV.2.11] Generated Waste Directed to Disposal
+    - L2 [EV.3.1] Reclaimed Products and Their Packaging Materials
+    - L2 [EV.3.2] Recycled Input Materials Used
+    - L2 [EV.3.3] Virgin (Non-recycled) Input Materials Used
+    - L2 [EV.3.4] Renewable Energy Sold
+    - L2 [EV.3.5] Nonrenewable Energy Sold
+    - L2 [EV.3.6] Water Recycled and Reused
+    - L2 [EV.3.7] Waste Diverted from Disposal for Reuse
+    - L2 [EV.3.8] Waste Diverted from Disposal for Recycling
+    - L2 [EV.3.9] Waste Diverted from Disposal for Other Recovery Options
+    - L2 [EV.3.10] Waste Directed to Disposal for Incineration
+    - L2 [EV.3.11] Waste Directed to Disposal for Landfilling
+    - L2 [EV.3.12] Waste Directed to Disposal for Other Disposal Operations
+    - L2 [EV.3.13] Recovery potential of materials used
+    - L2 [EV.3.14] Actual recovery of materials
+    - L2 [EV.3.15] Percentage of Circularity
+    - L2 [EV.3.16] Energy Intensity
+    - L2 [EV.3.17] Water Intensity
+    - L2 [EV.3.18] GHG emissions intensity
+    - L2 [EV.3.19] Returns Prevention Rate
+    - L2 [EV.3.20] Responsible disposal
+    - L2 [EV.3.21] Percentage of end-of-life returns harvested for components/spare parts
+    - L2 [EV.3.22] Disposition mix compared to target mix
+    - L2 [EV.3.23] Annual Carbon emissions avoided
+    - L2 [EV.3.24] Standardization of integration points across platforms
+    - L2 [EV.3.25] Cost recovery per product family sku through salvage/circular efforts
+
+### Social
+  - L1 [SC.1.1] Diversity and Inclusion
+  - L1 [SC.1.2] Wage Level
+  - L1 [SC.1.3] Training
+  - L1 [SC] Level-3 Metrics
+    - L2 [SC.3.1] Employment
+    - L2 [SC.3.2] New employee Hires
+    - L2 [SC.3.3] Employee Turnover
+    - L2 [SC.3.4] Anti-corruption
+    - L2 [SC.3.5] Occupational Safety & Health
+    - L2 [SC.3.6] Work-related injuries
+    - L2 [SC.3.7] Work-related ill health
+    - L2 [SC.3.8] Pay equality
+    - L2 [SC.3.9] Parental leave
+    - L2 [SC.3.10] Child labor
+    - L2 [SC.3.11] Career and Development
+    - L2 [SC.3.12] Risk Mitigation Costs for Sustainability
+    - L2 [SC.3.13] Manage Business Rules for Sustainability
+
+
+## Chapter 3: People
+
+### Skills (205 entries)
+  - [HS.0001] 3-Way Receiving Match
+  - [HS.0002] Acceptance Testing
+  - [HS.0003] Accounting
+  - [HS.0004] Advertising Methodologies
+  - [HS.0005] Assembly Process Design
+  - [HS.0006] Asset Management
+  - [HS.0007] Availability Management
+  - [HS.0009] Bar Code Handling And Radio Frequency Identification (RFID)
+  - [HS.0010] Basic Finance
+  - [HS.0011] Basic Transportation Management
+  - [HS.0012] Benchmarking
+  - [HS.0013] Blanket Purchase Order Process
+  - [HS.0014] Build Schedule Evaluation
+  - [HS.0015] Computer-Aided Design and Computer-Aided Manufacturing (CAD/CAM)
+  - [HS.0016] Capacity Planning and Management
+  - [HS.0018] Carrier Selection
+  - [HS.0019] Change Order Development
+  - [HS.0020] Competitive Bidding
+  - [HS.0021] Consignment Agreement Development
+  - [HS.0022] Contract Management
+  - [HS.0023] Controls and Compliance
+  - [HS.0024] Cost Analysis
+  - [HS.0025] Business Rule and Policy Management
+  - [HS.0026] Credit and Collection Management
+  - [HS.0027] Cross-Docking
+  - [HS.0028] Customer Order Management
+  - [HS.0029] Customer Relationship Management (CRM)
+  - [HS.0031] Customer Repair and Return Policy and Process
+  - [HS.0032] Customer or Supplier Communication
+  - [HS.0033] Master Data Management
+  - [HS.0034] Discrepancy Reporting and Resolution
+  - [HS.0035] Delivery Balancing
+  - [HS.0036] Delivery Scheduling
+  - [HS.0037] Demand Management
+  - [HS.0038] Design and Engineering Schedule Development
+  - [HS.0039] Driving Certification
+  - [HS.0041] Environmental, Health and Safety Regulations
+  - [HS.0042] Enabling Technology
+  - [HS.0043] Engineering
+  - [HS.0044] Enterprise Business Process
+  - ... and 165 more entries
+
+### Experiences (291 entries)
+  - [peop_expe_expe] Experiences
+  - [HE.0001] ABC Accounting
+  - [HE.0002] Accounting
+  - [HE.0003] Accounts Receivable
+  - [HE.0004] Advanced Financial Accounting Principles
+  - [HE.0005] Advanced Procurement
+  - [HE.0006] Allocation Rules and Strategy
+  - [HE.0007] Asset Management
+  - [HE.0008] Available-to-Promise (ATP) Logic and Calculation
+  - [HE.0009] Bar Coding and Radio Frequency Identification (RFID)
+  - [HE.0010] Basic Finance
+  - [HE.0011] Basic Procurement
+  - [HE.0012] Bills of Material (BOM), Specifications and Fabrication Methodology
+  - [HE.0013] Bundling Practices
+  - [HE.0014] Business Model and Sales Channel
+  - [HE.0015] Business Performance Management
+  - [HE.0016] Business Plans
+  - [HE.0017] Business Rules, Regulatory Policy and Company Return Policy
+  - [HE.0018] Capacity Planning
+  - [HE.0019] Capital Planning
+  - [HE.0020] Carrier Agreement Implementation
+  - [HE.0021] Carrier Performance Management
+  - [HE.0022] Carrier Rating and Routing Guides Usage
+  - [HE.0023] Carrier Selection and Qualification
+  - [HE.0024] Cash Application
+  - [HE.0025] Critical Design Review
+  - [HE.0027] Change Management System
+  - [HE.0028] Collaborative Planning, Forecasting and Replenishment (CPFR)
+  - [HE.0029] Collections
+  - [HE.0030] Company Pricing and Margin Policy
+  - [HE.0031] Company Terms and Conditions
+  - [HE.0032] Computer Literate
+  - [HE.0033] Configuration Management
+  - [HE.0034] Conflict Resolution
+  - [HE.0035] Consignment Practices
+  - [HE.0036] Construction Reasoning
+  - [HE.0037] Container Optimization
+  - [HE.0038] Continuous Learning
+  - [HE.0039] Contract Administration and Management
+  - [HE.0041] Contractual Terms and Conditions
+  - ... and 251 more entries
+
+### Trainings (156 entries)
+  - [peop_trai_trai] Trainings
+  - [HT.0001] Advanced Accounting Principles
+  - [HT.0002] Advanced Excel Techniques
+  - [HT.0003] Advanced Negotiations and Collaborative Planning
+  - [HT.0004] Advertising Methodologies
+  - [HT.0005] Agreement Construct and Legal Requirements
+  - [HT.0006] APICS Certified in Planning and Inventory Management (CPIM)
+  - [HT.0007] APICS Certified Supply Chain Professional (CSCP)
+  - [HT.0008] Automation Tools
+  - [HT.0009] Basic and Advanced Business
+  - [HT.0010] Basic and Advanced Finance
+  - [HT.0011] Basic Inventory Concepts
+  - [HT.0012] Basic Legal Process (Embargo, Black List)
+  - [HT.0013] Basic Science
+  - [HT.0014] Basic Supply Chain Finance
+  - [HT.0015] Blanket Purchase Agreements
+  - [HT.0016] Business Ethics and Conduct Training
+  - [HT.0017] Business Model and Sales Channel
+  - [HT.0019] Calculating Safety Stock
+  - [HT.0020] Capability and Organization Risks
+  - [HT.0021] Capacity Management (Aggregate Planning)
+  - [HT.0022] CAPS
+  - [HT.0023] Cellular Manufacturing
+  - [HT.0024] Certification Schemes
+  - [HT.0025] Communicating Customer and Supplier Information
+  - [HT.0026] Company Policies, Mission and Strategy, Business Conduct
+  - [HT.0027] Conflict Resolution
+  - [HT.0028] Contract Management
+  - [HT.0029] Contract Negotiation
+  - [HT.0030] Contracting for Supply Professionals
+  - [HT.0031] Corporate Strategy
+  - [HT.0032] Cost-Reduction Efforts
+  - [HT.0033] Cost or Price Analysis
+  - [HT.0034] Collaborative Planning, Forecasting and Replenishment (CPFR)
+  - [HT.0035] Credit Management
+  - [HT.0036] Cross-Docking
+  - [HT.0037] APICS Certified in Logistics, Transportation and Distribution (CLTD)
+  - [HT.0039] Customs-Trade Partnership Against Terrorism Certification (CTPAT)
+  - [HT.0040] Disposal Procedure and Environmental Rules
+  - [HT.0041] Disposition Resolution
+  - ... and 116 more entries
+
+## Chapter 4: Practices
+
+### Best Practices by Category
+- L0 [BP] Best Practices by Category
+  - L1 [prac_best_prac_by_cate_busi_proc_anal_and_impr] Business Process Analysis and Improvement
+  - L1 [prac_best_prac_by_cate_cust_supp] Customer Support
+  - L1 [prac_best_prac_by_cate_dist_mana] Distribution Management
+  - L1 [prac_best_prac_by_cate_info_and_data_mana] Information and Data Management
+  - L1 [prac_best_prac_by_cate_inve_mana] Inventory Management
+  - L1 [prac_best_prac_by_cate_manu_and_prod] Manufacturing and Production
+  - L1 [prac_best_prac_by_cate_mate_hand] Material Handling
+  - L1 [prac_best_prac_by_cate_new_prod_intr] New Product Introduction
+  - L1 [prac_best_prac_by_cate_orde_engi] Order Engineering
+  - L1 [prac_best_prac_by_cate_orde_mana] Order Management
+  - L1 [prac_best_prac_by_cate_peop_mana_incl_trai] People Management (Including Training)
+  - L1 [prac_best_prac_by_cate_plan_and_fore] Planning and Forecasting
+  - L1 [prac_best_prac_by_cate_prod_life_cycl_mana] Product Life Cycle Management
+  - L1 [prac_best_prac_by_cate_purc_and_proc] Purchasing and Procurement
+  - L1 [prac_best_prac_by_cate_reve_logi] Reverse Logistics
+  - L1 [prac_best_prac_by_cate_risk_and_secu_mana] Risk and Security Management
+  - L1 [prac_best_prac_by_cate_sust_supp_chai_mana] Sustainable Supply Chain Management
+  - L1 [prac_best_prac_by_cate_tran_mana] Transportation Management
+  - L1 [prac_best_prac_by_cate_ware] Warehousing
+    - L2 [BP.001] Supply Chain Risk Management (SCRM)
+    - L2 [BP.002] Risk Management Strategies
+    - L2 [BP.003] Single-Minute Exchange of Die (SMED)
+    - L2 [BP.004] Network Prioritization for Risk Identification
+    - L2 [BP.005] Self-Invoicing
+    - L2 [BP.006] Consignment Inventory
+    - L2 [BP.007] Baseline Inventory Monitoring
+    - L2 [BP.008] Slow-Moving Inventory Monitoring
+    - L2 [BP.009] Kanban
+    - L2 [BP.010] Min-Max Replenishment
+    - L2 [BP.011] Production Line Sequencing
+    - L2 [BP.012] Lot Tracking
+    - L2 [BP.013] Item Rationalization
+    - L2 [BP.014] Demand Planning and Forecasting
+    - L2 [BP.015] Safety Stock Planning
+    - L2 [BP.016] Supply Network Planning
+    - L2 [BP.017] Distribution Planning
+    - L2 [BP.018] ABC Inventory Classification System
+    - L2 [BP.020] Demand Management
+    - L2 [BP.021] Sales and Operations Planning (S&OP)
+    - L2 [BP.022] Material Requirements Planning (MRP)
+    - L2 [BP.023] Business Rule Management
+    - L2 [BP.024] Supply Chain Optimization (SCO)
+    - L2 [BP.025] Self-Service Warranty Claim Submittal
+    - L2 [BP.026] Improve Sales and Operations Planning (S&OP) Process
+    - L2 [BP.027] Pull-Based Inventory Replenishment
+    - L2 [BP.028] Inventory Optimization
+    - L2 [BP.029] Network Optimization
+    - L2 [BP.030] Inventory Record Accuracy
+    - L2 [BP.031] Stock Keeping Unit (SKU) Rationalization and Cost of Sales Analysis
+    - L2 [BP.032] Reduce or Write Off Slow-Moving Inventory
+    - L2 [BP.033] Traditional Demand Forecasting Improvement
+    - L2 [BP.034] Extend Inventory Planning Using Collaboration
+    - L2 [BP.035] Business Rule Review
+    - L2 [BP.036] Consignment Inventory with Suppliers
+    - L2 [BP.037] Manufacturing Direct or Drop Shipment
+    - L2 [BP.038] Batch-Size Reduction
+    - L2 [BP.039] Right Size Frequency of Production Wheel
+    - L2 [BP.040] Make-to-Order (MTO) Order Fulfillment Strategy
+    - L2 [BP.041] Transportation Optimization
+    - L2 [BP.042] Procurement Terms and Conditions Review
+    - L2 [BP.044] Inventory Financing Evaluation
+    - L2 [BP.045] Delay Inbound Supplier Shipments
+    - L2 [BP.047] Finished Goods Inventory Postponement
+    - L2 [BP.048] Demand Shaping
+    - L2 [BP.049] Lean Planning
+    - L2 [BP.052] Design for Logistics (DFL) Management
+    - L2 [BP.053] Manufacturing Reliability Improvement
+    - L2 [BP.054] Manufacturing Quality Improvements for Return Reduction
+    - L2 [BP.055] Freight Carrier Delivery Performance Evaluation
+    - L2 [BP.056] Supplier Raw Material Quality Assurance
+    - L2 [BP.058] Inventory Management Training
+    - L2 [BP.061] Reduce Non-Strategic Inventory Level
+    - L2 [BP.062] Master Data Accuracy
+    - L2 [BP.063] Optimize Sourcing Decisions to Local Source Point
+    - L2 [BP.064] Safety Stock Reduction
+    - L2 [BP.066] Returns Policy to Reduce Returns Inventory
+    - L2 [BP.067] Returns Inventory Reduction
+    - L2 [BP.068] Supplier Performance Reporting
+    - L2 [BP.069] Raw Materials Receiving Process
+    - L2 [BP.070] Planning and Scheduling Inventory Training
+    - L2 [BP.071] Modal Optimization
+    - L2 [BP.072] Inbound Return Material Authorization (RMA)–Enabled Processing
+    - L2 [BP.073] Returns Receiving Refurbishment
+    - L2 [BP.074] Process and Metrics Alignment
+    - L2 [BP.076] Bar Coding
+    - L2 [BP.077] Prepaid Return Shipping Label
+    - L2 [BP.078] Return Tracking
+    - L2 [BP.080] Enterprise Performance Management
+    - L2 [BP.082] Continuous Improvement
+    - L2 [BP.083] Project Management
+    - L2 [BP.084] Inventory Cycle Counting
+    - L2 [BP.086] Supply Network Planning
+    - L2 [BP.089] Perfect Pick Put-Away
+    - L2 [BP.090] Days of Supply-Based Material Requirements Planning (MRP) Proposal Management
+    - L2 [BP.091] Work Center Load Evaluation
+    - L2 [BP.092] Balance and Firm within Horizon
+    - L2 [BP.093] Production Plan
+    - L2 [BP.094] Characteristics-Based Forecasting
+    - L2 [BP.095] Bill of Material (BOM) Audit and Control
+    - L2 [BP.096] Logistics and Warehouse Planning
+    - L2 [BP.097] Supplier Appraisal
+    - L2 [BP.098] Mobile Access of Information
+    - L2 [BP.099] Data Warehousing and Business Intelligence
+    - L2 [BP.100] Strategic Sourcing
+    - L2 [BP.101] Purchasing and Procurement Strategy
+    - L2 [BP.102] Pick List Generation
+    - L2 [BP.103] Customer Data Line of Responsibility
+    - L2 [BP.104] Facility Master Planning
+    - L2 [BP.105] Task Management
+    - L2 [BP.106] Predictive Maintenance
+    - L2 [BP.107] Order Management
+    - L2 [BP.108] Return Policy Conformance Integration
+    - L2 [BP.109] Carcass Prepositioning
+    - L2 [BP.110] Product Development, Engineering and Disposition Collaboration
+    - L2 [BP.111] Electronic Technical Orders and Product Specifications
+    - L2 [BP.112] Return Shipping Consolidation
+    - L2 [BP.113] Cross-Functional Teams
+    - L2 [BP.114] Order Quotation System
+    - L2 [BP.115] Transportation Management System (TMS)
+    - L2 [BP.116] Expedited Logistics
+    - L2 [BP.117] Embed Specialized Services
+    - L2 [BP.118] Transportation Management Outsourcing
+    - L2 [BP.119] Generation of Dynamic Bills of Materials (BOMs)
+    - L2 [BP.120] 3D Printing and Rapid Prototyping
+    - L2 [BP.121] Digital Packaging on Demand
+    - L2 [BP.122] Vendor-Managed Inventory (VMI)
+    - L2 [BP.123] Return Load Optimization
+    - L2 [BP.124] Return Shipment Insurance
+    - L2 [BP.125] Automated Identification and Disposition of Overshipments
+    - L2 [BP.126] Supply Chain Control Towers
+    - L2 [BP.127] Automated Alerts for Material Management
+    - L2 [BP.128] Return Cost Recovery
+    - L2 [BP.129] Return Policy Included with Shipping Document
+    - L2 [BP.130] Identification of Obsolete Capital Assets
+    - L2 [BP.131] Request for Information (RFI)
+    - L2 [BP.132] Request for Quote (RFQ)
+    - L2 [BP.133] Total Preventative Maintenance Program
+    - L2 [BP.134] Supplier Evaluation
+    - L2 [BP.135] Return Authorization
+    - L2 [BP.136] Outsourced Reverse Logistics
+    - L2 [BP.137] Carcass Disassembly
+    - L2 [BP.138] Theory of Constraints (TOC)
+    - L2 [BP.141] Pre-issued Return Authorization
+    - L2 [BP.143] Preventive Returns
+    - L2 [BP.144] Purchase Order Management
+    - L2 [BP.145] Supplier Collaboration
+    - L2 [BP.146] Cross-Docking
+    - L2 [BP.147] Receiving Goods Inspection
+    - L2 [BP.148] 3-Way Delivery Verification
+    - L2 [BP.149] Supply Chain Risk Management (SCRM) Strategy Implementation and Analysis
+    - L2 [BP.150] Maintain Supply Chain Risk Register
+    - L2 [BP.151] Real-Time Package Tracking
+    - L2 [BP.152] Automated Data Capture (ADC)
+    - L2 [BP.153] Radio Frequency Identification (RFID)
+    - L2 [BP.155] Standard Operating Procedures
+    - L2 [BP.156] Collaborative Planning, Forecasting and Replenishment (CPFR)
+    - L2 [BP.157] Just-in-Time (JIT) Production
+    - L2 [BP.158] Make-to-Stock (MTS) Goods Receipt
+    - L2 [BP.159] Electronic Data Interchange (EDI)
+    - L2 [BP.160] Lean
+    - L2 [BP.161] Spend Analysis
+    - L2 [BP.162] Long-Term Supplier Agreement or Partnership
+    - L2 [BP.163] Supply Base Rationalization
+    - L2 [BP.164] Consignment Inventory Management
+    - L2 [BP.165] Convergence of SCOR with Lean and Six Sigma
+    - L2 [BP.166] Document Management System
+    - L2 [BP.167] Electronic Returns Tracking
+    - L2 [BP.168] Rotable Spares Pool
+    - L2 [BP.169] Beyond Economic Repair (BER) Management
+    - L2 [BP.171] Mixed Mode or Reverse Material Issue
+    - L2 [BP.172] Production Scheduling Optimization Using Technology
+    - L2 [BP.173] Supply Chain Risk Monitoring
+    - L2 [BP.174] Supply Chain Risk Assessment
+    - L2 [BP.177] Additive Manufacturing
+    - L2 [BP.178] Blockchain
+    - L2 [BP.179] Demand-Driven Material Requirements Planning (DDMRP)
+    - L2 [BP.180] Demand-Driven Sales and Operations Planning (DDS&OP)
+    - L2 [BP.181] Digital Supply Chain
+    - L2 [BP.182] Internet of Things (IOT)
+    - L2 [BP.183] Integrated Business Planning (IBP)
+    - L2 [BP.184] Scenario Planning
+    - L2 [BP.185] Cost of Quality Measurement
+    - L2 [BP.187] Supply Chain Finance
+    - L2 [BP.188] Supply Chain Management Object Synchronization (3- or 4-Way Match)
+    - L2 [BP.189] Augmented Reality
+    - L2 [BP.190] Robotic Process Automation
+    - L2 [BP.191] Artificial Intelligence
+    - L2 [BP.192] Big Data Analytics
+    - L2 [BP.193] Should Cost Modeling
+    - L2 [BP.194] Predictive Analytics
+    - L2 [BP.195] Digital Twin
+    - L2 [BP.196] Smart Contracts
+    - L2 [BP.197] Advanced Data Visualization and Visibility
+    - L2 [BP.198] Real-Time Location System
+    - L2 [BP.199] Autonomous Delivery
+    - L2 [BP.200] Stocktaking by Drones
+    - L2 [BP.201] Dynamic Inventory Management
+    - L2 [BP.202] Quick Response (QR) Code
+    - L2 [BP.203] Mobile Distribution Center
+    - L2 [BP.204] Machine Learning
+    - L2 [BP.205] Dynamic Routing
+    - L2 [BP.206] Virtual Reality
+    - L2 [BP.207] Multi-Enterprise Business Networks (MEBN)
+    - L2 [BP.208] Crowdsourced Delivery
+    - L2 [BP.209] Telematics
+    - L2 [BP.211] Fleet Management
+    - L2 [BP.212] Smart Factory
+    - L2 [BP.215] Service Configuration Management
+    - L2 [BP.216] Service Level Management
+    - L2 [BP.217] Service Change Management
+    - L2 [BP.218] Service Incident Management
+    - L2 [BP.219] Service Request Management
+    - L2 [BP.220] Service Availability Management
+    - L2 [BP.221] Service Capacity Management
+    - L2 [BP.222] Service Continuity Management
+    - L2 [BP.223] Service Knowledge Management System
+    - L2 [BP.224] Service Validation and Testing Management
+    - L2 [BP.225] Service Valuation Management
+    - L2 [BP.226] Service Design Management
+    - L2 [BP.227] Service Transition Management
+    - L2 [BP.228] Service Problem Management
+    - L2 [BP.229] Continual Service Improvement
+    - L2 [BP.230] Dynamic Case Management
+    - L2 [BP.231] Business Rules Management System
+    - L2 [BP.232] Green Procurement
+    - L2 [BP.233] Ethical Procurement
+    - L2 [BP.236] Early Supplier Involvement
+    - L2 [BP.237] In-Country Value
+    - L2 [BP.238] Negotiations Planning
+    - L2 [BP.239] Contract Drafting
+    - L2 [BP.240] Framework Agreement
+    - L2 [BP.241] Supply Market Research
+    - L2 [BP.242] Specification Development
+    - L2 [BP.243] Blanket Agreement
+    - L2 [BP.244] Sustainable Specification Development
+    - L2 [BP.245] Supplier Certification Program
+    - L2 [BP.246] Sustainable Procurement Strategy
+    - L2 [BP.247] Multi-Tier Supplier Audit
+    - L2 [BP.249] Approved Vendor List
+    - L2 [BP.250] Supplier Credit Check
+    - L2 [BP.251] Category Management
+    - L2 [BP.253] Specification Value Analysis
+    - L2 [BP.254] Specification Value Engineering
+    - L2 [BP.256] Make Or Buy Analysis
+    - L2 [BP.257] Outsourcing
+    - L2 [BP.258] Open Tendering
+    - L2 [BP.259] Restricted Tendering
+    - L2 [BP.260] Reverse Auction
+    - L2 [BP.261] Spot Buying
+    - L2 [BP.262] Trade Exchanges
+    - L2 [BP.263] E-Catalogs
+    - L2 [BP.265] Continuous Replenishment Program
+    - L2 [BP.266] Total Cost of Ownership Analysis
+    - L2 [BP.267] Price Analysis
+    - L2 [BP.268] Purchase Price Cost Analysis
+    - L2 [BP.269] Supplier Debriefing
+    - L2 [BP.270] MEAT Awarding (Most Economically Advantageous Tender)
+    - L2 [BP.272] Solicitation Process
+    - L2 [BP.273] Purchase Price Arrangement
+    - L2 [BP.274] Progress Payment
+    - L2 [BP.275] Single Sourcing
+    - L2 [BP.276] Dual Sourcing
+    - L2 [BP.278] Portfolio Analysis
+    - L2 [BP.279] Supplier Segmentation
+    - L2 [BP.280] Supply Base Rightsizing
+    - L2 [BP.282] Circular Economy
+    - L2 [BP.283] Product-as-a-Service
+    - L2 [BP.285] Material Passport
+    - L2 [BP.286] Sharing Platforms
+    - L2 [BP.288] Life Cycle Assessment
+    - L2 [BP.289] Eco-design
+    - L2 [BP.290] Material Efficiency Management
+    - L2 [BP.291] Energy Efficiency Management
+    - L2 [BP.292] Water Efficiency Management
+    - L2 [BP.294] Sustainability Reporting
+    - L2 [BP.295] Emission Reduction
+    - L2 [BP.296] Carbon Removal/Offsetting
+    - L2 [BP.300] Traceability
+    - L2 [BP.301] Proof of Concept
+    - L2 [BP.302] Social Procurement
+    - L2 [BP.305] Digital Invoice and Payments Processing
+    - L2 [BP.306] Digital Contract Management
+    - L2 [BP.307] Web Services
+    - L2 [BP.309] Data Master File Management
+    - L2 [BP.314] Metadata Management
+    - L2 [BP.318] Engineer Trading Partner Processes.
+    - L2 [BP.319] Internal Infrastructure and System Re-engineering
+    - L2 [BP.320] E-Application Architecture
+    - L2 [BP.321] Web-Based Applications
+    - L2 [BP.322] Collaborative Channel Management
+    - L2 [BP.325] Web Systems
+    - L2 [BP.326] Online Catalogs
+    - L2 [BP.327] Online Order Processing
+    - L2 [BP.328] Online Order Configurability
+    - L2 [BP.329] Lead Capture and Profiling
+    - L2 [BP.330] Contact Management
+    - L2 [BP.331] Account Management
+    - L2 [BP.332] Sales Process/Activity Management
+    - L2 [BP.333] Quotation Management
+    - L2 [BP.334] Social Accountability (SA8000)
+
+### Best Practices by Pillar
+- L0 [prac_best_prac_by_pill_best_prac_by_pill] Best Practices by Pillar
+  - L1 [prac_best_prac_by_pill_anal_and_tech] Analytics and Technology
+  - L1 [prac_best_prac_by_pill_proc] Process
+  - L1 [prac_best_prac_by_pill_orga] Organization

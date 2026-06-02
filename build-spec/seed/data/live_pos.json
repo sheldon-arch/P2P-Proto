@@ -1,0 +1,13 @@
+[
+  {
+    "id": "PO-LV-3",
+    "ticketId": "TKT-LV-003",
+    "supplierId": "SUP-0005",
+    "status": "ACKNOWLEDGED",
+    "poDate": "2026-05-12",
+    "value": 17225.0,
+    "currency": "USD",
+    "incoterm": "FOB",
+    "contractQty": 5000
+  }
+]

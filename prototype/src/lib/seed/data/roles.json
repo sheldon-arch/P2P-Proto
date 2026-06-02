@@ -1,0 +1,10 @@
+[
+  {
+    "id": "R-ADMIN",
+    "name": "SystemAdmin"
+  },
+  {
+    "id": "R-USER",
+    "name": "User"
+  }
+]

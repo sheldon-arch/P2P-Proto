@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+                  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+                  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+                  id="Definitions_Requisition" targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:collaboration id="Collaboration_Requisition">
+    <bpmn:participant id="Participant_Requisition" name="02 - Requisition and Intake (Requester-led)" processRef="Process_Requisition" />
+  </bpmn:collaboration>
+  <bpmn:process id="Process_Requisition" isExecutable="false">
+    <bpmn:laneSet id="LaneSet_Requisition">
+      <bpmn:lane id="L_req" name="Requester">
+        <bpmn:flowNodeRef>Start</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>OpenForm</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>AddLines</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>NewItem</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GwSaveOrSubmit</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Draft</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Submit</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Revise</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_buyer" name="Procurement / Buyer">
+        <bpmn:flowNodeRef>ApproveItem</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_budget" name="Budget Owner">
+        <bpmn:flowNodeRef>GwBudget</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Override</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_sys" name="Platform / System">
+        <bpmn:flowNodeRef>LinkItem</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Compute</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>BudgetCheck</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Route</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>End</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="Start" name="Need identified">
+      <bpmn:documentation>Trigger: a requester in any department identifies a purchase need (material, spare, service, or product-design item). Precondition: tenant configured (diagram 01) - masters, routing rules, budgets, field config exist. Requester holds requisition.create scoped to own/own-department; sees only own/own-department requisitions and history (requisition.view own/dept). [SCOR S1.1 Define Business Need / O2 | ISO 7.5 | source: AB + RA + role-model]</bpmn:documentation>
+      <bpmn:outgoing>f1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:userTask id="OpenForm" name="Open requisition, fill header">
+      <bpmn:documentation>Requester opens the intake form (requisition.create). HEADER FIELDS: identifier (string, AUTO, immutable across the whole cycle including delays; configurable pattern e.g. {YYYY}{MM_SHORT}{DEPT_PREFIX}07{RUNNING5} = year + short month + first 3 chars of dept (or 'Dept') + literal '07' + 5-digit padded counter; isAuto, never gates, read-only); date (date, AUTO-stamped in tenant timezone e.g. Oman GST+4, format DD-MMM-YYYY, isAuto, read-only); requester (reference user, AUTO from authenticated profile, read-only); department (reference, AUTO from profile, read-only); category (enum dropdown {Items|Spares|Services|ProductDesign}, MANDATORY, no default; drives field config + later receipt routing - Spares/Services go to Engineering, Items to Receiving/QC); directOrIndirect (enum dropdown {Direct|Indirect}, MANDATORY; Direct = goes into product, Indirect = MRO/office/services); purchaseType (enum dropdown {Local|Import}, MANDATORY, default Local; note RA: requester is NOT told local/import for routing, but the field is captured); priority (enum dropdown {ASAP|SameDay|Within2Days|Within1Week}, MANDATORY, default Within1Week; urgency weights for least-loaded assignment ASAP=4/SameDay=2/Within2Days=1/Within1Week=0); currency (reference Currency dropdown, MANDATORY, default tenant base currency); projectOrCostCenter (reference dropdown of ACTIVE projects/cost-centers only, MANDATORY; an INACTIVE project is not selectable); justification/notes (text, OPTIONAL, max 2000 chars). Mandatory set is the field-config INITIATION/TICKET_LEVEL entries for this category/purchaseType. [SCOR S1.1/O2 | ISO 7.5 | source: AB requisition fields + RA CreateTicketDto + data-model]</bpmn:documentation>
+      <bpmn:incoming>f1</bpmn:incoming>
+      <bpmn:outgoing>f2</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="AddLines" name="Add line items (search master or free-text)">
+      <bpmn:documentation>Requester adds one or more lines. LINE FIELDS: item (reference OR free-text; search master first by name/code; a UUID resolves to existing, a non-UUID string triggers the new-item-on-the-fly sub-flow, non-blocking); itemCode (string, AUTO from master, or 'PENDING - New Item' while awaiting handler approval; isAuto, read-only); hsCode (string, OPTIONAL, import-relevant); itemDescription (text, AUTO-populated from master on select, editable for free-text); productUsedFor (string, OPTIONAL; which finished product it feeds, for spend reporting); quantity (decimal, MANDATORY, &gt; 0, decimals allowed for weight/volume); unitOfMeasure (reference UoM dropdown, MANDATORY; from UoM master); unitPrice (decimal, OPTIONAL, may be 0 at creation - flagged, not blocked); availableStock (decimal, OPTIONAL, AUTO/read from inventory if known); needDate (date, MANDATORY per line, datepicker, must be &gt;= today); lineNote (text, OPTIONAL); attachments (file list, OPTIONAL; drawings/specs). SERVICE category lines instead use serviceName + itemReferenceNumber + contractDuration (dropdown {3m|6m|1y|2y|Custom}). Item-level mandatory set comes from field config (ITEM_LEVEL, category, purchaseType); blocks on ANY line if missing. [SCOR S1.1 | ISO 7.5 | source: AB line fields + RA items[] + data-model RequisitionLine]</bpmn:documentation>
+      <bpmn:incoming>f2</bpmn:incoming>
+      <bpmn:incoming>f10</bpmn:incoming>
+      <bpmn:outgoing>f3</bpmn:outgoing>
+      <bpmn:outgoing>f4</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="NewItem" name="Request new item (free-text entered)">
+      <bpmn:documentation>Sub-flow entry: requester typed an item not in the master. NON-BLOCKING - the requisition still proceeds. The line keeps the free-text description, itemCode shows 'PENDING - New Item', and a new-item request is created for the Procurement Handler/Buyer to approve. RA behavior: a non-UUID item reference auto-creates an item (description = the string; stockUom/purchaseUom = the line UoM; 6-digit running-number code) which then follows the item lifecycle PENDING_ONBOARDING -&gt; PENDING_APPROVAL -&gt; ONBOARDED. [SCOR OE4 | source: AB new-item sub-flow + RA auto-create + raphe-ticket-creation]</bpmn:documentation>
+      <bpmn:incoming>f3</bpmn:incoming>
+      <bpmn:outgoing>f5</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="ApproveItem" name="Approve / create new item in master">
+      <bpmn:documentation>The PROCUREMENT HANDLER/Buyer (items.create / item.approve), NOT the Purchase Head, reviews the free-text item and adds it to the master: assigns/confirms code (RM/PM from Excel master, others system-generated), description, stockUom, purchaseUom, segment, HS code, sourcePriority. On approval the item moves PENDING_APPROVAL -&gt; ONBOARDED and the requisition line's itemCode is back-filled from the new master record. This runs in parallel and does not hold the requisition submission. [SCOR OE4 | ISO 7.5 | source: AB BPMN (handler approves, supersedes Word doc) + albahja-requisition-approval]</bpmn:documentation>
+      <bpmn:incoming>f5</bpmn:incoming>
+      <bpmn:outgoing>f6</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="LinkItem" name="Link new item, resolve references">
+      <bpmn:documentation>System links the approved (or auto-created) item to the requisition line, resolves all reference fields to live records via the entity normalizer (project/vertical/user/supplier -&gt; name; item/ticket-item -&gt; description; dangling id -&gt; 400, missing resolver -&gt; 500 config defect), recomputes line and header totals. The requisition can be submitted before this completes because the sub-flow is non-blocking; the linked code simply replaces 'PENDING - New Item' when ready. [SCOR OE4 | source: platform-services dynamic forms 2 + raphe-edge-cases e09]</bpmn:documentation>
+      <bpmn:incoming>f6</bpmn:incoming>
+      <bpmn:outgoing>f7</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="GwSaveOrSubmit" name="Save draft or submit?">
+      <bpmn:documentation>Branch on the requester's action. Expression: action == 'SAVE_DRAFT' -&gt; persist as Draft (status Draft; no validation gate, no routing); action == 'SUBMIT' -&gt; run validation + budget soft-check then route. A draft can be reopened and edited any number of times before submit; the identifier is generated and immutable from first save. [source: AB draft save + albahja-requisition-approval status machine]</bpmn:documentation>
+      <bpmn:incoming>f4</bpmn:incoming>
+      <bpmn:incoming>f7</bpmn:incoming>
+      <bpmn:outgoing>f8</bpmn:outgoing>
+      <bpmn:outgoing>f9</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="Draft" name="Save as draft">
+      <bpmn:documentation>Persists the requisition with status Draft. No mandatory-field gate, no routing, no budget check. Visible only to the requester (and own department per view scope). The requester later reopens it (loops back to add/edit lines) and submits. Identifier is already assigned and immutable. [source: AB draft + data-model status IN_PROGRESS not yet set]</bpmn:documentation>
+      <bpmn:incoming>f8</bpmn:incoming>
+      <bpmn:outgoing>f10</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Submit" name="Submit requisition">
+      <bpmn:documentation>Requester clicks Submit (requisition.submit). Triggers server-side validation: every field-config mandatory, non-auto field for INITIATION at TICKET_LEVEL and ITEM_LEVEL (filtered by category + purchaseType) must be present (isEmpty rule: null/blank/[]/{}/invalid-date empty; 0 and false present). On any missing field -&gt; 400 with remainingStageFields[], status stays Draft, nothing routes. On pass -&gt; status IN_PROGRESS, stage INITIATION, totals computed. [SCOR S1.1/O2 | source: AB submit + raphe-stage-progression mandatory gate + raphe-ticket-creation]</bpmn:documentation>
+      <bpmn:incoming>f9</bpmn:incoming>
+      <bpmn:incoming>f18</bpmn:incoming>
+      <bpmn:outgoing>f11</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="Compute" name="Validate, compute total, convert to base">
+      <bpmn:documentation>System computes total = sum(quantity x unitPrice) per line summed to header (totalAmount in requisition currency), then totalAmountInBase via convertToBase(amount, currency): if currency == base or null -&gt; unchanged, no call; else fetch live FX rate (e.g. Frankfurter), round to 2dp; on fetch failure or invalid rate (0/NaN/Inf/negative) -&gt; log + return original unconverted (graceful degradation, never throws). totalAmountInBase drives the budget check, approval thresholds, and analytics. Audit (category ticket) + SSE ticket.updated emitted. [SCOR OE4 | source: platform-services FX 3 + raphe-ticket-creation step 5 + raphe-edge-cases e08]</bpmn:documentation>
+      <bpmn:incoming>f11</bpmn:incoming>
+      <bpmn:outgoing>f12</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="BudgetCheck" name="Soft budget check against cost-center">
+      <bpmn:documentation>Soft check (NOT a hard commit - the hard encumbrance happens at PO issue). System reads the Budget for the requisition's projectOrCostCenter and current period and compares. Expression evaluated downstream at the gateway: totalAmountInBase &lt;= budget.availableAmount. This check WARNS only; it never blocks submission by itself. Approval limits are NOT budget control - budget is a separate dimension. [SCOR OE11 | source: platform-services budget 11 + data-model budget soft-check]</bpmn:documentation>
+      <bpmn:incoming>f12</bpmn:incoming>
+      <bpmn:outgoing>f13</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="GwBudget" name="Within available budget?">
+      <bpmn:documentation>Budget gate. Expression: totalAmountInBase &lt;= budget.availableAmount -&gt; within budget, route to approval directly. totalAmountInBase &gt; budget.availableAmount -&gt; over budget: the system shows a non-blocking warning and the Budget Owner (budget.approve, own cost-center) must either approve an override (logged) to proceed, or the requester revises the requisition down. This soft gate at intake does not encumber funds; the hard commit is at PO issue. [SCOR OE11 | source: data-model budget/commitment + role-permission-matrix budget.approve]</bpmn:documentation>
+      <bpmn:incoming>f13</bpmn:incoming>
+      <bpmn:outgoing>f14</bpmn:outgoing>
+      <bpmn:outgoing>f15</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="Override" name="Approve budget override (logged) or send back">
+      <bpmn:documentation>Budget Owner acts on the over-budget warning (budget.approve, scoped to own cost-center). Actions: 'Approve override' (records overrideReason mandatory, overrideBy, overrideAt to the audit log; requisition proceeds to approval routing) OR 'Send back for revision' (returns to the requester with a mandatory note to reduce quantity/price or change cost-center). Override is a logged exception, not a silent bypass; approval limits remain separate from this budget gate. [SCOR OE11 | source: data-model + role-model Budget Owner + build-new finance control]</bpmn:documentation>
+      <bpmn:incoming>f15</bpmn:incoming>
+      <bpmn:outgoing>f16</bpmn:outgoing>
+      <bpmn:outgoing>f17</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Revise" name="Revise requisition (same identifier)">
+      <bpmn:documentation>Requester edits the SAME requisition per the send-back note (identifier unchanged, immutable). Can adjust quantity, unitPrice, lines, cost-center, or split the requirement. Resubmits, which re-runs validation + budget check (loops back to Submit). The remarks/notes field is an appended, timestamped activity log that cannot be deleted. [source: AB return-for-revision + albahja-requisition-approval loop]</bpmn:documentation>
+      <bpmn:incoming>f17</bpmn:incoming>
+      <bpmn:outgoing>f18</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="Route" name="Route into configurable approval chain">
+      <bpmn:documentation>System routes the submitted, budget-cleared requisition into the configurable approval chain (handleRouting, isInitialRouting=true): creates one per-stage completion (NOT_STARTED) for each configured stage, then assigns the first stage. For the Requester/Req-Department stage the assignee is pinned to the requester and the approver is resolved from the RoutingRuleEntry matched on (department, stage) least-loaded (urgency-weighted). Missing routing rule -&gt; BadRequestException, whole transaction rolls back, requisition stalls until admin fixes rules. Emits TICKET_ASSIGNED + audit + SSE. This hands off to the approval domain (diagram 03). [SCOR OE2 | ISO 8.4 | source: platform-services approval engine 1 + raphe-routing-approval + raphe-ticket-creation step 9]</bpmn:documentation>
+      <bpmn:incoming>f14</bpmn:incoming>
+      <bpmn:incoming>f16</bpmn:incoming>
+      <bpmn:outgoing>f19</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="End" name="Requisition submitted, in approval">
+      <bpmn:documentation>Outcome: a validated requisition (status IN_PROGRESS, stage INITIATION) with an immutable identifier, full header and line detail, base-currency totals, a soft budget result (or logged override), and per-stage approval completions created, the first stage assigned. Visibility stays scoped to own/department for the requester. Continues in diagram 03 (approval). New-item sub-flow may still be finishing in parallel without holding this outcome. [SCOR OE2 | source: build-new + RA initial routing]</bpmn:documentation>
+      <bpmn:incoming>f19</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="f1" sourceRef="Start" targetRef="OpenForm" />
+    <bpmn:sequenceFlow id="f2" sourceRef="OpenForm" targetRef="AddLines" />
+    <bpmn:sequenceFlow id="f3" name="item is free-text (not in master)" sourceRef="AddLines" targetRef="NewItem" />
+    <bpmn:sequenceFlow id="f4" name="item found in master" sourceRef="AddLines" targetRef="GwSaveOrSubmit" />
+    <bpmn:sequenceFlow id="f5" sourceRef="NewItem" targetRef="ApproveItem" />
+    <bpmn:sequenceFlow id="f6" sourceRef="ApproveItem" targetRef="LinkItem" />
+    <bpmn:sequenceFlow id="f7" name="non-blocking, requisition continues" sourceRef="LinkItem" targetRef="GwSaveOrSubmit" />
+    <bpmn:sequenceFlow id="f8" name="action == SAVE_DRAFT" sourceRef="GwSaveOrSubmit" targetRef="Draft" />
+    <bpmn:sequenceFlow id="f9" name="action == SUBMIT" sourceRef="GwSaveOrSubmit" targetRef="Submit" />
+    <bpmn:sequenceFlow id="f10" name="reopen and edit" sourceRef="Draft" targetRef="AddLines" />
+    <bpmn:sequenceFlow id="f11" sourceRef="Submit" targetRef="Compute" />
+    <bpmn:sequenceFlow id="f12" sourceRef="Compute" targetRef="BudgetCheck" />
+    <bpmn:sequenceFlow id="f13" sourceRef="BudgetCheck" targetRef="GwBudget" />
+    <bpmn:sequenceFlow id="f14" name="totalAmountInBase &lt;= availableAmount" sourceRef="GwBudget" targetRef="Route" />
+    <bpmn:sequenceFlow id="f15" name="totalAmountInBase &gt; availableAmount" sourceRef="GwBudget" targetRef="Override" />
+    <bpmn:sequenceFlow id="f16" name="override approved (logged)" sourceRef="Override" targetRef="Route" />
+    <bpmn:sequenceFlow id="f17" name="sent back for revision" sourceRef="Override" targetRef="Revise" />
+    <bpmn:sequenceFlow id="f18" name="resubmit, same identifier" sourceRef="Revise" targetRef="Submit" />
+    <bpmn:sequenceFlow id="f19" sourceRef="Route" targetRef="End" />
+    <bpmn:textAnnotation id="NoteReq">
+      <bpmn:text>Requester-led intake. Header (auto identifier immutable, auto date/requester/department, category/direct-indirect/purchaseType/priority/currency/cost-center dropdowns, justification) plus one or more lines (item search-master-or-free-text, code auto, HS code, description, product-used-for, quantity&gt;0 decimal, UoM, unit price may be 0, available stock, need date, line note, attachments). Free-text item triggers a non-blocking new-item sub-flow that the Procurement Handler approves while the requisition continues. Save draft any time. On submit: mandatory-field gate (field config by stage/scope/purchaseType, isAuto never gates), total computed and converted to base, soft budget check (warns if over; Budget Owner override is logged, hard commit is later at PO). Routes into the configurable approval chain with per-stage completions, the first stage assigned least-loaded. Visibility scoped to own/department.</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Assoc_Requisition_1" sourceRef="Route" targetRef="NoteReq" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagram_Requisition">
+    <bpmndi:BPMNPlane id="Plane_Requisition" bpmnElement="Collaboration_Requisition">
+      <bpmndi:BPMNShape id="Participant_Requisition_di" bpmnElement="Participant_Requisition" isHorizontal="true">
+        <dc:Bounds x="160" y="80" width="3110" height="640" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_req_di" bpmnElement="L_req" isHorizontal="true">
+        <dc:Bounds x="190" y="80" width="3080" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_buyer_di" bpmnElement="L_buyer" isHorizontal="true">
+        <dc:Bounds x="190" y="240" width="3080" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_budget_di" bpmnElement="L_budget" isHorizontal="true">
+        <dc:Bounds x="190" y="400" width="3080" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_sys_di" bpmnElement="L_sys" isHorizontal="true">
+        <dc:Bounds x="190" y="560" width="3080" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Start_di" bpmnElement="Start">
+        <dc:Bounds x="267" y="142" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="257" y="182" width="56" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="OpenForm_di" bpmnElement="OpenForm">
+        <dc:Bounds x="415" y="120" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="AddLines_di" bpmnElement="AddLines">
+        <dc:Bounds x="605" y="120" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="NewItem_di" bpmnElement="NewItem">
+        <dc:Bounds x="795" y="120" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ApproveItem_di" bpmnElement="ApproveItem">
+        <dc:Bounds x="985" y="280" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="LinkItem_di" bpmnElement="LinkItem">
+        <dc:Bounds x="1175" y="600" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GwSaveOrSubmit_di" bpmnElement="GwSaveOrSubmit" isMarkerVisible="true">
+        <dc:Bounds x="1400" y="135" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1390" y="189" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Draft_di" bpmnElement="Draft">
+        <dc:Bounds x="1555" y="120" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Submit_di" bpmnElement="Submit">
+        <dc:Bounds x="1745" y="120" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Compute_di" bpmnElement="Compute">
+        <dc:Bounds x="1935" y="600" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BudgetCheck_di" bpmnElement="BudgetCheck">
+        <dc:Bounds x="2125" y="600" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GwBudget_di" bpmnElement="GwBudget" isMarkerVisible="true">
+        <dc:Bounds x="2350" y="455" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2340" y="509" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Override_di" bpmnElement="Override">
+        <dc:Bounds x="2505" y="440" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Revise_di" bpmnElement="Revise">
+        <dc:Bounds x="2695" y="120" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Route_di" bpmnElement="Route">
+        <dc:Bounds x="2885" y="600" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_di" bpmnElement="End">
+        <dc:Bounds x="3117" y="622" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3107" y="662" width="56" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="f1_di" bpmnElement="f1">
+        <di:waypoint x="303" y="160" />
+        <di:waypoint x="415" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f2_di" bpmnElement="f2">
+        <di:waypoint x="535" y="160" />
+        <di:waypoint x="605" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f3_di" bpmnElement="f3">
+        <di:waypoint x="725" y="160" />
+        <di:waypoint x="795" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f4_di" bpmnElement="f4">
+        <di:waypoint x="725" y="160" />
+        <di:waypoint x="1400" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f5_di" bpmnElement="f5">
+        <di:waypoint x="915" y="160" />
+        <di:waypoint x="950" y="160" />
+        <di:waypoint x="950" y="320" />
+        <di:waypoint x="985" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f6_di" bpmnElement="f6">
+        <di:waypoint x="1105" y="320" />
+        <di:waypoint x="1140" y="320" />
+        <di:waypoint x="1140" y="640" />
+        <di:waypoint x="1175" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f7_di" bpmnElement="f7">
+        <di:waypoint x="1295" y="640" />
+        <di:waypoint x="1348" y="640" />
+        <di:waypoint x="1348" y="160" />
+        <di:waypoint x="1400" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f8_di" bpmnElement="f8">
+        <di:waypoint x="1450" y="160" />
+        <di:waypoint x="1555" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f9_di" bpmnElement="f9">
+        <di:waypoint x="1450" y="160" />
+        <di:waypoint x="1745" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f10_di" bpmnElement="f10">
+        <di:waypoint x="1615" y="200" />
+        <di:waypoint x="1615" y="230" />
+        <di:waypoint x="665" y="230" />
+        <di:waypoint x="665" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f11_di" bpmnElement="f11">
+        <di:waypoint x="1865" y="160" />
+        <di:waypoint x="1900" y="160" />
+        <di:waypoint x="1900" y="640" />
+        <di:waypoint x="1935" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f12_di" bpmnElement="f12">
+        <di:waypoint x="2055" y="640" />
+        <di:waypoint x="2125" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f13_di" bpmnElement="f13">
+        <di:waypoint x="2245" y="640" />
+        <di:waypoint x="2298" y="640" />
+        <di:waypoint x="2298" y="480" />
+        <di:waypoint x="2350" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f14_di" bpmnElement="f14">
+        <di:waypoint x="2400" y="480" />
+        <di:waypoint x="2643" y="480" />
+        <di:waypoint x="2643" y="640" />
+        <di:waypoint x="2885" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f15_di" bpmnElement="f15">
+        <di:waypoint x="2400" y="480" />
+        <di:waypoint x="2505" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f16_di" bpmnElement="f16">
+        <di:waypoint x="2625" y="480" />
+        <di:waypoint x="2755" y="480" />
+        <di:waypoint x="2755" y="640" />
+        <di:waypoint x="2885" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f17_di" bpmnElement="f17">
+        <di:waypoint x="2625" y="480" />
+        <di:waypoint x="2660" y="480" />
+        <di:waypoint x="2660" y="160" />
+        <di:waypoint x="2695" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f18_di" bpmnElement="f18">
+        <di:waypoint x="2755" y="200" />
+        <di:waypoint x="2755" y="230" />
+        <di:waypoint x="1805" y="230" />
+        <di:waypoint x="1805" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f19_di" bpmnElement="f19">
+        <di:waypoint x="3005" y="640" />
+        <di:waypoint x="3117" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="NoteReq_di" bpmnElement="NoteReq">
+        <dc:Bounds x="160" y="760" width="1600" height="100" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Assoc_Requisition_1_di" bpmnElement="Assoc_Requisition_1">
+        <di:waypoint x="2945" y="680" />
+        <di:waypoint x="260" y="760" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

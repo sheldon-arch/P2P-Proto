@@ -1,0 +1,582 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+                  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+                  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+                  id="Definitions_PaymentsInstallments" targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:collaboration id="Collaboration_PaymentsInstallments">
+    <bpmn:participant id="Participant_PaymentsInstallments" name="10 - Payments and Installments" processRef="Process_PaymentsInstallments" />
+  </bpmn:collaboration>
+  <bpmn:process id="Process_PaymentsInstallments" isExecutable="false">
+    <bpmn:laneSet id="LaneSet_PaymentsInstallments">
+      <bpmn:lane id="L_buyer" name="Procurement / Buyer">
+        <bpmn:flowNodeRef>GwCash</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>CashFloat</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GwFloatLow</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ReimburseFloat</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_finmaker" name="Finance - Maker">
+        <bpmn:flowNodeRef>Start</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>BuildSchedule</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GwApproveAmt</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>MakerPrepare</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ProcessPayment</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Reschedule</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_finchecker" name="Finance - Checker">
+        <bpmn:flowNodeRef>CheckerReview</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GwReleaseOk</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_mgmt" name="Management">
+        <bpmn:flowNodeRef>MgmtRelease</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_supplier" name="Supplier / Vendor">
+        <bpmn:flowNodeRef>ConfirmSupplier</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_sys" name="Platform / System">
+        <bpmn:flowNodeRef>GwLocked</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>SetApproved</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>SetPartial</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Withholding</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Recoup</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GwProcessable</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>PostPayment</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GwDest</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>TopUpFloat</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GwMoreEntries</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>OverdueTimer</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>RemindOverdue</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>End</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="Start" name="Approved payable / acknowledged PO">
+      <bpmn:documentation>Entry trigger: an invoice was matched and approved (diagram 09), OR a PO was acknowledged with an advance term due at acknowledgement (diagram 05). Payment is built and released as a schedule of installments. [SCOR S2.7 Authorize Supplier Payment | source: RA installments + AB payment terms]</bpmn:documentation>
+      <bpmn:outgoing>f1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:userTask id="BuildSchedule" name="Build payment schedule (entries + terms)">
+      <bpmn:documentation>Finance-Maker builds the TicketPaymentSchedule = set of TicketPaymentInstallment entries fixed when the supplier/PO is finalised. Per entry fields: amount (number&gt;0, mandatory), event-or-date (one of: event {after PO | against documents | on delivery | on milestone acceptance} OR a fixed date, mandatory), description (text, mandatory), term (dropdown, mandatory). term value set (locked allowed list, meet-7): {100% advance | part-advance + balance against documents | part-advance + balance against shipment received | 30/70 (and other split combinations) | net 30 | net 60 | net 90}. ~90% of local + US supplies are net 90 (90-day credit). Amounts stored as Float (null treated as 0). Installment initial status = null (pending). Owning role: Finance-Maker (payments.schedules.view + maker prepare). Editing payTerms / paymentSchedules reverts auto-approved Finance/Management completions to AWAITING_APPROVAL (RA e02). [SCOR S2.7 / OE6 | source: AB locked term list + RA schedule]</bpmn:documentation>
+      <bpmn:incoming>f1</bpmn:incoming>
+      <bpmn:outgoing>f2</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="GwLocked" name="Schedule locked?">
+      <bpmn:documentation>Lock guard (RA e03). Branch expression: any installment in the schedule has status in {APPROVED, PARTIAL_APPROVAL, PROCESSED} -&gt; schedule LOCKED; else -&gt; editable. Editable installment states = null (pending) and RESCHEDULED only. On a locked schedule, upsert AND delete of entries are SILENTLY SKIPPED (no error); new schedules (no id) are always created. This prevents altering committed money. [SCOR S2.7 | source: RA e03 locked schedule]</bpmn:documentation>
+      <bpmn:incoming>f2</bpmn:incoming>
+      <bpmn:outgoing>f3</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="GwCash" name="Cash float buy (no PO) or credit/advance?">
+      <bpmn:documentation>Branch expression: purchaseChannel == 'cash' (on-the-spot local buy on the cash float, no PO reference) -&gt; cash-float track; else (credit / advance / reimbursement against PO+invoice) -&gt; installment approval track. The cash track produces a cash-purchase GRN with NO PO reference and reimburses the float when low. [SCOR S2.7 | source: AB local-purchase cash branch]</bpmn:documentation>
+      <bpmn:incoming>f3</bpmn:incoming>
+      <bpmn:outgoing>f4</bpmn:outgoing>
+      <bpmn:outgoing>f5</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="CashFloat" name="Cash buy on float, log receipt (no PO)">
+      <bpmn:documentation>Cash handler buys on the configurable cash float (OMR-style, default OMR 300 held by procurement), collects the vendor receipt; Stores raise a cash-purchase GRN against the requisition with NO PO reference. Handler logs vendor receipt + deducts spend from the float balance. Fields: floatBalance (number, configurable currency+amount, default OMR 300), spendAmount (number&gt;0), vendorReceipt (file, mandatory), reason (text). Owning role: Buyer/cash handler (payments.cashFloat.manage conditional). Reports must show cash-purchase spend alongside credit. [SCOR S2.7 | source: AB cash float + cash GRN]</bpmn:documentation>
+      <bpmn:incoming>f4</bpmn:incoming>
+      <bpmn:outgoing>f6</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="GwFloatLow" name="Float nearing limit?">
+      <bpmn:documentation>Branch expression: floatBalance &lt;= reimbursementThreshold (configurable, default ~OMR 100 left / ~OMR 200 spent of the OMR 300 float) -&gt; request reimbursement (runs through the same maker/checker pipeline, destination = cash handler not supplier); else -&gt; cash purchase closed, float carries forward. [SCOR S2.7 | source: AB float reimbursement]</bpmn:documentation>
+      <bpmn:incoming>f6</bpmn:incoming>
+      <bpmn:outgoing>f7</bpmn:outgoing>
+      <bpmn:outgoing>f8</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="ReimburseFloat" name="Request float reimbursement">
+      <bpmn:documentation>Cash handler submits a reimbursement request (~OMR 300; fields: amount (number&gt;0, default top-up to float ceiling), reason (text), currentFloatBalance (number)). Routes into the maker prepares step; the maker/checker pipeline approves it and the destination is the cash handler (not a supplier). Handler then collects cash and tops the float back to its ceiling. Owning role: Buyer/cash handler. [SCOR S2.7 | source: AB reimbursement -&gt; settlement]</bpmn:documentation>
+      <bpmn:incoming>f7</bpmn:incoming>
+      <bpmn:outgoing>f9</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="GwApproveAmt" name="Approve installment: amount vs agreed?">
+      <bpmn:documentation>Installment approval (POST /api/payments/schedules/installment/:id/approve, perm payments.schedules.approve, body ApproveInstallmentDto {amount (&gt;0, &lt;= agreed), remarks?}). Validation: amount must be &gt; 0 AND &lt;= installment.amount (agreed); otherwise BadRequestException and the installment stays pending. Branch expression: amount == agreed -&gt; APPROVED (no remainder); 0 &lt; amount &lt; agreed -&gt; PARTIAL_APPROVAL (+ remainder). Records approvedAmount / approvedById / approvedAt / note. Owning role: Finance-Maker (approve action). [SCOR S2.7 | source: RA e04 approve installment]</bpmn:documentation>
+      <bpmn:incoming>f5</bpmn:incoming>
+      <bpmn:incoming>f29</bpmn:incoming>
+      <bpmn:outgoing>f10</bpmn:outgoing>
+      <bpmn:outgoing>f11</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="SetApproved" name="Status = APPROVED (full)">
+      <bpmn:documentation>amount == agreed: set installment status = APPROVED, no remainder created. Records approvedAmount = agreed. [SCOR S2.7 | source: RA approve full]</bpmn:documentation>
+      <bpmn:incoming>f10</bpmn:incoming>
+      <bpmn:outgoing>f12</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="SetPartial" name="Status = PARTIAL_APPROVAL + create ONE remainder">
+      <bpmn:documentation>0 &lt; amount &lt; agreed: set installment status = PARTIAL_APPROVAL AND create exactly ONE remainder installment (leftover = agreed - approved; same date, same paymentScheduleId, same description; status null = pending). Records approvedAmount = approved. Only ONE remainder is created per partial approval (the remainder itself can later be approved/partial again). [SCOR S2.7 | source: RA e04 remainder]</bpmn:documentation>
+      <bpmn:incoming>f11</bpmn:incoming>
+      <bpmn:outgoing>f13</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Withholding" name="Apply withholding tax (TDS/WHT)">
+      <bpmn:documentation>Tax service applies withholding on the payable where applicable: withholdingTaxCodeId + withholdingAmount (TDS / WHT on cross-border services). Net payable = approvedAmount - withholdingAmount; the withheld portion is remitted to the authority separately. Reverse-charge / import VAT already handled at invoice (diagram 09). [SCOR S2.7 | source: build-new tax service withholding]</bpmn:documentation>
+      <bpmn:incoming>f12</bpmn:incoming>
+      <bpmn:incoming>f13</bpmn:incoming>
+      <bpmn:outgoing>f14</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Recoup" name="Recoup advance, withhold retention">
+      <bpmn:documentation>Advance recoupment + retention/holdback. If an AdvancePayment (prepayment asset) exists for the PO, recover it against this and later invoices: status requested -&gt; paid -&gt; recouped; recoupedAgainstInvoiceIds records the invoices it was recovered against, reducing the net release. Retention/holdback: withheld a configured withheldPercent (status withheld), released only on releaseCondition (acceptance / warranty period). Net release = approvedAmount - withholding - advanceRecouped - retentionWithheld. Owning role: Finance-Maker (payments.advance.manage, payments.retention.manage). [SCOR S2.7 | source: data-model AdvancePayment + Retention]</bpmn:documentation>
+      <bpmn:incoming>f14</bpmn:incoming>
+      <bpmn:outgoing>f15</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="MakerPrepare" name="Maker prepares payment for release">
+      <bpmn:documentation>Finance-Maker prepares the payment run against the schedule (the net release after withholding / advance / retention). Maker is the preparer only; maker is NOT the checker. Owning role: Finance-Maker (payments prepare/process; maker, not checker). Convergence point for both the credit/advance track and the cash-float reimbursement track. [SCOR S2.7 | source: AB maker prepares + role-matrix SoD]</bpmn:documentation>
+      <bpmn:incoming>f9</bpmn:incoming>
+      <bpmn:incoming>f15</bpmn:incoming>
+      <bpmn:incoming>f23</bpmn:incoming>
+      <bpmn:incoming>f32</bpmn:incoming>
+      <bpmn:outgoing>f16</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="CheckerReview" name="Checker (Chief Accountant) reviews release">
+      <bpmn:documentation>Finance-Checker (Chief Accountant) reviews the prepared payment against the schedule + cash flow and approves it to pay, or holds it. SoD: maker != checker (financial-control segregation per SOX/COSO + ISO 37001, NOT ISO 9001 8.4). Owning role: Finance-Checker (payments.schedules.approve release). This is the only second-person release gate. [SCOR S2.7 | source: AB Chief Accountant checker + financial-control SoD]</bpmn:documentation>
+      <bpmn:incoming>f16</bpmn:incoming>
+      <bpmn:outgoing>f17</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="GwReleaseOk" name="Approved to pay?">
+      <bpmn:documentation>Branch expression: checkerDecision == 'approve' -&gt; process payment; checkerDecision == 'hold' (signatory unavailable / cash-flow) -&gt; reschedule with reason. Hold does not lose the entry; it re-enters prepare when due. [SCOR S2.7 | source: AB approved-to-pay vs not-now]</bpmn:documentation>
+      <bpmn:incoming>f17</bpmn:incoming>
+      <bpmn:outgoing>f18</bpmn:outgoing>
+      <bpmn:outgoing>f19</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="GwProcessable" name="Processable status?">
+      <bpmn:documentation>Process guard (POST .../process, perm payments.schedules.process). Branch expression: installment.status in {APPROVED, PARTIAL_APPROVAL} -&gt; process; otherwise BadRequestException (only APPROVED or PARTIAL_APPROVAL are processable; pending/RESCHEDULED/already-PROCESSED are not). [SCOR S2.7 | source: RA process guard]</bpmn:documentation>
+      <bpmn:incoming>fmgmt</bpmn:incoming>
+      <bpmn:outgoing>f20</bpmn:outgoing>
+      <bpmn:outgoing>f21</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="ProcessPayment" name="Process payment + upload receipt">
+      <bpmn:documentation>Maker processes the payment (multipart ProcessInstallmentDto {paymentDate (ISO, mandatory), notes?, file?}). Sets status = PROCESSED + processedAt / processedById / receiptFile. Optional receipt stored at path receipts/{ticketId}/{originalFilename} (LocalStorageService; upload failure FAILS the whole op). PROCESSED is terminal (no un-process). Realized FX gain/loss computed between PO date rate and this payment date rate. Owning role: Finance-Maker (process). [SCOR S2.7 | source: RA process + receipt path]</bpmn:documentation>
+      <bpmn:incoming>f20</bpmn:incoming>
+      <bpmn:outgoing>f22</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Reschedule" name="Reschedule with reason (capture originalDate)">
+      <bpmn:documentation>Reschedule (POST .../reschedule, perm payments.schedules.reschedule, body {newDate (ISO, mandatory), reason?}). First reschedule captures the current date as originalDate (preserved thereafter); sets date = newDate, status = RESCHEDULED; amount + originalDate unchanged on later reschedules. Reasons: hold (signatory unavailable / cash flow). Re-enters prepare when due. Owning roles: Finance-Maker (conditional, with reason) / Finance-Checker. [SCOR S2.7 | source: RA reschedule + AB hold-reschedule]</bpmn:documentation>
+      <bpmn:incoming>f19</bpmn:incoming>
+      <bpmn:incoming>f21</bpmn:incoming>
+      <bpmn:outgoing>f23</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="PostPayment" name="Recompute totals, update ledgers + completions">
+      <bpmn:documentation>Post-commit (all paths converge). Recompute ticket payment totals (getAmounts): Paid = sum approvedAmount of PROCESSED; Upcoming = sum non-processed with date &gt;= start-of-today; Overdue = sum non-processed with date &lt; start-of-today; Pending = totalAmount - Paid (any shortfall added to Upcoming). Overdue boundary = 00:00:00 (start-of-today, no timezone handling); null date = upcoming. Writes Ticket.totalAmountPaid / upcomingPaymentAmount / overduePaymentAmount. Updates the creditor ledger per supplier (name, amount, payment terms, transaction history; read-only to procurement). Emit INSTALLMENT_STATUS_UPDATED (approved / partially approved / processed / rescheduled) -&gt; email PROCUREMENT completion assignee; update MANAGEMENT vertical completion; audit + SSE ticket.updated. [SCOR S2.7 | source: RA getAmounts + post-commit + AB creditor ledger]</bpmn:documentation>
+      <bpmn:incoming>f22</bpmn:incoming>
+      <bpmn:outgoing>f24</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="GwDest" name="Destination?">
+      <bpmn:documentation>Branch expression: destination == 'supplier' -&gt; email payment confirmation on the order thread to the supplier; destination == 'cashHandler' (float reimbursement) -&gt; notify the cash handler to collect cash and top up the float. [SCOR S2.7 | source: AB destination split]</bpmn:documentation>
+      <bpmn:incoming>f24</bpmn:incoming>
+      <bpmn:outgoing>f25</bpmn:outgoing>
+      <bpmn:outgoing>f26</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sendTask id="ConfirmSupplier" name="Email payment confirmation to supplier">
+      <bpmn:documentation>System emails the payment confirmation / receipt copy on the order thread; supplier receives the payment confirmation. Owning role: Platform/System (notification). [SCOR S2.7 | source: AB email confirmation on order thread]</bpmn:documentation>
+      <bpmn:incoming>f25</bpmn:incoming>
+      <bpmn:outgoing>f27</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:serviceTask id="TopUpFloat" name="Top up cash float to ceiling">
+      <bpmn:documentation>Float-reimbursement destination: the cash handler collects cash and the float is topped back to its configured ceiling (default OMR 300); float carries forward. [SCOR S2.7 | source: AB float top-up]</bpmn:documentation>
+      <bpmn:incoming>f26</bpmn:incoming>
+      <bpmn:outgoing>f28</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="GwMoreEntries" name="More schedule entries due?">
+      <bpmn:documentation>Branch expression: any installment in the schedule has status == null (pending) or RESCHEDULED with date due AND net amount remaining &gt; 0 -&gt; loop to the next entry (re-enter approval); else (all settled) -&gt; close out. Remainders created by partial approval are themselves pending entries that re-enter here. [SCOR S2.7 | source: AB next-entry loop + RA remainder]</bpmn:documentation>
+      <bpmn:incoming>f27</bpmn:incoming>
+      <bpmn:incoming>f28</bpmn:incoming>
+      <bpmn:outgoing>f29</bpmn:outgoing>
+      <bpmn:outgoing>f30</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:boundaryEvent id="OverdueTimer" name="Overdue reminder timer (~28d before due)" attachedToRef="BuildSchedule" cancelActivity="false">
+      <bpmn:documentation>Non-interrupting timer boundary on the schedule (where the credit-term entries live). For a credit term the system fires an overdue reminder a few days before the term is due: ~28 days for a 30-day term (and the same number of days before due for 60/90-day terms). Non-interrupting: the main flow continues unchanged; the timer only spawns the reminder. Distinct from the delivery-overdue reminder in diagram 08. [SCOR S2.7 | source: AB overdue reminder ~28d]</bpmn:documentation>
+      <bpmn:outgoing>f31</bpmn:outgoing>
+      <bpmn:timerEventDefinition />
+    </bpmn:boundaryEvent>
+    <bpmn:sendTask id="RemindOverdue" name="Send overdue payment reminder to Accounts">
+      <bpmn:documentation>On the timer, the system emails the overdue payment reminder to Accounts / Finance (notification service) so the maker prepares the due credit installment. Informational only; it does not change installment status. Converges into the maker-prepare step for the due entry. [SCOR S2.7 | source: AB overdue reminder ~28d + platform-services notifications]</bpmn:documentation>
+      <bpmn:incoming>f31</bpmn:incoming>
+      <bpmn:outgoing>f32</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:endEvent id="End" name="Payments settled, ledger updated">
+      <bpmn:documentation>Outcome: all schedule installments PROCESSED (or accounted via credit/debit note), GR/IR cleared (diagram 09), advance recouped, retention released per condition, withholding remitted, creditor ledger and ticket payment totals updated, supplier (or cash handler) confirmed. Feeds cycle close-out and analytics (diagram 12). [SCOR S2.7 -&gt; OE3 | source: RA + AB settlement]</bpmn:documentation>
+      <bpmn:incoming>f8</bpmn:incoming>
+      <bpmn:incoming>f30</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="MgmtRelease" name="Management approves release (terminal vertical)">
+      <bpmn:documentation>For releases at or above the configurable management threshold (and as the terminal approval vertical), Management approves the payment release before processing; this is where the MANAGEMENT vertical completion is exercised through the installment release. Below threshold, the checker approval suffices and this step auto-passes. Gateway: releaseAmountInBase &gt;= managementReleaseThreshold (configurable) -&gt; Management approval required. [SCOR OE1/S2.7 | source: RA MANAGEMENT vertical approves via installments]</bpmn:documentation>
+      <bpmn:incoming>f18</bpmn:incoming>
+      <bpmn:outgoing>fmgmt</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="f1" sourceRef="Start" targetRef="BuildSchedule" />
+    <bpmn:sequenceFlow id="f2" sourceRef="BuildSchedule" targetRef="GwLocked" />
+    <bpmn:sequenceFlow id="f3" name="editable / committed entries skipped" sourceRef="GwLocked" targetRef="GwCash" />
+    <bpmn:sequenceFlow id="f4" name="cash buy (no PO)" sourceRef="GwCash" targetRef="CashFloat" />
+    <bpmn:sequenceFlow id="f5" name="credit / advance (against PO)" sourceRef="GwCash" targetRef="GwApproveAmt" />
+    <bpmn:sequenceFlow id="f6" sourceRef="CashFloat" targetRef="GwFloatLow" />
+    <bpmn:sequenceFlow id="f7" name="float low (&lt;= threshold)" sourceRef="GwFloatLow" targetRef="ReimburseFloat" />
+    <bpmn:sequenceFlow id="f8" name="float ok, cash buy closed" sourceRef="GwFloatLow" targetRef="End" />
+    <bpmn:sequenceFlow id="f9" sourceRef="ReimburseFloat" targetRef="MakerPrepare" />
+    <bpmn:sequenceFlow id="f10" name="amount == agreed" sourceRef="GwApproveAmt" targetRef="SetApproved" />
+    <bpmn:sequenceFlow id="f11" name="0 &lt; amount &lt; agreed" sourceRef="GwApproveAmt" targetRef="SetPartial" />
+    <bpmn:sequenceFlow id="f12" sourceRef="SetApproved" targetRef="Withholding" />
+    <bpmn:sequenceFlow id="f13" sourceRef="SetPartial" targetRef="Withholding" />
+    <bpmn:sequenceFlow id="f14" sourceRef="Withholding" targetRef="Recoup" />
+    <bpmn:sequenceFlow id="f15" sourceRef="Recoup" targetRef="MakerPrepare" />
+    <bpmn:sequenceFlow id="f16" sourceRef="MakerPrepare" targetRef="CheckerReview" />
+    <bpmn:sequenceFlow id="f17" sourceRef="CheckerReview" targetRef="GwReleaseOk" />
+    <bpmn:sequenceFlow id="f18" name="approved to pay" sourceRef="GwReleaseOk" targetRef="MgmtRelease" />
+    <bpmn:sequenceFlow id="f19" name="hold (signatory / cash flow)" sourceRef="GwReleaseOk" targetRef="Reschedule" />
+    <bpmn:sequenceFlow id="f20" name="status in {APPROVED, PARTIAL_APPROVAL}" sourceRef="GwProcessable" targetRef="ProcessPayment" />
+    <bpmn:sequenceFlow id="f21" name="not processable" sourceRef="GwProcessable" targetRef="Reschedule" />
+    <bpmn:sequenceFlow id="f22" sourceRef="ProcessPayment" targetRef="PostPayment" />
+    <bpmn:sequenceFlow id="f23" name="re-enter when due" sourceRef="Reschedule" targetRef="MakerPrepare" />
+    <bpmn:sequenceFlow id="f24" sourceRef="PostPayment" targetRef="GwDest" />
+    <bpmn:sequenceFlow id="f25" name="supplier" sourceRef="GwDest" targetRef="ConfirmSupplier" />
+    <bpmn:sequenceFlow id="f26" name="cash handler" sourceRef="GwDest" targetRef="TopUpFloat" />
+    <bpmn:sequenceFlow id="f27" sourceRef="ConfirmSupplier" targetRef="GwMoreEntries" />
+    <bpmn:sequenceFlow id="f28" sourceRef="TopUpFloat" targetRef="GwMoreEntries" />
+    <bpmn:sequenceFlow id="f29" name="next entry due (loop)" sourceRef="GwMoreEntries" targetRef="GwApproveAmt" />
+    <bpmn:sequenceFlow id="f30" name="all settled" sourceRef="GwMoreEntries" targetRef="End" />
+    <bpmn:sequenceFlow id="f31" name="term due in ~28d (non-interrupting)" sourceRef="OverdueTimer" targetRef="RemindOverdue" />
+    <bpmn:sequenceFlow id="f32" name="prepare due credit installment" sourceRef="RemindOverdue" targetRef="MakerPrepare" />
+    <bpmn:sequenceFlow id="fmgmt" name="released" sourceRef="MgmtRelease" targetRef="GwProcessable" />
+    <bpmn:textAnnotation id="NoteInstallment">
+      <bpmn:text>Installment state machine: null (pending) -&gt; APPROVED (amount == agreed) | PARTIAL_APPROVAL (0 &lt; amount &lt; agreed; creates exactly ONE remainder, null status) -&gt; PROCESSED (guard: status in {APPROVED, PARTIAL_APPROVAL}; terminal, no un-process). pending/PROCESSED -&gt; RESCHEDULED (first reschedule captures originalDate). Approve validation: amount &gt; 0 AND &lt;= agreed, else BadRequestException and stays pending. Schedule LOCKED (upsert + delete silently skipped) if ANY installment in {APPROVED, PARTIAL_APPROVAL, PROCESSED}; only null and RESCHEDULED entries are editable.</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Assoc_PaymentsInstallments_1" sourceRef="GwApproveAmt" targetRef="NoteInstallment" />
+    <bpmn:textAnnotation id="NoteSod">
+      <bpmn:text>Maker != checker is a financial-control segregation (SOX/COSO + ISO 37001, NOT ISO 9001). Maker (Finance-Maker) prepares; Checker (Chief Accountant) is the only second-person release gate. Withholding tax (TDS/WHT) on cross-border services, advance recoupment (recover prepayment against later invoices), and retention/holdback (release on acceptance / warranty) all net down the release amount before processing.</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Assoc_PaymentsInstallments_2" sourceRef="CheckerReview" targetRef="NoteSod" />
+    <bpmn:textAnnotation id="NoteAmounts">
+      <bpmn:text>Amount breakdown (recomputed live, never cached): Paid = sum approvedAmount of PROCESSED; Upcoming = sum non-processed with date &gt;= start-of-today; Overdue = sum non-processed with date &lt; start-of-today (overdue boundary = 00:00:00 start-of-today, null date = upcoming); Pending = totalAmount - Paid, shortfall added to Upcoming. Creditor ledger per supplier (read-only to procurement). Cash float track: cash buy on configurable float (default OMR 300), cash GRN with NO PO reference, reimburse when float &lt;= threshold (default ~OMR 100 left), destination = cash handler not supplier.</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Assoc_PaymentsInstallments_3" sourceRef="PostPayment" targetRef="NoteAmounts" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagram_PaymentsInstallments">
+    <bpmndi:BPMNPlane id="Plane_PaymentsInstallments" bpmnElement="Collaboration_PaymentsInstallments">
+      <bpmndi:BPMNShape id="Participant_PaymentsInstallments_di" bpmnElement="Participant_PaymentsInstallments" isHorizontal="true">
+        <dc:Bounds x="160" y="80" width="3680" height="960" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_buyer_di" bpmnElement="L_buyer" isHorizontal="true">
+        <dc:Bounds x="190" y="80" width="3650" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_finmaker_di" bpmnElement="L_finmaker" isHorizontal="true">
+        <dc:Bounds x="190" y="240" width="3650" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_finchecker_di" bpmnElement="L_finchecker" isHorizontal="true">
+        <dc:Bounds x="190" y="400" width="3650" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_mgmt_di" bpmnElement="L_mgmt" isHorizontal="true">
+        <dc:Bounds x="190" y="560" width="3650" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_supplier_di" bpmnElement="L_supplier" isHorizontal="true">
+        <dc:Bounds x="190" y="720" width="3650" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_sys_di" bpmnElement="L_sys" isHorizontal="true">
+        <dc:Bounds x="190" y="880" width="3650" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Start_di" bpmnElement="Start">
+        <dc:Bounds x="267" y="302" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="257" y="342" width="56" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BuildSchedule_di" bpmnElement="BuildSchedule">
+        <dc:Bounds x="415" y="280" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GwLocked_di" bpmnElement="GwLocked" isMarkerVisible="true">
+        <dc:Bounds x="640" y="935" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="630" y="989" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GwCash_di" bpmnElement="GwCash" isMarkerVisible="true">
+        <dc:Bounds x="830" y="135" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="820" y="189" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CashFloat_di" bpmnElement="CashFloat">
+        <dc:Bounds x="985" y="120" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GwFloatLow_di" bpmnElement="GwFloatLow" isMarkerVisible="true">
+        <dc:Bounds x="1210" y="135" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1200" y="189" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ReimburseFloat_di" bpmnElement="ReimburseFloat">
+        <dc:Bounds x="1365" y="120" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GwApproveAmt_di" bpmnElement="GwApproveAmt" isMarkerVisible="true">
+        <dc:Bounds x="1020" y="295" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1010" y="349" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SetApproved_di" bpmnElement="SetApproved">
+        <dc:Bounds x="1175" y="920" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SetPartial_di" bpmnElement="SetPartial">
+        <dc:Bounds x="1745" y="920" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Withholding_di" bpmnElement="Withholding">
+        <dc:Bounds x="1365" y="920" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Recoup_di" bpmnElement="Recoup">
+        <dc:Bounds x="1555" y="920" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="MakerPrepare_di" bpmnElement="MakerPrepare">
+        <dc:Bounds x="1745" y="280" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CheckerReview_di" bpmnElement="CheckerReview">
+        <dc:Bounds x="1935" y="440" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GwReleaseOk_di" bpmnElement="GwReleaseOk" isMarkerVisible="true">
+        <dc:Bounds x="2160" y="455" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2150" y="509" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GwProcessable_di" bpmnElement="GwProcessable" isMarkerVisible="true">
+        <dc:Bounds x="2540" y="935" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2530" y="989" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ProcessPayment_di" bpmnElement="ProcessPayment">
+        <dc:Bounds x="2695" y="280" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Reschedule_di" bpmnElement="Reschedule">
+        <dc:Bounds x="2505" y="280" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="PostPayment_di" bpmnElement="PostPayment">
+        <dc:Bounds x="2885" y="920" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GwDest_di" bpmnElement="GwDest" isMarkerVisible="true">
+        <dc:Bounds x="3110" y="935" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3100" y="989" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ConfirmSupplier_di" bpmnElement="ConfirmSupplier">
+        <dc:Bounds x="3265" y="760" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TopUpFloat_di" bpmnElement="TopUpFloat">
+        <dc:Bounds x="3265" y="920" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GwMoreEntries_di" bpmnElement="GwMoreEntries" isMarkerVisible="true">
+        <dc:Bounds x="3490" y="935" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3480" y="989" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="OverdueTimer_di" bpmnElement="OverdueTimer">
+        <dc:Bounds x="1027" y="942" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1017" y="982" width="56" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="RemindOverdue_di" bpmnElement="RemindOverdue">
+        <dc:Bounds x="795" y="920" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_di" bpmnElement="End">
+        <dc:Bounds x="3687" y="942" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3677" y="982" width="56" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="MgmtRelease_di" bpmnElement="MgmtRelease">
+        <dc:Bounds x="2315" y="600" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="f1_di" bpmnElement="f1">
+        <di:waypoint x="303" y="320" />
+        <di:waypoint x="415" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f2_di" bpmnElement="f2">
+        <di:waypoint x="535" y="320" />
+        <di:waypoint x="588" y="320" />
+        <di:waypoint x="588" y="960" />
+        <di:waypoint x="640" y="960" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f3_di" bpmnElement="f3">
+        <di:waypoint x="690" y="960" />
+        <di:waypoint x="760" y="960" />
+        <di:waypoint x="760" y="160" />
+        <di:waypoint x="830" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f4_di" bpmnElement="f4">
+        <di:waypoint x="880" y="160" />
+        <di:waypoint x="985" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f5_di" bpmnElement="f5">
+        <di:waypoint x="880" y="160" />
+        <di:waypoint x="950" y="160" />
+        <di:waypoint x="950" y="320" />
+        <di:waypoint x="1020" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f6_di" bpmnElement="f6">
+        <di:waypoint x="1105" y="160" />
+        <di:waypoint x="1210" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f7_di" bpmnElement="f7">
+        <di:waypoint x="1260" y="160" />
+        <di:waypoint x="1365" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f8_di" bpmnElement="f8">
+        <di:waypoint x="1260" y="160" />
+        <di:waypoint x="2474" y="160" />
+        <di:waypoint x="2474" y="960" />
+        <di:waypoint x="3687" y="960" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f9_di" bpmnElement="f9">
+        <di:waypoint x="1485" y="160" />
+        <di:waypoint x="1615" y="160" />
+        <di:waypoint x="1615" y="320" />
+        <di:waypoint x="1745" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f10_di" bpmnElement="f10">
+        <di:waypoint x="1070" y="320" />
+        <di:waypoint x="1123" y="320" />
+        <di:waypoint x="1123" y="960" />
+        <di:waypoint x="1175" y="960" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f11_di" bpmnElement="f11">
+        <di:waypoint x="1070" y="320" />
+        <di:waypoint x="1408" y="320" />
+        <di:waypoint x="1408" y="960" />
+        <di:waypoint x="1745" y="960" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f12_di" bpmnElement="f12">
+        <di:waypoint x="1295" y="960" />
+        <di:waypoint x="1365" y="960" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f13_di" bpmnElement="f13">
+        <di:waypoint x="1805" y="1000" />
+        <di:waypoint x="1805" y="1030" />
+        <di:waypoint x="1425" y="1030" />
+        <di:waypoint x="1425" y="1000" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f14_di" bpmnElement="f14">
+        <di:waypoint x="1485" y="960" />
+        <di:waypoint x="1555" y="960" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f15_di" bpmnElement="f15">
+        <di:waypoint x="1675" y="960" />
+        <di:waypoint x="1710" y="960" />
+        <di:waypoint x="1710" y="320" />
+        <di:waypoint x="1745" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f16_di" bpmnElement="f16">
+        <di:waypoint x="1865" y="320" />
+        <di:waypoint x="1900" y="320" />
+        <di:waypoint x="1900" y="480" />
+        <di:waypoint x="1935" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f17_di" bpmnElement="f17">
+        <di:waypoint x="2055" y="480" />
+        <di:waypoint x="2160" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f18_di" bpmnElement="f18">
+        <di:waypoint x="2210" y="480" />
+        <di:waypoint x="2263" y="480" />
+        <di:waypoint x="2263" y="640" />
+        <di:waypoint x="2315" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f19_di" bpmnElement="f19">
+        <di:waypoint x="2210" y="480" />
+        <di:waypoint x="2358" y="480" />
+        <di:waypoint x="2358" y="320" />
+        <di:waypoint x="2505" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f20_di" bpmnElement="f20">
+        <di:waypoint x="2590" y="960" />
+        <di:waypoint x="2643" y="960" />
+        <di:waypoint x="2643" y="320" />
+        <di:waypoint x="2695" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f21_di" bpmnElement="f21">
+        <di:waypoint x="2590" y="960" />
+        <di:waypoint x="2610" y="960" />
+        <di:waypoint x="2610" y="320" />
+        <di:waypoint x="2505" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f22_di" bpmnElement="f22">
+        <di:waypoint x="2815" y="320" />
+        <di:waypoint x="2850" y="320" />
+        <di:waypoint x="2850" y="960" />
+        <di:waypoint x="2885" y="960" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f23_di" bpmnElement="f23">
+        <di:waypoint x="2565" y="360" />
+        <di:waypoint x="2565" y="390" />
+        <di:waypoint x="1805" y="390" />
+        <di:waypoint x="1805" y="360" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f24_di" bpmnElement="f24">
+        <di:waypoint x="3005" y="960" />
+        <di:waypoint x="3110" y="960" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f25_di" bpmnElement="f25">
+        <di:waypoint x="3160" y="960" />
+        <di:waypoint x="3213" y="960" />
+        <di:waypoint x="3213" y="800" />
+        <di:waypoint x="3265" y="800" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f26_di" bpmnElement="f26">
+        <di:waypoint x="3160" y="960" />
+        <di:waypoint x="3265" y="960" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f27_di" bpmnElement="f27">
+        <di:waypoint x="3385" y="800" />
+        <di:waypoint x="3438" y="800" />
+        <di:waypoint x="3438" y="960" />
+        <di:waypoint x="3490" y="960" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f28_di" bpmnElement="f28">
+        <di:waypoint x="3385" y="960" />
+        <di:waypoint x="3490" y="960" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f29_di" bpmnElement="f29">
+        <di:waypoint x="3490" y="960" />
+        <di:waypoint x="2280" y="960" />
+        <di:waypoint x="2280" y="320" />
+        <di:waypoint x="1070" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f30_di" bpmnElement="f30">
+        <di:waypoint x="3540" y="960" />
+        <di:waypoint x="3687" y="960" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f31_di" bpmnElement="f31">
+        <di:waypoint x="1045" y="978" />
+        <di:waypoint x="1045" y="1008" />
+        <di:waypoint x="855" y="1008" />
+        <di:waypoint x="855" y="1000" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f32_di" bpmnElement="f32">
+        <di:waypoint x="915" y="960" />
+        <di:waypoint x="1330" y="960" />
+        <di:waypoint x="1330" y="320" />
+        <di:waypoint x="1745" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="fmgmt_di" bpmnElement="fmgmt">
+        <di:waypoint x="2435" y="640" />
+        <di:waypoint x="2488" y="640" />
+        <di:waypoint x="2488" y="960" />
+        <di:waypoint x="2540" y="960" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="NoteInstallment_di" bpmnElement="NoteInstallment">
+        <dc:Bounds x="160" y="1080" width="1600" height="100" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Assoc_PaymentsInstallments_1_di" bpmnElement="Assoc_PaymentsInstallments_1">
+        <di:waypoint x="1045" y="345" />
+        <di:waypoint x="260" y="1080" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="NoteSod_di" bpmnElement="NoteSod">
+        <dc:Bounds x="160" y="1190" width="1600" height="100" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Assoc_PaymentsInstallments_2_di" bpmnElement="Assoc_PaymentsInstallments_2">
+        <di:waypoint x="1995" y="520" />
+        <di:waypoint x="260" y="1190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="NoteAmounts_di" bpmnElement="NoteAmounts">
+        <dc:Bounds x="160" y="1300" width="1600" height="100" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Assoc_PaymentsInstallments_3_di" bpmnElement="Assoc_PaymentsInstallments_3">
+        <di:waypoint x="2945" y="1000" />
+        <di:waypoint x="260" y="1300" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

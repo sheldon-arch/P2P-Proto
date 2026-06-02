@@ -1,0 +1,2913 @@
+[
+  {
+    "id": "SUP-0001",
+    "code": "S/00001",
+    "name": "Synthex Active Pharma Ltd",
+    "description": "Synthex Active Pharma Ltd - approved supplier",
+    "purchaseType": "IMPORT",
+    "classification": "External",
+    "currency": "INR",
+    "dealCurrency": "INR",
+    "supplierGroup": "RM",
+    "status": "ONBOARDED",
+    "grade": "A",
+    "avlScopeOfApproval": [
+      "RM-API"
+    ],
+    "paymentTerms": "30-70",
+    "payMode": "EP",
+    "incoTerm": "CIF",
+    "incoPlace": "Nhava Sheva",
+    "advancePayable": true,
+    "advanceTolerance": 10,
+    "autoInvoicing": false,
+    "minimumOrderValue": 1,
+    "isErpSynced": true,
+    "riskTier": "critical",
+    "securityTradeProgram": "none",
+    "continuity": {
+      "hasBcp": true,
+      "mtpdDays": 7,
+      "backupSupplierCoverage": true
+    },
+    "sustainability": {
+      "iso14001": true,
+      "ecovadis": "Gold"
+    },
+    "infoSec": {
+      "iso27001": false,
+      "dpaSigned": true
+    },
+    "antiBribery": {
+      "dueDiligenceStatus": "complete",
+      "sanctionsScreened": true,
+      "lastScreened": "2026-01-17"
+    },
+    "certifications": [
+      {
+        "name": "ISO 9001:2015",
+        "expiry": "2026-11-28"
+      },
+      {
+        "name": "GMP",
+        "expiry": "2026-06-13"
+      },
+      {
+        "name": "ISO 14001:2015",
+        "expiry": "2026-12-18"
+      }
+    ],
+    "lastAssessed": "2026-04-01",
+    "nextDue": "2026-11-11",
+    "country": "India",
+    "region": "IN",
+    "taxIds": {
+      "gstin": "24EMWXA3936D6ZC",
+      "pan": "EGKKV1104G"
+    }
+  },
+  {
+    "id": "SUP-0002",
+    "code": "S/00002",
+    "name": "BioCore Ingredients GmbH",
+    "description": "BioCore Ingredients GmbH - approved supplier",
+    "purchaseType": "IMPORT",
+    "classification": "External",
+    "currency": "EUR",
+    "dealCurrency": "EUR",
+    "supplierGroup": "RM",
+    "status": "ONBOARDED",
+    "grade": "A",
+    "avlScopeOfApproval": [
+      "RM-API"
+    ],
+    "paymentTerms": "PA-DOC",
+    "payMode": "EP",
+    "incoTerm": "CIF",
+    "incoPlace": "Hamburg",
+    "advancePayable": true,
+    "advanceTolerance": 10,
+    "autoInvoicing": false,
+    "minimumOrderValue": 1,
+    "isErpSynced": false,
+    "riskTier": "critical",
+    "securityTradeProgram": "AEO",
+    "continuity": {
+      "hasBcp": true,
+      "mtpdDays": 7,
+      "backupSupplierCoverage": true
+    },
+    "sustainability": {
+      "iso14001": true,
+      "ecovadis": "Bronze"
+    },
+    "infoSec": {
+      "iso27001": true,
+      "dpaSigned": true
+    },
+    "antiBribery": {
+      "dueDiligenceStatus": "complete",
+      "sanctionsScreened": true,
+      "lastScreened": "2026-05-01"
+    },
+    "certifications": [
+      {
+        "name": "ISO 9001:2015",
+        "expiry": "2027-01-22"
+      },
+      {
+        "name": "GMP",
+        "expiry": "2026-12-30"
+      },
+      {
+        "name": "ISO 14001:2015",
+        "expiry": "2026-11-06"
+      }
+    ],
+    "lastAssessed": "2025-12-28",
+    "nextDue": "2026-11-23",
+    "country": "Germany",
+    "region": "EU",
+    "taxIds": {
+      "vat": "GE657779675"
+    }
+  },
+  {
+    "id": "SUP-0003",
+    "code": "S/00003",
+    "name": "Helvetia Fine Chemicals AG",
+    "description": "Helvetia Fine Chemicals AG - approved supplier",
+    "purchaseType": "IMPORT",
+    "classification": "External",
+    "currency": "CHF",
+    "dealCurrency": "CHF",
+    "supplierGroup": "RM",
+    "status": "ONBOARDED",
+    "grade": "A",
+    "avlScopeOfApproval": [
+      "RM-API"
+    ],
+    "paymentTerms": "ADV100",
+    "payMode": "EP",
+    "incoTerm": "CIF",
+    "incoPlace": "Hamburg",
+    "advancePayable": true,
+    "advanceTolerance": 10,
+    "autoInvoicing": false,
+    "minimumOrderValue": 1,
+    "isErpSynced": true,
+    "riskTier": "critical",
+    "securityTradeProgram": "none",
+    "continuity": {
+      "hasBcp": true,
+      "mtpdDays": 7,
+      "backupSupplierCoverage": true
+    },
+    "sustainability": {
+      "iso14001": true,
+      "ecovadis": "Bronze"
+    },
+    "infoSec": {
+      "iso27001": true,
+      "dpaSigned": true
+    },
+    "antiBribery": {
+      "dueDiligenceStatus": "complete",
+      "sanctionsScreened": true,
+      "lastScreened": "2026-02-22"
+    },
+    "certifications": [
+      {
+        "name": "ISO 9001:2015",
+        "expiry": "2027-01-18"
+      },
+      {
+        "name": "GMP",
+        "expiry": "2027-03-26"
+      },
+      {
+        "name": "ISO 14001:2015",
+        "expiry": "2026-12-23"
+      }
+    ],
+    "lastAssessed": "2026-02-15",
+    "nextDue": "2027-02-07",
+    "country": "Switzerland",
+    "region": "EU",
+    "taxIds": {
+      "vat": "SW360982528"
+    }
+  },
+  {
+    "id": "SUP-0004",
+    "code": "S/00004",
+    "name": "Crescent Excipients Pvt Ltd",
+    "description": "Crescent Excipients Pvt Ltd - approved supplier",
+    "purchaseType": "IMPORT",
+    "classification": "External",
+    "currency": "INR",
+    "dealCurrency": "INR",
+    "supplierGroup": "RM",
+    "status": "ONBOARDED",
+    "grade": "A",
+    "avlScopeOfApproval": [
+      "RM-EXC"
+    ],
+    "paymentTerms": "PA-DOC",
+    "payMode": "EP",
+    "incoTerm": "CIF",
+    "incoPlace": "Nhava Sheva",
+    "advancePayable": true,
+    "advanceTolerance": 10,
+    "autoInvoicing": false,
+    "minimumOrderValue": 1,
+    "isErpSynced": true,
+    "riskTier": "high",
+    "securityTradeProgram": "AEO",
+    "continuity": {
+      "hasBcp": true,
+      "mtpdDays": 30,
+      "backupSupplierCoverage": true
+    },
+    "sustainability": {
+      "iso14001": true,
+      "ecovadis": "Bronze"
+    },
+    "infoSec": {
+      "iso27001": false,
+      "dpaSigned": true
+    },
+    "antiBribery": {
+      "dueDiligenceStatus": "complete",
+      "sanctionsScreened": true,
+      "lastScreened": "2025-12-14"
+    },
+    "certifications": [
+      {
+        "name": "ISO 9001:2015",
+        "expiry": "2027-01-20"
+      },
+      {
+        "name": "GMP",
+        "expiry": "2026-09-28"
+      },
+      {
+        "name": "ISO 14001:2015",
+        "expiry": "2026-11-19"
+      }
+    ],
+    "lastAssessed": "2025-08-18",
+    "nextDue": "2026-07-04",
+    "country": "India",
+    "region": "IN",
+    "taxIds": {
+      "gstin": "27DYYTF5439J6ZE",
+      "pan": "YCFFF1260B"
+    }
+  },
+  {
+    "id": "SUP-0005",
+    "code": "S/00005",
+    "name": "PackRight Cartons Co",
+    "description": "PackRight Cartons Co - approved supplier",
+    "purchaseType": "LOCAL",
+    "classification": "External",
+    "currency": "USD",
+    "dealCurrency": "USD",
+    "supplierGroup": "PM",
+    "status": "ONBOARDED",
+    "grade": "A",
+    "avlScopeOfApproval": [
+      "PM-FCTN"
+    ],
+    "paymentTerms": "PA-SHIP",
+    "payMode": "EP",
+    "incoTerm": "FOB",
+    "incoPlace": "Newark",
+    "advancePayable": false,
+    "advanceTolerance": 10,
+    "autoInvoicing": false,
+    "minimumOrderValue": 1,
+    "isErpSynced": true,
+    "riskTier": "high",
+    "securityTradeProgram": "AEO",
+    "continuity": {
+      "hasBcp": true,
+      "mtpdDays": 30,
+      "backupSupplierCoverage": true
+    },
+    "sustainability": {
+      "iso14001": false,
+      "ecovadis": "Gold"
+    },
+    "infoSec": {
+      "iso27001": false,
+      "dpaSigned": true
+    },
+    "antiBribery": {
+      "dueDiligenceStatus": "complete",
+      "sanctionsScreened": true,
+      "lastScreened": "2026-01-22"
+    },
+    "certifications": [
+      {
+        "name": "ISO 9001:2015",
+        "expiry": "2026-12-06"
+      }
+    ],
+    "lastAssessed": "2026-01-04",
+    "nextDue": "2026-11-12",
+    "country": "United States",
+    "region": "US",
+    "taxIds": {
+      "ein": "61-9164962"
+    }
+  },
+  {
+    "id": "SUP-0006",
+    "code": "S/00006",
+    "name": "ClearMold HDPE Industries",
+    "description": "ClearMold HDPE Industries - approved supplier",
+    "purchaseType": "LOCAL",
+    "classification": "External",
+    "currency": "USD",
+    "dealCurrency": "USD",
+    "supplierGroup": "PM",
+    "status": "ONBOARDED",
+    "grade": "A",
+    "avlScopeOfApproval": [
+      "PM-HDPE"
+    ],
+    "paymentTerms": "PA-SHIP",
+    "payMode": "EP",
+    "incoTerm": "FOB",
+    "incoPlace": "Newark",
+    "advancePayable": false,
+    "advanceTolerance": 10,
+    "autoInvoicing": false,
+    "minimumOrderValue": 1,
+    "isErpSynced": false,
+    "riskTier": "high",
+    "securityTradeProgram": "AEO",
+    "continuity": {
+      "hasBcp": true,
+      "mtpdDays": 30,
+      "backupSupplierCoverage": true
+    },
+    "sustainability": {
+      "iso14001": false,
+      "ecovadis": "Bronze"
+    },
+    "infoSec": {
+      "iso27001": false,
+      "dpaSigned": true
+    },
+    "antiBribery": {
+      "dueDiligenceStatus": "complete",
+      "sanctionsScreened": true,
+      "lastScreened": "2026-04-11"
+    },
+    "certifications": [
+      {
+        "name": "ISO 9001:2015",
+        "expiry": "2027-02-06"
+      }
+    ],
+    "lastAssessed": "2026-04-04",
+    "nextDue": "2026-09-21",
+    "country": "United States",
+    "region": "US",
+    "taxIds": {
+      "ein": "32-5162331"
+    }
+  },
+  {
+    "id": "SUP-0007",
+    "code": "S/00007",
+    "name": "Gulf Closure Systems LLC",
+    "description": "Gulf Closure Systems LLC - approved supplier",
+    "purchaseType": "IMPORT",
+    "classification": "External",
+    "currency": "AED",
+    "dealCurrency": "AED",
+    "supplierGroup": "PM",
+    "status": "ONBOARDED",
+    "grade": "A",
+    "avlScopeOfApproval": [
+      "PM-CRC"
+    ],
+    "paymentTerms": "PA-DOC",
+    "payMode": "EP",
+    "incoTerm": "CIF",
+    "incoPlace": "Jebel Ali",
+    "advancePayable": true,
+    "advanceTolerance": 10,
+    "autoInvoicing": false,
+    "minimumOrderValue": 1,
+    "isErpSynced": true,
+    "riskTier": "high",
+    "securityTradeProgram": "AEO",
+    "continuity": {
+      "hasBcp": true,
+      "mtpdDays": 30,
+      "backupSupplierCoverage": true
+    },
+    "sustainability": {
+      "iso14001": false,
+      "ecovadis": "Gold"
+    },
+    "infoSec": {
+      "iso27001": false,
+      "dpaSigned": true
+    },
+    "antiBribery": {
+      "dueDiligenceStatus": "complete",
+      "sanctionsScreened": true,
+      "lastScreened": "2026-02-16"
+    },
+    "certifications": [
+      {
+        "name": "ISO 9001:2015",
+        "expiry": "2027-04-01"
+      }
+    ],
+    "lastAssessed": "2026-04-21",
+    "nextDue": "2027-04-22",
+    "country": "UAE",
+    "region": "AE",
+    "taxIds": {
+      "trn": "248490355125433"
+    }
+  },
+  {
+    "id": "SUP-0008",
+    "code": "S/00008",
+    "name": "Meridian Logistics Partners",
+    "description": "Meridian Logistics Partners - approved supplier",
+    "purchaseType": "LOCAL",
+    "classification": "External",
+    "currency": "USD",
+    "dealCurrency": "USD",
+    "supplierGroup": "SVC",
+    "status": "ONBOARDED",
+    "grade": "A",
+    "avlScopeOfApproval": [
+      "SVC-FRT"
+    ],
+    "paymentTerms": "NET90",
+    "payMode": "EP",
+    "incoTerm": "FOB",
+    "incoPlace": "Newark",
+    "advancePayable": false,
+    "advanceTolerance": 10,
+    "autoInvoicing": false,
+    "minimumOrderValue": 1,
+    "isErpSynced": true,
+    "riskTier": "high",
+    "securityTradeProgram": "AEO",
+    "continuity": {
+      "hasBcp": true,
+      "mtpdDays": 30,
+      "backupSupplierCoverage": true
+    },
+    "sustainability": {
+      "iso14001": false,
+      "ecovadis": null
+    },
+    "infoSec": {
+      "iso27001": false,
+      "dpaSigned": true
+    },
+    "antiBribery": {
+      "dueDiligenceStatus": "complete",
+      "sanctionsScreened": true,
+      "lastScreened": "2026-01-10"
+    },
+    "certifications": [
+      {
+        "name": "ISO 9001:2015",
+        "expiry": "2027-05-07"
+      }
+    ],
+    "lastAssessed": "2026-05-11",
+    "nextDue": "2027-01-06",
+    "country": "United States",
+    "region": "US",
+    "taxIds": {
+      "ein": "14-5942089"
+    }
+  },
+  {
+    "id": "SUP-0009",
+    "code": "S/00009",
+    "name": "Crystal Bottling",
+    "description": "Crystal Bottling - approved supplier",
+    "purchaseType": "LOCAL",
+    "classification": "External",
+    "currency": "USD",
+    "dealCurrency": "USD",
+    "supplierGroup": "PMBTL",
+    "status": "ONBOARDED",
+    "grade": "C",
+    "avlScopeOfApproval": [
+      "PMBTL"
+    ],
+    "paymentTerms": "NET30",
+    "payMode": "EP",
+    "incoTerm": "FOB",
+    "incoPlace": "Newark",
+    "advancePayable": false,
+    "advanceTolerance": 0,
+    "autoInvoicing": false,
+    "minimumOrderValue": 1,
+    "isErpSynced": true,
+    "riskTier": "low",
+    "securityTradeProgram": "none",
+    "continuity": {
+      "hasBcp": false,
+      "mtpdDays": 30,
+      "backupSupplierCoverage": false
+    },
+    "sustainability": {
+      "iso14001": false,
+      "ecovadis": null
+    },
+    "infoSec": {
+      "iso27001": false,
+      "dpaSigned": false
+    },
+    "antiBribery": {
+      "dueDiligenceStatus": "screened",
+      "sanctionsScreened": true,
+      "lastScreened": "2026-03-01"
+    },
+    "certifications": [],
+    "lastAssessed": "2025-11-04",
+    "nextDue": "2027-03-21",
+    "country": "United States",
+    "region": "US",
+    "taxIds": {
+      "ein": "83-5855370"
+    }
+  },
+  {
+    "id": "SUP-0010",
+    "code": "S/00010",
+    "name": "Evergreen Lab Supplies",
+    "description": "Evergreen Lab Supplies - approved supplier",
+    "purchaseType": "LOCAL",
+    "classification": "External",
+    "currency": "USD",
+    "dealCurrency": "USD",
+    "supplierGroup": "LAB",
+    "status": "ONBOARDED",
+    "grade": "B",
+    "avlScopeOfApproval": [
+      "LAB"
+    ],
+    "paymentTerms": "NET90",
+    "payMode": "EP",
+    "incoTerm": "FOB",
+    "incoPlace": "Newark",
+    "advancePayable": false,
+    "advanceTolerance": 0,
+    "autoInvoicing": false,
+    "minimumOrderValue": 1,
+    "isErpSynced": false,
+    "riskTier": "medium",
+    "securityTradeProgram": "none",
+    "continuity": {
+      "hasBcp": false,
+      "mtpdDays": 30,
+      "backupSupplierCoverage": false
+    },
+    "sustainability": {
+      "iso14001": false,
+      "ecovadis": null
+    },
+    "infoSec": {
+      "iso27001": false,
+      "dpaSigned": false
+    },
+    "antiBribery": {
+      "dueDiligenceStatus": "screened",
+      "sanctionsScreened": true,
+      "lastScreened": "2026-02-08"
+    },
+    "certifications": [],
+    "lastAssessed": "2026-05-05",
+    "nextDue": "2027-01-01",
+    "country": "United States",
+    "region": "US",
+    "taxIds": {
+      "ein": "88-7350940"
+    }
+  },
+  {
+    "id": "SUP-0011",
+    "code": "S/00011",
+    "name": "Silverline Chemicals",
+    "description": "Silverline Chemicals - approved supplier",
+    "purchaseType": "IMPORT",
+    "classification": "External",
+    "currency": "INR",
+    "dealCurrency": "INR",
+    "supplierGroup": "CHEM",
+    "status": "ONBOARDED",
+    "grade": "A",
+    "avlScopeOfApproval": [
+      "CHEM"
+    ],
+    "paymentTerms": "PA-SHIP",
+    "payMode": "EP",
+    "incoTerm": "CIF",
+    "incoPlace": "Nhava Sheva",
+    "advancePayable": false,
+    "advanceTolerance": 0,
+    "autoInvoicing": false,
+    "minimumOrderValue": 1,
+    "isErpSynced": true,
+    "riskTier": "low",
+    "securityTradeProgram": "none",
+    "continuity": {
+      "hasBcp": false,
+      "mtpdDays": 30,
+      "backupSupplierCoverage": false
+    },
+    "sustainability": {
+      "iso14001": false,
+      "ecovadis": null
+    },
+    "infoSec": {
+      "iso27001": false,
+      "dpaSigned": false
+    },
+    "antiBribery": {
+      "dueDiligenceStatus": "screened",
+      "sanctionsScreened": true,
+      "lastScreened": "2026-02-06"
+    },
+    "certifications": [
+      {
+        "name": "ISO 9001:2015",
+        "expiry": "2027-03-10"
+      }
+    ],
+    "lastAssessed": "2025-08-09",
+    "nextDue": "2026-12-05",
+    "country": "India",
+    "region": "IN",
+    "taxIds": {
+      "gstin": "27XMYBY1040J3Z9",
+      "pan": "HRETG3484A"
+    }
+  },
+  {
+    "id": "SUP-0012",
+    "code": "S/00012",
+    "name": "Maple Services",
+    "description": "Maple Services - approved supplier",
+    "purchaseType": "LOCAL",
+    "classification": "External",
+    "currency": "USD",
+    "dealCurrency": "USD",
+    "supplierGroup": "SVC",
+    "status": "ONBOARDED",
+    "grade": "A",
+    "avlScopeOfApproval": [
+      "SVC"
+    ],
+    "paymentTerms": "NET90",
+    "payMode": "EP",
+    "incoTerm": "FOB",
+    "incoPlace": "Newark",
+    "advancePayable": false,
+    "advanceTolerance": 0,
+    "autoInvoicing": false,
+    "minimumOrderValue": 1,
+    "isErpSynced": true,
+    "riskTier": "low",
+    "securityTradeProgram": "none",
+    "continuity": {
+      "hasBcp": false,
+      "mtpdDays": 30,
+      "backupSupplierCoverage": false
+    },
+    "sustainability": {
+      "iso14001": false,
+      "ecovadis": null
+    },
+    "infoSec": {
+      "iso27001": false,
+      "dpaSigned": false
+    },
+    "antiBribery": {
+      "dueDiligenceStatus": "screened",
+      "sanctionsScreened": true,
+      "lastScreened": "2026-02-16"
+    },
+    "certifications": [],
+    "lastAssessed": "2025-12-05",
+    "nextDue": "2027-01-09",
+    "country": "United States",
+    "region": "US",
+    "taxIds": {
+      "ein": "90-4672307"
+    }
+  },
+  {
+    "id": "SUP-0013",
+    "code": "S/00013",
+    "name": "Maple Labels",
+    "description": "Maple Labels - approved supplier",
+    "purchaseType": "LOCAL",
+    "classification": "External",
+    "currency": "USD",
+    "dealCurrency": "USD",
+    "supplierGroup": "PMLBL",
+    "status": "ONBOARDED",
+    "grade": "C",
+    "avlScopeOfApproval": [
+      "PMLBL"
+    ],
+    "paymentTerms": "NET90",
+    "payMode": "EP",
+    "incoTerm": "FOB",
+    "incoPlace": "Newark",
+    "advancePayable": false,
+    "advanceTolerance": 0,
+    "autoInvoicing": false,
+    "minimumOrderValue": 1,
+    "isErpSynced": false,
+    "riskTier": "low",
+    "securityTradeProgram": "none",
+    "continuity": {
+      "hasBcp": false,
+      "mtpdDays": 30,
+      "backupSupplierCoverage": false
+    },
+    "sustainability": {
+      "iso14001": false,
+      "ecovadis": null
+    },
+    "infoSec": {
+      "iso27001": false,
+      "dpaSigned": false
+    },
+    "antiBribery": {
+      "dueDiligenceStatus": "screened",
+      "sanctionsScreened": true,
+      "lastScreened": "2026-02-20"
+    },
+    "certifications": [],
+    "lastAssessed": "2025-08-10",
+    "nextDue": "2027-02-13",
+    "country": "United States",
+    "region": "US",
+    "taxIds": {
+      "ein": "67-4060409"
+    }
+  },
+  {
+    "id": "SUP-0014",
+    "code": "S/00014",
+    "name": "Polaris Print",
+    "description": "Polaris Print - approved supplier",
+    "purchaseType": "IMPORT",
+    "classification": "External",
+    "currency": "INR",
+    "dealCurrency": "INR",
+    "supplierGroup": "PMLFT",
+    "status": "ONBOARDED",
+    "grade": "B",
+    "avlScopeOfApproval": [
+      "PMLFT"
+    ],
+    "paymentTerms": "PA-SHIP",
+    "payMode": "EP",
+    "incoTerm": "CIF",
+    "incoPlace": "Nhava Sheva",
+    "advancePayable": false,
+    "advanceTolerance": 0,
+    "autoInvoicing": false,
+    "minimumOrderValue": 1,
+    "isErpSynced": true,
+    "riskTier": "medium",
+    "securityTradeProgram": "none",
+    "continuity": {
+      "hasBcp": false,
+      "mtpdDays": 30,
+      "backupSupplierCoverage": false
+    },
+    "sustainability": {
+      "iso14001": false,
+      "ecovadis": null
+    },
+    "infoSec": {
+      "iso27001": false,
+      "dpaSigned": false
+    },
+    "antiBribery": {
+      "dueDiligenceStatus": "screened",
+      "sanctionsScreened": true,
+      "lastScreened": "2025-11-27"
+    },
+    "certifications": [
+      {
+        "name": "ISO 9001:2015",
+        "expiry": "2027-04-27"
+      }
+    ],
+    "lastAssessed": "2026-05-01",
+    "nextDue": "2027-02-08",
+    "country": "India",
+    "region": "IN",
+    "taxIds": {
+      "gstin": "36ROBGZ4139F2Z8",
+      "pan": "EZAWY3847E"
+    }
+  },
+  {
+    "id": "SUP-0015",
+    "code": "S/00015",
+    "name": "Summit Excipients",
+    "description": "Summit Excipients - approved supplier",
+    "purchaseType": "IMPORT",
+    "classification": "External",
+    "currency": "INR",
+    "dealCurrency": "INR",
+    "supplierGroup": "RMEX",
+    "status": "ONBOARDED",
+    "grade": "C",
+    "avlScopeOfApproval": [
+      "RMEX"
+    ],
+    "paymentTerms": "NET60",
+    "payMode": "EP",
+    "incoTerm": "CIF",
+    "incoPlace": "Nhava Sheva",
+    "advancePayable": false,
+    "advanceTolerance": 0,
+    "autoInvoicing": false,
+    "minimumOrderValue": 1,
+    "isErpSynced": true,
+    "riskTier": "high",
+    "securityTradeProgram": "none",
+    "continuity": {
+      "hasBcp": false,
+      "mtpdDays": 30,
+      "backupSupplierCoverage": false
+    },
+    "sustainability": {
+      "iso14001": false,
+      "ecovadis": null
+    },
+    "infoSec": {
+      "iso27001": false,
+      "dpaSigned": false
+    },
+    "antiBribery": {
+      "dueDiligenceStatus": "screened",
+      "sanctionsScreened": true,
+      "lastScreened": "2026-01-06"
+    },
+    "certifications": [
+      {
+        "name": "ISO 9001:2015",
+        "expiry": "2027-02-28"
+      }
+    ],
+    "lastAssessed": "2025-10-17",
+    "nextDue": "2027-04-24",
+    "country": "India",
+    "region": "IN",
+    "taxIds": {
+      "gstin": "33TQEGC8329A7ZG",
+      "pan": "MRLHW4405E"
+    }
+  },
+  {
+    "id": "SUP-0016",
+    "code": "S/00016",
+    "name": "Vertex Print",
+    "description": "Vertex Print - approved supplier",
+    "purchaseType": "LOCAL",
+    "classification": "External",
+    "currency": "USD",
+    "dealCurrency": "USD",
+    "supplierGroup": "PMLFT",
+    "status": "ONBOARDED",
+    "grade": "B",
+    "avlScopeOfApproval": [
+      "PMLFT"
+    ],
+    "paymentTerms": "NET30",
+    "payMode": "EP",
+    "incoTerm": "FOB",
+    "incoPlace": "Newark",
+    "advancePayable": false,
+    "advanceTolerance": 0,
+    "autoInvoicing": false,
+    "minimumOrderValue": 1,
+    "isErpSynced": false,
+    "riskTier": "low",
+    "securityTradeProgram": "none",
+    "continuity": {
+      "hasBcp": false,
+      "mtpdDays": 30,
+      "backupSupplierCoverage": false
+    },
+    "sustainability": {
+      "iso14001": false,
+      "ecovadis": null
+    },
+    "infoSec": {
+      "iso27001": false,
+      "dpaSigned": false
+    },
+    "antiBribery": {
+      "dueDiligenceStatus": "screened",
+      "sanctionsScreened": true,
+      "lastScreened": "2026-05-10"
+    },
+    "certifications": [],
+    "lastAssessed": "2025-09-21",
+    "nextDue": "2026-12-30",
+    "country": "United States",
+    "region": "US",
+    "taxIds": {
+      "ein": "92-6034443"
+    }
+  },
+  {
+    "id": "SUP-0017",
+    "code": "S/00017",
+    "name": "Solstice Lab Supplies",
+    "description": "Solstice Lab Supplies - approved supplier",
+    "purchaseType": "LOCAL",
+    "classification": "External",
+    "currency": "USD",
+    "dealCurrency": "USD",
+    "supplierGroup": "LAB",
+    "status": "ONBOARDED",
+    "grade": "A",
+    "avlScopeOfApproval": [
+      "LAB"
+    ],
+    "paymentTerms": "NET30",
+    "payMode": "EP",
+    "incoTerm": "FOB",
+    "incoPlace": "Newark",
+    "advancePayable": false,
+    "advanceTolerance": 0,
+    "autoInvoicing": false,
+    "minimumOrderValue": 1,
+    "isErpSynced": false,
+    "riskTier": "high",
+    "securityTradeProgram": "none",
+    "continuity": {
+      "hasBcp": false,
+      "mtpdDays": 30,
+      "backupSupplierCoverage": false
+    },
+    "sustainability": {
+      "iso14001": false,
+      "ecovadis": null
+    },
+    "infoSec": {
+      "iso27001": false,
+      "dpaSigned": false
+    },
+    "antiBribery": {
+      "dueDiligenceStatus": "screened",
+      "sanctionsScreened": true,
+      "lastScreened": "2026-04-12"
+    },
+    "certifications": [],
+    "lastAssessed": "2025-08-21",
+    "nextDue": "2026-11-26",
+    "country": "United States",
+    "region": "US",
+    "taxIds": {
+      "ein": "65-5489072"
+    }
+  },
+  {
+    "id": "SUP-0018",
+    "code": "S/00018",
+    "name": "Lumen Chemicals",
+    "description": "Lumen Chemicals - approved supplier",
+    "purchaseType": "IMPORT",
+    "classification": "External",
+    "currency": "INR",
+    "dealCurrency": "INR",
+    "supplierGroup": "CHEM",
+    "status": "ONBOARDED",
+    "grade": "C",
+    "avlScopeOfApproval": [
+      "CHEM"
+    ],
+    "paymentTerms": "NET60",
+    "payMode": "EP",
+    "incoTerm": "CIF",
+    "incoPlace": "Nhava Sheva",
+    "advancePayable": false,
+    "advanceTolerance": 0,
+    "autoInvoicing": false,
+    "minimumOrderValue": 1,
+    "isErpSynced": true,
+    "riskTier": "medium",
+    "securityTradeProgram": "none",
+    "continuity": {
+      "hasBcp": false,
+      "mtpdDays": 30,
+      "backupSupplierCoverage": false
+    },
+    "sustainability": {
+      "iso14001": false,
+      "ecovadis": null
+    },
+    "infoSec": {
+      "iso27001": false,
+      "dpaSigned": false
+    },
+    "antiBribery": {
+      "dueDiligenceStatus": "screened",
+      "sanctionsScreened": true,
+      "lastScreened": "2026-05-02"
+    },
+    "certifications": [
+      {
+        "name": "ISO 9001:2015",
+        "expiry": "2026-12-30"
+      }
+    ],
+    "lastAssessed": "2025-08-14",
+    "nextDue": "2026-09-17",
+    "country": "India",
+    "region": "IN",
+    "taxIds": {
+      "gstin": "33UDFHF7235D3ZA",
+      "pan": "FLEBX3497C"
+    }
+  },
+  {
+    "id": "SUP-0019",
+    "code": "S/00019",
+    "name": "Zenith Bottling",
+    "description": "Zenith Bottling - approved supplier",
+    "purchaseType": "LOCAL",
+    "classification": "External",
+    "currency": "USD",
+    "dealCurrency": "USD",
+    "supplierGroup": "PMBTL",
+    "status": "ONBOARDED",
+    "grade": "A",
+    "avlScopeOfApproval": [
+      "PMBTL"
+    ],
+    "paymentTerms": "NET30",
+    "payMode": "EP",
+    "incoTerm": "FOB",
+    "incoPlace": "Newark",
+    "advancePayable": false,
+    "advanceTolerance": 0,
+    "autoInvoicing": false,
+    "minimumOrderValue": 1,
+    "isErpSynced": true,
+    "riskTier": "medium",
+    "securityTradeProgram": "none",
+    "continuity": {
+      "hasBcp": false,
+      "mtpdDays": 30,
+      "backupSupplierCoverage": false
+    },
+    "sustainability": {
+      "iso14001": false,
+      "ecovadis": null
+    },
+    "infoSec": {
+      "iso27001": false,
+      "dpaSigned": false
+    },
+    "antiBribery": {
+      "dueDiligenceStatus": "screened",
+      "sanctionsScreened": true,
+      "lastScreened": "2026-04-05"
+    },
+    "certifications": [],
+    "lastAssessed": "2025-11-15",
+    "nextDue": "2027-03-01",
+    "country": "United States",
+    "region": "US",
+    "taxIds": {
+      "ein": "69-9923682"
+    }
+  },
+  {
+    "id": "SUP-0020",
+    "code": "S/00020",
+    "name": "Juniper Bottling",
+    "description": "Juniper Bottling - approved supplier",
+    "purchaseType": "LOCAL",
+    "classification": "External",
+    "currency": "USD",
+    "dealCurrency": "USD",
+    "supplierGroup": "PMBTL",
+    "status": "ONBOARDED",
+    "grade": "A",
+    "avlScopeOfApproval": [
+      "PMBTL"
+    ],
+    "paymentTerms": "PA-SHIP",
+    "payMode": "EP",
+    "incoTerm": "FOB",
+    "incoPlace": "Newark",
+    "advancePayable": false,
+    "advanceTolerance": 0,
+    "autoInvoicing": false,
+    "minimumOrderValue": 1,
+    "isErpSynced": false,
+    "riskTier": "low",
+    "securityTradeProgram": "none",
+    "continuity": {
+      "hasBcp": false,
+      "mtpdDays": 30,
+      "backupSupplierCoverage": false
+    },
+    "sustainability": {
+      "iso14001": false,
+      "ecovadis": null
+    },
+    "infoSec": {
+      "iso27001": false,
+      "dpaSigned": false
+    },
+    "antiBribery": {
+      "dueDiligenceStatus": "screened",
+      "sanctionsScreened": true,
+      "lastScreened": "2026-04-03"
+    },
+    "certifications": [],
+    "lastAssessed": "2025-09-02",
+    "nextDue": "2026-10-13",
+    "country": "United States",
+    "region": "US",
+    "taxIds": {
+      "ein": "69-9661869"
+    }
+  },
+  {
+    "id": "SUP-0021",
+    "code": "S/00021",
+    "name": "Harbor Excipients",
+    "description": "Harbor Excipients - approved supplier",
+    "purchaseType": "IMPORT",
+    "classification": "External",
+    "currency": "INR",
+    "dealCurrency": "INR",
+    "supplierGroup": "RMEX",
+    "status": "ONBOARDED",
+    "grade": "B",
+    "avlScopeOfApproval": [
+      "RMEX"
+    ],
+    "paymentTerms": "NET30",
+    "payMode": "EP",
+    "incoTerm": "CIF",
+    "incoPlace": "Nhava Sheva",
+    "advancePayable": false,
+    "advanceTolerance": 0,
+    "autoInvoicing": false,
+    "minimumOrderValue": 1,
+    "isErpSynced": false,
+    "riskTier": "high",
+    "securityTradeProgram": "none",
+    "continuity": {
+      "hasBcp": false,
+      "mtpdDays": 30,
+      "backupSupplierCoverage": false
+    },
+    "sustainability": {
+      "iso14001": false,
+      "ecovadis": null
+    },
+    "infoSec": {
+      "iso27001": false,
+      "dpaSigned": false
+    },
+    "antiBribery": {
+      "dueDiligenceStatus": "screened",
+      "sanctionsScreened": true,
+      "lastScreened": "2026-04-13"
+    },
+    "certifications": [
+      {
+        "name": "ISO 9001:2015",
+        "expiry": "2026-11-14"
+      }
+    ],
+    "lastAssessed": "2026-04-28",
+    "nextDue": "2026-07-11",
+    "country": "India",
+    "region": "IN",
+    "taxIds": {
+      "gstin": "24KNEPG4080I6Z6",
+      "pan": "WLIJW6937C"
+    }
+  },
+  {
+    "id": "SUP-0022",
+    "code": "S/00022",
+    "name": "Pioneer Bottling",
+    "description": "Pioneer Bottling - approved supplier",
+    "purchaseType": "LOCAL",
+    "classification": "External",
+    "currency": "USD",
+    "dealCurrency": "USD",
+    "supplierGroup": "PMBTL",
+    "status": "ONBOARDED",
+    "grade": "A",
+    "avlScopeOfApproval": [
+      "PMBTL"
+    ],
+    "paymentTerms": "NET30",
+    "payMode": "EP",
+    "incoTerm": "FOB",
+    "incoPlace": "Newark",
+    "advancePayable": false,
+    "advanceTolerance": 0,
+    "autoInvoicing": false,
+    "minimumOrderValue": 1,
+    "isErpSynced": true,
+    "riskTier": "low",
+    "securityTradeProgram": "none",
+    "continuity": {
+      "hasBcp": false,
+      "mtpdDays": 30,
+      "backupSupplierCoverage": false
+    },
+    "sustainability": {
+      "iso14001": false,
+      "ecovadis": null
+    },
+    "infoSec": {
+      "iso27001": false,
+      "dpaSigned": false
+    },
+    "antiBribery": {
+      "dueDiligenceStatus": "screened",
+      "sanctionsScreened": true,
+      "lastScreened": "2026-02-14"
+    },
+    "certifications": [],
+    "lastAssessed": "2025-10-31",
+    "nextDue": "2026-11-15",
+    "country": "United States",
+    "region": "US",
+    "taxIds": {
+      "ein": "14-7284606"
+    }
+  },
+  {
+    "id": "SUP-0023",
+    "code": "S/00023",
+    "name": "Pioneer Lab Supplies",
+    "description": "Pioneer Lab Supplies - approved supplier",
+    "purchaseType": "IMPORT",
+    "classification": "External",
+    "currency": "EUR",
+    "dealCurrency": "EUR",
+    "supplierGroup": "LAB",
+    "status": "ONBOARDED",
+    "grade": "A",
+    "avlScopeOfApproval": [
+      "LAB"
+    ],
+    "paymentTerms": "NET60",
+    "payMode": "EP",
+    "incoTerm": "CIF",
+    "incoPlace": "Hamburg",
+    "advancePayable": false,
+    "advanceTolerance": 0,
+    "autoInvoicing": false,
+    "minimumOrderValue": 1,
+    "isErpSynced": true,
+    "riskTier": "medium",
+    "securityTradeProgram": "none",
+    "continuity": {
+      "hasBcp": false,
+      "mtpdDays": 30,
+      "backupSupplierCoverage": false
+    },
+    "sustainability": {
+      "iso14001": false,
+      "ecovadis": null
+    },
+    "infoSec": {
+      "iso27001": false,
+      "dpaSigned": false
+    },
+    "antiBribery": {
+      "dueDiligenceStatus": "screened",
+      "sanctionsScreened": true,
+      "lastScreened": "2026-01-17"
+    },
+    "certifications": [
+      {
+        "name": "ISO 9001:2015",
+        "expiry": "2026-12-25"
+      }
+    ],
+    "lastAssessed": "2026-01-14",
+    "nextDue": "2027-02-17",
+    "country": "France",
+    "region": "EU",
+    "taxIds": {
+      "vat": "FR364426921"
+    }
+  },
+  {
+    "id": "SUP-0024",
+    "code": "S/00024",
+    "name": "Fortis Bottling",
+    "description": "Fortis Bottling - approved supplier",
+    "purchaseType": "LOCAL",
+    "classification": "External",
+    "currency": "USD",
+    "dealCurrency": "USD",
+    "supplierGroup": "PMBTL",
+    "status": "ONBOARDED",
+    "grade": "B",
+    "avlScopeOfApproval": [
+      "PMBTL"
+    ],
+    "paymentTerms": "NET60",
+    "payMode": "EP",
+    "incoTerm": "FOB",
+    "incoPlace": "Newark",
+    "advancePayable": false,
+    "advanceTolerance": 0,
+    "autoInvoicing": false,
+    "minimumOrderValue": 1,
+    "isErpSynced": false,
+    "riskTier": "high",
+    "securityTradeProgram": "none",
+    "continuity": {
+      "hasBcp": false,
+      "mtpdDays": 30,
+      "backupSupplierCoverage": false
+    },
+    "sustainability": {
+      "iso14001": false,
+      "ecovadis": null
+    },
+    "infoSec": {
+      "iso27001": false,
+      "dpaSigned": false
+    },
+    "antiBribery": {
+      "dueDiligenceStatus": "screened",
+      "sanctionsScreened": true,
+      "lastScreened": "2026-04-17"
+    },
+    "certifications": [],
+    "lastAssessed": "2026-01-01",
+    "nextDue": "2027-03-02",
+    "country": "United States",
+    "region": "US",
+    "taxIds": {
+      "ein": "78-3960966"
+    }
+  },
+  {
+    "id": "SUP-0025",
+    "code": "S/00025",
+    "name": "Sterling Bottling",
+    "description": "Sterling Bottling - approved supplier",
+    "purchaseType": "IMPORT",
+    "classification": "External",
+    "currency": "INR",
+    "dealCurrency": "INR",
+    "supplierGroup": "PMBTL",
+    "status": "ONBOARDED",
+    "grade": "A",
+    "avlScopeOfApproval": [
+      "PMBTL"
+    ],
+    "paymentTerms": "PA-SHIP",
+    "payMode": "EP",
+    "incoTerm": "CIF",
+    "incoPlace": "Nhava Sheva",
+    "advancePayable": false,
+    "advanceTolerance": 0,
+    "autoInvoicing": false,
+    "minimumOrderValue": 1,
+    "isErpSynced": true,
+    "riskTier": "high",
+    "securityTradeProgram": "none",
+    "continuity": {
+      "hasBcp": false,
+      "mtpdDays": 30,
+      "backupSupplierCoverage": false
+    },
+    "sustainability": {
+      "iso14001": false,
+      "ecovadis": null
+    },
+    "infoSec": {
+      "iso27001": false,
+      "dpaSigned": false
+    },
+    "antiBribery": {
+      "dueDiligenceStatus": "screened",
+      "sanctionsScreened": true,
+      "lastScreened": "2026-04-30"
+    },
+    "certifications": [
+      {
+        "name": "ISO 9001:2015",
+        "expiry": "2027-04-03"
+      }
+    ],
+    "lastAssessed": "2025-08-10",
+    "nextDue": "2026-10-14",
+    "country": "India",
+    "region": "IN",
+    "taxIds": {
+      "gstin": "27KUJHB5354E5ZD",
+      "pan": "ZYHIF7090C"
+    }
+  },
+  {
+    "id": "SUP-0026",
+    "code": "S/00026",
+    "name": "Ironclad Chemicals",
+    "description": "Ironclad Chemicals - approved supplier",
+    "purchaseType": "IMPORT",
+    "classification": "External",
+    "currency": "INR",
+    "dealCurrency": "INR",
+    "supplierGroup": "CHEM",
+    "status": "ONBOARDED",
+    "grade": "A",
+    "avlScopeOfApproval": [
+      "CHEM"
+    ],
+    "paymentTerms": "NET30",
+    "payMode": "EP",
+    "incoTerm": "CIF",
+    "incoPlace": "Nhava Sheva",
+    "advancePayable": false,
+    "advanceTolerance": 0,
+    "autoInvoicing": false,
+    "minimumOrderValue": 1,
+    "isErpSynced": true,
+    "riskTier": "medium",
+    "securityTradeProgram": "none",
+    "continuity": {
+      "hasBcp": false,
+      "mtpdDays": 30,
+      "backupSupplierCoverage": false
+    },
+    "sustainability": {
+      "iso14001": false,
+      "ecovadis": null
+    },
+    "infoSec": {
+      "iso27001": false,
+      "dpaSigned": false
+    },
+    "antiBribery": {
+      "dueDiligenceStatus": "screened",
+      "sanctionsScreened": true,
+      "lastScreened": "2026-04-25"
+    },
+    "certifications": [
+      {
+        "name": "ISO 9001:2015",
+        "expiry": "2026-08-27"
+      }
+    ],
+    "lastAssessed": "2026-02-27",
+    "nextDue": "2027-03-21",
+    "country": "India",
+    "region": "IN",
+    "taxIds": {
+      "gstin": "29YDURP2584C2ZC",
+      "pan": "RCZYI5681J"
+    }
+  },
+  {
+    "id": "SUP-0027",
+    "code": "S/00027",
+    "name": "Polaris Packaging",
+    "description": "Polaris Packaging - approved supplier",
+    "purchaseType": "LOCAL",
+    "classification": "External",
+    "currency": "USD",
+    "dealCurrency": "USD",
+    "supplierGroup": "PMCTN",
+    "status": "ONBOARDED",
+    "grade": "B",
+    "avlScopeOfApproval": [
+      "PMCTN"
+    ],
+    "paymentTerms": "PA-SHIP",
+    "payMode": "EP",
+    "incoTerm": "FOB",
+    "incoPlace": "Newark",
+    "advancePayable": false,
+    "advanceTolerance": 0,
+    "autoInvoicing": false,
+    "minimumOrderValue": 1,
+    "isErpSynced": true,
+    "riskTier": "medium",
+    "securityTradeProgram": "none",
+    "continuity": {
+      "hasBcp": false,
+      "mtpdDays": 30,
+      "backupSupplierCoverage": false
+    },
+    "sustainability": {
+      "iso14001": false,
+      "ecovadis": null
+    },
+    "infoSec": {
+      "iso27001": false,
+      "dpaSigned": false
+    },
+    "antiBribery": {
+      "dueDiligenceStatus": "screened",
+      "sanctionsScreened": true,
+      "lastScreened": "2026-02-28"
+    },
+    "certifications": [],
+    "lastAssessed": "2025-10-23",
+    "nextDue": "2026-11-02",
+    "country": "United States",
+    "region": "US",
+    "taxIds": {
+      "ein": "60-2915927"
+    }
+  },
+  {
+    "id": "SUP-0028",
+    "code": "S/00028",
+    "name": "Ironclad Services",
+    "description": "Ironclad Services - approved supplier",
+    "purchaseType": "IMPORT",
+    "classification": "External",
+    "currency": "EUR",
+    "dealCurrency": "EUR",
+    "supplierGroup": "SVC",
+    "status": "ONBOARDED",
+    "grade": "A",
+    "avlScopeOfApproval": [
+      "SVC"
+    ],
+    "paymentTerms": "NET30",
+    "payMode": "EP",
+    "incoTerm": "CIF",
+    "incoPlace": "Hamburg",
+    "advancePayable": false,
+    "advanceTolerance": 0,
+    "autoInvoicing": false,
+    "minimumOrderValue": 1,
+    "isErpSynced": false,
+    "riskTier": "low",
+    "securityTradeProgram": "none",
+    "continuity": {
+      "hasBcp": false,
+      "mtpdDays": 30,
+      "backupSupplierCoverage": false
+    },
+    "sustainability": {
+      "iso14001": false,
+      "ecovadis": null
+    },
+    "infoSec": {
+      "iso27001": false,
+      "dpaSigned": false
+    },
+    "antiBribery": {
+      "dueDiligenceStatus": "screened",
+      "sanctionsScreened": true,
+      "lastScreened": "2026-02-19"
+    },
+    "certifications": [
+      {
+        "name": "ISO 9001:2015",
+        "expiry": "2026-09-28"
+      }
+    ],
+    "lastAssessed": "2025-08-10",
+    "nextDue": "2026-11-04",
+    "country": "France",
+    "region": "EU",
+    "taxIds": {
+      "vat": "FR960486517"
+    }
+  },
+  {
+    "id": "SUP-0029",
+    "code": "S/00029",
+    "name": "Solstice Print",
+    "description": "Solstice Print - approved supplier",
+    "purchaseType": "LOCAL",
+    "classification": "External",
+    "currency": "USD",
+    "dealCurrency": "USD",
+    "supplierGroup": "PMLFT",
+    "status": "ONBOARDED",
+    "grade": "A",
+    "avlScopeOfApproval": [
+      "PMLFT"
+    ],
+    "paymentTerms": "PA-SHIP",
+    "payMode": "EP",
+    "incoTerm": "FOB",
+    "incoPlace": "Newark",
+    "advancePayable": false,
+    "advanceTolerance": 0,
+    "autoInvoicing": false,
+    "minimumOrderValue": 1,
+    "isErpSynced": true,
+    "riskTier": "high",
+    "securityTradeProgram": "none",
+    "continuity": {
+      "hasBcp": false,
+      "mtpdDays": 30,
+      "backupSupplierCoverage": false
+    },
+    "sustainability": {
+      "iso14001": false,
+      "ecovadis": null
+    },
+    "infoSec": {
+      "iso27001": false,
+      "dpaSigned": false
+    },
+    "antiBribery": {
+      "dueDiligenceStatus": "screened",
+      "sanctionsScreened": true,
+      "lastScreened": "2026-01-06"
+    },
+    "certifications": [],
+    "lastAssessed": "2025-10-16",
+    "nextDue": "2026-07-24",
+    "country": "United States",
+    "region": "US",
+    "taxIds": {
+      "ein": "83-2982360"
+    }
+  },
+  {
+    "id": "SUP-0030",
+    "code": "S/00030",
+    "name": "Redwood Bottling",
+    "description": "Redwood Bottling - approved supplier",
+    "purchaseType": "LOCAL",
+    "classification": "External",
+    "currency": "USD",
+    "dealCurrency": "USD",
+    "supplierGroup": "PMBTL",
+    "status": "ONBOARDED",
+    "grade": "A",
+    "avlScopeOfApproval": [
+      "PMBTL"
+    ],
+    "paymentTerms": "PA-SHIP",
+    "payMode": "EP",
+    "incoTerm": "FOB",
+    "incoPlace": "Newark",
+    "advancePayable": false,
+    "advanceTolerance": 0,
+    "autoInvoicing": false,
+    "minimumOrderValue": 1,
+    "isErpSynced": true,
+    "riskTier": "high",
+    "securityTradeProgram": "none",
+    "continuity": {
+      "hasBcp": false,
+      "mtpdDays": 30,
+      "backupSupplierCoverage": false
+    },
+    "sustainability": {
+      "iso14001": false,
+      "ecovadis": null
+    },
+    "infoSec": {
+      "iso27001": false,
+      "dpaSigned": false
+    },
+    "antiBribery": {
+      "dueDiligenceStatus": "screened",
+      "sanctionsScreened": true,
+      "lastScreened": "2026-02-24"
+    },
+    "certifications": [],
+    "lastAssessed": "2025-09-10",
+    "nextDue": "2026-09-16",
+    "country": "United States",
+    "region": "US",
+    "taxIds": {
+      "ein": "46-3705379"
+    }
+  },
+  {
+    "id": "SUP-0031",
+    "code": "S/00031",
+    "name": "Pinnacle Lab Supplies",
+    "description": "Pinnacle Lab Supplies - approved supplier",
+    "purchaseType": "LOCAL",
+    "classification": "External",
+    "currency": "USD",
+    "dealCurrency": "USD",
+    "supplierGroup": "LAB",
+    "status": "ONBOARDED",
+    "grade": "A",
+    "avlScopeOfApproval": [
+      "LAB"
+    ],
+    "paymentTerms": "NET60",
+    "payMode": "EP",
+    "incoTerm": "FOB",
+    "incoPlace": "Newark",
+    "advancePayable": false,
+    "advanceTolerance": 0,
+    "autoInvoicing": false,
+    "minimumOrderValue": 1,
+    "isErpSynced": true,
+    "riskTier": "high",
+    "securityTradeProgram": "none",
+    "continuity": {
+      "hasBcp": false,
+      "mtpdDays": 30,
+      "backupSupplierCoverage": false
+    },
+    "sustainability": {
+      "iso14001": false,
+      "ecovadis": null
+    },
+    "infoSec": {
+      "iso27001": false,
+      "dpaSigned": false
+    },
+    "antiBribery": {
+      "dueDiligenceStatus": "screened",
+      "sanctionsScreened": true,
+      "lastScreened": "2026-03-27"
+    },
+    "certifications": [],
+    "lastAssessed": "2026-03-03",
+    "nextDue": "2027-02-09",
+    "country": "United States",
+    "region": "US",
+    "taxIds": {
+      "ein": "21-3307684"
+    }
+  },
+  {
+    "id": "SUP-0032",
+    "code": "S/00032",
+    "name": "Ironclad Excipients",
+    "description": "Ironclad Excipients - approved supplier",
+    "purchaseType": "LOCAL",
+    "classification": "External",
+    "currency": "USD",
+    "dealCurrency": "USD",
+    "supplierGroup": "RMEX",
+    "status": "ONBOARDED",
+    "grade": "A",
+    "avlScopeOfApproval": [
+      "RMEX"
+    ],
+    "paymentTerms": "NET60",
+    "payMode": "EP",
+    "incoTerm": "FOB",
+    "incoPlace": "Newark",
+    "advancePayable": false,
+    "advanceTolerance": 0,
+    "autoInvoicing": false,
+    "minimumOrderValue": 1,
+    "isErpSynced": true,
+    "riskTier": "medium",
+    "securityTradeProgram": "none",
+    "continuity": {
+      "hasBcp": false,
+      "mtpdDays": 30,
+      "backupSupplierCoverage": false
+    },
+    "sustainability": {
+      "iso14001": false,
+      "ecovadis": null
+    },
+    "infoSec": {
+      "iso27001": false,
+      "dpaSigned": false
+    },
+    "antiBribery": {
+      "dueDiligenceStatus": "screened",
+      "sanctionsScreened": true,
+      "lastScreened": "2026-03-15"
+    },
+    "certifications": [],
+    "lastAssessed": "2025-12-05",
+    "nextDue": "2026-08-07",
+    "country": "United States",
+    "region": "US",
+    "taxIds": {
+      "ein": "24-8789642"
+    }
+  },
+  {
+    "id": "SUP-0033",
+    "code": "S/00033",
+    "name": "Nimbus Chemicals",
+    "description": "Nimbus Chemicals - approved supplier",
+    "purchaseType": "LOCAL",
+    "classification": "External",
+    "currency": "USD",
+    "dealCurrency": "USD",
+    "supplierGroup": "CHEM",
+    "status": "ONBOARDED",
+    "grade": "C",
+    "avlScopeOfApproval": [
+      "CHEM"
+    ],
+    "paymentTerms": "NET90",
+    "payMode": "EP",
+    "incoTerm": "FOB",
+    "incoPlace": "Newark",
+    "advancePayable": false,
+    "advanceTolerance": 0,
+    "autoInvoicing": false,
+    "minimumOrderValue": 1,
+    "isErpSynced": true,
+    "riskTier": "medium",
+    "securityTradeProgram": "none",
+    "continuity": {
+      "hasBcp": false,
+      "mtpdDays": 30,
+      "backupSupplierCoverage": false
+    },
+    "sustainability": {
+      "iso14001": false,
+      "ecovadis": null
+    },
+    "infoSec": {
+      "iso27001": false,
+      "dpaSigned": false
+    },
+    "antiBribery": {
+      "dueDiligenceStatus": "screened",
+      "sanctionsScreened": true,
+      "lastScreened": "2026-03-11"
+    },
+    "certifications": [],
+    "lastAssessed": "2026-04-07",
+    "nextDue": "2027-02-05",
+    "country": "United States",
+    "region": "US",
+    "taxIds": {
+      "ein": "62-7180759"
+    }
+  },
+  {
+    "id": "SUP-0034",
+    "code": "S/00034",
+    "name": "Lumen Industrial Supplies",
+    "description": "Lumen Industrial Supplies - approved supplier",
+    "purchaseType": "LOCAL",
+    "classification": "External",
+    "currency": "USD",
+    "dealCurrency": "USD",
+    "supplierGroup": "MRO",
+    "status": "ONBOARDED",
+    "grade": "C",
+    "avlScopeOfApproval": [
+      "MRO"
+    ],
+    "paymentTerms": "NET60",
+    "payMode": "EP",
+    "incoTerm": "FOB",
+    "incoPlace": "Newark",
+    "advancePayable": false,
+    "advanceTolerance": 0,
+    "autoInvoicing": false,
+    "minimumOrderValue": 1,
+    "isErpSynced": false,
+    "riskTier": "medium",
+    "securityTradeProgram": "none",
+    "continuity": {
+      "hasBcp": false,
+      "mtpdDays": 30,
+      "backupSupplierCoverage": false
+    },
+    "sustainability": {
+      "iso14001": false,
+      "ecovadis": null
+    },
+    "infoSec": {
+      "iso27001": false,
+      "dpaSigned": false
+    },
+    "antiBribery": {
+      "dueDiligenceStatus": "screened",
+      "sanctionsScreened": true,
+      "lastScreened": "2025-11-14"
+    },
+    "certifications": [],
+    "lastAssessed": "2025-11-22",
+    "nextDue": "2026-08-13",
+    "country": "United States",
+    "region": "US",
+    "taxIds": {
+      "ein": "24-2065591"
+    }
+  },
+  {
+    "id": "SUP-0035",
+    "code": "S/00035",
+    "name": "Glacier Labels",
+    "description": "Glacier Labels - approved supplier",
+    "purchaseType": "LOCAL",
+    "classification": "External",
+    "currency": "USD",
+    "dealCurrency": "USD",
+    "supplierGroup": "PMLBL",
+    "status": "ONBOARDED",
+    "grade": "B",
+    "avlScopeOfApproval": [
+      "PMLBL"
+    ],
+    "paymentTerms": "NET60",
+    "payMode": "EP",
+    "incoTerm": "FOB",
+    "incoPlace": "Newark",
+    "advancePayable": false,
+    "advanceTolerance": 0,
+    "autoInvoicing": false,
+    "minimumOrderValue": 1,
+    "isErpSynced": true,
+    "riskTier": "medium",
+    "securityTradeProgram": "none",
+    "continuity": {
+      "hasBcp": false,
+      "mtpdDays": 30,
+      "backupSupplierCoverage": false
+    },
+    "sustainability": {
+      "iso14001": false,
+      "ecovadis": null
+    },
+    "infoSec": {
+      "iso27001": false,
+      "dpaSigned": false
+    },
+    "antiBribery": {
+      "dueDiligenceStatus": "screened",
+      "sanctionsScreened": true,
+      "lastScreened": "2026-04-09"
+    },
+    "certifications": [],
+    "lastAssessed": "2026-03-04",
+    "nextDue": "2026-08-08",
+    "country": "United States",
+    "region": "US",
+    "taxIds": {
+      "ein": "27-2433649"
+    }
+  },
+  {
+    "id": "SUP-0036",
+    "code": "S/00036",
+    "name": "Glacier Lab Supplies",
+    "description": "Glacier Lab Supplies - approved supplier",
+    "purchaseType": "LOCAL",
+    "classification": "External",
+    "currency": "USD",
+    "dealCurrency": "USD",
+    "supplierGroup": "LAB",
+    "status": "ONBOARDED",
+    "grade": "C",
+    "avlScopeOfApproval": [
+      "LAB"
+    ],
+    "paymentTerms": "NET60",
+    "payMode": "EP",
+    "incoTerm": "FOB",
+    "incoPlace": "Newark",
+    "advancePayable": false,
+    "advanceTolerance": 0,
+    "autoInvoicing": false,
+    "minimumOrderValue": 1,
+    "isErpSynced": false,
+    "riskTier": "medium",
+    "securityTradeProgram": "none",
+    "continuity": {
+      "hasBcp": false,
+      "mtpdDays": 30,
+      "backupSupplierCoverage": false
+    },
+    "sustainability": {
+      "iso14001": false,
+      "ecovadis": null
+    },
+    "infoSec": {
+      "iso27001": false,
+      "dpaSigned": false
+    },
+    "antiBribery": {
+      "dueDiligenceStatus": "screened",
+      "sanctionsScreened": true,
+      "lastScreened": "2025-12-23"
+    },
+    "certifications": [],
+    "lastAssessed": "2026-01-23",
+    "nextDue": "2027-04-16",
+    "country": "United States",
+    "region": "US",
+    "taxIds": {
+      "ein": "54-2719638"
+    }
+  },
+  {
+    "id": "SUP-0037",
+    "code": "S/00037",
+    "name": "Keystone Lab Supplies",
+    "description": "Keystone Lab Supplies - approved supplier",
+    "purchaseType": "LOCAL",
+    "classification": "External",
+    "currency": "USD",
+    "dealCurrency": "USD",
+    "supplierGroup": "LAB",
+    "status": "ONBOARDED",
+    "grade": "A",
+    "avlScopeOfApproval": [
+      "LAB"
+    ],
+    "paymentTerms": "NET60",
+    "payMode": "EP",
+    "incoTerm": "FOB",
+    "incoPlace": "Newark",
+    "advancePayable": false,
+    "advanceTolerance": 0,
+    "autoInvoicing": false,
+    "minimumOrderValue": 1,
+    "isErpSynced": true,
+    "riskTier": "medium",
+    "securityTradeProgram": "none",
+    "continuity": {
+      "hasBcp": false,
+      "mtpdDays": 30,
+      "backupSupplierCoverage": false
+    },
+    "sustainability": {
+      "iso14001": false,
+      "ecovadis": null
+    },
+    "infoSec": {
+      "iso27001": false,
+      "dpaSigned": false
+    },
+    "antiBribery": {
+      "dueDiligenceStatus": "screened",
+      "sanctionsScreened": true,
+      "lastScreened": "2026-05-05"
+    },
+    "certifications": [],
+    "lastAssessed": "2025-09-13",
+    "nextDue": "2026-11-11",
+    "country": "United States",
+    "region": "US",
+    "taxIds": {
+      "ein": "38-5122327"
+    }
+  },
+  {
+    "id": "SUP-0038",
+    "code": "S/00038",
+    "name": "Cardinal Excipients",
+    "description": "Cardinal Excipients - approved supplier",
+    "purchaseType": "LOCAL",
+    "classification": "External",
+    "currency": "USD",
+    "dealCurrency": "USD",
+    "supplierGroup": "RMEX",
+    "status": "ONBOARDED",
+    "grade": "B",
+    "avlScopeOfApproval": [
+      "RMEX"
+    ],
+    "paymentTerms": "PA-SHIP",
+    "payMode": "EP",
+    "incoTerm": "FOB",
+    "incoPlace": "Newark",
+    "advancePayable": false,
+    "advanceTolerance": 0,
+    "autoInvoicing": false,
+    "minimumOrderValue": 1,
+    "isErpSynced": true,
+    "riskTier": "low",
+    "securityTradeProgram": "none",
+    "continuity": {
+      "hasBcp": false,
+      "mtpdDays": 30,
+      "backupSupplierCoverage": false
+    },
+    "sustainability": {
+      "iso14001": false,
+      "ecovadis": null
+    },
+    "infoSec": {
+      "iso27001": false,
+      "dpaSigned": false
+    },
+    "antiBribery": {
+      "dueDiligenceStatus": "screened",
+      "sanctionsScreened": true,
+      "lastScreened": "2025-12-11"
+    },
+    "certifications": [],
+    "lastAssessed": "2026-04-21",
+    "nextDue": "2026-10-07",
+    "country": "United States",
+    "region": "US",
+    "taxIds": {
+      "ein": "69-3283652"
+    }
+  },
+  {
+    "id": "SUP-0039",
+    "code": "S/00039",
+    "name": "Summit Services",
+    "description": "Summit Services - approved supplier",
+    "purchaseType": "LOCAL",
+    "classification": "External",
+    "currency": "USD",
+    "dealCurrency": "USD",
+    "supplierGroup": "SVC",
+    "status": "ONBOARDED",
+    "grade": "B",
+    "avlScopeOfApproval": [
+      "SVC"
+    ],
+    "paymentTerms": "PA-SHIP",
+    "payMode": "EP",
+    "incoTerm": "FOB",
+    "incoPlace": "Newark",
+    "advancePayable": false,
+    "advanceTolerance": 0,
+    "autoInvoicing": false,
+    "minimumOrderValue": 1,
+    "isErpSynced": false,
+    "riskTier": "low",
+    "securityTradeProgram": "none",
+    "continuity": {
+      "hasBcp": false,
+      "mtpdDays": 30,
+      "backupSupplierCoverage": false
+    },
+    "sustainability": {
+      "iso14001": false,
+      "ecovadis": null
+    },
+    "infoSec": {
+      "iso27001": false,
+      "dpaSigned": false
+    },
+    "antiBribery": {
+      "dueDiligenceStatus": "screened",
+      "sanctionsScreened": true,
+      "lastScreened": "2025-11-29"
+    },
+    "certifications": [],
+    "lastAssessed": "2025-12-30",
+    "nextDue": "2026-09-17",
+    "country": "United States",
+    "region": "US",
+    "taxIds": {
+      "ein": "54-5039083"
+    }
+  },
+  {
+    "id": "SUP-0040",
+    "code": "S/00040",
+    "name": "Riverstone Chemicals",
+    "description": "Riverstone Chemicals - approved supplier",
+    "purchaseType": "LOCAL",
+    "classification": "External",
+    "currency": "USD",
+    "dealCurrency": "USD",
+    "supplierGroup": "CHEM",
+    "status": "ONBOARDED",
+    "grade": "B",
+    "avlScopeOfApproval": [
+      "CHEM"
+    ],
+    "paymentTerms": "NET60",
+    "payMode": "EP",
+    "incoTerm": "FOB",
+    "incoPlace": "Newark",
+    "advancePayable": false,
+    "advanceTolerance": 0,
+    "autoInvoicing": false,
+    "minimumOrderValue": 1,
+    "isErpSynced": false,
+    "riskTier": "high",
+    "securityTradeProgram": "none",
+    "continuity": {
+      "hasBcp": false,
+      "mtpdDays": 30,
+      "backupSupplierCoverage": false
+    },
+    "sustainability": {
+      "iso14001": false,
+      "ecovadis": null
+    },
+    "infoSec": {
+      "iso27001": false,
+      "dpaSigned": false
+    },
+    "antiBribery": {
+      "dueDiligenceStatus": "screened",
+      "sanctionsScreened": true,
+      "lastScreened": "2026-04-18"
+    },
+    "certifications": [],
+    "lastAssessed": "2026-01-14",
+    "nextDue": "2027-02-04",
+    "country": "United States",
+    "region": "US",
+    "taxIds": {
+      "ein": "83-8647891"
+    }
+  },
+  {
+    "id": "SUP-0041",
+    "code": "S/00041",
+    "name": "Granite Industrial Supplies",
+    "description": "Granite Industrial Supplies - approved supplier",
+    "purchaseType": "LOCAL",
+    "classification": "External",
+    "currency": "USD",
+    "dealCurrency": "USD",
+    "supplierGroup": "MRO",
+    "status": "ONBOARDED",
+    "grade": "A",
+    "avlScopeOfApproval": [
+      "MRO"
+    ],
+    "paymentTerms": "NET90",
+    "payMode": "EP",
+    "incoTerm": "FOB",
+    "incoPlace": "Newark",
+    "advancePayable": false,
+    "advanceTolerance": 0,
+    "autoInvoicing": false,
+    "minimumOrderValue": 1,
+    "isErpSynced": true,
+    "riskTier": "low",
+    "securityTradeProgram": "none",
+    "continuity": {
+      "hasBcp": false,
+      "mtpdDays": 30,
+      "backupSupplierCoverage": false
+    },
+    "sustainability": {
+      "iso14001": false,
+      "ecovadis": null
+    },
+    "infoSec": {
+      "iso27001": false,
+      "dpaSigned": false
+    },
+    "antiBribery": {
+      "dueDiligenceStatus": "screened",
+      "sanctionsScreened": true,
+      "lastScreened": "2025-12-02"
+    },
+    "certifications": [],
+    "lastAssessed": "2025-09-27",
+    "nextDue": "2026-12-29",
+    "country": "United States",
+    "region": "US",
+    "taxIds": {
+      "ein": "41-7618487"
+    }
+  },
+  {
+    "id": "SUP-0042",
+    "code": "S/00042",
+    "name": "Zenith Services",
+    "description": "Zenith Services - approved supplier",
+    "purchaseType": "IMPORT",
+    "classification": "External",
+    "currency": "INR",
+    "dealCurrency": "INR",
+    "supplierGroup": "SVC",
+    "status": "ONBOARDED",
+    "grade": "C",
+    "avlScopeOfApproval": [
+      "SVC"
+    ],
+    "paymentTerms": "NET30",
+    "payMode": "EP",
+    "incoTerm": "CIF",
+    "incoPlace": "Nhava Sheva",
+    "advancePayable": false,
+    "advanceTolerance": 0,
+    "autoInvoicing": false,
+    "minimumOrderValue": 1,
+    "isErpSynced": false,
+    "riskTier": "high",
+    "securityTradeProgram": "none",
+    "continuity": {
+      "hasBcp": false,
+      "mtpdDays": 30,
+      "backupSupplierCoverage": false
+    },
+    "sustainability": {
+      "iso14001": false,
+      "ecovadis": null
+    },
+    "infoSec": {
+      "iso27001": false,
+      "dpaSigned": false
+    },
+    "antiBribery": {
+      "dueDiligenceStatus": "screened",
+      "sanctionsScreened": true,
+      "lastScreened": "2026-03-30"
+    },
+    "certifications": [
+      {
+        "name": "ISO 9001:2015",
+        "expiry": "2026-11-03"
+      }
+    ],
+    "lastAssessed": "2025-10-13",
+    "nextDue": "2026-09-01",
+    "country": "India",
+    "region": "IN",
+    "taxIds": {
+      "gstin": "27OBVAA1208G4ZE",
+      "pan": "GSSXK5038I"
+    }
+  },
+  {
+    "id": "SUP-0043",
+    "code": "S/00043",
+    "name": "Lumen Excipients",
+    "description": "Lumen Excipients - approved supplier",
+    "purchaseType": "IMPORT",
+    "classification": "External",
+    "currency": "EUR",
+    "dealCurrency": "EUR",
+    "supplierGroup": "RMEX",
+    "status": "ONBOARDED",
+    "grade": "B",
+    "avlScopeOfApproval": [
+      "RMEX"
+    ],
+    "paymentTerms": "NET30",
+    "payMode": "EP",
+    "incoTerm": "CIF",
+    "incoPlace": "Hamburg",
+    "advancePayable": false,
+    "advanceTolerance": 0,
+    "autoInvoicing": false,
+    "minimumOrderValue": 1,
+    "isErpSynced": true,
+    "riskTier": "high",
+    "securityTradeProgram": "none",
+    "continuity": {
+      "hasBcp": false,
+      "mtpdDays": 30,
+      "backupSupplierCoverage": false
+    },
+    "sustainability": {
+      "iso14001": false,
+      "ecovadis": null
+    },
+    "infoSec": {
+      "iso27001": false,
+      "dpaSigned": false
+    },
+    "antiBribery": {
+      "dueDiligenceStatus": "screened",
+      "sanctionsScreened": true,
+      "lastScreened": "2025-11-24"
+    },
+    "certifications": [
+      {
+        "name": "ISO 9001:2015",
+        "expiry": "2026-10-13"
+      }
+    ],
+    "lastAssessed": "2026-02-18",
+    "nextDue": "2026-08-15",
+    "country": "France",
+    "region": "EU",
+    "taxIds": {
+      "vat": "FR142397885"
+    }
+  },
+  {
+    "id": "SUP-0044",
+    "code": "S/00044",
+    "name": "Nimbus Industrial Supplies",
+    "description": "Nimbus Industrial Supplies - approved supplier",
+    "purchaseType": "LOCAL",
+    "classification": "External",
+    "currency": "USD",
+    "dealCurrency": "USD",
+    "supplierGroup": "MRO",
+    "status": "ONBOARDED",
+    "grade": "B",
+    "avlScopeOfApproval": [
+      "MRO"
+    ],
+    "paymentTerms": "NET30",
+    "payMode": "EP",
+    "incoTerm": "FOB",
+    "incoPlace": "Newark",
+    "advancePayable": false,
+    "advanceTolerance": 0,
+    "autoInvoicing": false,
+    "minimumOrderValue": 1,
+    "isErpSynced": false,
+    "riskTier": "medium",
+    "securityTradeProgram": "none",
+    "continuity": {
+      "hasBcp": false,
+      "mtpdDays": 30,
+      "backupSupplierCoverage": false
+    },
+    "sustainability": {
+      "iso14001": false,
+      "ecovadis": null
+    },
+    "infoSec": {
+      "iso27001": false,
+      "dpaSigned": false
+    },
+    "antiBribery": {
+      "dueDiligenceStatus": "screened",
+      "sanctionsScreened": true,
+      "lastScreened": "2026-03-07"
+    },
+    "certifications": [],
+    "lastAssessed": "2026-03-13",
+    "nextDue": "2026-07-14",
+    "country": "United States",
+    "region": "US",
+    "taxIds": {
+      "ein": "20-9617594"
+    }
+  },
+  {
+    "id": "SUP-0045",
+    "code": "S/00045",
+    "name": "Wellspring Print",
+    "description": "Wellspring Print - approved supplier",
+    "purchaseType": "IMPORT",
+    "classification": "External",
+    "currency": "INR",
+    "dealCurrency": "INR",
+    "supplierGroup": "PMLFT",
+    "status": "OFFBOARDED",
+    "grade": "C",
+    "avlScopeOfApproval": [
+      "PMLFT"
+    ],
+    "paymentTerms": "PA-SHIP",
+    "payMode": "EP",
+    "incoTerm": "CIF",
+    "incoPlace": "Nhava Sheva",
+    "advancePayable": false,
+    "advanceTolerance": 0,
+    "autoInvoicing": false,
+    "minimumOrderValue": 1,
+    "isErpSynced": false,
+    "riskTier": "medium",
+    "securityTradeProgram": "none",
+    "continuity": {
+      "hasBcp": false,
+      "mtpdDays": 30,
+      "backupSupplierCoverage": false
+    },
+    "sustainability": {
+      "iso14001": false,
+      "ecovadis": null
+    },
+    "infoSec": {
+      "iso27001": false,
+      "dpaSigned": false
+    },
+    "antiBribery": {
+      "dueDiligenceStatus": "screened",
+      "sanctionsScreened": true,
+      "lastScreened": "2026-02-22"
+    },
+    "certifications": [
+      {
+        "name": "ISO 9001:2015",
+        "expiry": "2026-12-12"
+      }
+    ],
+    "lastAssessed": "2026-05-07",
+    "nextDue": "2027-02-01",
+    "country": "India",
+    "region": "IN",
+    "taxIds": {
+      "gstin": "36UIHHA3915E6ZE",
+      "pan": "VHQUU5088C"
+    }
+  },
+  {
+    "id": "SUP-0046",
+    "code": "S/00046",
+    "name": "Harbor Lab Supplies",
+    "description": "Harbor Lab Supplies - approved supplier",
+    "purchaseType": "LOCAL",
+    "classification": "External",
+    "currency": "USD",
+    "dealCurrency": "USD",
+    "supplierGroup": "LAB",
+    "status": "SUSPENDED",
+    "grade": "C",
+    "avlScopeOfApproval": [
+      "LAB"
+    ],
+    "paymentTerms": "NET60",
+    "payMode": "EP",
+    "incoTerm": "FOB",
+    "incoPlace": "Newark",
+    "advancePayable": false,
+    "advanceTolerance": 0,
+    "autoInvoicing": false,
+    "minimumOrderValue": 1,
+    "isErpSynced": true,
+    "riskTier": "low",
+    "securityTradeProgram": "none",
+    "continuity": {
+      "hasBcp": false,
+      "mtpdDays": 30,
+      "backupSupplierCoverage": false
+    },
+    "sustainability": {
+      "iso14001": false,
+      "ecovadis": null
+    },
+    "infoSec": {
+      "iso27001": false,
+      "dpaSigned": false
+    },
+    "antiBribery": {
+      "dueDiligenceStatus": "screened",
+      "sanctionsScreened": true,
+      "lastScreened": "2025-12-06"
+    },
+    "certifications": [],
+    "lastAssessed": "2025-12-11",
+    "nextDue": "2027-01-04",
+    "country": "United States",
+    "region": "US",
+    "taxIds": {
+      "ein": "22-2146668"
+    },
+    "suspendReason": "Expired GMP certificate",
+    "suspendCategory": "expired-cert"
+  },
+  {
+    "id": "SUP-0047",
+    "code": "S/00047",
+    "name": "Lumen Print",
+    "description": "Lumen Print - approved supplier",
+    "purchaseType": "LOCAL",
+    "classification": "External",
+    "currency": "USD",
+    "dealCurrency": "USD",
+    "supplierGroup": "PMLFT",
+    "status": "ONBOARDED",
+    "grade": "B",
+    "avlScopeOfApproval": [
+      "PMLFT"
+    ],
+    "paymentTerms": "NET60",
+    "payMode": "EP",
+    "incoTerm": "FOB",
+    "incoPlace": "Newark",
+    "advancePayable": false,
+    "advanceTolerance": 0,
+    "autoInvoicing": false,
+    "minimumOrderValue": 1,
+    "isErpSynced": true,
+    "riskTier": "medium",
+    "securityTradeProgram": "none",
+    "continuity": {
+      "hasBcp": false,
+      "mtpdDays": 30,
+      "backupSupplierCoverage": false
+    },
+    "sustainability": {
+      "iso14001": false,
+      "ecovadis": null
+    },
+    "infoSec": {
+      "iso27001": false,
+      "dpaSigned": false
+    },
+    "antiBribery": {
+      "dueDiligenceStatus": "screened",
+      "sanctionsScreened": true,
+      "lastScreened": "2025-12-12"
+    },
+    "certifications": [],
+    "lastAssessed": "2025-09-12",
+    "nextDue": "2026-10-11",
+    "country": "United States",
+    "region": "US",
+    "taxIds": {
+      "ein": "18-8021202"
+    }
+  },
+  {
+    "id": "SUP-0048",
+    "code": "S/00048",
+    "name": "Umbra Industrial Supplies",
+    "description": "Umbra Industrial Supplies - approved supplier",
+    "purchaseType": "LOCAL",
+    "classification": "External",
+    "currency": "USD",
+    "dealCurrency": "USD",
+    "supplierGroup": "MRO",
+    "status": "ONBOARDED",
+    "grade": "B",
+    "avlScopeOfApproval": [
+      "MRO"
+    ],
+    "paymentTerms": "NET30",
+    "payMode": "EP",
+    "incoTerm": "FOB",
+    "incoPlace": "Newark",
+    "advancePayable": false,
+    "advanceTolerance": 0,
+    "autoInvoicing": false,
+    "minimumOrderValue": 1,
+    "isErpSynced": false,
+    "riskTier": "high",
+    "securityTradeProgram": "none",
+    "continuity": {
+      "hasBcp": false,
+      "mtpdDays": 30,
+      "backupSupplierCoverage": false
+    },
+    "sustainability": {
+      "iso14001": false,
+      "ecovadis": null
+    },
+    "infoSec": {
+      "iso27001": false,
+      "dpaSigned": false
+    },
+    "antiBribery": {
+      "dueDiligenceStatus": "screened",
+      "sanctionsScreened": true,
+      "lastScreened": "2025-12-21"
+    },
+    "certifications": [],
+    "lastAssessed": "2026-01-19",
+    "nextDue": "2027-01-25",
+    "country": "United States",
+    "region": "US",
+    "taxIds": {
+      "ein": "63-3123192"
+    }
+  },
+  {
+    "id": "SUP-0049",
+    "code": "S/00049",
+    "name": "Terra Lab Supplies",
+    "description": "Terra Lab Supplies - approved supplier",
+    "purchaseType": "LOCAL",
+    "classification": "External",
+    "currency": "USD",
+    "dealCurrency": "USD",
+    "supplierGroup": "LAB",
+    "status": "PENDING_APPROVAL",
+    "grade": "B",
+    "avlScopeOfApproval": [
+      "LAB"
+    ],
+    "paymentTerms": "PA-SHIP",
+    "payMode": "EP",
+    "incoTerm": "FOB",
+    "incoPlace": "Newark",
+    "advancePayable": false,
+    "advanceTolerance": 0,
+    "autoInvoicing": false,
+    "minimumOrderValue": 1,
+    "isErpSynced": true,
+    "riskTier": "low",
+    "securityTradeProgram": "none",
+    "continuity": {
+      "hasBcp": false,
+      "mtpdDays": 30,
+      "backupSupplierCoverage": false
+    },
+    "sustainability": {
+      "iso14001": false,
+      "ecovadis": null
+    },
+    "infoSec": {
+      "iso27001": false,
+      "dpaSigned": false
+    },
+    "antiBribery": {
+      "dueDiligenceStatus": "screened",
+      "sanctionsScreened": true,
+      "lastScreened": "2026-03-17"
+    },
+    "certifications": [],
+    "lastAssessed": "2025-12-07",
+    "nextDue": "2026-09-21",
+    "country": "United States",
+    "region": "US",
+    "taxIds": {
+      "ein": "63-9329221"
+    }
+  },
+  {
+    "id": "SUP-0050",
+    "code": "S/00050",
+    "name": "Dynamo Bottling",
+    "description": "Dynamo Bottling - approved supplier",
+    "purchaseType": "IMPORT",
+    "classification": "External",
+    "currency": "EUR",
+    "dealCurrency": "EUR",
+    "supplierGroup": "PMBTL",
+    "status": "PENDING_APPROVAL",
+    "grade": "B",
+    "avlScopeOfApproval": [
+      "PMBTL"
+    ],
+    "paymentTerms": "PA-SHIP",
+    "payMode": "EP",
+    "incoTerm": "CIF",
+    "incoPlace": "Hamburg",
+    "advancePayable": false,
+    "advanceTolerance": 0,
+    "autoInvoicing": false,
+    "minimumOrderValue": 1,
+    "isErpSynced": true,
+    "riskTier": "medium",
+    "securityTradeProgram": "none",
+    "continuity": {
+      "hasBcp": false,
+      "mtpdDays": 30,
+      "backupSupplierCoverage": false
+    },
+    "sustainability": {
+      "iso14001": false,
+      "ecovadis": null
+    },
+    "infoSec": {
+      "iso27001": false,
+      "dpaSigned": false
+    },
+    "antiBribery": {
+      "dueDiligenceStatus": "screened",
+      "sanctionsScreened": true,
+      "lastScreened": "2026-03-22"
+    },
+    "certifications": [
+      {
+        "name": "ISO 9001:2015",
+        "expiry": "2026-12-13"
+      }
+    ],
+    "lastAssessed": "2025-10-04",
+    "nextDue": "2026-12-12",
+    "country": "France",
+    "region": "EU",
+    "taxIds": {
+      "vat": "FR719260864"
+    }
+  },
+  {
+    "id": "SUP-0051",
+    "code": "S/00051",
+    "name": "Dynamo Packaging",
+    "description": "Dynamo Packaging - approved supplier",
+    "purchaseType": "IMPORT",
+    "classification": "External",
+    "currency": "EUR",
+    "dealCurrency": "EUR",
+    "supplierGroup": "PMCTN",
+    "status": "PENDING_ONBOARDING",
+    "grade": "B",
+    "avlScopeOfApproval": [
+      "PMCTN"
+    ],
+    "paymentTerms": "NET60",
+    "payMode": "EP",
+    "incoTerm": "CIF",
+    "incoPlace": "Hamburg",
+    "advancePayable": false,
+    "advanceTolerance": 0,
+    "autoInvoicing": false,
+    "minimumOrderValue": 1,
+    "isErpSynced": false,
+    "riskTier": "low",
+    "securityTradeProgram": "none",
+    "continuity": {
+      "hasBcp": false,
+      "mtpdDays": 30,
+      "backupSupplierCoverage": false
+    },
+    "sustainability": {
+      "iso14001": false,
+      "ecovadis": null
+    },
+    "infoSec": {
+      "iso27001": false,
+      "dpaSigned": false
+    },
+    "antiBribery": {
+      "dueDiligenceStatus": "screened",
+      "sanctionsScreened": true,
+      "lastScreened": "2026-03-11"
+    },
+    "certifications": [
+      {
+        "name": "ISO 9001:2015",
+        "expiry": "2026-08-14"
+      }
+    ],
+    "lastAssessed": "2025-08-06",
+    "nextDue": "2027-01-24",
+    "country": "France",
+    "region": "EU",
+    "taxIds": {
+      "vat": "FR257708843"
+    }
+  },
+  {
+    "id": "SUP-0052",
+    "code": "S/00052",
+    "name": "Allied Bottling",
+    "description": "Allied Bottling - approved supplier",
+    "purchaseType": "LOCAL",
+    "classification": "External",
+    "currency": "USD",
+    "dealCurrency": "USD",
+    "supplierGroup": "PMBTL",
+    "status": "PENDING_ONBOARDING",
+    "grade": "A",
+    "avlScopeOfApproval": [
+      "PMBTL"
+    ],
+    "paymentTerms": "NET60",
+    "payMode": "EP",
+    "incoTerm": "FOB",
+    "incoPlace": "Newark",
+    "advancePayable": false,
+    "advanceTolerance": 0,
+    "autoInvoicing": false,
+    "minimumOrderValue": 1,
+    "isErpSynced": true,
+    "riskTier": "low",
+    "securityTradeProgram": "none",
+    "continuity": {
+      "hasBcp": false,
+      "mtpdDays": 30,
+      "backupSupplierCoverage": false
+    },
+    "sustainability": {
+      "iso14001": false,
+      "ecovadis": null
+    },
+    "infoSec": {
+      "iso27001": false,
+      "dpaSigned": false
+    },
+    "antiBribery": {
+      "dueDiligenceStatus": "screened",
+      "sanctionsScreened": true,
+      "lastScreened": "2026-04-19"
+    },
+    "certifications": [],
+    "lastAssessed": "2025-10-12",
+    "nextDue": "2026-09-24",
+    "country": "United States",
+    "region": "US",
+    "taxIds": {
+      "ein": "94-9932791"
+    }
+  }
+]

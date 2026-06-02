@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+                  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+                  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+                  id="Definitions_Analytics" targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:collaboration id="Collaboration_Analytics">
+    <bpmn:participant id="Participant_Analytics" name="Spend Analytics, Supplier Scorecard and KPIs" processRef="Process_Analytics" />
+  </bpmn:collaboration>
+  <bpmn:process id="Process_Analytics" isExecutable="false">
+    <bpmn:laneSet id="LaneSet_Analytics">
+      <bpmn:lane id="L_sys" name="Platform / System">
+        <bpmn:flowNodeRef>Start</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Ingest</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Normalize</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Delivery2v4</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Composite</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ComplianceGate</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GwGrade</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>WriteScorecard</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>CycleKpis</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>SpendCuts</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Dashboards</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>End</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_buyer" name="Procurement / Buyer">
+        <bpmn:flowNodeRef>BuyerView</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_appr" name="Approver">
+        <bpmn:flowNodeRef>MgmtView</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_qc" name="Quality">
+        <bpmn:flowNodeRef>QcView</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_finmaker" name="Finance - Maker">
+        <bpmn:flowNodeRef>FinView</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="Start" name="Period close / on-commit event">
+      <bpmn:documentation>Trigger. The analytics engine runs (a) on every committed transaction (incremental, via the same post-commit SSE hook, so live tiles stay current) and (b) on a scheduled period close (month / quarter) for the full scorecard roll-up. Canonical grain: PO header, PO line, goods-receipt line, invoice line, payment. OTD/OTIF/quality measured at GR line; cost/PPV at PO line; AP metrics at invoice line. [SCOR OE3 Performance and Continuous Improvement | ISO 8.4.1 monitoring | source: platform-services analytics engine + procurement-metrics-kpis grain]</bpmn:documentation>
+      <bpmn:outgoing>f1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="Ingest" name="Ingest + cleanse facts (dedup, classify)">
+      <bpmn:documentation>Prerequisite step. Cleanse spend: dedup/normalize supplier names + roll up to parent hierarchy; classify every PO/invoice line to the category taxonomy (UNSPSC-style segment/subSegment). Track classification coverage % and unclassified-spend % as data-health KPIs (a cut cannot be trusted below a configurable coverage threshold). FX: every amount normalized to the configurable base/reporting currency via convertToBase (graceful degradation: on rate-fetch failure or invalid rate the original amount is carried unconverted, never throws). [SCOR OE4 | source: procurement-metrics-kpis spend-cleansing prerequisite + platform-services FX]</bpmn:documentation>
+      <bpmn:incoming>f1</bpmn:incoming>
+      <bpmn:outgoing>f2</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:businessRuleTask id="Normalize" name="Stage 1: normalize each metric to 0-100">
+      <bpmn:documentation>Two-stage scoring, stage 1. Each raw supplier metric for the period is normalized to a 0-100 sub-score against configurable threshold bands (bands are tenant config, defaults below). Quality: defect rate % = defective/total-received x100 (target &lt;=1%); PPM/DPPM = rejects/inspected x1,000,000 (denominator = inspected, not received, under AQL sampling; automotive band 50-500, food/bev &lt;=1000; note DPPM != DPMO, do not conflate); NCR count / non-conformance rate %. Delivery: OTD % = on-time/total x100 (band &gt;=95 green / 90-94 amber / &lt;90 red); fill rate % = delivered/ordered x100 (&gt;=98). Cost: PPV = (actual price - baseline price) x qty, PPV% = (actual-baseline)/baseline x100 (negative = favorable); baseline = last purchase price (AB). Responsiveness: RFQ turnaround = quote-returned - RFQ-issued (days); CAPA responsiveness = avg days to close a CAPA. Each metric maps onto its band -&gt; 0-100. [SCOR RL/RS/CO | ISO 8.4.1 | source: procurement-metrics-kpis formulas + platform-services two-stage scoring]</bpmn:documentation>
+      <bpmn:incoming>f2</bpmn:incoming>
+      <bpmn:outgoing>f3</bpmn:outgoing>
+    </bpmn:businessRuleTask>
+    <bpmn:businessRuleTask id="Delivery2v4" name="Compute OTIF (2-factor) AND perfect-order (4-factor) distinctly">
+      <bpmn:documentation>Delivery sub-scores computed and LABELLED distinctly, never conflated. Two-factor OTIF % = orders (grain: per ORDER LINE, fixed + disclosed) delivered on-time AND in-full / total x100 - the intersection, all-or-nothing: on-time-but-short fails, complete-but-late fails (RA e07 streak uses this two-factor metric for the operational dashboard). Four-factor perfect order = on-time AND in-full AND damage-free AND documentation-accurate (SCOR RL.1.2 Perfect Supplier Order Fulfillment; components RL.2.6 on-time, RL.2.5 in-full, RL.3.22-24 damage-free, RL.2.7/RL.3.17-20 documentation-accurate). The supplier RE-QUALIFICATION gate uses the four-factor perfect-order metric; the operational dashboard streak uses two-factor OTIF. Both stored per period. [SCOR RL.1.2 | source: data-model OTIF/perfect-order clarification + procurement-metrics-kpis]</bpmn:documentation>
+      <bpmn:incoming>f3</bpmn:incoming>
+      <bpmn:outgoing>f4</bpmn:outgoing>
+    </bpmn:businessRuleTask>
+    <bpmn:businessRuleTask id="Composite" name="Stage 2: weighted composite per supplier per period">
+      <bpmn:documentation>Two-stage scoring, stage 2. composite = sum(sub-score x weight) over the four scored dimensions. Weights are configurable, sum to 100; defaults = delivery 40 / quality 30 / cost 20 / service(responsiveness) 10 (pharma/food raises quality). Compliance is NOT a weighted input - it is a separate hard GATE (next step). Composite stored on SupplierScorecard {supplierId, period, dimensionScores, composite, grade}. Time-series maintained: rolling average, trend slope, variance, and failure-reason breakdown (late vs short vs wrong-SKU vs damaged). [SCOR OE3 | ISO 8.4.1 | source: platform-services weighted roll-up + procurement-metrics-kpis weighting]</bpmn:documentation>
+      <bpmn:incoming>f4</bpmn:incoming>
+      <bpmn:outgoing>f5</bpmn:outgoing>
+    </bpmn:businessRuleTask>
+    <bpmn:businessRuleTask id="ComplianceGate" name="Compliance GATE (cert validity, doc completeness)">
+      <bpmn:documentation>Compliance is modelled as an eligibility GATE layered on the composite, not a weighted score. certification validity % = binary per cert, must be 100% (any expired/missing mandatory cert -&gt; gate FAIL regardless of composite); documentation completeness % (ASN/CoC/CoA/packing/customs present). A gate fail caps the supplier's effective standing (cannot be AVL/Preferred) even with a high composite. ISO 9001 8.4.1 requires certs/AVL records; expiry alerts fire on selection and &gt;=1 week before expiry. [ISO 8.4.1 + 7.5 records | source: procurement-metrics-kpis compliance-as-gate + platform-services document expiry]</bpmn:documentation>
+      <bpmn:incoming>f5</bpmn:incoming>
+      <bpmn:outgoing>f6</bpmn:outgoing>
+    </bpmn:businessRuleTask>
+    <bpmn:exclusiveGateway id="GwGrade" name="grade band? (composite vs A/B/C + gate)">
+      <bpmn:documentation>Grade assignment, exact bands: composite &gt;= 90 -&gt; Grade A; composite &gt;= 70 AND &lt; 90 -&gt; Grade B; composite &lt; 70 -&gt; Grade C. AVL gate (eligible for the Approved Vendor List) = certs 100% (compliance gate PASS) AND composite &gt;= configurable threshold (default 70). Preferred status = sustained Grade A over multiple consecutive periods AND no single red dimension AND low risk tier AND competitive TCO. A compliance-gate FAIL forces status to at most Conditional/Suspended irrespective of grade. [SCOR OE3 / ISO 8.4.1 | source: procurement-metrics-kpis grade bands A&gt;=90/B&gt;=70/C&lt;70 + AVL gate]</bpmn:documentation>
+      <bpmn:incoming>f6</bpmn:incoming>
+      <bpmn:outgoing>f7</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="WriteScorecard" name="Persist scorecard + AVL status + streak counters">
+      <bpmn:documentation>Persist the period scorecard, grade, AVL status {Approved | Conditional | Suspended | Disqualified | Preferred}, and update streak counters: consecutive-periods-at-or-above-threshold (feeds preferred qualification) and consecutive-below counter (triggers corrective action / probation, and at the configured count feeds the SUSPEND gate in e04). Two consecutive periods below target or a critical NCR are event triggers for early re-evaluation. SSE scorecard.updated emitted; audit logged. [SCOR OE3 | ISO 8.4.1 re-evaluation records | source: iso-supply-chain-standards AVL status set + procurement-metrics-kpis streaks]</bpmn:documentation>
+      <bpmn:incoming>f7</bpmn:incoming>
+      <bpmn:outgoing>f8</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:businessRuleTask id="CycleKpis" name="Compute cycle / process KPIs">
+      <bpmn:documentation>Process KPIs computed for the period: requisition-to-PO cycle time (SLA 7-10 days, both companies; APQC top ~5h / poor ~48h reference); approval SLA = avg approval time + % within SLA; PPV (above); spend-under-management % = (approved spend - maverick)/total x100 (mature 80%+); three-way-match exception rate % = 100 - first-time-match rate; DPO = avg AP / COGS x365; invoice accuracy / first-time-match rate %; emergency/rush purchase ratio %. [SCOR RS/CO | source: procurement-metrics-kpis cycle/process KPIs]</bpmn:documentation>
+      <bpmn:incoming>f8</bpmn:incoming>
+      <bpmn:outgoing>f9</bpmn:outgoing>
+    </bpmn:businessRuleTask>
+    <bpmn:businessRuleTask id="SpendCuts" name="Compute spend cuts + savings + price-spike">
+      <bpmn:documentation>Spend analytics. Cuts: by category (taxonomy), by supplier (+ parent hierarchy = concentration/risk), by department/cost-center, by region/plant; tail spend (~20% of spend across ~80% of suppliers); contract compliance/utilization % = on-contract/addressable x100 (inverse of maverick). Savings (AB two-layer): baseline = last purchase price; negotiation layer (quoted-increase vs negotiated-increase) + comparison layer (selected vs alternative quotes); hard savings = baseline - actual; cost avoidance reported SEPARATELY, never summed with hard savings; savings can be negative (extra expense). Abnormal price spike flag: unit price &gt; 5% above baseline (AB threshold, configurable) raises a market-price-watch alert to the buyer. Forecasting (AB, procurement-only, manual): month/quarter x quantity entries; variance flag when actual deviates from forecast beyond a configurable band. [SCOR CO / P3 Plan Source | source: procurement-metrics-kpis spend cuts + AB savings/spike/forecast]</bpmn:documentation>
+      <bpmn:incoming>f9</bpmn:incoming>
+      <bpmn:outgoing>f10</bpmn:outgoing>
+    </bpmn:businessRuleTask>
+    <bpmn:serviceTask id="Dashboards" name="Publish dashboards + alerts (RBAC-scoped)">
+      <bpmn:documentation>Render role-scoped dashboards and fire alerts. Access is RBAC-scoped per analytics.view / scorecard.view / spend.view: Buyer sees full scorecard + spend + savings + forecast; Approver/Management sees the management performance view; Quality sees quality KPIs; Finance-Maker sees AP metrics (DPO, match-exception rate); Supplier sees only its own scorecard (C). Alerts: price-spike &gt;5%, ETA/cert expiry, two-consecutive-below, SLA breach. SSE on update; clients re-query through the guarded REST endpoint (no data leaks over the stream). [SCOR OE3 | source: platform-services analytics + role-permission-matrix analytics/scorecard/spend view]</bpmn:documentation>
+      <bpmn:incoming>f10</bpmn:incoming>
+      <bpmn:outgoing>f11</bpmn:outgoing>
+      <bpmn:outgoing>f12</bpmn:outgoing>
+      <bpmn:outgoing>f13</bpmn:outgoing>
+      <bpmn:outgoing>f14</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="BuyerView" name="Buyer reviews scorecard, spend, savings, forecast">
+      <bpmn:documentation>Buyer (analytics.view, scorecard.view, spend.view, forecast.manage, scorecard.configure) reviews supplier scorecards, spend cuts, savings, price-spike alerts, and maintains the manual forecast. Buyer can configure scorecard weights/bands and the AVL threshold (scorecard.configure). Actions feed sourcing decisions (preferred suppliers, AVL gating in diagram 04) and the CAPA/suspend loop (e04). [SCOR OE3 | source: role-permission-matrix buyer analytics/forecast/configure]</bpmn:documentation>
+      <bpmn:incoming>f11</bpmn:incoming>
+      <bpmn:outgoing>f15</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="MgmtView" name="Approver / Management performance view">
+      <bpmn:documentation>Approver in the Management view (analytics.view in-scope) sees aggregate performance: cycle times, approval SLA, spend-under-management, savings vs target, top suppliers/categories, exception trends. Read-only management dashboard; no edit of scorecards. [SCOR OE3 | source: role-permission-matrix mgmt analytics view]</bpmn:documentation>
+      <bpmn:incoming>f12</bpmn:incoming>
+      <bpmn:outgoing>f16</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="QcView" name="Quality reviews quality KPIs">
+      <bpmn:documentation>Quality (analytics.view C: quality KPIs) reviews PPM/defect/NCR trends, lot acceptance %, CAPA responsiveness, and the failure-reason breakdown per supplier. Recurring quality failures feed the NCR/CAPA loop (e04) and the suspend gate. [ISO 8.4.1 monitoring | source: role-permission-matrix quality KPIs]</bpmn:documentation>
+      <bpmn:incoming>f13</bpmn:incoming>
+      <bpmn:outgoing>f17</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="FinView" name="Finance reviews AP / match KPIs">
+      <bpmn:documentation>Finance-Maker (analytics.view, payments.analytics.view) reviews DPO, first-time-match / three-way-match exception rate, invoice accuracy, and creditor-ledger ageing (entries left / overdue). Match-exception trends feed back to the invoice/match flow (diagram 09 / e12). [SCOR CO | source: role-permission-matrix finance analytics + AB creditor ledger]</bpmn:documentation>
+      <bpmn:incoming>f14</bpmn:incoming>
+      <bpmn:outgoing>f18</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="End" name="Analytics published">
+      <bpmn:documentation>Terminal for the cycle. Scorecards, KPIs, spend cuts, savings, forecasts, and alerts are published and consumed by role. Feeds sourcing (04 AVL/preferred), CAPA/suspend (e04), and overall continuous improvement (SCOR OE3). [SCOR OE3 | source: build-new]</bpmn:documentation>
+      <bpmn:incoming>f15</bpmn:incoming>
+      <bpmn:incoming>f16</bpmn:incoming>
+      <bpmn:incoming>f17</bpmn:incoming>
+      <bpmn:incoming>f18</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="f1" sourceRef="Start" targetRef="Ingest" />
+    <bpmn:sequenceFlow id="f2" sourceRef="Ingest" targetRef="Normalize" />
+    <bpmn:sequenceFlow id="f3" sourceRef="Normalize" targetRef="Delivery2v4" />
+    <bpmn:sequenceFlow id="f4" sourceRef="Delivery2v4" targetRef="Composite" />
+    <bpmn:sequenceFlow id="f5" sourceRef="Composite" targetRef="ComplianceGate" />
+    <bpmn:sequenceFlow id="f6" sourceRef="ComplianceGate" targetRef="GwGrade" />
+    <bpmn:sequenceFlow id="f7" name="grade A/B/C assigned + AVL gate applied" sourceRef="GwGrade" targetRef="WriteScorecard" />
+    <bpmn:sequenceFlow id="f8" sourceRef="WriteScorecard" targetRef="CycleKpis" />
+    <bpmn:sequenceFlow id="f9" sourceRef="CycleKpis" targetRef="SpendCuts" />
+    <bpmn:sequenceFlow id="f10" sourceRef="SpendCuts" targetRef="Dashboards" />
+    <bpmn:sequenceFlow id="f11" sourceRef="Dashboards" targetRef="BuyerView" />
+    <bpmn:sequenceFlow id="f12" sourceRef="Dashboards" targetRef="MgmtView" />
+    <bpmn:sequenceFlow id="f13" sourceRef="Dashboards" targetRef="QcView" />
+    <bpmn:sequenceFlow id="f14" sourceRef="Dashboards" targetRef="FinView" />
+    <bpmn:sequenceFlow id="f15" sourceRef="BuyerView" targetRef="End" />
+    <bpmn:sequenceFlow id="f16" sourceRef="MgmtView" targetRef="End" />
+    <bpmn:sequenceFlow id="f17" sourceRef="QcView" targetRef="End" />
+    <bpmn:sequenceFlow id="f18" sourceRef="FinView" targetRef="End" />
+    <bpmn:textAnnotation id="NoteAnalytics">
+      <bpmn:text>Computation + dashboard flow: the System computes, roles view. Two-stage scoring: stage 1 normalizes each metric to 0-100 against configurable bands; stage 2 weights them into a composite per supplier per period (default delivery 40 / quality 30 / cost 20 / service 10). Compliance (cert validity, doc completeness) is a hard GATE, not weighted. Grades A&gt;=90 / B&gt;=70 / C&lt;70; AVL gate = certs 100% + composite &gt;= threshold; Preferred = sustained Grade A. Two-factor OTIF (operational streak) and four-factor perfect order RL.1.2 (re-qualification gate) are computed and labelled distinctly. Abnormal price spike &gt; 5% above baseline. Forecasting is manual (month/quarter x qty, variance flag).</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Assoc_Analytics_1" sourceRef="Composite" targetRef="NoteAnalytics" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagram_Analytics">
+    <bpmndi:BPMNPlane id="Plane_Analytics" bpmnElement="Collaboration_Analytics">
+      <bpmndi:BPMNShape id="Participant_Analytics_di" bpmnElement="Participant_Analytics" isHorizontal="true">
+        <dc:Bounds x="160" y="80" width="2540" height="800" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_sys_di" bpmnElement="L_sys" isHorizontal="true">
+        <dc:Bounds x="190" y="80" width="2510" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_buyer_di" bpmnElement="L_buyer" isHorizontal="true">
+        <dc:Bounds x="190" y="240" width="2510" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_appr_di" bpmnElement="L_appr" isHorizontal="true">
+        <dc:Bounds x="190" y="400" width="2510" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_qc_di" bpmnElement="L_qc" isHorizontal="true">
+        <dc:Bounds x="190" y="560" width="2510" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_finmaker_di" bpmnElement="L_finmaker" isHorizontal="true">
+        <dc:Bounds x="190" y="720" width="2510" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Start_di" bpmnElement="Start">
+        <dc:Bounds x="267" y="142" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="257" y="182" width="56" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Ingest_di" bpmnElement="Ingest">
+        <dc:Bounds x="415" y="120" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Normalize_di" bpmnElement="Normalize">
+        <dc:Bounds x="605" y="120" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Delivery2v4_di" bpmnElement="Delivery2v4">
+        <dc:Bounds x="795" y="120" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Composite_di" bpmnElement="Composite">
+        <dc:Bounds x="985" y="120" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ComplianceGate_di" bpmnElement="ComplianceGate">
+        <dc:Bounds x="1175" y="120" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GwGrade_di" bpmnElement="GwGrade" isMarkerVisible="true">
+        <dc:Bounds x="1400" y="135" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1390" y="189" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="WriteScorecard_di" bpmnElement="WriteScorecard">
+        <dc:Bounds x="1555" y="120" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CycleKpis_di" bpmnElement="CycleKpis">
+        <dc:Bounds x="1745" y="120" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SpendCuts_di" bpmnElement="SpendCuts">
+        <dc:Bounds x="1935" y="120" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Dashboards_di" bpmnElement="Dashboards">
+        <dc:Bounds x="2125" y="120" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BuyerView_di" bpmnElement="BuyerView">
+        <dc:Bounds x="2315" y="280" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="MgmtView_di" bpmnElement="MgmtView">
+        <dc:Bounds x="2315" y="440" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="QcView_di" bpmnElement="QcView">
+        <dc:Bounds x="2315" y="600" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="FinView_di" bpmnElement="FinView">
+        <dc:Bounds x="2315" y="760" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_di" bpmnElement="End">
+        <dc:Bounds x="2547" y="142" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2537" y="182" width="56" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="f1_di" bpmnElement="f1">
+        <di:waypoint x="303" y="160" />
+        <di:waypoint x="415" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f2_di" bpmnElement="f2">
+        <di:waypoint x="535" y="160" />
+        <di:waypoint x="605" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f3_di" bpmnElement="f3">
+        <di:waypoint x="725" y="160" />
+        <di:waypoint x="795" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f4_di" bpmnElement="f4">
+        <di:waypoint x="915" y="160" />
+        <di:waypoint x="985" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f5_di" bpmnElement="f5">
+        <di:waypoint x="1105" y="160" />
+        <di:waypoint x="1175" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f6_di" bpmnElement="f6">
+        <di:waypoint x="1295" y="160" />
+        <di:waypoint x="1400" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f7_di" bpmnElement="f7">
+        <di:waypoint x="1450" y="160" />
+        <di:waypoint x="1555" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f8_di" bpmnElement="f8">
+        <di:waypoint x="1675" y="160" />
+        <di:waypoint x="1745" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f9_di" bpmnElement="f9">
+        <di:waypoint x="1865" y="160" />
+        <di:waypoint x="1935" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f10_di" bpmnElement="f10">
+        <di:waypoint x="2055" y="160" />
+        <di:waypoint x="2125" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f11_di" bpmnElement="f11">
+        <di:waypoint x="2245" y="160" />
+        <di:waypoint x="2280" y="160" />
+        <di:waypoint x="2280" y="320" />
+        <di:waypoint x="2315" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f12_di" bpmnElement="f12">
+        <di:waypoint x="2245" y="160" />
+        <di:waypoint x="2280" y="160" />
+        <di:waypoint x="2280" y="480" />
+        <di:waypoint x="2315" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f13_di" bpmnElement="f13">
+        <di:waypoint x="2245" y="160" />
+        <di:waypoint x="2280" y="160" />
+        <di:waypoint x="2280" y="640" />
+        <di:waypoint x="2315" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f14_di" bpmnElement="f14">
+        <di:waypoint x="2245" y="160" />
+        <di:waypoint x="2280" y="160" />
+        <di:waypoint x="2280" y="800" />
+        <di:waypoint x="2315" y="800" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f15_di" bpmnElement="f15">
+        <di:waypoint x="2435" y="320" />
+        <di:waypoint x="2491" y="320" />
+        <di:waypoint x="2491" y="160" />
+        <di:waypoint x="2547" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f16_di" bpmnElement="f16">
+        <di:waypoint x="2435" y="480" />
+        <di:waypoint x="2491" y="480" />
+        <di:waypoint x="2491" y="160" />
+        <di:waypoint x="2547" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f17_di" bpmnElement="f17">
+        <di:waypoint x="2435" y="640" />
+        <di:waypoint x="2491" y="640" />
+        <di:waypoint x="2491" y="160" />
+        <di:waypoint x="2547" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f18_di" bpmnElement="f18">
+        <di:waypoint x="2435" y="800" />
+        <di:waypoint x="2491" y="800" />
+        <di:waypoint x="2491" y="160" />
+        <di:waypoint x="2547" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="NoteAnalytics_di" bpmnElement="NoteAnalytics">
+        <dc:Bounds x="160" y="920" width="1600" height="100" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Assoc_Analytics_1_di" bpmnElement="Assoc_Analytics_1">
+        <di:waypoint x="1045" y="200" />
+        <di:waypoint x="260" y="920" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

@@ -1,0 +1,1442 @@
+[
+  {
+    "id": "GRN-02000",
+    "ticketId": "TKT-01000",
+    "poDate": "2025-11-23",
+    "grnDate": "2025-12-12",
+    "receivedQty": 33000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02001",
+    "ticketId": "TKT-01001",
+    "poDate": "2026-03-27",
+    "grnDate": "2026-05-07",
+    "receivedQty": 67500,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02002",
+    "ticketId": "TKT-01002",
+    "poDate": "2026-02-22",
+    "grnDate": "2026-03-11",
+    "receivedQty": 12500,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02003",
+    "ticketId": "TKT-01003",
+    "poDate": "2026-01-29",
+    "grnDate": "2026-02-26",
+    "receivedQty": 1500,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02004",
+    "ticketId": "TKT-01004",
+    "poDate": "2025-07-24",
+    "grnDate": "2025-08-26",
+    "receivedQty": 3500,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02005",
+    "ticketId": "TKT-01005",
+    "poDate": "2025-10-05",
+    "grnDate": "2025-10-25",
+    "receivedQty": 3000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02006",
+    "ticketId": "TKT-01006",
+    "poDate": "2025-10-22",
+    "grnDate": "2025-11-10",
+    "receivedQty": 25000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02007",
+    "ticketId": "TKT-01007",
+    "poDate": "2025-10-28",
+    "grnDate": "2025-11-18",
+    "receivedQty": 20000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02008",
+    "ticketId": "TKT-01008",
+    "poDate": "2025-09-06",
+    "grnDate": "2025-09-23",
+    "receivedQty": 14000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02009",
+    "ticketId": "TKT-01009",
+    "poDate": "2025-06-28",
+    "grnDate": "2025-07-10",
+    "receivedQty": 20000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02010",
+    "ticketId": "TKT-01010",
+    "poDate": "2026-02-20",
+    "grnDate": "2026-05-06",
+    "receivedQty": 4000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02011",
+    "ticketId": "TKT-01011",
+    "poDate": "2025-10-27",
+    "grnDate": "2025-12-05",
+    "receivedQty": 82500,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02012",
+    "ticketId": "TKT-01012",
+    "poDate": "2026-03-08",
+    "grnDate": "2026-04-09",
+    "receivedQty": 40000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02013",
+    "ticketId": "TKT-01013",
+    "poDate": "2026-02-17",
+    "grnDate": "2026-03-28",
+    "receivedQty": 1000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02014",
+    "ticketId": "TKT-01014",
+    "poDate": "2026-01-08",
+    "grnDate": "2026-02-16",
+    "receivedQty": 105000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02015",
+    "ticketId": "TKT-01015",
+    "poDate": "2025-10-07",
+    "grnDate": "2025-11-05",
+    "receivedQty": 7500,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02016",
+    "ticketId": "TKT-01016",
+    "poDate": "2025-09-15",
+    "grnDate": "2025-10-11",
+    "receivedQty": 25500,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02017",
+    "ticketId": "TKT-01017",
+    "poDate": "2025-11-29",
+    "grnDate": "2026-01-08",
+    "receivedQty": 5500,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02018",
+    "ticketId": "TKT-01018",
+    "poDate": "2026-02-21",
+    "grnDate": "2026-03-21",
+    "receivedQty": 5000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02019",
+    "ticketId": "TKT-01019",
+    "poDate": "2025-10-30",
+    "grnDate": "2025-11-21",
+    "receivedQty": 13000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02020",
+    "ticketId": "TKT-01020",
+    "poDate": "2025-07-30",
+    "grnDate": "2025-08-18",
+    "receivedQty": 20000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02021",
+    "ticketId": "TKT-01021",
+    "poDate": "2026-04-18",
+    "grnDate": "2026-05-20",
+    "receivedQty": 27500,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02022",
+    "ticketId": "TKT-01022",
+    "poDate": "2025-12-19",
+    "grnDate": "2026-01-07",
+    "receivedQty": 20000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02023",
+    "ticketId": "TKT-01023",
+    "poDate": "2025-12-15",
+    "grnDate": "2025-12-24",
+    "receivedQty": 81000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02024",
+    "ticketId": "TKT-01024",
+    "poDate": "2025-08-03",
+    "grnDate": "2025-09-15",
+    "receivedQty": 90000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02025",
+    "ticketId": "TKT-01025",
+    "poDate": "2026-02-21",
+    "grnDate": "2026-03-26",
+    "receivedQty": 5000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02026",
+    "ticketId": "TKT-01026",
+    "poDate": "2025-07-13",
+    "grnDate": "2025-08-06",
+    "receivedQty": 75000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02027",
+    "ticketId": "TKT-01027",
+    "poDate": "2026-04-27",
+    "grnDate": "2026-05-09",
+    "receivedQty": 32500,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02028",
+    "ticketId": "TKT-01028",
+    "poDate": "2025-12-07",
+    "grnDate": "2025-12-31",
+    "receivedQty": 11000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02029",
+    "ticketId": "TKT-01029",
+    "poDate": "2026-02-19",
+    "grnDate": "2026-05-03",
+    "receivedQty": 6500,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02030",
+    "ticketId": "TKT-01030",
+    "poDate": "2025-07-06",
+    "grnDate": "2025-08-17",
+    "receivedQty": 70000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02031",
+    "ticketId": "TKT-01031",
+    "poDate": "2026-02-12",
+    "grnDate": "2026-03-05",
+    "receivedQty": 15000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02032",
+    "ticketId": "TKT-01032",
+    "poDate": "2026-04-17",
+    "grnDate": "2026-05-27",
+    "receivedQty": 57500,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02033",
+    "ticketId": "TKT-01033",
+    "poDate": "2026-01-23",
+    "grnDate": "2026-02-09",
+    "receivedQty": 80500,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02034",
+    "ticketId": "TKT-01034",
+    "poDate": "2025-07-18",
+    "grnDate": "2025-08-01",
+    "receivedQty": 1000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02035",
+    "ticketId": "TKT-01035",
+    "poDate": "2026-01-31",
+    "grnDate": "2026-02-18",
+    "receivedQty": 65000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02036",
+    "ticketId": "TKT-01036",
+    "poDate": "2025-12-13",
+    "grnDate": "2025-12-27",
+    "receivedQty": 65000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02037",
+    "ticketId": "TKT-01037",
+    "poDate": "2025-11-18",
+    "grnDate": "2025-12-03",
+    "receivedQty": 21000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02038",
+    "ticketId": "TKT-01038",
+    "poDate": "2025-12-08",
+    "grnDate": "2026-01-02",
+    "receivedQty": 6000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02039",
+    "ticketId": "TKT-01039",
+    "poDate": "2026-01-22",
+    "grnDate": "2026-02-15",
+    "receivedQty": 40000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02040",
+    "ticketId": "TKT-01040",
+    "poDate": "2025-09-05",
+    "grnDate": "2025-09-22",
+    "receivedQty": 21000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02041",
+    "ticketId": "TKT-01041",
+    "poDate": "2026-01-15",
+    "grnDate": "2026-01-31",
+    "receivedQty": 2500,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02042",
+    "ticketId": "TKT-01042",
+    "poDate": "2025-10-26",
+    "grnDate": "2025-11-27",
+    "receivedQty": 80000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02043",
+    "ticketId": "TKT-01043",
+    "poDate": "2026-04-12",
+    "grnDate": "2026-06-25",
+    "receivedQty": 52000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02044",
+    "ticketId": "TKT-01044",
+    "poDate": "2025-11-23",
+    "grnDate": "2025-12-24",
+    "receivedQty": 70500,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02045",
+    "ticketId": "TKT-01045",
+    "poDate": "2026-01-19",
+    "grnDate": "2026-04-04",
+    "receivedQty": 40000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02046",
+    "ticketId": "TKT-01046",
+    "poDate": "2025-09-16",
+    "grnDate": "2025-10-09",
+    "receivedQty": 25000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02047",
+    "ticketId": "TKT-01047",
+    "poDate": "2025-07-23",
+    "grnDate": "2025-08-08",
+    "receivedQty": 26000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02048",
+    "ticketId": "TKT-01048",
+    "poDate": "2025-11-17",
+    "grnDate": "2025-12-04",
+    "receivedQty": 3000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02049",
+    "ticketId": "TKT-01049",
+    "poDate": "2026-02-09",
+    "grnDate": "2026-02-18",
+    "receivedQty": 25000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02050",
+    "ticketId": "TKT-01050",
+    "poDate": "2025-10-31",
+    "grnDate": "2025-11-20",
+    "receivedQty": 82500,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02051",
+    "ticketId": "TKT-01051",
+    "poDate": "2025-12-04",
+    "grnDate": "2026-02-16",
+    "receivedQty": 55500,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02052",
+    "ticketId": "TKT-01052",
+    "poDate": "2026-05-04",
+    "grnDate": "2026-05-23",
+    "receivedQty": 40000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02053",
+    "ticketId": "TKT-01053",
+    "poDate": "2026-02-06",
+    "grnDate": "2026-02-25",
+    "receivedQty": 1500,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02054",
+    "ticketId": "TKT-01054",
+    "poDate": "2025-07-27",
+    "grnDate": "2025-08-14",
+    "receivedQty": 61000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02055",
+    "ticketId": "TKT-01055",
+    "poDate": "2026-01-13",
+    "grnDate": "2026-02-10",
+    "receivedQty": 37500,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02056",
+    "ticketId": "TKT-01056",
+    "poDate": "2025-12-01",
+    "grnDate": "2025-12-19",
+    "receivedQty": 10500,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02057",
+    "ticketId": "TKT-01057",
+    "poDate": "2025-12-30",
+    "grnDate": "2026-02-01",
+    "receivedQty": 40000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02058",
+    "ticketId": "TKT-01058",
+    "poDate": "2025-07-31",
+    "grnDate": "2025-08-25",
+    "receivedQty": 85000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02059",
+    "ticketId": "TKT-01059",
+    "poDate": "2025-07-10",
+    "grnDate": "2025-08-03",
+    "receivedQty": 6500,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02060",
+    "ticketId": "TKT-01060",
+    "poDate": "2026-02-15",
+    "grnDate": "2026-03-20",
+    "receivedQty": 10000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02061",
+    "ticketId": "TKT-01061",
+    "poDate": "2025-11-09",
+    "grnDate": "2025-12-07",
+    "receivedQty": 500,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02062",
+    "ticketId": "TKT-01062",
+    "poDate": "2026-01-19",
+    "grnDate": "2026-02-07",
+    "receivedQty": 27500,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02063",
+    "ticketId": "TKT-01063",
+    "poDate": "2025-11-01",
+    "grnDate": "2025-12-08",
+    "receivedQty": 5000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02064",
+    "ticketId": "TKT-01064",
+    "poDate": "2025-12-24",
+    "grnDate": "2026-01-16",
+    "receivedQty": 20000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02065",
+    "ticketId": "TKT-01065",
+    "poDate": "2025-06-26",
+    "grnDate": "2025-08-07",
+    "receivedQty": 27000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02066",
+    "ticketId": "TKT-01066",
+    "poDate": "2025-09-20",
+    "grnDate": "2025-10-22",
+    "receivedQty": 5500,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02067",
+    "ticketId": "TKT-01067",
+    "poDate": "2026-01-05",
+    "grnDate": "2026-01-31",
+    "receivedQty": 21000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02068",
+    "ticketId": "TKT-01068",
+    "poDate": "2025-08-16",
+    "grnDate": "2025-10-30",
+    "receivedQty": 41000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02069",
+    "ticketId": "TKT-01069",
+    "poDate": "2025-08-04",
+    "grnDate": "2025-08-27",
+    "receivedQty": 62500,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02070",
+    "ticketId": "TKT-01070",
+    "poDate": "2026-03-03",
+    "grnDate": "2026-04-04",
+    "receivedQty": 500,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02071",
+    "ticketId": "TKT-01071",
+    "poDate": "2025-07-14",
+    "grnDate": "2025-08-09",
+    "receivedQty": 40000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02072",
+    "ticketId": "TKT-01072",
+    "poDate": "2025-12-15",
+    "grnDate": "2026-01-17",
+    "receivedQty": 40000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02073",
+    "ticketId": "TKT-01073",
+    "poDate": "2026-01-02",
+    "grnDate": "2026-01-11",
+    "receivedQty": 100500,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02074",
+    "ticketId": "TKT-01074",
+    "poDate": "2026-04-23",
+    "grnDate": "2026-05-17",
+    "receivedQty": 13000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02075",
+    "ticketId": "TKT-01075",
+    "poDate": "2026-01-11",
+    "grnDate": "2026-01-28",
+    "receivedQty": 44000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02076",
+    "ticketId": "TKT-01076",
+    "poDate": "2025-07-15",
+    "grnDate": "2025-08-10",
+    "receivedQty": 500,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02077",
+    "ticketId": "TKT-01077",
+    "poDate": "2025-06-25",
+    "grnDate": "2025-07-26",
+    "receivedQty": 30000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02078",
+    "ticketId": "TKT-01078",
+    "poDate": "2026-03-06",
+    "grnDate": "2026-03-22",
+    "receivedQty": 45000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02079",
+    "ticketId": "TKT-01079",
+    "poDate": "2025-09-18",
+    "grnDate": "2025-10-14",
+    "receivedQty": 5000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02080",
+    "ticketId": "TKT-01080",
+    "poDate": "2025-11-26",
+    "grnDate": "2025-12-11",
+    "receivedQty": 11000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02081",
+    "ticketId": "TKT-01081",
+    "poDate": "2025-09-29",
+    "grnDate": "2025-11-07",
+    "receivedQty": 20000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02082",
+    "ticketId": "TKT-01082",
+    "poDate": "2026-03-21",
+    "grnDate": "2026-04-04",
+    "receivedQty": 15500,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02083",
+    "ticketId": "TKT-01083",
+    "poDate": "2026-03-07",
+    "grnDate": "2026-04-08",
+    "receivedQty": 53500,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02084",
+    "ticketId": "TKT-01084",
+    "poDate": "2025-11-12",
+    "grnDate": "2025-12-02",
+    "receivedQty": 55500,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02085",
+    "ticketId": "TKT-01085",
+    "poDate": "2026-04-02",
+    "grnDate": "2026-04-20",
+    "receivedQty": 43500,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02086",
+    "ticketId": "TKT-01086",
+    "poDate": "2025-11-12",
+    "grnDate": "2025-12-12",
+    "receivedQty": 50500,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02087",
+    "ticketId": "TKT-01087",
+    "poDate": "2025-07-10",
+    "grnDate": "2025-07-25",
+    "receivedQty": 25000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02088",
+    "ticketId": "TKT-01088",
+    "poDate": "2025-07-15",
+    "grnDate": "2025-07-27",
+    "receivedQty": 51000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02089",
+    "ticketId": "TKT-01089",
+    "poDate": "2026-04-02",
+    "grnDate": "2026-05-12",
+    "receivedQty": 25000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02090",
+    "ticketId": "TKT-01090",
+    "poDate": "2025-09-01",
+    "grnDate": "2025-09-26",
+    "receivedQty": 11500,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02091",
+    "ticketId": "TKT-01091",
+    "poDate": "2026-01-17",
+    "grnDate": "2026-02-20",
+    "receivedQty": 10500,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02092",
+    "ticketId": "TKT-01092",
+    "poDate": "2025-11-23",
+    "grnDate": "2025-12-08",
+    "receivedQty": 52000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02093",
+    "ticketId": "TKT-01093",
+    "poDate": "2025-09-01",
+    "grnDate": "2025-10-03",
+    "receivedQty": 15000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02094",
+    "ticketId": "TKT-01094",
+    "poDate": "2026-04-24",
+    "grnDate": "2026-05-19",
+    "receivedQty": 31000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02095",
+    "ticketId": "TKT-01095",
+    "poDate": "2025-06-25",
+    "grnDate": "2025-07-04",
+    "receivedQty": 66000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02096",
+    "ticketId": "TKT-01096",
+    "poDate": "2026-01-16",
+    "grnDate": "2026-01-30",
+    "receivedQty": 20000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02097",
+    "ticketId": "TKT-01097",
+    "poDate": "2025-08-25",
+    "grnDate": "2025-09-13",
+    "receivedQty": 1000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02098",
+    "ticketId": "TKT-01098",
+    "poDate": "2025-08-23",
+    "grnDate": "2025-10-05",
+    "receivedQty": 91000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02099",
+    "ticketId": "TKT-01099",
+    "poDate": "2025-11-04",
+    "grnDate": "2025-12-16",
+    "receivedQty": 85000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02100",
+    "ticketId": "TKT-01100",
+    "poDate": "2025-11-19",
+    "grnDate": "2025-12-08",
+    "receivedQty": 80000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02101",
+    "ticketId": "TKT-01101",
+    "poDate": "2025-11-05",
+    "grnDate": "2025-11-19",
+    "receivedQty": 20000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02102",
+    "ticketId": "TKT-01102",
+    "poDate": "2025-08-25",
+    "grnDate": "2025-09-12",
+    "receivedQty": 21000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02103",
+    "ticketId": "TKT-01103",
+    "poDate": "2025-12-12",
+    "grnDate": "2025-12-27",
+    "receivedQty": 60000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02104",
+    "ticketId": "TKT-01104",
+    "poDate": "2026-01-31",
+    "grnDate": "2026-03-04",
+    "receivedQty": 7500,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02105",
+    "ticketId": "TKT-01105",
+    "poDate": "2025-07-14",
+    "grnDate": "2025-07-22",
+    "receivedQty": 40000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02106",
+    "ticketId": "TKT-01106",
+    "poDate": "2026-02-05",
+    "grnDate": "2026-02-26",
+    "receivedQty": 2500,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02107",
+    "ticketId": "TKT-01107",
+    "poDate": "2026-04-23",
+    "grnDate": "2026-07-05",
+    "receivedQty": 35000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02108",
+    "ticketId": "TKT-01108",
+    "poDate": "2026-04-15",
+    "grnDate": "2026-05-21",
+    "receivedQty": 45000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02109",
+    "ticketId": "TKT-01109",
+    "poDate": "2025-12-14",
+    "grnDate": "2026-01-02",
+    "receivedQty": 75000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02110",
+    "ticketId": "TKT-01110",
+    "poDate": "2025-12-23",
+    "grnDate": "2026-01-31",
+    "receivedQty": 110000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02111",
+    "ticketId": "TKT-01111",
+    "poDate": "2025-12-03",
+    "grnDate": "2025-12-27",
+    "receivedQty": 1000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02112",
+    "ticketId": "TKT-01112",
+    "poDate": "2026-03-04",
+    "grnDate": "2026-03-23",
+    "receivedQty": 30500,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02113",
+    "ticketId": "TKT-01113",
+    "poDate": "2026-03-13",
+    "grnDate": "2026-03-28",
+    "receivedQty": 2500,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02114",
+    "ticketId": "TKT-01114",
+    "poDate": "2026-02-06",
+    "grnDate": "2026-02-22",
+    "receivedQty": 1000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02115",
+    "ticketId": "TKT-01115",
+    "poDate": "2025-10-23",
+    "grnDate": "2025-11-22",
+    "receivedQty": 500,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02116",
+    "ticketId": "TKT-01116",
+    "poDate": "2025-12-21",
+    "grnDate": "2026-01-07",
+    "receivedQty": 15000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02117",
+    "ticketId": "TKT-01117",
+    "poDate": "2026-01-15",
+    "grnDate": "2026-02-12",
+    "receivedQty": 5000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02118",
+    "ticketId": "TKT-01118",
+    "poDate": "2026-04-12",
+    "grnDate": "2026-05-21",
+    "receivedQty": 100000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02119",
+    "ticketId": "TKT-01119",
+    "poDate": "2025-11-05",
+    "grnDate": "2025-12-05",
+    "receivedQty": 10000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02120",
+    "ticketId": "TKT-01120",
+    "poDate": "2025-10-27",
+    "grnDate": "2025-11-26",
+    "receivedQty": 40500,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02121",
+    "ticketId": "TKT-01121",
+    "poDate": "2025-12-04",
+    "grnDate": "2026-02-15",
+    "receivedQty": 5000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02122",
+    "ticketId": "TKT-01122",
+    "poDate": "2025-07-06",
+    "grnDate": "2025-08-03",
+    "receivedQty": 41000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02123",
+    "ticketId": "TKT-01123",
+    "poDate": "2025-12-05",
+    "grnDate": "2025-12-31",
+    "receivedQty": 1500,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02124",
+    "ticketId": "TKT-01124",
+    "poDate": "2025-08-06",
+    "grnDate": "2025-09-01",
+    "receivedQty": 42500,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02125",
+    "ticketId": "TKT-01125",
+    "poDate": "2026-02-22",
+    "grnDate": "2026-03-12",
+    "receivedQty": 1000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02126",
+    "ticketId": "TKT-01126",
+    "poDate": "2025-09-01",
+    "grnDate": "2025-10-10",
+    "receivedQty": 20000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02127",
+    "ticketId": "TKT-01127",
+    "poDate": "2026-04-25",
+    "grnDate": "2026-05-21",
+    "receivedQty": 500,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02128",
+    "ticketId": "TKT-01128",
+    "poDate": "2025-10-16",
+    "grnDate": "2025-11-24",
+    "receivedQty": 51500,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02129",
+    "ticketId": "TKT-01129",
+    "poDate": "2025-10-03",
+    "grnDate": "2025-11-06",
+    "receivedQty": 20000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02130",
+    "ticketId": "TKT-01130",
+    "poDate": "2026-03-06",
+    "grnDate": "2026-05-24",
+    "receivedQty": 5000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02131",
+    "ticketId": "TKT-01131",
+    "poDate": "2025-09-19",
+    "grnDate": "2025-10-22",
+    "receivedQty": 20000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02132",
+    "ticketId": "TKT-01132",
+    "poDate": "2026-02-03",
+    "grnDate": "2026-03-07",
+    "receivedQty": 60000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02133",
+    "ticketId": "TKT-01133",
+    "poDate": "2025-12-22",
+    "grnDate": "2026-01-17",
+    "receivedQty": 5000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02134",
+    "ticketId": "TKT-01134",
+    "poDate": "2025-08-12",
+    "grnDate": "2025-09-14",
+    "receivedQty": 12000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02135",
+    "ticketId": "TKT-01135",
+    "poDate": "2025-09-11",
+    "grnDate": "2025-11-24",
+    "receivedQty": 1000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02136",
+    "ticketId": "TKT-01136",
+    "poDate": "2026-03-05",
+    "grnDate": "2026-03-31",
+    "receivedQty": 21000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02137",
+    "ticketId": "TKT-01137",
+    "poDate": "2026-03-19",
+    "grnDate": "2026-04-09",
+    "receivedQty": 8500,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02138",
+    "ticketId": "TKT-01138",
+    "poDate": "2026-03-12",
+    "grnDate": "2026-04-02",
+    "receivedQty": 10000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02139",
+    "ticketId": "TKT-01139",
+    "poDate": "2025-07-11",
+    "grnDate": "2025-08-04",
+    "receivedQty": 5000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02140",
+    "ticketId": "TKT-01140",
+    "poDate": "2025-06-29",
+    "grnDate": "2025-07-18",
+    "receivedQty": 30000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02141",
+    "ticketId": "TKT-01141",
+    "poDate": "2025-06-13",
+    "grnDate": "2025-08-27",
+    "receivedQty": 23000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02142",
+    "ticketId": "TKT-01142",
+    "poDate": "2026-01-26",
+    "grnDate": "2026-02-18",
+    "receivedQty": 60000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02143",
+    "ticketId": "TKT-01143",
+    "poDate": "2025-11-09",
+    "grnDate": "2025-12-09",
+    "receivedQty": 25000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02144",
+    "ticketId": "TKT-01144",
+    "poDate": "2025-12-28",
+    "grnDate": "2026-02-03",
+    "receivedQty": 6000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02145",
+    "ticketId": "TKT-01145",
+    "poDate": "2025-12-24",
+    "grnDate": "2026-01-08",
+    "receivedQty": 70000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02146",
+    "ticketId": "TKT-01146",
+    "poDate": "2025-09-28",
+    "grnDate": "2025-10-19",
+    "receivedQty": 70000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02147",
+    "ticketId": "TKT-01147",
+    "poDate": "2025-10-02",
+    "grnDate": "2025-11-03",
+    "receivedQty": 20000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02148",
+    "ticketId": "TKT-01148",
+    "poDate": "2026-02-22",
+    "grnDate": "2026-03-12",
+    "receivedQty": 10000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02149",
+    "ticketId": "TKT-01149",
+    "poDate": "2025-10-09",
+    "grnDate": "2025-11-12",
+    "receivedQty": 5000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02150",
+    "ticketId": "TKT-01150",
+    "poDate": "2025-08-04",
+    "grnDate": "2025-09-13",
+    "receivedQty": 500,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02151",
+    "ticketId": "TKT-01151",
+    "poDate": "2025-11-19",
+    "grnDate": "2025-12-28",
+    "receivedQty": 20500,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02152",
+    "ticketId": "TKT-01152",
+    "poDate": "2025-10-15",
+    "grnDate": "2025-11-15",
+    "receivedQty": 15500,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02153",
+    "ticketId": "TKT-01153",
+    "poDate": "2026-01-17",
+    "grnDate": "2026-04-16",
+    "receivedQty": 21500,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02154",
+    "ticketId": "TKT-01154",
+    "poDate": "2025-11-02",
+    "grnDate": "2025-11-10",
+    "receivedQty": 7500,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02155",
+    "ticketId": "TKT-01155",
+    "poDate": "2025-11-03",
+    "grnDate": "2025-12-04",
+    "receivedQty": 5000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02156",
+    "ticketId": "TKT-01156",
+    "poDate": "2026-04-23",
+    "grnDate": "2026-05-17",
+    "receivedQty": 23500,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02157",
+    "ticketId": "TKT-01157",
+    "poDate": "2026-01-07",
+    "grnDate": "2026-01-26",
+    "receivedQty": 32500,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02158",
+    "ticketId": "TKT-01158",
+    "poDate": "2025-12-15",
+    "grnDate": "2026-01-10",
+    "receivedQty": 20500,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02159",
+    "ticketId": "TKT-01159",
+    "poDate": "2025-12-14",
+    "grnDate": "2026-01-09",
+    "receivedQty": 2500,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02160",
+    "ticketId": "TKT-01160",
+    "poDate": "2025-08-12",
+    "grnDate": "2025-09-11",
+    "receivedQty": 1000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02161",
+    "ticketId": "TKT-01161",
+    "poDate": "2026-01-24",
+    "grnDate": "2026-02-16",
+    "receivedQty": 24000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02162",
+    "ticketId": "TKT-01162",
+    "poDate": "2025-12-21",
+    "grnDate": "2026-01-08",
+    "receivedQty": 120500,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02163",
+    "ticketId": "TKT-01163",
+    "poDate": "2025-06-13",
+    "grnDate": "2025-07-16",
+    "receivedQty": 63000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02164",
+    "ticketId": "TKT-01164",
+    "poDate": "2026-01-20",
+    "grnDate": "2026-02-21",
+    "receivedQty": 500,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02165",
+    "ticketId": "TKT-01165",
+    "poDate": "2025-08-30",
+    "grnDate": "2025-09-28",
+    "receivedQty": 20000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02166",
+    "ticketId": "TKT-01166",
+    "poDate": "2025-10-12",
+    "grnDate": "2025-10-27",
+    "receivedQty": 32500,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02167",
+    "ticketId": "TKT-01167",
+    "poDate": "2025-12-12",
+    "grnDate": "2025-12-31",
+    "receivedQty": 1000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02168",
+    "ticketId": "TKT-01168",
+    "poDate": "2026-04-16",
+    "grnDate": "2026-05-12",
+    "receivedQty": 23000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02169",
+    "ticketId": "TKT-01169",
+    "poDate": "2025-10-03",
+    "grnDate": "2025-11-02",
+    "receivedQty": 45000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02170",
+    "ticketId": "TKT-01170",
+    "poDate": "2026-02-10",
+    "grnDate": "2026-03-05",
+    "receivedQty": 65000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02171",
+    "ticketId": "TKT-01171",
+    "poDate": "2025-06-18",
+    "grnDate": "2025-07-09",
+    "receivedQty": 91000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02172",
+    "ticketId": "TKT-01172",
+    "poDate": "2026-01-10",
+    "grnDate": "2026-02-11",
+    "receivedQty": 23500,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02173",
+    "ticketId": "TKT-01173",
+    "poDate": "2025-09-16",
+    "grnDate": "2025-10-17",
+    "receivedQty": 500,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02174",
+    "ticketId": "TKT-01174",
+    "poDate": "2025-09-25",
+    "grnDate": "2025-10-25",
+    "receivedQty": 20500,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02175",
+    "ticketId": "TKT-01175",
+    "poDate": "2025-09-12",
+    "grnDate": "2025-10-02",
+    "receivedQty": 25000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02176",
+    "ticketId": "TKT-01176",
+    "poDate": "2025-06-19",
+    "grnDate": "2025-07-17",
+    "receivedQty": 43500,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02177",
+    "ticketId": "TKT-01177",
+    "poDate": "2025-12-20",
+    "grnDate": "2026-01-08",
+    "receivedQty": 5000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02178",
+    "ticketId": "TKT-01178",
+    "poDate": "2025-11-10",
+    "grnDate": "2025-12-01",
+    "receivedQty": 95000,
+    "status": "COMPLETED"
+  },
+  {
+    "id": "GRN-02179",
+    "ticketId": "TKT-01179",
+    "poDate": "2025-11-29",
+    "grnDate": "2025-12-24",
+    "receivedQty": 2500,
+    "status": "COMPLETED"
+  }
+]

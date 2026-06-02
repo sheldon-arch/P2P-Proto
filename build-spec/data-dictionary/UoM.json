@@ -1,0 +1,18 @@
+{
+  "entity": "UoM",
+  "description": "A logistics-master record for a unit of measure. The uom code is the natural key; an item carries a stockUom and a purchaseUom, and a requisition/PO line states a quantity in a UoM. The master spans volume, weight, length, area, quantity (the largest set: can/bottle/pallet/reel/box/carton/nos/pc/set/...), and commercial (lot/job/service) categories. Maintainable individually or by bulk import (natural-key upsert by uom).",
+  "primaryDomain": "01-configuration",
+  "lifecycleEnum": null,
+  "fields": [
+    {"name": "uom", "label": "Unit of Measure", "dataType": "text", "cardinality": "one", "mandatory": "yes", "mandatoryCondition": null, "default": null, "enumDomain": null, "enumValues": null, "referenceTarget": null, "validation": "non-blank; the short code e.g. kg, ltr, nos, pcs, ctn, set; natural primary key; unique; immutable; the bulk-import upsert key", "computedFormula": null, "computedVsEntered": "entered", "isAuto": false, "owningRole": "Administrator", "purpose": "The stable short code an item's stockUom/purchaseUom and a line's quantity reference; the natural key bulk import upserts on. Carries the unit a quantity is denominated in end to end.", "source": "AB+RA", "scorIso": "OE4"},
+    {"name": "fullForm", "label": "Full Form", "dataType": "text", "cardinality": "one", "mandatory": "yes", "mandatoryCondition": null, "default": null, "enumDomain": null, "enumValues": null, "referenceTarget": null, "validation": "non-blank; the expanded name e.g. Kilogram, Litre, Numbers, Carton", "computedFormula": null, "computedVsEntered": "entered", "isAuto": false, "owningRole": "Administrator", "purpose": "The expanded label shown in dropdowns and on documents so a user reads 'Kilogram' rather than memorizing 'kg'; the display field for the UoM reference.", "source": "AB+RA", "scorIso": "OE4"},
+    {"name": "category", "label": "Category", "dataType": "enum", "cardinality": "one", "mandatory": "yes", "mandatoryCondition": null, "default": null, "enumDomain": null, "enumValues": ["Volume", "Weight", "Length", "Area", "Quantity", "Commercial"], "referenceTarget": null, "validation": "one of {Volume, Weight, Length, Area, Quantity, Commercial}; groups the unit by measurement family", "computedFormula": null, "computedVsEntered": "entered", "isAuto": false, "owningRole": "Administrator", "purpose": "Groups the unit by measurement family so dropdowns filter sensibly and a future conversion only applies within a compatible family (you convert litres to ml, never litres to kg).", "source": "AB", "scorIso": "OE4"},
+    {"name": "status", "label": "Status", "dataType": "enum", "cardinality": "one", "mandatory": "yes", "mandatoryCondition": null, "default": "ACTIVE", "enumDomain": null, "enumValues": ["ACTIVE", "INACTIVE"], "referenceTarget": null, "validation": "INACTIVE not selectable on new items/lines; existing records retain their unit", "computedFormula": null, "computedVsEntered": "entered", "isAuto": false, "owningRole": "Administrator", "purpose": "Lets an admin retire a unit from new use without altering items or lines already denominated in it.", "source": "build-new", "scorIso": "OE4"}
+  ],
+  "relationships": [
+    {"name": "stockUnitOf", "type": "1:N", "target": "Item", "fk": "stockUom"},
+    {"name": "purchaseUnitOf", "type": "1:N", "target": "Item", "fk": "purchaseUom"},
+    {"name": "measures", "type": "1:N", "target": "RequisitionLine", "fk": "unitOfMeasure"}
+  ],
+  "invariants": ["A13 audit + SSE on every committed master change", "uom is the natural key; the bulk-import upsert key"]
+}

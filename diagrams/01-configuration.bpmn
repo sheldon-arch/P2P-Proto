@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+                  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+                  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+                  id="Definitions_Configuration" targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:collaboration id="Collaboration_Configuration">
+    <bpmn:participant id="Participant_Configuration" name="01 - Configuration and Master Data Setup (Administrator-led)" processRef="Process_Configuration" />
+  </bpmn:collaboration>
+  <bpmn:process id="Process_Configuration" isExecutable="false">
+    <bpmn:laneSet id="LaneSet_Configuration">
+      <bpmn:lane id="L_admin" name="Administrator">
+        <bpmn:flowNodeRef>Start</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ChooseBase</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GwMode</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>SeedMasters</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>BulkUpload</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>FixFile</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Users</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Roles</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Chain</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Budgets</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Fields</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_sys" name="Platform / System">
+        <bpmn:flowNodeRef>Validate</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GwImportValid</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ImportError</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Commit</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ResolvePerms</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activate</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>End</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="Start" name="Tenant provisioned, setup begins">
+      <bpmn:documentation>Trigger: a new tenant/organization is provisioned and an Administrator (role holding permission 'all', isAdminOnly super-admin, or the seeded SystemAdmin role) signs in to configure the platform before any transaction can run. Single-organization deployment. No requisition, PO, or payment can be created until masters, RBAC, the approval chain, routing rules, budgets, and the field config exist. Auth: email OTP (6 numeric digits, expiresIn 600s, allowedAttempts 3) or SSO (Microsoft/SAML/OIDC); disableSignUp=true so only pre-seeded users authenticate. [SCOR OE5 | ISO 7.5 | source: blueprint + raphe-auth-rbac]</bpmn:documentation>
+      <bpmn:outgoing>f1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:userTask id="ChooseBase" name="Set base/reporting currency and FX source">
+      <bpmn:documentation>FIRST configuration act, because every threshold, comparison, and analytic is computed in base. Fields: baseCurrencyIsoCode (dropdown of ISO 4217 codes {USD|OMR|SAR|AED|EUR|CHF|INR|...}, mandatory, NO default - must be chosen explicitly, NOT hard-coded INR/OMR, configurable once at setup then locked unless no transactions exist), fxProvider (dropdown {Frankfurter|ManualOnly|other}, default Frankfurter), fxRefreshFrequency (dropdown {OnDemand|Daily|Hourly}, default Daily), allowPerPoRateOverride (boolean, default true - lets a buyer override the rate per PO). Owning role: Administrator (masters.manage). Validation: baseCurrencyIsoCode must be one of the seeded Currency masters or seeded together. [SCOR OE4 | source: platform-services FX 3.5 + decision 3.5]</bpmn:documentation>
+      <bpmn:incoming>f1</bpmn:incoming>
+      <bpmn:outgoing>f2</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="GwMode" name="Create masters individually or bulk import?">
+      <bpmn:documentation>Branch on how the Administrator chooses to load each master. Expression: importMode == 'BULK' (a file is uploaded for the master) -&gt; bulk pipeline; importMode == 'INDIVIDUAL' (form entry) -&gt; individual create. The choice is per master, not global; an admin can bulk-load suppliers and hand-enter tax codes in the same setup. Both paths converge on the same validated master records. [SCOR OE4 | source: data-model master data + raphe-bulk-import]</bpmn:documentation>
+      <bpmn:incoming>f2</bpmn:incoming>
+      <bpmn:outgoing>f3</bpmn:outgoing>
+      <bpmn:outgoing>f4</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="SeedMasters" name="Create master data individually">
+      <bpmn:documentation>Admin creates each master record via a form (masters.manage). Masters and key fields: (1) Currency - isoCode (PK, 3-letter, mandatory), name, symbol, isBase (boolean; exactly one true). (2) UoM - uom (PK, mandatory; from UOM master: ltr/ml/gal/cu.m, gm/kg/ton, mtr/mm/cm/inch/ft, sq.ft/sq.m, can/jar/bottle/sachet/pouch/tray/pallet/reel/coil/sheet/drum/cyld/tube/tin, bag/bdle/boxes/cartons/ctn/pkt/roll, nos/pc/pcs/pair/set/books, lot/job/service), category (dropdown {Volume|Weight|Length|Area|Quantity|Commercial}). (3) Warehouse - code (PK), name, site/store (e.g. Barka, Vadi Kabir). (4) PaymentTerms - code (PK), description, termType (dropdown {100%Advance|PartAdvance+AgainstDocs|PartAdvance+AgainstShipment|30/70|Net30|Net60|Net90|Custom}). (5) Project/CostCenter - code (PK), name, status (dropdown {ACTIVE|INACTIVE}, default ACTIVE; only ACTIVE selectable on a requisition). (6) Category/Segment - composite key (classType+classCode+classDesc); requisition category set {Items|Spares|Services|ProductDesign}. (7) Item - code (auto-generated by configurable pattern OR RM/PM Excel code; immutable), description (auto-populated), stockUom (ref UoM), purchaseUom (ref UoM), segment, HS code, sourcePriority (dropdown {MANUFACTURED|PURCHASED|SUBCONTRACTED|STOCK_TRANSFER}), status (lifecycle, default PENDING_ONBOARDING). (8) Supplier - code (auto S/##### configurable; immutable), name, currency (ref), classification, group, addresses + tax (GST/VAT/PAN), status (default PENDING_ONBOARDING). (9) TaxCode - code (PK), type (dropdown {GST|VAT|Duty|ReverseCharge|Withholding}), rate (decimal %, &gt;=0), jurisdiction, recoverable (boolean, input-credit eligible). All records validated on save; missing mandatory field -&gt; 400, nothing written. [SCOR OE4 | ISO 7.5 | source: data-model master data + albahja-masters-and-fields + raphe-masters-and-data-model]</bpmn:documentation>
+      <bpmn:incoming>f3</bpmn:incoming>
+      <bpmn:outgoing>f5</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="BulkUpload" name="Upload bulk import file (CSV/XLSX) for a master">
+      <bpmn:documentation>Admin uploads one CSV/XLSX per master into the generic import pipeline (permissions per master: suppliers.import, items.import, UOM_IMPORT, WAREHOUSE_IMPORT, CURRENCY_IMPORT, SEGMENT_IMPORT, PAY_TERM_IMPORT, SUPPLIER_GROUP_IMPORT, assetProposal.import, plus tax codes). Effect: submits the file for parse + validation. Natural keys for upsert: uom-&gt;uom, supplier-&gt;code, warehouse-&gt;code, payTerm-&gt;code, currency-&gt;isoCode, segment-&gt;composite, item-&gt;code, supplierGroup-&gt;name, taxCode-&gt;code. Edge: no file -&gt; 'No file uploaded'; header-only -&gt; 'No valid data found'. [SCOR OE4 | source: raphe-bulk-import + platform-services bulk import 7]</bpmn:documentation>
+      <bpmn:incoming>f4</bpmn:incoming>
+      <bpmn:incoming>f11</bpmn:incoming>
+      <bpmn:outgoing>f6</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="Validate" name="Validate masters, generate codes, resolve refs">
+      <bpmn:documentation>For INDIVIDUAL creates: validate field types/enums, generate immutable codes per configurable pattern (item running number, supplier S/#####), auto-populate description, set status PENDING_ONBOARDING for supplier/item, persist, audit (category admin/master), emit SSE. For BULK: parse workbook -&gt; file readable? sheet present? has data rows? -&gt; validate header EXACTLY (no missing, no extra columns; order-insensitive) -&gt; iterate rows (header=row1, first data row=row2) -&gt; per row validate fields/types/enums + resolve foreign refs by natural key -&gt; ACCUMULATE all row errors (never fail-fast). Reference resolution via entity normalizer; dangling id -&gt; 400, missing resolver -&gt; 500 config defect. [SCOR OE4 | ISO 7.5 | source: platform-services bulk import 7 + dynamic forms 2 + raphe-bulk-import]</bpmn:documentation>
+      <bpmn:incoming>f5</bpmn:incoming>
+      <bpmn:incoming>f6</bpmn:incoming>
+      <bpmn:outgoing>f7</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="GwImportValid" name="Bulk file: all rows valid?">
+      <bpmn:documentation>All-or-nothing gate, evaluated only on the BULK branch. Expression: rowErrors.length == 0 -&gt; commit; rowErrors.length &gt; 0 -&gt; reject the ENTIRE import (even valid rows not saved). On reject the system throws ONE BadRequestException listing every {rowNumber, reason}. Individual creates skip this gate (they validate per record). [SCOR OE4 | source: raphe-bulk-import + raphe-edge-cases e06]</bpmn:documentation>
+      <bpmn:incoming>f7</bpmn:incoming>
+      <bpmn:outgoing>f8</bpmn:outgoing>
+      <bpmn:outgoing>f9</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="ImportError" name="Reject import, report all row errors">
+      <bpmn:documentation>Returns the accumulated error list to the Administrator with row numbers and reasons; nothing is written; no audit emitted on a rejected import. Admin corrects the file and re-uploads (loops back to BulkUpload). A late DB failure during commit rolls back the whole import fully. [SCOR OE4 | source: raphe-bulk-import + raphe-edge-cases e06]</bpmn:documentation>
+      <bpmn:incoming>f9</bpmn:incoming>
+      <bpmn:outgoing>f10</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="FixFile" name="Correct file and re-upload">
+      <bpmn:documentation>Administrator edits the rejected CSV/XLSX per the reported {rowNumber, reason} list (fix header mismatch, bad enum, unresolved foreign ref, duplicate natural key resolved last-wins) and re-uploads. No partial state to clean up because the failed import wrote nothing. [SCOR OE4 | source: raphe-bulk-import]</bpmn:documentation>
+      <bpmn:incoming>f10</bpmn:incoming>
+      <bpmn:outgoing>f11</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="Commit" name="Upsert masters in one transaction (all-or-nothing)">
+      <bpmn:documentation>Open ONE prisma.$transaction; upsert each row by natural key (match -&gt; update, else create with generated code). Commit-all or roll-back-all. Imported supplier/item records default status PENDING_ONBOARDING (must be approved before transacting); isErpSynced flag reset on update. Returns {created, updated}; audit log (category admin) + SSE emitted on success only. [SCOR OE4 | ISO 7.5 | source: raphe-bulk-import + platform-services 7]</bpmn:documentation>
+      <bpmn:incoming>f8</bpmn:incoming>
+      <bpmn:outgoing>f12</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="Users" name="Create users, designations, business units">
+      <bpmn:documentation>Admin pre-seeds the people graph (users.create, roles.manage). User fields: email (trimmed/lowercased/unique case-insensitive, mandatory), name, department (ref), designation (ref, rank), businessUnit/vertical (ref), role (ref), approvalLimit (decimal in base currency; default null which the engine reads as the configurable default 200000; a configured 0 stays 0 = approves nothing), status (dropdown {ACTIVE|INACTIVE}, default ACTIVE). Designation fields: name, rank (integer, 7 levels in DESIGNATION_RANK; drives assignment eligibility 'same-or-higher rank'). BusinessUnit/Vertical fields: name, code. disableSignUp=true so only these seeded users authenticate; status re-checked every request, INACTIVE forces logout. [SCOR OE5 | source: raphe-auth-rbac + platform-services 10 + role-model]</bpmn:documentation>
+      <bpmn:incoming>f12</bpmn:incoming>
+      <bpmn:outgoing>f13</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Roles" name="Define roles and assign permissions (RBAC)">
+      <bpmn:documentation>Admin defines roles and grants namespaced permissions (roles.manage). Permission shape {value, description, isAdminOnly}; format resource.action across domains (requisition.*, approval.*, budget.*, rfq.*, po.*, suppliers.*, items.*, delivery.*, qc.*, invoice.*, payments.*, return.*, tax.*, analytics.*, users/roles/masters/fieldConfig.manage, audit.view, all). Permissions can be attached at FOUR sources: Role.permissions, UserRole.permissions (per-user override), Designation.permissions, Vertical/BusinessUnit.permissions. Special permission 'all' (isAdminOnly) short-circuits to allow everything. Two roles seeded at init: SystemAdmin (granted all), User. Admin must also set the SoD ruleset (ON by default): buyer!=PO approver, receiver!=invoice approver, maker!=checker, requester!=sole approver of own requisition; relaxing any is recorded in audit. [SCOR OE5 | source: role-permission-matrix + raphe-auth-rbac + role-model SoD]</bpmn:documentation>
+      <bpmn:incoming>f13</bpmn:incoming>
+      <bpmn:outgoing>f14</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="ResolvePerms" name="Resolve effective permissions (union + super-admin)">
+      <bpmn:documentation>On each guarded request the system computes effective permissions = deduplicated UNION of Role + UserRole + Designation + Vertical/BusinessUnit permissions, plus super-admin 'all' short-circuit. No priority ordering; duplicates collapse. Guard chain: AuthGuard (validate session + active user) -&gt; PermissionsGuard (read @RequirePermissions; no metadata = authentication-only). Empty set -&gt; ForbiddenException('User has no roles'); required perm absent -&gt; ForbiddenException. No caching, so a permission change applies on the NEXT request. SoD rules override grants. [SCOR OE5 | source: raphe-auth-rbac + role-permission-matrix]</bpmn:documentation>
+      <bpmn:incoming>f14</bpmn:incoming>
+      <bpmn:outgoing>f15</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="Chain" name="Configure approval chain and routing rules">
+      <bpmn:documentation>Admin defines the multi-stage approval chain (approval.configureChain, routingRules.update). ApprovalChain/Stage fields: ordered stages (configurable; a tenant chooses all-to-one AB style OR multi-stage RA style e.g. ReqDepartment-&gt;Procurement-&gt;Finance-&gt;Management); per stage stageType (dropdown {Standard|Budget|Award|SupplierApproval|Artwork|LanguageReview}), isAutoApprovalEnabled (boolean), siteConditional (boolean - e.g. factory site needs Factory Manager). RoutingRuleEntry fields: department (ref), stage/verticalId (ref) [unique composite (department, verticalId)], assigneeUserIds (array), approverUserIds (array). Per-approver approvalLimit set on the User (base currency). defaultApprovalLimit (tenant config, default 200000) used when an approver limit is null. Auto-approval threshold = the resolved approver's limit; nearest-bucket selection reserves high-limit approvers for large amounts. Missing routing rule for a (department, stage) -&gt; downstream routing throws BadRequestException and the requisition stalls until fixed. [SCOR OE2 | ISO 8.4 | source: platform-services approval engine 1 + raphe-routing-approval]</bpmn:documentation>
+      <bpmn:incoming>f15</bpmn:incoming>
+      <bpmn:outgoing>f16</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Budgets" name="Set budgets per cost-center x period">
+      <bpmn:documentation>Admin (or Budget Owner under delegated grant budget.manage) seeds budgets so the soft check at requisition and the hard commit at PO have funds to test. Budget fields: costCenterId/projectId (ref, mandatory), period (e.g. FY/quarter/month, mandatory), amount (decimal in base currency, mandatory, &gt;0), availableAmount (init = amount), committedAmount (init 0), actualAmount (init 0). Rule: approval limits are NOT budget control; budget is a separate gate. Soft check fires at requisition (warns if over availableAmount); hard commit fires at PO issue (availableAmount -= amount, committedAmount += amount; guard available &gt;= amount OR override-with-approval). Relieved to actual at GR/invoice. [SCOR OE11 | source: data-model budget/commitment + platform-services 11 build-new]</bpmn:documentation>
+      <bpmn:incoming>f16</bpmn:incoming>
+      <bpmn:outgoing>f17</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Fields" name="Configure dynamic fields (stage x scope x purchaseType)">
+      <bpmn:documentation>Admin defines the field engine config so intake/detail forms adapt per category without code (fieldConfig.manage). FieldConfig entry fields: fieldKey, label, dataType (dropdown {string|number|decimal|date|boolean|reference|enum|attachment}), stage (dropdown {INITIATION|ORDERED|PARTIAL_DELIVERY|POST_DELIVERY}), scope (dropdown {TICKET_LEVEL|ITEM_LEVEL|BLOCK_LEVEL}), purchaseType (array subset of {LOCAL|IMPORT}), mandatory (boolean), isAuto (boolean - auto fields NEVER gate stage progression), showHistory (boolean), referenceEntity (when dataType=reference: {project|vertical|user|supplier|item|ticket-item}). Mandatory-field gating drives stage progression: a stage cannot advance until its mandatory, non-auto fields for the current stage/scope/purchaseType are filled. isEmpty rule: null/undefined/blank-trimmed/[]/{}/invalid-date are empty; 0 and false count as present. [SCOR OE2 | ISO 7.5 | source: platform-services dynamic forms 2 + raphe-stage-progression]</bpmn:documentation>
+      <bpmn:incoming>f17</bpmn:incoming>
+      <bpmn:outgoing>f18</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="Activate" name="Mark config complete, enable transactions">
+      <bpmn:documentation>System verifies the minimum viable config exists: base currency set, at least one routing rule per active department/stage, at least one budget per active cost-center x current period, the field config loaded, and at least one user per required approval stage. When satisfied, transactional flows (requisition intake onward) are enabled. Without routing rules and budgets, downstream routing and commitment fail, so this guard prevents a half-configured tenant from accepting requisitions. Audit log (category admin) + SSE emitted. [SCOR OE2/OE4/OE11 | source: blueprint + platform-services]</bpmn:documentation>
+      <bpmn:incoming>f18</bpmn:incoming>
+      <bpmn:outgoing>f19</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="End" name="Tenant configured, ready for intake">
+      <bpmn:documentation>Outcome: masters, RBAC, the configurable approval chain + routing rules, budgets per cost-center x period, and the dynamic field config are all in place; suppliers/items default PENDING_ONBOARDING until separately approved. The tenant can now accept requisitions (diagram 02). Config is editable later, but a permission change applies next request, an FX base change is locked once transactions exist, and a routing-rule gap stalls affected requisitions until fixed. [SCOR OE2/OE4 | source: build-new]</bpmn:documentation>
+      <bpmn:incoming>f19</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="f1" sourceRef="Start" targetRef="ChooseBase" />
+    <bpmn:sequenceFlow id="f2" sourceRef="ChooseBase" targetRef="GwMode" />
+    <bpmn:sequenceFlow id="f3" name="importMode == INDIVIDUAL" sourceRef="GwMode" targetRef="SeedMasters" />
+    <bpmn:sequenceFlow id="f4" name="importMode == BULK" sourceRef="GwMode" targetRef="BulkUpload" />
+    <bpmn:sequenceFlow id="f5" sourceRef="SeedMasters" targetRef="Validate" />
+    <bpmn:sequenceFlow id="f6" sourceRef="BulkUpload" targetRef="Validate" />
+    <bpmn:sequenceFlow id="f7" sourceRef="Validate" targetRef="GwImportValid" />
+    <bpmn:sequenceFlow id="f8" name="rowErrors.length == 0" sourceRef="GwImportValid" targetRef="Commit" />
+    <bpmn:sequenceFlow id="f9" name="rowErrors.length &gt; 0" sourceRef="GwImportValid" targetRef="ImportError" />
+    <bpmn:sequenceFlow id="f10" sourceRef="ImportError" targetRef="FixFile" />
+    <bpmn:sequenceFlow id="f11" sourceRef="FixFile" targetRef="BulkUpload" />
+    <bpmn:sequenceFlow id="f12" sourceRef="Commit" targetRef="Users" />
+    <bpmn:sequenceFlow id="f13" sourceRef="Users" targetRef="Roles" />
+    <bpmn:sequenceFlow id="f14" sourceRef="Roles" targetRef="ResolvePerms" />
+    <bpmn:sequenceFlow id="f15" sourceRef="ResolvePerms" targetRef="Chain" />
+    <bpmn:sequenceFlow id="f16" sourceRef="Chain" targetRef="Budgets" />
+    <bpmn:sequenceFlow id="f17" sourceRef="Budgets" targetRef="Fields" />
+    <bpmn:sequenceFlow id="f18" sourceRef="Fields" targetRef="Activate" />
+    <bpmn:sequenceFlow id="f19" sourceRef="Activate" targetRef="End" />
+    <bpmn:textAnnotation id="NoteConfig">
+      <bpmn:text>Administrator-led setup precedes any transaction. Per master, the admin chooses individual create or bulk import (all-or-nothing: any file/header/row/persistence error rejects the whole import with row-numbered reasons, even valid rows). RBAC = deduplicated union of role + user-grant + designation + business-unit + super-admin 'all'. The approval chain, routing rules, per-approver limits, budgets per cost-center x period, and the dynamic field config (by stage/scope/purchaseType, mandatory, isAuto) are configuration, not code. Base/reporting currency is set first because all thresholds and analytics compute in base. Suppliers/items default PENDING_ONBOARDING. Without routing rules and budgets, downstream routing and commitment fail.</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Assoc_Configuration_1" sourceRef="Activate" targetRef="NoteConfig" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagram_Configuration">
+    <bpmndi:BPMNPlane id="Plane_Configuration" bpmnElement="Collaboration_Configuration">
+      <bpmndi:BPMNShape id="Participant_Configuration_di" bpmnElement="Participant_Configuration" isHorizontal="true">
+        <dc:Bounds x="160" y="80" width="3110" height="320" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_admin_di" bpmnElement="L_admin" isHorizontal="true">
+        <dc:Bounds x="190" y="80" width="3080" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_sys_di" bpmnElement="L_sys" isHorizontal="true">
+        <dc:Bounds x="190" y="240" width="3080" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Start_di" bpmnElement="Start">
+        <dc:Bounds x="267" y="142" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="257" y="182" width="56" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ChooseBase_di" bpmnElement="ChooseBase">
+        <dc:Bounds x="415" y="120" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GwMode_di" bpmnElement="GwMode" isMarkerVisible="true">
+        <dc:Bounds x="640" y="135" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="630" y="189" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SeedMasters_di" bpmnElement="SeedMasters">
+        <dc:Bounds x="795" y="120" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BulkUpload_di" bpmnElement="BulkUpload">
+        <dc:Bounds x="985" y="120" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Validate_di" bpmnElement="Validate">
+        <dc:Bounds x="985" y="280" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GwImportValid_di" bpmnElement="GwImportValid" isMarkerVisible="true">
+        <dc:Bounds x="1210" y="295" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1200" y="349" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ImportError_di" bpmnElement="ImportError">
+        <dc:Bounds x="1365" y="280" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="FixFile_di" bpmnElement="FixFile">
+        <dc:Bounds x="1555" y="120" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Commit_di" bpmnElement="Commit">
+        <dc:Bounds x="1555" y="280" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Users_di" bpmnElement="Users">
+        <dc:Bounds x="1745" y="120" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Roles_di" bpmnElement="Roles">
+        <dc:Bounds x="1935" y="120" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ResolvePerms_di" bpmnElement="ResolvePerms">
+        <dc:Bounds x="2125" y="280" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Chain_di" bpmnElement="Chain">
+        <dc:Bounds x="2315" y="120" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Budgets_di" bpmnElement="Budgets">
+        <dc:Bounds x="2505" y="120" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Fields_di" bpmnElement="Fields">
+        <dc:Bounds x="2695" y="120" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activate_di" bpmnElement="Activate">
+        <dc:Bounds x="2885" y="280" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_di" bpmnElement="End">
+        <dc:Bounds x="3117" y="302" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3107" y="342" width="56" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="f1_di" bpmnElement="f1">
+        <di:waypoint x="303" y="160" />
+        <di:waypoint x="415" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f2_di" bpmnElement="f2">
+        <di:waypoint x="535" y="160" />
+        <di:waypoint x="640" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f3_di" bpmnElement="f3">
+        <di:waypoint x="690" y="160" />
+        <di:waypoint x="795" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f4_di" bpmnElement="f4">
+        <di:waypoint x="690" y="160" />
+        <di:waypoint x="985" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f5_di" bpmnElement="f5">
+        <di:waypoint x="915" y="160" />
+        <di:waypoint x="950" y="160" />
+        <di:waypoint x="950" y="320" />
+        <di:waypoint x="985" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f6_di" bpmnElement="f6">
+        <di:waypoint x="1105" y="160" />
+        <di:waypoint x="1125" y="160" />
+        <di:waypoint x="1125" y="320" />
+        <di:waypoint x="985" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f7_di" bpmnElement="f7">
+        <di:waypoint x="1105" y="320" />
+        <di:waypoint x="1210" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f8_di" bpmnElement="f8">
+        <di:waypoint x="1260" y="320" />
+        <di:waypoint x="1555" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f9_di" bpmnElement="f9">
+        <di:waypoint x="1260" y="320" />
+        <di:waypoint x="1365" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f10_di" bpmnElement="f10">
+        <di:waypoint x="1485" y="320" />
+        <di:waypoint x="1520" y="320" />
+        <di:waypoint x="1520" y="160" />
+        <di:waypoint x="1555" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f11_di" bpmnElement="f11">
+        <di:waypoint x="1615" y="200" />
+        <di:waypoint x="1615" y="230" />
+        <di:waypoint x="1045" y="230" />
+        <di:waypoint x="1045" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f12_di" bpmnElement="f12">
+        <di:waypoint x="1675" y="320" />
+        <di:waypoint x="1710" y="320" />
+        <di:waypoint x="1710" y="160" />
+        <di:waypoint x="1745" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f13_di" bpmnElement="f13">
+        <di:waypoint x="1865" y="160" />
+        <di:waypoint x="1935" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f14_di" bpmnElement="f14">
+        <di:waypoint x="2055" y="160" />
+        <di:waypoint x="2090" y="160" />
+        <di:waypoint x="2090" y="320" />
+        <di:waypoint x="2125" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f15_di" bpmnElement="f15">
+        <di:waypoint x="2245" y="320" />
+        <di:waypoint x="2280" y="320" />
+        <di:waypoint x="2280" y="160" />
+        <di:waypoint x="2315" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f16_di" bpmnElement="f16">
+        <di:waypoint x="2435" y="160" />
+        <di:waypoint x="2505" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f17_di" bpmnElement="f17">
+        <di:waypoint x="2625" y="160" />
+        <di:waypoint x="2695" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f18_di" bpmnElement="f18">
+        <di:waypoint x="2815" y="160" />
+        <di:waypoint x="2850" y="160" />
+        <di:waypoint x="2850" y="320" />
+        <di:waypoint x="2885" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f19_di" bpmnElement="f19">
+        <di:waypoint x="3005" y="320" />
+        <di:waypoint x="3117" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="NoteConfig_di" bpmnElement="NoteConfig">
+        <dc:Bounds x="160" y="440" width="1600" height="100" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Assoc_Configuration_1_di" bpmnElement="Assoc_Configuration_1">
+        <di:waypoint x="2945" y="360" />
+        <di:waypoint x="260" y="440" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

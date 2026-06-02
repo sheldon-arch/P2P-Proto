@@ -1,0 +1,39 @@
+[
+  {
+    "id": "INST-LV-1",
+    "scheduleId": "SCH-LV-1",
+    "ticketId": "TKT-LV-022",
+    "supplierId": "SUP-0003",
+    "amount": 50000,
+    "date": "2026-05-27",
+    "description": "Milestone 1",
+    "status": "PARTIAL_APPROVAL",
+    "approvedAmount": 35000,
+    "approvedById": "U-FINMK1",
+    "remainderInstallmentId": "INST-LV-1R"
+  },
+  {
+    "id": "INST-LV-1R",
+    "scheduleId": "SCH-LV-1",
+    "ticketId": "TKT-LV-022",
+    "supplierId": "SUP-0003",
+    "amount": 15000,
+    "date": "2026-05-27",
+    "description": "Milestone 1 (remainder)",
+    "status": "PENDING",
+    "isRemainder": true
+  },
+  {
+    "id": "INST-LV-2",
+    "scheduleId": "SCH-LV-2",
+    "ticketId": "TKT-LV-023",
+    "supplierId": "SUP-0004",
+    "amount": 28000,
+    "date": "2026-05-01",
+    "description": "Net-30 invoice now overdue",
+    "status": "APPROVED",
+    "overdue": true,
+    "reminderSent": "2026-05-29",
+    "reminderNote": "~28-day overdue reminder fired"
+  }
+]

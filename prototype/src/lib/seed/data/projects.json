@@ -1,0 +1,86 @@
+[
+  {
+    "id": "PRJ-001",
+    "name": "Plant 1 Manufacturing Operations",
+    "code": "MfgOps-P1",
+    "status": "ACTIVE",
+    "annualBudget": 2400000
+  },
+  {
+    "id": "PRJ-002",
+    "name": "Plant 2 Manufacturing Operations",
+    "code": "MfgOps-P2",
+    "status": "ACTIVE",
+    "annualBudget": 1900000
+  },
+  {
+    "id": "PRJ-003",
+    "name": "New Product Development 2026",
+    "code": "NPD-2026",
+    "status": "ACTIVE",
+    "annualBudget": 650000
+  },
+  {
+    "id": "PRJ-004",
+    "name": "Maintenance and Engineering 2026",
+    "code": "Maint-2026",
+    "status": "ACTIVE",
+    "annualBudget": 480000
+  },
+  {
+    "id": "PRJ-005",
+    "name": "Quality Lab Operations",
+    "code": "QC-Lab",
+    "status": "ACTIVE",
+    "annualBudget": 320000
+  },
+  {
+    "id": "PRJ-006",
+    "name": "Packaging Development",
+    "code": "PackDev",
+    "status": "ACTIVE",
+    "annualBudget": 410000
+  },
+  {
+    "id": "PRJ-007",
+    "name": "CapEx - Production Line 3",
+    "code": "CapEx-Line3",
+    "status": "ACTIVE",
+    "annualBudget": 1200000
+  },
+  {
+    "id": "PRJ-008",
+    "name": "Indirect and Admin Spend",
+    "code": "Indirect-Admin",
+    "status": "ACTIVE",
+    "annualBudget": 280000
+  },
+  {
+    "id": "PRJ-009",
+    "name": "Cold Chain and Logistics",
+    "code": "ColdChain",
+    "status": "ACTIVE",
+    "annualBudget": 360000
+  },
+  {
+    "id": "PRJ-010",
+    "name": "Regulatory and Compliance",
+    "code": "Reg-Compliance",
+    "status": "ACTIVE",
+    "annualBudget": 190000
+  },
+  {
+    "id": "PRJ-011",
+    "name": "Sustainability Initiatives",
+    "code": "Sustainability",
+    "status": "ACTIVE",
+    "annualBudget": 150000
+  },
+  {
+    "id": "PRJ-012",
+    "name": "Legacy Project (Inactive)",
+    "code": "Legacy-2025",
+    "status": "INACTIVE",
+    "annualBudget": 0
+  }
+]

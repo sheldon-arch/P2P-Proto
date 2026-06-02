@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+                  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+                  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+                  id="Definitions_E03QtyTolerance" targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:collaboration id="Collaboration_E03QtyTolerance">
+    <bpmn:participant id="Participant_E03QtyTolerance" name="e03 - Quantity Tolerance and Partial Deliveries" processRef="Process_E03QtyTolerance" />
+  </bpmn:collaboration>
+  <bpmn:process id="Process_E03QtyTolerance" isExecutable="false">
+    <bpmn:laneSet id="LaneSet_E03QtyTolerance">
+      <bpmn:lane id="L_buyer" name="Procurement / Buyer">
+        <bpmn:flowNodeRef>BuyerDisposition</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>AmendPO</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_recv" name="Receiving / Warehouse">
+        <bpmn:flowNodeRef>Start</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>CountReceived</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GwToleranceItem</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GwWithinTolerance</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GwToleranceBreach</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>NotifyBuyerBreach</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GwPartialOrFull</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>RaiseGRN</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GwLineComplete</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>AwaitNext</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_qc" name="Quality">
+        <bpmn:flowNodeRef>QcGate</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_sys" name="Platform / System">
+        <bpmn:flowNodeRef>AuditAmend</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>End</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="Start" name="Shipment arrives against open PO">
+      <bpmn:documentation>Trigger: a physical shipment (labels, cartons, bottles, RM, PM) arrives at the warehouse against a PO with status in {acknowledged, partially-received}. PO is editable-until-first-GR for tolerance amend. Receiving opens the inbound record: fields trackingNumber (MAWB/HAWB, text, optional), carrier (dropdown {air|sea|road|courier}), actualDeliveryDate (date, mandatory, default today), boeNumber (text, optional, import only), clearanceBy (text, optional). [SCOR S2.4 Receive Product | ISO 8.6 | source: AB inbound + RA block model]</bpmn:documentation>
+      <bpmn:incoming>f18</bpmn:incoming>
+      <bpmn:outgoing>f1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:userTask id="CountReceived" name="Count and record received quantity per line">
+      <bpmn:documentation>Receiving counts each PO line and records receivedQuantity (number, &gt;0, mandatory) into the delivery block itemsDelivery JSON [{poLineId, quantity}]. Captures deliveryNoteNumber (text, mandatory), packing-list reference, photos (attachments). No GRN raised yet. The recorded receivedQuantity is compared to POLine.quantity (the ordered quantity for this shipment, which for a full-contract PO is the full contract quantity, e.g. 100000 bottles). [SCOR S2.4 | ISO 8.6 receiving records | source: AB + RA itemsDelivery]</bpmn:documentation>
+      <bpmn:incoming>f1</bpmn:incoming>
+      <bpmn:outgoing>f2</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="GwToleranceItem" name="Line carries a quantity tolerance?">
+      <bpmn:documentation>Expression: POLine.tolerance != null AND POLine.tolerance.qtyPercent &gt; 0. Tolerance items are printed/converted goods where supplier overrun/underrun is inherent: labels and cartons carry +/-5% to +/-10% (configurable per line, default labels 10%, cartons 5%). True -&gt; evaluate variance. False (fixed-count items: finished bottles counted as discrete units, electronics, spares) -&gt; skip tolerance, go straight to partial-vs-full evaluation. [SCOR S2.4 | source: AB POLine tolerance +/-5-10%]</bpmn:documentation>
+      <bpmn:incoming>f2</bpmn:incoming>
+      <bpmn:outgoing>f3</bpmn:outgoing>
+      <bpmn:outgoing>f4</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="GwWithinTolerance" name="Received within tolerance band?">
+      <bpmn:documentation>Expression: abs(receivedQuantity - POLine.quantity) &lt;= POLine.quantity * (POLine.tolerance.qtyPercent / 100). Example: ordered 100000 labels, tolerance 10%, band 90000..110000; received 104000 is within. Within band -&gt; the receipt is accepted but the PO line quantity does not match the physical count, so the PO must be amended to the actual received quantity BEFORE the GRN so the three-way match reconciles. Outside band -&gt; over/under-tolerance exception. [SCOR S2.4 | source: AB tolerance rule]</bpmn:documentation>
+      <bpmn:incoming>f3</bpmn:incoming>
+      <bpmn:outgoing>f5</bpmn:outgoing>
+      <bpmn:outgoing>f6</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="GwToleranceBreach" name="Over or under the band?">
+      <bpmn:documentation>Expression on the breach direction. receivedQuantity &gt; POLine.quantity * (1 + qtyPercent/100) -&gt; over-tolerance (excess delivery, supplier shipped more than the band allows). receivedQuantity &lt; POLine.quantity * (1 - qtyPercent/100) -&gt; under-tolerance (short delivery beyond the band). Either way the buyer must decide before GRN; receiving cannot self-clear a breach. [SCOR S2.4 | source: AB + build-new control]</bpmn:documentation>
+      <bpmn:incoming>f6</bpmn:incoming>
+      <bpmn:outgoing>f7</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sendTask id="NotifyBuyerBreach" name="Raise tolerance-breach exception to buyer">
+      <bpmn:documentation>Receiving raises a tolerance-breach exception (type {over-tolerance|under-tolerance}, poId, poLineId, ordered, received, band) and notifies the buyer. The line is held; no GRN until the buyer dispositions. The shipment is not rejected outright (goods are physically present); the decision is commercial. [SCOR S2.4 | ISO 8.7 | source: build-new exception routing]</bpmn:documentation>
+      <bpmn:incoming>f7</bpmn:incoming>
+      <bpmn:outgoing>f8</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:userTask id="BuyerDisposition" name="Buyer dispositions breach">
+      <bpmn:documentation>Buyer chooses disposition (dropdown {accept-and-amend | accept-partial-reject-excess | reject-return}). accept-and-amend: amend PO to full received quantity (over) or to received quantity and keep balance open (under). accept-partial-reject-excess: accept up to band, return excess via RMA (S4). reject-return: refuse the breach portion. Requires po.amend permission; buyer cannot approve own PO for issue but may amend pre-receipt (audited). [SCOR S2.4/S4 | source: build-new + AB editable-until-receipt]</bpmn:documentation>
+      <bpmn:incoming>f8</bpmn:incoming>
+      <bpmn:outgoing>f9</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="AmendPO" name="Amend PO line to actual received quantity">
+      <bpmn:documentation>Buyer edits POLine.quantity to the actual physical count (within-tolerance auto-path) or to the buyer-approved quantity (breach path). Action po.amend: allowed only while PO is editable-until-first-GR; recomputes line value = amendedQuantity * agreedPrice, recomputes tax, adjusts the budget commitment delta (commitment += or -= value change) and re-derives totalAmountInBase via the FX service. PO stays issued/acknowledged; no re-approval unless financial-revert rule fires (edit to pay terms / schedules reverts auto-approved finance completions). [SCOR S2.1/OE11 | ISO 8.4.3 | source: AB amend + build-new commitment]</bpmn:documentation>
+      <bpmn:incoming>f5</bpmn:incoming>
+      <bpmn:incoming>f9</bpmn:incoming>
+      <bpmn:outgoing>f10</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="AuditAmend" name="Write immutable amend audit + commitment delta">
+      <bpmn:documentation>System writes an append-only audit entry (category po): actor, timestamp, poLineId, oldQuantity, newQuantity, oldValue, newValue, reason (tolerance-amend|breach-disposition), delivery-block reference. Posts the commitment delta to the budget service and emits an SSE {poId}. Immutable, field-level humanised diff (RA buildUpdateMetadata). This audit BEFORE GRN is the control that makes the three-way match reconcilable. [SCOR OE4 | ISO 7.5 records | source: platform-services audit + RA]</bpmn:documentation>
+      <bpmn:incoming>f10</bpmn:incoming>
+      <bpmn:outgoing>f11</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="GwPartialOrFull" name="Shipment satisfies the full PO line?">
+      <bpmn:documentation>Expression: sum(receivedQuantity across all delivery blocks for the line) &gt;= POLine.quantity (after any amend). True -&gt; line fully received, derived delivery status = delivered. False -&gt; partial: line stays open, derived status = partial, ticket stage = PARTIAL_DELIVERY. A full-contract PO (e.g. 100000 bottles) received in 20000-unit lots produces five partial shipments, one GRN each, against the same PO line until cumulative &gt;= contract quantity. [SCOR S2.4 | source: RA derived delivery status + AB partial blocks]</bpmn:documentation>
+      <bpmn:incoming>f4</bpmn:incoming>
+      <bpmn:incoming>f11</bpmn:incoming>
+      <bpmn:outgoing>f12</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="QcGate" name="Material requires QC and COA?">
+      <bpmn:documentation>Expression: item.category in {Items} AND item.requiresCoa = true (RM/PM materials). True -&gt; COA + sample to QC; QC approve/reject is a HARD block (no GRN without COA). False (cartons, non-COA consumables, spares) -&gt; skip QC, proceed to GRN. Each partial shipment is inspected on its own sample; passing one block does not waive inspection of the next. [SCOR S2.5 | ISO 8.6 | source: AB hard QC block]</bpmn:documentation>
+      <bpmn:incoming>f12</bpmn:incoming>
+      <bpmn:outgoing>f14</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="RaiseGRN" name="Raise GRN for this shipment against amended PO">
+      <bpmn:documentation>Receiving raises ONE GRN per shipment (per partial block) against the (amended) PO line. GRN fields: erpGrNumber (auto), poId, poLineId, receivedQuantity, deliveryNoteNumber, actualDeliveryDate, qcStatus (passed|n/a), attachments. Action grn.raise (Receiving permission; Quality only after QC pass). GR/IR clearing accrues a liability = receivedQuantity * agreedPrice incl. tax to the GR/IR account, status accrued, invoiceId null until matched. Relieves the commitment for the received quantity. [SCOR S2.4 | ISO 8.6 | source: build-new GR/IR + RA grn]</bpmn:documentation>
+      <bpmn:incoming>f14</bpmn:incoming>
+      <bpmn:outgoing>f15</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="GwLineComplete" name="Cumulative received &gt;= PO line quantity?">
+      <bpmn:documentation>Expression: sum(GRN.receivedQuantity for poLineId) &gt;= POLine.quantity. True -&gt; line complete, derived status delivered, ready for invoice/three-way match per line; if all lines complete the ticket can advance toward POST_DELIVERY. False -&gt; remain PARTIAL_DELIVERY and await the next shipment, looping back to the start for the next inbound block. [SCOR S2.4/S2.6 | source: RA stage machine + AB partial]</bpmn:documentation>
+      <bpmn:incoming>f15</bpmn:incoming>
+      <bpmn:outgoing>f16</bpmn:outgoing>
+      <bpmn:outgoing>f17</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:intermediateCatchEvent id="AwaitNext" name="Await next partial shipment">
+      <bpmn:documentation>Line remains open at PARTIAL_DELIVERY; system holds the PO open and waits (message/timer) for the next inbound shipment against the same PO line. Each subsequent shipment repeats count -&gt; tolerance -&gt; GRN. Overdue derivation: if actualDeliveryDate gap exceeds need-date, derived status flips to overdue and an ETA-approaching / overdue alarm fires to the buyer. [SCOR S2.4 | source: RA derived overdue + AB ETA alarm]</bpmn:documentation>
+      <bpmn:incoming>f17</bpmn:incoming>
+      <bpmn:outgoing>f18</bpmn:outgoing>
+      <bpmn:messageEventDefinition />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:endEvent id="End" name="Line fully received, ready for match">
+      <bpmn:documentation>PO line fully received within tolerance, all partial GRNs raised, GR/IR accrued per receipt, commitment relieved, audit + SSE emitted. Hands to e12 (two-way vs three-way match) and 09 invoice/match. [SCOR S2.6 | source: build-new]</bpmn:documentation>
+      <bpmn:incoming>f16</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="f1" sourceRef="Start" targetRef="CountReceived" />
+    <bpmn:sequenceFlow id="f2" sourceRef="CountReceived" targetRef="GwToleranceItem" />
+    <bpmn:sequenceFlow id="f3" name="tolerance line (qtyPercent &gt; 0)" sourceRef="GwToleranceItem" targetRef="GwWithinTolerance" />
+    <bpmn:sequenceFlow id="f4" name="no-tolerance item -&gt; skip" sourceRef="GwToleranceItem" targetRef="GwPartialOrFull" />
+    <bpmn:sequenceFlow id="f5" name="within band: amend to actual count" sourceRef="GwWithinTolerance" targetRef="AmendPO" />
+    <bpmn:sequenceFlow id="f6" name="outside band" sourceRef="GwWithinTolerance" targetRef="GwToleranceBreach" />
+    <bpmn:sequenceFlow id="f7" name="over or under tolerance" sourceRef="GwToleranceBreach" targetRef="NotifyBuyerBreach" />
+    <bpmn:sequenceFlow id="f8" sourceRef="NotifyBuyerBreach" targetRef="BuyerDisposition" />
+    <bpmn:sequenceFlow id="f9" name="accept (amend qty)" sourceRef="BuyerDisposition" targetRef="AmendPO" />
+    <bpmn:sequenceFlow id="f10" sourceRef="AmendPO" targetRef="AuditAmend" />
+    <bpmn:sequenceFlow id="f11" sourceRef="AuditAmend" targetRef="GwPartialOrFull" />
+    <bpmn:sequenceFlow id="f12" name="full line or accepted partial block" sourceRef="GwPartialOrFull" targetRef="QcGate" />
+    <bpmn:sequenceFlow id="f14" name="QC pass / no COA needed" sourceRef="QcGate" targetRef="RaiseGRN" />
+    <bpmn:sequenceFlow id="f15" sourceRef="RaiseGRN" targetRef="GwLineComplete" />
+    <bpmn:sequenceFlow id="f16" name="cumulative &gt;= ordered" sourceRef="GwLineComplete" targetRef="End" />
+    <bpmn:sequenceFlow id="f17" name="cumulative &lt; ordered" sourceRef="GwLineComplete" targetRef="AwaitNext" />
+    <bpmn:sequenceFlow id="f18" name="next shipment arrives" sourceRef="AwaitNext" targetRef="Start" />
+    <bpmn:textAnnotation id="NoteTolerance">
+      <bpmn:text>Tolerance amend happens BEFORE the GRN so the three-way match reconciles against the physical count. One GRN per partial shipment; a full-contract PO line (e.g. 100000 bottles) may be received in many lots, each its own GRN, against the same line until cumulative &gt;= ordered. No-tolerance items skip the band check entirely.</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Assoc_E03QtyTolerance_1" sourceRef="AmendPO" targetRef="NoteTolerance" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagram_E03QtyTolerance">
+    <bpmndi:BPMNPlane id="Plane_E03QtyTolerance" bpmnElement="Collaboration_E03QtyTolerance">
+      <bpmndi:BPMNShape id="Participant_E03QtyTolerance_di" bpmnElement="Participant_E03QtyTolerance" isHorizontal="true">
+        <dc:Bounds x="160" y="80" width="2160" height="640" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_buyer_di" bpmnElement="L_buyer" isHorizontal="true">
+        <dc:Bounds x="190" y="80" width="2130" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_recv_di" bpmnElement="L_recv" isHorizontal="true">
+        <dc:Bounds x="190" y="240" width="2130" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_qc_di" bpmnElement="L_qc" isHorizontal="true">
+        <dc:Bounds x="190" y="400" width="2130" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_sys_di" bpmnElement="L_sys" isHorizontal="true">
+        <dc:Bounds x="190" y="560" width="2130" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Start_di" bpmnElement="Start">
+        <dc:Bounds x="267" y="302" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="257" y="342" width="56" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CountReceived_di" bpmnElement="CountReceived">
+        <dc:Bounds x="415" y="280" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GwToleranceItem_di" bpmnElement="GwToleranceItem" isMarkerVisible="true">
+        <dc:Bounds x="640" y="295" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="630" y="349" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GwWithinTolerance_di" bpmnElement="GwWithinTolerance" isMarkerVisible="true">
+        <dc:Bounds x="830" y="295" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="820" y="349" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GwToleranceBreach_di" bpmnElement="GwToleranceBreach" isMarkerVisible="true">
+        <dc:Bounds x="1020" y="295" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1010" y="349" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="NotifyBuyerBreach_di" bpmnElement="NotifyBuyerBreach">
+        <dc:Bounds x="1175" y="280" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BuyerDisposition_di" bpmnElement="BuyerDisposition">
+        <dc:Bounds x="1365" y="120" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="AmendPO_di" bpmnElement="AmendPO">
+        <dc:Bounds x="1555" y="120" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="AuditAmend_di" bpmnElement="AuditAmend">
+        <dc:Bounds x="1745" y="600" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GwPartialOrFull_di" bpmnElement="GwPartialOrFull" isMarkerVisible="true">
+        <dc:Bounds x="1400" y="295" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1390" y="349" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="QcGate_di" bpmnElement="QcGate" isMarkerVisible="true">
+        <dc:Bounds x="1400" y="455" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1390" y="509" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="RaiseGRN_di" bpmnElement="RaiseGRN">
+        <dc:Bounds x="1555" y="280" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GwLineComplete_di" bpmnElement="GwLineComplete" isMarkerVisible="true">
+        <dc:Bounds x="1780" y="295" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1770" y="349" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="AwaitNext_di" bpmnElement="AwaitNext">
+        <dc:Bounds x="1977" y="302" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1967" y="342" width="56" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_di" bpmnElement="End">
+        <dc:Bounds x="2167" y="622" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2157" y="662" width="56" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="f1_di" bpmnElement="f1">
+        <di:waypoint x="303" y="320" />
+        <di:waypoint x="415" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f2_di" bpmnElement="f2">
+        <di:waypoint x="535" y="320" />
+        <di:waypoint x="640" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f3_di" bpmnElement="f3">
+        <di:waypoint x="690" y="320" />
+        <di:waypoint x="830" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f4_di" bpmnElement="f4">
+        <di:waypoint x="690" y="320" />
+        <di:waypoint x="1400" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f5_di" bpmnElement="f5">
+        <di:waypoint x="880" y="320" />
+        <di:waypoint x="1218" y="320" />
+        <di:waypoint x="1218" y="160" />
+        <di:waypoint x="1555" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f6_di" bpmnElement="f6">
+        <di:waypoint x="880" y="320" />
+        <di:waypoint x="1020" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f7_di" bpmnElement="f7">
+        <di:waypoint x="1070" y="320" />
+        <di:waypoint x="1175" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f8_di" bpmnElement="f8">
+        <di:waypoint x="1295" y="320" />
+        <di:waypoint x="1330" y="320" />
+        <di:waypoint x="1330" y="160" />
+        <di:waypoint x="1365" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f9_di" bpmnElement="f9">
+        <di:waypoint x="1485" y="160" />
+        <di:waypoint x="1555" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f10_di" bpmnElement="f10">
+        <di:waypoint x="1675" y="160" />
+        <di:waypoint x="1710" y="160" />
+        <di:waypoint x="1710" y="640" />
+        <di:waypoint x="1745" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f11_di" bpmnElement="f11">
+        <di:waypoint x="1745" y="640" />
+        <di:waypoint x="1598" y="640" />
+        <di:waypoint x="1598" y="320" />
+        <di:waypoint x="1450" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f12_di" bpmnElement="f12">
+        <di:waypoint x="1450" y="320" />
+        <di:waypoint x="1470" y="320" />
+        <di:waypoint x="1470" y="480" />
+        <di:waypoint x="1400" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f14_di" bpmnElement="f14">
+        <di:waypoint x="1450" y="480" />
+        <di:waypoint x="1503" y="480" />
+        <di:waypoint x="1503" y="320" />
+        <di:waypoint x="1555" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f15_di" bpmnElement="f15">
+        <di:waypoint x="1675" y="320" />
+        <di:waypoint x="1780" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f16_di" bpmnElement="f16">
+        <di:waypoint x="1830" y="320" />
+        <di:waypoint x="1999" y="320" />
+        <di:waypoint x="1999" y="640" />
+        <di:waypoint x="2167" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f17_di" bpmnElement="f17">
+        <di:waypoint x="1830" y="320" />
+        <di:waypoint x="1977" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f18_di" bpmnElement="f18">
+        <di:waypoint x="1995" y="338" />
+        <di:waypoint x="1995" y="368" />
+        <di:waypoint x="285" y="368" />
+        <di:waypoint x="285" y="338" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="NoteTolerance_di" bpmnElement="NoteTolerance">
+        <dc:Bounds x="160" y="760" width="1600" height="100" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Assoc_E03QtyTolerance_1_di" bpmnElement="Assoc_E03QtyTolerance_1">
+        <di:waypoint x="1615" y="200" />
+        <di:waypoint x="260" y="760" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

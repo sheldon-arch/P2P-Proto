@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+                  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+                  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+                  id="Definitions_13InventoryReplenishment" targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:collaboration id="Collaboration_13InventoryReplenishment">
+    <bpmn:participant id="Participant_13InventoryReplenishment" name="13 - Inventory-Driven Demand and Reorder Replenishment" processRef="Process_13InventoryReplenishment" />
+  </bpmn:collaboration>
+  <bpmn:process id="Process_13InventoryReplenishment" isExecutable="false">
+    <bpmn:laneSet id="LaneSet_13InventoryReplenishment">
+      <bpmn:lane id="L_inv" name="Inventory Manager">
+        <bpmn:flowNodeRef>ReviewWorklist</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GwManagerDecision</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>RaiseRequisition</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ReviewDraft</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>SubmitRequisition</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DeferItem</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>InvestigateItem</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>PostAdjustment</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>PostTransfer</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_sys" name="Platform / System">
+        <bpmn:flowNodeRef>Start</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>RecomputeAvailable</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GwReorderTrigger</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>SurfaceWorklist</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>PrefillRequisition</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>PostReceipt</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>IncrementStock</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GwClearWorklist</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>NoAction</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>End</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_rcv" name="Receiving / Warehouse">
+        <bpmn:flowNodeRef>RaiseGrn</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+
+    <bpmn:startEvent id="Start" name="Stock movement posts">
+      <bpmn:documentation>Trigger: every RECEIPT, ISSUE, ADJUSTMENT, or TRANSFER StockMovement that changes stockOnHand for an item-warehouse pair. [SCOR P3 | S2.6 | OE4 | build-new; axiom A21]</bpmn:documentation>
+      <bpmn:outgoing>f1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="RecomputeAvailable" name="Recompute available = stockOnHand - allocated">
+      <bpmn:documentation>The platform recomputes available for the affected item-warehouse pair and updates lastMovementAt. [SCOR S2.6 | OE4 | build-new]</bpmn:documentation>
+      <bpmn:incoming>f1</bpmn:incoming>
+      <bpmn:incoming>f_adj</bpmn:incoming>
+      <bpmn:incoming>f_xfer</bpmn:incoming>
+      <bpmn:outgoing>f2</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="GwReorderTrigger" name="available &lt;= reorderPoint AND no open requisition?">
+      <bpmn:documentation>Expression: Inventory.available &lt;= Item.reorderPoint AND NOT EXISTS (open requisition for this itemId, status NOT IN {COMPLETED, CANCELLED}). True -&gt; surface on the reorder worklist. False -&gt; no action (above reorder point, or an open requisition already covers it). [SCOR P3 Plan Source | ISO 8.4 | build-new; axiom A21]</bpmn:documentation>
+      <bpmn:incoming>f2</bpmn:incoming>
+      <bpmn:outgoing>f3</bpmn:outgoing>
+      <bpmn:outgoing>f3b</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="NoAction" name="No action (above reorder point or open req exists)">
+      <bpmn:documentation>available &gt; reorderPoint OR an open requisition exists for the item; the platform takes no action and the item does not surface. [SCOR P3 | build-new]</bpmn:documentation>
+      <bpmn:incoming>f3b</bpmn:incoming>
+      <bpmn:outgoing>f3c</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="SurfaceWorklist" name="Surface item on reorder worklist (with suggestedQty)">
+      <bpmn:documentation>The worklist entry (system-computed, not stored) carries: item code/description, warehouseCode, stockOnHand, allocated, available, reorderPoint, safetyStock, minStock, maxStock, suggestedQty (= maxStock - available, floored at 0), primary supplier (Item.standardSupplierId), lead time, last purchase price. [SCOR P3 | OE4 | build-new]</bpmn:documentation>
+      <bpmn:incoming>f3</bpmn:incoming>
+      <bpmn:outgoing>f4</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="ReviewWorklist" name="Review reorder worklist (prioritized by urgency)">
+      <bpmn:documentation>Inventory Manager opens the worklist, sorted by urgency: available &lt; minStock first, then &lt;= safetyStock, then other at-or-below-reorderPoint items. Reviews the context panel per item. [SCOR P3 | OE5 | build-new; axiom A21 human-in-the-loop]</bpmn:documentation>
+      <bpmn:incoming>f4</bpmn:incoming>
+      <bpmn:outgoing>f5</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="GwManagerDecision" name="Manager decision on worklist item">
+      <bpmn:documentation>action = RAISE_REQUISITION -&gt; pre-fill and open a draft requisition; action = DEFER -&gt; snooze with mandatory reason and reminder date (stays on list, deferred section); action = INVESTIGATE -&gt; flag the balance for review, suppress the trigger temporarily. [SCOR P3 | OE5 | build-new]</bpmn:documentation>
+      <bpmn:incoming>f5</bpmn:incoming>
+      <bpmn:outgoing>f6</bpmn:outgoing>
+      <bpmn:outgoing>f6d</bpmn:outgoing>
+      <bpmn:outgoing>f6i</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="DeferItem" name="Defer (snooze with reason and reminder date)">
+      <bpmn:documentation>The Manager snoozes the item with a mandatory reason and a reminder date; the item stays on the list in a deferred section. [SCOR P3 | OE5 | build-new]</bpmn:documentation>
+      <bpmn:incoming>f6d</bpmn:incoming>
+      <bpmn:outgoing>f6d2</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="InvestigateItem" name="Flag for investigation (suppress trigger)">
+      <bpmn:documentation>The Manager flags a suspected data error (e.g. an allocation or count problem); the trigger is suppressed temporarily pending review. [SCOR P3 | OE5 | build-new]</bpmn:documentation>
+      <bpmn:incoming>f6i</bpmn:incoming>
+      <bpmn:outgoing>f6i2</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="PrefillRequisition" name="Pre-fill draft replenishment requisition">
+      <bpmn:documentation>System creates a draft requisition: requester = Inventory Manager, department = warehouse owning department, category = Items, purchaseType derived from the item's standard supplier (Import if foreign, Local if domestic), priority = Within2Days, currency = base, one line (itemId, quantity = suggestedQty editable, unitOfMeasure = Item.purchaseUom, needDate = today + lead time). reorderOrigin = true. [SCOR P3 -&gt; O2 | S1.1 | ISO 8.4 | build-new; axiom A21]</bpmn:documentation>
+      <bpmn:incoming>f6</bpmn:incoming>
+      <bpmn:outgoing>f7</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="RaiseRequisition" name="Raise replenishment requisition (one-click)">
+      <bpmn:documentation>The Manager clicks Raise Requisition on a worklist item, creating the pre-filled draft. [SCOR P3 -&gt; O2 | S1.1 | ISO 8.4 | build-new; axiom A21]</bpmn:documentation>
+      <bpmn:incoming>f7</bpmn:incoming>
+      <bpmn:outgoing>f8</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="ReviewDraft" name="Review and adjust the draft requisition">
+      <bpmn:documentation>The Manager reviews the pre-filled draft, adjusts quantity if the suggested amount is wrong (e.g. in-transit stock), sets the need date, adds a line note, confirms the cost center. Identifier auto-assigned and immutable from first save. [SCOR S1.1 | O2 | ISO 7.5 | build-new]</bpmn:documentation>
+      <bpmn:incoming>f8</bpmn:incoming>
+      <bpmn:outgoing>f9</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="SubmitRequisition" name="Submit requisition (joins standard flow)">
+      <bpmn:documentation>The Manager submits; the INITIATION mandatory-field gate and soft budget check run; the requisition enters the standard approval chain (Diagram 03). The worklist entry is marked requisition-raised and the de-duplicate guard activates. [SCOR O2 | S1.1 | OE2 | ISO 8.4 | build-new]</bpmn:documentation>
+      <bpmn:incoming>f9</bpmn:incoming>
+      <bpmn:outgoing>f10</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="RaiseGrn" name="Raise GRN on physical receipt (Diagram 08)">
+      <bpmn:documentation>After the standard approval/sourcing/PO flow (Diagrams 02-05) and delivery, Receiving raises the GRN. GRN finalization triggers the RECEIPT movement automatically. [SCOR S2.4/S2.6 | ISO 8.6 | build-new; axiom A21]</bpmn:documentation>
+      <bpmn:incoming>f10</bpmn:incoming>
+      <bpmn:outgoing>f11</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="PostReceipt" name="Post RECEIPT movement on GRN finalization">
+      <bpmn:documentation>On GRN finalization the platform posts a RECEIPT StockMovement (type RECEIPT, itemId, warehouseCode, quantity = GRN quantity, reference = grnId). Posted by the platform, not a manual Inventory Manager action. [SCOR S2.4/S2.6 | ISO 8.6 | build-new; axiom A21]</bpmn:documentation>
+      <bpmn:incoming>f11</bpmn:incoming>
+      <bpmn:outgoing>f12</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="IncrementStock" name="Increment stockOnHand; recompute available">
+      <bpmn:documentation>stockOnHand += RECEIPT.quantity; recompute available; set lastMovementAt. [SCOR S2.6 | P3 | OE4 | build-new; axiom A21]</bpmn:documentation>
+      <bpmn:incoming>f12</bpmn:incoming>
+      <bpmn:outgoing>f13</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="GwClearWorklist" name="available &gt; reorderPoint now?">
+      <bpmn:documentation>If available now exceeds reorderPoint, clear the worklist entry; the replenishment cycle is complete. Otherwise the item remains on the worklist. [SCOR S2.6 | P3 | OE4 | build-new; axiom A21]</bpmn:documentation>
+      <bpmn:incoming>f13</bpmn:incoming>
+      <bpmn:outgoing>f14</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+
+    <bpmn:userTask id="PostAdjustment" name="Post ADJUSTMENT movement (note required)">
+      <bpmn:documentation>Sub-flow: on a physical-count variance, damage write-off, or correction, the Manager posts an ADJUSTMENT (type, quantity, direction add/subtract, itemId, warehouseCode, mandatory note, reference). The platform updates stockOnHand, recomputes available, and re-evaluates the reorder trigger. [SCOR P3 | OE4 | ISO 7.5 | build-new]</bpmn:documentation>
+      <bpmn:outgoing>f_adj</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="PostTransfer" name="Post inter-warehouse TRANSFER (debit + credit)">
+      <bpmn:documentation>Sub-flow: to move stock between warehouses, the Manager creates a TRANSFER (source, destination, itemId, quantity). The platform posts a TRANSFER debit on the source and a credit on the destination sharing a movementOrderId; source available reduces on debit. [SCOR S2.6 | P3 | OE4 | build-new]</bpmn:documentation>
+      <bpmn:outgoing>f_xfer</bpmn:outgoing>
+    </bpmn:userTask>
+
+    <bpmn:endEvent id="End" name="Replenishment cycle complete / no action">
+      <bpmn:documentation>The worklist entry clears (available &gt; reorderPoint) and the StockMovement ledger provides a full audit trail from demand trigger through receipt; or the trigger took no action. [SCOR S2.6 | P3 | OE4 | build-new]</bpmn:documentation>
+      <bpmn:incoming>f14</bpmn:incoming>
+      <bpmn:incoming>f3c</bpmn:incoming>
+      <bpmn:incoming>f6d2</bpmn:incoming>
+      <bpmn:incoming>f6i2</bpmn:incoming>
+    </bpmn:endEvent>
+
+    <bpmn:sequenceFlow id="f1" sourceRef="Start" targetRef="RecomputeAvailable" />
+    <bpmn:sequenceFlow id="f2" sourceRef="RecomputeAvailable" targetRef="GwReorderTrigger" />
+    <bpmn:sequenceFlow id="f3" name="available &lt;= reorderPoint AND no open requisition" sourceRef="GwReorderTrigger" targetRef="SurfaceWorklist" />
+    <bpmn:sequenceFlow id="f3b" name="available &gt; reorderPoint OR open requisition exists" sourceRef="GwReorderTrigger" targetRef="NoAction" />
+    <bpmn:sequenceFlow id="f3c" sourceRef="NoAction" targetRef="End" />
+    <bpmn:sequenceFlow id="f4" sourceRef="SurfaceWorklist" targetRef="ReviewWorklist" />
+    <bpmn:sequenceFlow id="f5" sourceRef="ReviewWorklist" targetRef="GwManagerDecision" />
+    <bpmn:sequenceFlow id="f6" name="action == RAISE_REQUISITION" sourceRef="GwManagerDecision" targetRef="PrefillRequisition" />
+    <bpmn:sequenceFlow id="f6d" name="action == DEFER" sourceRef="GwManagerDecision" targetRef="DeferItem" />
+    <bpmn:sequenceFlow id="f6i" name="action == INVESTIGATE" sourceRef="GwManagerDecision" targetRef="InvestigateItem" />
+    <bpmn:sequenceFlow id="f6d2" sourceRef="DeferItem" targetRef="End" />
+    <bpmn:sequenceFlow id="f6i2" sourceRef="InvestigateItem" targetRef="End" />
+    <bpmn:sequenceFlow id="f7" sourceRef="PrefillRequisition" targetRef="RaiseRequisition" />
+    <bpmn:sequenceFlow id="f8" sourceRef="RaiseRequisition" targetRef="ReviewDraft" />
+    <bpmn:sequenceFlow id="f9" sourceRef="ReviewDraft" targetRef="SubmitRequisition" />
+    <bpmn:sequenceFlow id="f10" name="standard approval -&gt; sourcing -&gt; PO -&gt; delivery (02-05, 08)" sourceRef="SubmitRequisition" targetRef="RaiseGrn" />
+    <bpmn:sequenceFlow id="f11" sourceRef="RaiseGrn" targetRef="PostReceipt" />
+    <bpmn:sequenceFlow id="f12" sourceRef="PostReceipt" targetRef="IncrementStock" />
+    <bpmn:sequenceFlow id="f13" sourceRef="IncrementStock" targetRef="GwClearWorklist" />
+    <bpmn:sequenceFlow id="f14" name="available &gt; reorderPoint -&gt; clear worklist" sourceRef="GwClearWorklist" targetRef="End" />
+    <bpmn:sequenceFlow id="f_adj" name="re-evaluate reorder trigger" sourceRef="PostAdjustment" targetRef="RecomputeAvailable" />
+    <bpmn:sequenceFlow id="f_xfer" name="re-evaluate reorder trigger" sourceRef="PostTransfer" targetRef="RecomputeAvailable" />
+  </bpmn:process>
+</bpmn:definitions>

@@ -1,0 +1,15 @@
+{
+  "entity": "ItemSourcePriority",
+  "description": "An ordered sourcing-preference entry for an item: which source type (manufactured, purchased, subcontracted, stock-transfer) to use and at what priority rank. An item has one or more entries; the set is replaced wholesale on item update. Each entry is unique within the item by priority and by source type. Drives the sourcing decision (make-vs-buy-vs-subcontract-vs-transfer) when demand for the item arises.",
+  "primaryDomain": "07-item-onboarding",
+  "lifecycleEnum": null,
+  "fields": [
+    {"name": "itemId", "label": "Item", "dataType": "reference", "cardinality": "one", "mandatory": "yes", "mandatoryCondition": null, "default": "from parent", "enumDomain": null, "enumValues": null, "referenceTarget": "Item.code", "validation": "set from the parent item; entry belongs to exactly one item; the source-priority set is replaced wholesale (not merged) on item update", "computedFormula": null, "computedVsEntered": "auto", "isAuto": true, "owningRole": "Platform/System", "purpose": "Binds the sourcing-preference entry to its item so the make-vs-buy ranking resolves per item; replace-on-update keeps the ranking set internally consistent (no orphaned or duplicate ranks after an edit).", "source": "RA", "scorIso": "OE4"},
+    {"name": "priority", "label": "Priority", "dataType": "integer", "cardinality": "one", "mandatory": "yes", "mandatoryCondition": null, "default": null, "enumDomain": null, "enumValues": null, "referenceTarget": null, "validation": "integer rank (lower = preferred); unique within the item: unique (itemId, priority)", "computedFormula": null, "computedVsEntered": "entered", "isAuto": false, "owningRole": "Buyer", "purpose": "The rank that orders the source types for the item so sourcing tries the most-preferred source first and falls back in order; uniqueness per item guarantees an unambiguous ranking.", "source": "RA", "scorIso": "OE4"},
+    {"name": "sourceType", "label": "Source Type", "dataType": "enum", "cardinality": "one", "mandatory": "yes", "mandatoryCondition": null, "default": null, "enumDomain": "ItemSourceType", "enumValues": null, "referenceTarget": null, "validation": "one of the enum (MANUFACTURED | PURCHASED | SUBCONTRACTED | STOCK_TRANSFER); unique within the item: unique (itemId, sourceType)", "computedFormula": null, "computedVsEntered": "entered", "isAuto": false, "owningRole": "Buyer", "purpose": "Names how the item is sourced at this rank (make in-house, buy from a supplier, subcontract, or transfer from another stock location); the controlled value that the sourcing engine acts on; uniqueness per item prevents listing the same source type twice.", "source": "RA", "scorIso": "OE4"}
+  ],
+  "relationships": [
+    {"name": "belongsTo", "type": "N:1", "target": "Item", "fk": "itemId"}
+  ],
+  "invariants": ["unique (itemId, priority) and unique (itemId, sourceType)", "A10 the source-priority set is replaced wholesale on item update (which reverts the item to PENDING_APPROVAL)", "A13 audit (category ADMIN) + SSE on every change"]
+}

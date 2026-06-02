@@ -1,0 +1,6302 @@
+[
+  {
+    "id": "ITM-0001",
+    "code": "CP/RM/API",
+    "runningNumber": "000001",
+    "description": "Lactose Active Pharmaceutical Ingredient",
+    "shortDescription": "Lactose Active Pharmaceutical Ingredient",
+    "type": "RAWMATERIAL",
+    "status": "ONBOARDED",
+    "department": "CP",
+    "segment": "RM",
+    "subSegment": "RM-API",
+    "stockUom": "KG",
+    "purchaseUom": "DRUM",
+    "salesUom": "KG",
+    "standardSupplierId": "SUP-0001",
+    "standardSupplierCode": "S/00001",
+    "hsnCode": "29420090",
+    "regulatedItem": true,
+    "standardCost": 317.13,
+    "lastPurchasePrice": 363.662,
+    "leadTimeDays": 75,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "RM - Raw Material"
+  },
+  {
+    "id": "ITM-0002",
+    "code": "CP/RM/API",
+    "runningNumber": "000002",
+    "description": "Sorbitol Active Pharmaceutical Ingredient",
+    "shortDescription": "Sorbitol Active Pharmaceutical Ingredien",
+    "type": "RAWMATERIAL",
+    "status": "ONBOARDED",
+    "department": "CP",
+    "segment": "RM",
+    "subSegment": "RM-API",
+    "stockUom": "KG",
+    "purchaseUom": "DRUM",
+    "salesUom": "KG",
+    "standardSupplierId": "SUP-0001",
+    "standardSupplierCode": "S/00001",
+    "hsnCode": "29420090",
+    "regulatedItem": true,
+    "standardCost": 134.248,
+    "lastPurchasePrice": 123.021,
+    "leadTimeDays": 80,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "RM - Raw Material"
+  },
+  {
+    "id": "ITM-0003",
+    "code": "CP/RM/API",
+    "runningNumber": "000003",
+    "description": "Camphor Active Pharmaceutical Ingredient",
+    "shortDescription": "Camphor Active Pharmaceutical Ingredient",
+    "type": "RAWMATERIAL",
+    "status": "ONBOARDED",
+    "department": "CP",
+    "segment": "RM",
+    "subSegment": "RM-API",
+    "stockUom": "KG",
+    "purchaseUom": "DRUM",
+    "salesUom": "KG",
+    "standardSupplierId": "SUP-0003",
+    "standardSupplierCode": "S/00003",
+    "hsnCode": "29420090",
+    "regulatedItem": true,
+    "standardCost": 298.764,
+    "lastPurchasePrice": 339.639,
+    "leadTimeDays": 74,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": false,
+    "itemAccountGroup": "RM - Raw Material"
+  },
+  {
+    "id": "ITM-0004",
+    "code": "CP/RM/API",
+    "runningNumber": "000004",
+    "description": "Omega-3 Active Pharmaceutical Ingredient",
+    "shortDescription": "Omega-3 Active Pharmaceutical Ingredient",
+    "type": "RAWMATERIAL",
+    "status": "ONBOARDED",
+    "department": "CP",
+    "segment": "RM",
+    "subSegment": "RM-API",
+    "stockUom": "KG",
+    "purchaseUom": "DRUM",
+    "salesUom": "KG",
+    "standardSupplierId": "SUP-0001",
+    "standardSupplierCode": "S/00001",
+    "hsnCode": "29420090",
+    "regulatedItem": true,
+    "standardCost": 241.028,
+    "lastPurchasePrice": 252.921,
+    "leadTimeDays": 73,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "RM - Raw Material"
+  },
+  {
+    "id": "ITM-0005",
+    "code": "CP/RM/API",
+    "runningNumber": "000005",
+    "description": "Lactose Active Pharmaceutical Ingredient",
+    "shortDescription": "Lactose Active Pharmaceutical Ingredient",
+    "type": "RAWMATERIAL",
+    "status": "ONBOARDED",
+    "department": "CP",
+    "segment": "RM",
+    "subSegment": "RM-API",
+    "stockUom": "KG",
+    "purchaseUom": "DRUM",
+    "salesUom": "KG",
+    "standardSupplierId": "SUP-0002",
+    "standardSupplierCode": "S/00002",
+    "hsnCode": "29420090",
+    "regulatedItem": true,
+    "standardCost": 256.894,
+    "lastPurchasePrice": 265.51,
+    "leadTimeDays": 73,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "RM - Raw Material"
+  },
+  {
+    "id": "ITM-0006",
+    "code": "CP/RM/API",
+    "runningNumber": "000006",
+    "description": "Cellulose Active Pharmaceutical Ingredient",
+    "shortDescription": "Cellulose Active Pharmaceutical Ingredie",
+    "type": "RAWMATERIAL",
+    "status": "ONBOARDED",
+    "department": "CP",
+    "segment": "RM",
+    "subSegment": "RM-API",
+    "stockUom": "KG",
+    "purchaseUom": "DRUM",
+    "salesUom": "KG",
+    "standardSupplierId": "SUP-0001",
+    "standardSupplierCode": "S/00001",
+    "hsnCode": "29420090",
+    "regulatedItem": true,
+    "standardCost": 144.687,
+    "lastPurchasePrice": 145.102,
+    "leadTimeDays": 75,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": false,
+    "itemAccountGroup": "RM - Raw Material"
+  },
+  {
+    "id": "ITM-0007",
+    "code": "CP/RM/API",
+    "runningNumber": "000007",
+    "description": "Vitamin D3 D3 Active Pharmaceutical Ingredient",
+    "shortDescription": "Vitamin D3 Active Pharmaceutical Ingredi",
+    "type": "RAWMATERIAL",
+    "status": "ONBOARDED",
+    "department": "CP",
+    "segment": "RM",
+    "subSegment": "RM-API",
+    "stockUom": "KG",
+    "purchaseUom": "DRUM",
+    "salesUom": "KG",
+    "standardSupplierId": "SUP-0002",
+    "standardSupplierCode": "S/00002",
+    "hsnCode": "29420090",
+    "regulatedItem": true,
+    "standardCost": 147.122,
+    "lastPurchasePrice": 135.965,
+    "leadTimeDays": 80,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "RM - Raw Material"
+  },
+  {
+    "id": "ITM-0008",
+    "code": "CP/RM/API",
+    "runningNumber": "000008",
+    "description": "Zinc Active Pharmaceutical Ingredient",
+    "shortDescription": "Zinc Active Pharmaceutical Ingredient",
+    "type": "RAWMATERIAL",
+    "status": "ONBOARDED",
+    "department": "CP",
+    "segment": "RM",
+    "subSegment": "RM-API",
+    "stockUom": "KG",
+    "purchaseUom": "DRUM",
+    "salesUom": "KG",
+    "standardSupplierId": "SUP-0003",
+    "standardSupplierCode": "S/00003",
+    "hsnCode": "29420090",
+    "regulatedItem": true,
+    "standardCost": 117.692,
+    "lastPurchasePrice": 116.763,
+    "leadTimeDays": 80,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "RM - Raw Material"
+  },
+  {
+    "id": "ITM-0009",
+    "code": "CP/RM/API",
+    "runningNumber": "000009",
+    "description": "Vitamin C C Active Pharmaceutical Ingredient",
+    "shortDescription": "Vitamin C Active Pharmaceutical Ingredie",
+    "type": "RAWMATERIAL",
+    "status": "ONBOARDED",
+    "department": "CP",
+    "segment": "RM",
+    "subSegment": "RM-API",
+    "stockUom": "KG",
+    "purchaseUom": "DRUM",
+    "salesUom": "KG",
+    "standardSupplierId": "SUP-0001",
+    "standardSupplierCode": "S/00001",
+    "hsnCode": "29420090",
+    "regulatedItem": true,
+    "standardCost": 195.788,
+    "lastPurchasePrice": 190.858,
+    "leadTimeDays": 80,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "RM - Raw Material"
+  },
+  {
+    "id": "ITM-0010",
+    "code": "CP/RM/API",
+    "runningNumber": "000010",
+    "description": "Collagen Active Pharmaceutical Ingredient",
+    "shortDescription": "Collagen Active Pharmaceutical Ingredien",
+    "type": "RAWMATERIAL",
+    "status": "ONBOARDED",
+    "department": "CP",
+    "segment": "RM",
+    "subSegment": "RM-API",
+    "stockUom": "KG",
+    "purchaseUom": "DRUM",
+    "salesUom": "KG",
+    "standardSupplierId": "SUP-0002",
+    "standardSupplierCode": "S/00002",
+    "hsnCode": "29420090",
+    "regulatedItem": true,
+    "standardCost": 215.443,
+    "lastPurchasePrice": 198.669,
+    "leadTimeDays": 72,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "RM - Raw Material"
+  },
+  {
+    "id": "ITM-0011",
+    "code": "CP/RM/API",
+    "runningNumber": "000011",
+    "description": "Benzoyl Active Pharmaceutical Ingredient",
+    "shortDescription": "Benzoyl Active Pharmaceutical Ingredient",
+    "type": "RAWMATERIAL",
+    "status": "ONBOARDED",
+    "department": "CP",
+    "segment": "RM",
+    "subSegment": "RM-API",
+    "stockUom": "KG",
+    "purchaseUom": "DRUM",
+    "salesUom": "KG",
+    "standardSupplierId": "SUP-0002",
+    "standardSupplierCode": "S/00002",
+    "hsnCode": "29420090",
+    "regulatedItem": true,
+    "standardCost": 266.792,
+    "lastPurchasePrice": 303.965,
+    "leadTimeDays": 78,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "RM - Raw Material"
+  },
+  {
+    "id": "ITM-0012",
+    "code": "CP/RM/API",
+    "runningNumber": "000012",
+    "description": "Cetirizine Active Pharmaceutical Ingredient",
+    "shortDescription": "Cetirizine Active Pharmaceutical Ingredi",
+    "type": "RAWMATERIAL",
+    "status": "ONBOARDED",
+    "department": "CP",
+    "segment": "RM",
+    "subSegment": "RM-API",
+    "stockUom": "KG",
+    "purchaseUom": "DRUM",
+    "salesUom": "KG",
+    "standardSupplierId": "SUP-0002",
+    "standardSupplierCode": "S/00002",
+    "hsnCode": "29420090",
+    "regulatedItem": true,
+    "standardCost": 300.221,
+    "lastPurchasePrice": 330.905,
+    "leadTimeDays": 72,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "RM - Raw Material"
+  },
+  {
+    "id": "ITM-0013",
+    "code": "CP/RM/API",
+    "runningNumber": "000013",
+    "description": "Salicylic Active Pharmaceutical Ingredient",
+    "shortDescription": "Salicylic Active Pharmaceutical Ingredie",
+    "type": "RAWMATERIAL",
+    "status": "ONBOARDED",
+    "department": "CP",
+    "segment": "RM",
+    "subSegment": "RM-API",
+    "stockUom": "KG",
+    "purchaseUom": "DRUM",
+    "salesUom": "KG",
+    "standardSupplierId": "SUP-0001",
+    "standardSupplierCode": "S/00001",
+    "hsnCode": "29420090",
+    "regulatedItem": true,
+    "standardCost": 215.151,
+    "lastPurchasePrice": 233.102,
+    "leadTimeDays": 80,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "RM - Raw Material"
+  },
+  {
+    "id": "ITM-0014",
+    "code": "CP/RM/API",
+    "runningNumber": "000014",
+    "description": "Potassium Active Pharmaceutical Ingredient",
+    "shortDescription": "Potassium Active Pharmaceutical Ingredie",
+    "type": "RAWMATERIAL",
+    "status": "ONBOARDED",
+    "department": "CP",
+    "segment": "RM",
+    "subSegment": "RM-API",
+    "stockUom": "KG",
+    "purchaseUom": "DRUM",
+    "salesUom": "KG",
+    "standardSupplierId": "SUP-0003",
+    "standardSupplierCode": "S/00003",
+    "hsnCode": "29420090",
+    "regulatedItem": true,
+    "standardCost": 256.229,
+    "lastPurchasePrice": 281.955,
+    "leadTimeDays": 78,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "RM - Raw Material"
+  },
+  {
+    "id": "ITM-0015",
+    "code": "CP/RM/API",
+    "runningNumber": "000015",
+    "description": "Loratadine Active Pharmaceutical Ingredient",
+    "shortDescription": "Loratadine Active Pharmaceutical Ingredi",
+    "type": "RAWMATERIAL",
+    "status": "ONBOARDED",
+    "department": "CP",
+    "segment": "RM",
+    "subSegment": "RM-API",
+    "stockUom": "KG",
+    "purchaseUom": "DRUM",
+    "salesUom": "KG",
+    "standardSupplierId": "SUP-0003",
+    "standardSupplierCode": "S/00003",
+    "hsnCode": "29420090",
+    "regulatedItem": true,
+    "standardCost": 165.052,
+    "lastPurchasePrice": 175.492,
+    "leadTimeDays": 72,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "RM - Raw Material"
+  },
+  {
+    "id": "ITM-0016",
+    "code": "CP/RM/API",
+    "runningNumber": "000016",
+    "description": "Aloe Active Pharmaceutical Ingredient",
+    "shortDescription": "Aloe Active Pharmaceutical Ingredient",
+    "type": "RAWMATERIAL",
+    "status": "ONBOARDED",
+    "department": "CP",
+    "segment": "RM",
+    "subSegment": "RM-API",
+    "stockUom": "KG",
+    "purchaseUom": "DRUM",
+    "salesUom": "KG",
+    "standardSupplierId": "SUP-0002",
+    "standardSupplierCode": "S/00002",
+    "hsnCode": "29420090",
+    "regulatedItem": true,
+    "standardCost": 279.324,
+    "lastPurchasePrice": 272.077,
+    "leadTimeDays": 80,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "RM - Raw Material"
+  },
+  {
+    "id": "ITM-0017",
+    "code": "CP/RM/API",
+    "runningNumber": "000017",
+    "description": "Paracetamol Active Pharmaceutical Ingredient",
+    "shortDescription": "Paracetamol Active Pharmaceutical Ingred",
+    "type": "RAWMATERIAL",
+    "status": "ONBOARDED",
+    "department": "CP",
+    "segment": "RM",
+    "subSegment": "RM-API",
+    "stockUom": "KG",
+    "purchaseUom": "DRUM",
+    "salesUom": "KG",
+    "standardSupplierId": "SUP-0003",
+    "standardSupplierCode": "S/00003",
+    "hsnCode": "29420090",
+    "regulatedItem": true,
+    "standardCost": 276.375,
+    "lastPurchasePrice": 294.95,
+    "leadTimeDays": 75,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": false,
+    "itemAccountGroup": "RM - Raw Material"
+  },
+  {
+    "id": "ITM-0018",
+    "code": "CP/RM/API",
+    "runningNumber": "000018",
+    "description": "Sorbitol Active Pharmaceutical Ingredient",
+    "shortDescription": "Sorbitol Active Pharmaceutical Ingredien",
+    "type": "RAWMATERIAL",
+    "status": "ONBOARDED",
+    "department": "CP",
+    "segment": "RM",
+    "subSegment": "RM-API",
+    "stockUom": "KG",
+    "purchaseUom": "DRUM",
+    "salesUom": "KG",
+    "standardSupplierId": "SUP-0002",
+    "standardSupplierCode": "S/00002",
+    "hsnCode": "29420090",
+    "regulatedItem": true,
+    "standardCost": 197.622,
+    "lastPurchasePrice": 195.243,
+    "leadTimeDays": 76,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": false,
+    "itemAccountGroup": "RM - Raw Material"
+  },
+  {
+    "id": "ITM-0019",
+    "code": "CP/RM/API",
+    "runningNumber": "000019",
+    "description": "Aloe Active Pharmaceutical Ingredient",
+    "shortDescription": "Aloe Active Pharmaceutical Ingredient",
+    "type": "RAWMATERIAL",
+    "status": "ONBOARDED",
+    "department": "CP",
+    "segment": "RM",
+    "subSegment": "RM-API",
+    "stockUom": "KG",
+    "purchaseUom": "DRUM",
+    "salesUom": "KG",
+    "standardSupplierId": "SUP-0003",
+    "standardSupplierCode": "S/00003",
+    "hsnCode": "29420090",
+    "regulatedItem": true,
+    "standardCost": 283.048,
+    "lastPurchasePrice": 269.718,
+    "leadTimeDays": 74,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "RM - Raw Material"
+  },
+  {
+    "id": "ITM-0020",
+    "code": "CP/RM/API",
+    "runningNumber": "000020",
+    "description": "Zinc Active Pharmaceutical Ingredient",
+    "shortDescription": "Zinc Active Pharmaceutical Ingredient",
+    "type": "RAWMATERIAL",
+    "status": "ONBOARDED",
+    "department": "CP",
+    "segment": "RM",
+    "subSegment": "RM-API",
+    "stockUom": "KG",
+    "purchaseUom": "DRUM",
+    "salesUom": "KG",
+    "standardSupplierId": "SUP-0002",
+    "standardSupplierCode": "S/00002",
+    "hsnCode": "29420090",
+    "regulatedItem": true,
+    "standardCost": 146.426,
+    "lastPurchasePrice": 143.896,
+    "leadTimeDays": 79,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": false,
+    "itemAccountGroup": "RM - Raw Material"
+  },
+  {
+    "id": "ITM-0021",
+    "code": "CP/RM/API",
+    "runningNumber": "000021",
+    "description": "Probiotic Active Pharmaceutical Ingredient",
+    "shortDescription": "Probiotic Active Pharmaceutical Ingredie",
+    "type": "RAWMATERIAL",
+    "status": "ONBOARDED",
+    "department": "CP",
+    "segment": "RM",
+    "subSegment": "RM-API",
+    "stockUom": "KG",
+    "purchaseUom": "DRUM",
+    "salesUom": "KG",
+    "standardSupplierId": "SUP-0001",
+    "standardSupplierCode": "S/00001",
+    "hsnCode": "29420090",
+    "regulatedItem": true,
+    "standardCost": 248.345,
+    "lastPurchasePrice": 226.659,
+    "leadTimeDays": 72,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "RM - Raw Material"
+  },
+  {
+    "id": "ITM-0022",
+    "code": "CP/RM/API",
+    "runningNumber": "000022",
+    "description": "Cellulose Active Pharmaceutical Ingredient",
+    "shortDescription": "Cellulose Active Pharmaceutical Ingredie",
+    "type": "RAWMATERIAL",
+    "status": "ONBOARDED",
+    "department": "CP",
+    "segment": "RM",
+    "subSegment": "RM-API",
+    "stockUom": "KG",
+    "purchaseUom": "DRUM",
+    "salesUom": "KG",
+    "standardSupplierId": "SUP-0003",
+    "standardSupplierCode": "S/00003",
+    "hsnCode": "29420090",
+    "regulatedItem": true,
+    "standardCost": 322.79,
+    "lastPurchasePrice": 368.357,
+    "leadTimeDays": 74,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "RM - Raw Material"
+  },
+  {
+    "id": "ITM-0023",
+    "code": "CP/RM/EXC",
+    "runningNumber": "000023",
+    "description": "Lactose Excipient Grade",
+    "shortDescription": "Lactose Excipient Grade",
+    "type": "RAWMATERIAL",
+    "status": "ONBOARDED",
+    "department": "CP",
+    "segment": "RM",
+    "subSegment": "RM-EXC",
+    "stockUom": "KG",
+    "purchaseUom": "BAG",
+    "salesUom": "KG",
+    "standardSupplierId": "SUP-0004",
+    "standardSupplierCode": "S/00004",
+    "hsnCode": "38220090",
+    "regulatedItem": true,
+    "standardCost": 17.109,
+    "lastPurchasePrice": 18.864,
+    "leadTimeDays": 33,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "RM - Raw Material"
+  },
+  {
+    "id": "ITM-0024",
+    "code": "CP/RM/EXC",
+    "runningNumber": "000024",
+    "description": "Paracetamol Excipient Grade",
+    "shortDescription": "Paracetamol Excipient Grade",
+    "type": "RAWMATERIAL",
+    "status": "ONBOARDED",
+    "department": "CP",
+    "segment": "RM",
+    "subSegment": "RM-EXC",
+    "stockUom": "KG",
+    "purchaseUom": "BAG",
+    "salesUom": "KG",
+    "standardSupplierId": "SUP-0004",
+    "standardSupplierCode": "S/00004",
+    "hsnCode": "38220090",
+    "regulatedItem": true,
+    "standardCost": 8.42,
+    "lastPurchasePrice": 8.072,
+    "leadTimeDays": 35,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": false,
+    "itemAccountGroup": "RM - Raw Material"
+  },
+  {
+    "id": "ITM-0025",
+    "code": "CP/RM/EXC",
+    "runningNumber": "000025",
+    "description": "Vitamin D3 D3 Excipient Grade",
+    "shortDescription": "Vitamin D3 Excipient Grade",
+    "type": "RAWMATERIAL",
+    "status": "ONBOARDED",
+    "department": "CP",
+    "segment": "RM",
+    "subSegment": "RM-EXC",
+    "stockUom": "KG",
+    "purchaseUom": "BAG",
+    "salesUom": "KG",
+    "standardSupplierId": "SUP-0004",
+    "standardSupplierCode": "S/00004",
+    "hsnCode": "38220090",
+    "regulatedItem": true,
+    "standardCost": 8.897,
+    "lastPurchasePrice": 8.688,
+    "leadTimeDays": 33,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "RM - Raw Material"
+  },
+  {
+    "id": "ITM-0026",
+    "code": "CP/RM/EXC",
+    "runningNumber": "000026",
+    "description": "Loratadine Excipient Grade",
+    "shortDescription": "Loratadine Excipient Grade",
+    "type": "RAWMATERIAL",
+    "status": "ONBOARDED",
+    "department": "CP",
+    "segment": "RM",
+    "subSegment": "RM-EXC",
+    "stockUom": "KG",
+    "purchaseUom": "BAG",
+    "salesUom": "KG",
+    "standardSupplierId": "SUP-0004",
+    "standardSupplierCode": "S/00004",
+    "hsnCode": "38220090",
+    "regulatedItem": true,
+    "standardCost": 14.658,
+    "lastPurchasePrice": 14.063,
+    "leadTimeDays": 27,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "RM - Raw Material"
+  },
+  {
+    "id": "ITM-0027",
+    "code": "CP/RM/EXC",
+    "runningNumber": "000027",
+    "description": "Zinc Excipient Grade",
+    "shortDescription": "Zinc Excipient Grade",
+    "type": "RAWMATERIAL",
+    "status": "ONBOARDED",
+    "department": "CP",
+    "segment": "RM",
+    "subSegment": "RM-EXC",
+    "stockUom": "KG",
+    "purchaseUom": "BAG",
+    "salesUom": "KG",
+    "standardSupplierId": "SUP-0004",
+    "standardSupplierCode": "S/00004",
+    "hsnCode": "38220090",
+    "regulatedItem": true,
+    "standardCost": 12.001,
+    "lastPurchasePrice": 12.51,
+    "leadTimeDays": 34,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "RM - Raw Material"
+  },
+  {
+    "id": "ITM-0028",
+    "code": "CP/RM/EXC",
+    "runningNumber": "000028",
+    "description": "Aloe Excipient Grade",
+    "shortDescription": "Aloe Excipient Grade",
+    "type": "RAWMATERIAL",
+    "status": "ONBOARDED",
+    "department": "CP",
+    "segment": "RM",
+    "subSegment": "RM-EXC",
+    "stockUom": "KG",
+    "purchaseUom": "BAG",
+    "salesUom": "KG",
+    "standardSupplierId": "SUP-0004",
+    "standardSupplierCode": "S/00004",
+    "hsnCode": "38220090",
+    "regulatedItem": true,
+    "standardCost": 12.62,
+    "lastPurchasePrice": 13.864,
+    "leadTimeDays": 32,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "RM - Raw Material"
+  },
+  {
+    "id": "ITM-0029",
+    "code": "CP/RM/EXC",
+    "runningNumber": "000029",
+    "description": "Loratadine Excipient Grade",
+    "shortDescription": "Loratadine Excipient Grade",
+    "type": "RAWMATERIAL",
+    "status": "ONBOARDED",
+    "department": "CP",
+    "segment": "RM",
+    "subSegment": "RM-EXC",
+    "stockUom": "KG",
+    "purchaseUom": "BAG",
+    "salesUom": "KG",
+    "standardSupplierId": "SUP-0004",
+    "standardSupplierCode": "S/00004",
+    "hsnCode": "38220090",
+    "regulatedItem": true,
+    "standardCost": 8.799,
+    "lastPurchasePrice": 9.247,
+    "leadTimeDays": 29,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": false,
+    "itemAccountGroup": "RM - Raw Material"
+  },
+  {
+    "id": "ITM-0030",
+    "code": "CP/RM/EXC",
+    "runningNumber": "000030",
+    "description": "Folic Excipient Grade",
+    "shortDescription": "Folic Excipient Grade",
+    "type": "RAWMATERIAL",
+    "status": "ONBOARDED",
+    "department": "CP",
+    "segment": "RM",
+    "subSegment": "RM-EXC",
+    "stockUom": "KG",
+    "purchaseUom": "BAG",
+    "salesUom": "KG",
+    "standardSupplierId": "SUP-0004",
+    "standardSupplierCode": "S/00004",
+    "hsnCode": "38220090",
+    "regulatedItem": true,
+    "standardCost": 17.718,
+    "lastPurchasePrice": 16.45,
+    "leadTimeDays": 27,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": false,
+    "itemAccountGroup": "RM - Raw Material"
+  },
+  {
+    "id": "ITM-0031",
+    "code": "CP/RM/EXC",
+    "runningNumber": "000031",
+    "description": "Vitamin C C Excipient Grade",
+    "shortDescription": "Vitamin C Excipient Grade",
+    "type": "RAWMATERIAL",
+    "status": "ONBOARDED",
+    "department": "CP",
+    "segment": "RM",
+    "subSegment": "RM-EXC",
+    "stockUom": "KG",
+    "purchaseUom": "BAG",
+    "salesUom": "KG",
+    "standardSupplierId": "SUP-0004",
+    "standardSupplierCode": "S/00004",
+    "hsnCode": "38220090",
+    "regulatedItem": true,
+    "standardCost": 17.698,
+    "lastPurchasePrice": 16.293,
+    "leadTimeDays": 35,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "RM - Raw Material"
+  },
+  {
+    "id": "ITM-0032",
+    "code": "CP/RM/EXC",
+    "runningNumber": "000032",
+    "description": "Titanium Dioxide Dioxide Excipient Grade",
+    "shortDescription": "Titanium Dioxide Excipient Grade",
+    "type": "RAWMATERIAL",
+    "status": "ONBOARDED",
+    "department": "CP",
+    "segment": "RM",
+    "subSegment": "RM-EXC",
+    "stockUom": "KG",
+    "purchaseUom": "BAG",
+    "salesUom": "KG",
+    "standardSupplierId": "SUP-0004",
+    "standardSupplierCode": "S/00004",
+    "hsnCode": "38220090",
+    "regulatedItem": true,
+    "standardCost": 15.968,
+    "lastPurchasePrice": 16.695,
+    "leadTimeDays": 35,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": false,
+    "itemAccountGroup": "RM - Raw Material"
+  },
+  {
+    "id": "ITM-0033",
+    "code": "CP/RM/EXC",
+    "runningNumber": "000033",
+    "description": "Lutein Excipient Grade",
+    "shortDescription": "Lutein Excipient Grade",
+    "type": "RAWMATERIAL",
+    "status": "ONBOARDED",
+    "department": "CP",
+    "segment": "RM",
+    "subSegment": "RM-EXC",
+    "stockUom": "KG",
+    "purchaseUom": "BAG",
+    "salesUom": "KG",
+    "standardSupplierId": "SUP-0004",
+    "standardSupplierCode": "S/00004",
+    "hsnCode": "38220090",
+    "regulatedItem": true,
+    "standardCost": 17.085,
+    "lastPurchasePrice": 15.736,
+    "leadTimeDays": 30,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "RM - Raw Material"
+  },
+  {
+    "id": "ITM-0034",
+    "code": "CP/RM/EXC",
+    "runningNumber": "000034",
+    "description": "Biotin Excipient Grade",
+    "shortDescription": "Biotin Excipient Grade",
+    "type": "RAWMATERIAL",
+    "status": "ONBOARDED",
+    "department": "CP",
+    "segment": "RM",
+    "subSegment": "RM-EXC",
+    "stockUom": "KG",
+    "purchaseUom": "BAG",
+    "salesUom": "KG",
+    "standardSupplierId": "SUP-0004",
+    "standardSupplierCode": "S/00004",
+    "hsnCode": "38220090",
+    "regulatedItem": true,
+    "standardCost": 19.031,
+    "lastPurchasePrice": 19.519,
+    "leadTimeDays": 31,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "RM - Raw Material"
+  },
+  {
+    "id": "ITM-0035",
+    "code": "CP/RM/EXC",
+    "runningNumber": "000035",
+    "description": "Vitamin C C Excipient Grade",
+    "shortDescription": "Vitamin C Excipient Grade",
+    "type": "RAWMATERIAL",
+    "status": "ONBOARDED",
+    "department": "CP",
+    "segment": "RM",
+    "subSegment": "RM-EXC",
+    "stockUom": "KG",
+    "purchaseUom": "BAG",
+    "salesUom": "KG",
+    "standardSupplierId": "SUP-0004",
+    "standardSupplierCode": "S/00004",
+    "hsnCode": "38220090",
+    "regulatedItem": true,
+    "standardCost": 16.81,
+    "lastPurchasePrice": 17.035,
+    "leadTimeDays": 35,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": false,
+    "itemAccountGroup": "RM - Raw Material"
+  },
+  {
+    "id": "ITM-0036",
+    "code": "CP/RM/EXC",
+    "runningNumber": "000036",
+    "description": "Collagen Excipient Grade",
+    "shortDescription": "Collagen Excipient Grade",
+    "type": "RAWMATERIAL",
+    "status": "ONBOARDED",
+    "department": "CP",
+    "segment": "RM",
+    "subSegment": "RM-EXC",
+    "stockUom": "KG",
+    "purchaseUom": "BAG",
+    "salesUom": "KG",
+    "standardSupplierId": "SUP-0004",
+    "standardSupplierCode": "S/00004",
+    "hsnCode": "38220090",
+    "regulatedItem": true,
+    "standardCost": 15.718,
+    "lastPurchasePrice": 16.781,
+    "leadTimeDays": 27,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "RM - Raw Material"
+  },
+  {
+    "id": "ITM-0037",
+    "code": "CP/RM/EXC",
+    "runningNumber": "000037",
+    "description": "Folic Excipient Grade",
+    "shortDescription": "Folic Excipient Grade",
+    "type": "RAWMATERIAL",
+    "status": "ONBOARDED",
+    "department": "CP",
+    "segment": "RM",
+    "subSegment": "RM-EXC",
+    "stockUom": "KG",
+    "purchaseUom": "BAG",
+    "salesUom": "KG",
+    "standardSupplierId": "SUP-0004",
+    "standardSupplierCode": "S/00004",
+    "hsnCode": "38220090",
+    "regulatedItem": true,
+    "standardCost": 17.551,
+    "lastPurchasePrice": 16.062,
+    "leadTimeDays": 27,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "RM - Raw Material"
+  },
+  {
+    "id": "ITM-0038",
+    "code": "CP/RM/EXC",
+    "runningNumber": "000038",
+    "description": "Folic Excipient Grade",
+    "shortDescription": "Folic Excipient Grade",
+    "type": "RAWMATERIAL",
+    "status": "ONBOARDED",
+    "department": "CP",
+    "segment": "RM",
+    "subSegment": "RM-EXC",
+    "stockUom": "KG",
+    "purchaseUom": "BAG",
+    "salesUom": "KG",
+    "standardSupplierId": "SUP-0004",
+    "standardSupplierCode": "S/00004",
+    "hsnCode": "38220090",
+    "regulatedItem": true,
+    "standardCost": 15.822,
+    "lastPurchasePrice": 15.416,
+    "leadTimeDays": 34,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": false,
+    "itemAccountGroup": "RM - Raw Material"
+  },
+  {
+    "id": "ITM-0039",
+    "code": "CP/RM/EXC",
+    "runningNumber": "000039",
+    "description": "Collagen Excipient Grade",
+    "shortDescription": "Collagen Excipient Grade",
+    "type": "RAWMATERIAL",
+    "status": "ONBOARDED",
+    "department": "CP",
+    "segment": "RM",
+    "subSegment": "RM-EXC",
+    "stockUom": "KG",
+    "purchaseUom": "BAG",
+    "salesUom": "KG",
+    "standardSupplierId": "SUP-0004",
+    "standardSupplierCode": "S/00004",
+    "hsnCode": "38220090",
+    "regulatedItem": true,
+    "standardCost": 21.406,
+    "lastPurchasePrice": 22.288,
+    "leadTimeDays": 27,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "RM - Raw Material"
+  },
+  {
+    "id": "ITM-0040",
+    "code": "CP/RM/EXC",
+    "runningNumber": "000040",
+    "description": "Vitamin D3 D3 Excipient Grade",
+    "shortDescription": "Vitamin D3 Excipient Grade",
+    "type": "RAWMATERIAL",
+    "status": "ONBOARDED",
+    "department": "CP",
+    "segment": "RM",
+    "subSegment": "RM-EXC",
+    "stockUom": "KG",
+    "purchaseUom": "BAG",
+    "salesUom": "KG",
+    "standardSupplierId": "SUP-0004",
+    "standardSupplierCode": "S/00004",
+    "hsnCode": "38220090",
+    "regulatedItem": true,
+    "standardCost": 17.628,
+    "lastPurchasePrice": 15.903,
+    "leadTimeDays": 28,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "RM - Raw Material"
+  },
+  {
+    "id": "ITM-0041",
+    "code": "CP/RM/SOL",
+    "runningNumber": "000041",
+    "description": "Potassium Pharma Solvent",
+    "shortDescription": "Potassium Pharma Solvent",
+    "type": "RAWMATERIAL",
+    "status": "ONBOARDED",
+    "department": "CP",
+    "segment": "RM",
+    "subSegment": "RM-SOLV",
+    "stockUom": "L",
+    "purchaseUom": "DRUM",
+    "salesUom": "L",
+    "standardSupplierId": "SUP-0014",
+    "standardSupplierCode": "S/00014",
+    "hsnCode": "29051100",
+    "regulatedItem": true,
+    "standardCost": 7.904,
+    "lastPurchasePrice": 7.305,
+    "leadTimeDays": 29,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "RM - Raw Material"
+  },
+  {
+    "id": "ITM-0042",
+    "code": "CP/RM/SOL",
+    "runningNumber": "000042",
+    "description": "Glycerin Pharma Solvent",
+    "shortDescription": "Glycerin Pharma Solvent",
+    "type": "RAWMATERIAL",
+    "status": "ONBOARDED",
+    "department": "CP",
+    "segment": "RM",
+    "subSegment": "RM-SOLV",
+    "stockUom": "L",
+    "purchaseUom": "DRUM",
+    "salesUom": "L",
+    "standardSupplierId": "SUP-0005",
+    "standardSupplierCode": "S/00005",
+    "hsnCode": "29051100",
+    "regulatedItem": true,
+    "standardCost": 3.56,
+    "lastPurchasePrice": 3.445,
+    "leadTimeDays": 31,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "RM - Raw Material"
+  },
+  {
+    "id": "ITM-0043",
+    "code": "CP/RM/SOL",
+    "runningNumber": "000043",
+    "description": "Glycerin Pharma Solvent",
+    "shortDescription": "Glycerin Pharma Solvent",
+    "type": "RAWMATERIAL",
+    "status": "ONBOARDED",
+    "department": "CP",
+    "segment": "RM",
+    "subSegment": "RM-SOLV",
+    "stockUom": "L",
+    "purchaseUom": "DRUM",
+    "salesUom": "L",
+    "standardSupplierId": "SUP-0013",
+    "standardSupplierCode": "S/00013",
+    "hsnCode": "29051100",
+    "regulatedItem": true,
+    "standardCost": 7.161,
+    "lastPurchasePrice": 8.019,
+    "leadTimeDays": 26,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": false,
+    "itemAccountGroup": "RM - Raw Material"
+  },
+  {
+    "id": "ITM-0044",
+    "code": "CP/RM/SOL",
+    "runningNumber": "000044",
+    "description": "Lutein Pharma Solvent",
+    "shortDescription": "Lutein Pharma Solvent",
+    "type": "RAWMATERIAL",
+    "status": "ONBOARDED",
+    "department": "CP",
+    "segment": "RM",
+    "subSegment": "RM-SOLV",
+    "stockUom": "L",
+    "purchaseUom": "DRUM",
+    "salesUom": "L",
+    "standardSupplierId": "SUP-0040",
+    "standardSupplierCode": "S/00040",
+    "hsnCode": "29051100",
+    "regulatedItem": true,
+    "standardCost": 5.345,
+    "lastPurchasePrice": 4.94,
+    "leadTimeDays": 30,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "RM - Raw Material"
+  },
+  {
+    "id": "ITM-0045",
+    "code": "CP/RM/SOL",
+    "runningNumber": "000045",
+    "description": "Camphor Pharma Solvent",
+    "shortDescription": "Camphor Pharma Solvent",
+    "type": "RAWMATERIAL",
+    "status": "ONBOARDED",
+    "department": "CP",
+    "segment": "RM",
+    "subSegment": "RM-SOLV",
+    "stockUom": "L",
+    "purchaseUom": "DRUM",
+    "salesUom": "L",
+    "standardSupplierId": "SUP-0029",
+    "standardSupplierCode": "S/00029",
+    "hsnCode": "29051100",
+    "regulatedItem": true,
+    "standardCost": 5.492,
+    "lastPurchasePrice": 5.522,
+    "leadTimeDays": 33,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": false,
+    "itemAccountGroup": "RM - Raw Material"
+  },
+  {
+    "id": "ITM-0046",
+    "code": "CP/RM/SOL",
+    "runningNumber": "000046",
+    "description": "Vitamin C C Pharma Solvent",
+    "shortDescription": "Vitamin C Pharma Solvent",
+    "type": "RAWMATERIAL",
+    "status": "ONBOARDED",
+    "department": "CP",
+    "segment": "RM",
+    "subSegment": "RM-SOLV",
+    "stockUom": "L",
+    "purchaseUom": "DRUM",
+    "salesUom": "L",
+    "standardSupplierId": "SUP-0012",
+    "standardSupplierCode": "S/00012",
+    "hsnCode": "29051100",
+    "regulatedItem": true,
+    "standardCost": 4.858,
+    "lastPurchasePrice": 4.813,
+    "leadTimeDays": 30,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "RM - Raw Material"
+  },
+  {
+    "id": "ITM-0047",
+    "code": "CP/RM/SOL",
+    "runningNumber": "000047",
+    "description": "Lutein Pharma Solvent",
+    "shortDescription": "Lutein Pharma Solvent",
+    "type": "RAWMATERIAL",
+    "status": "ONBOARDED",
+    "department": "CP",
+    "segment": "RM",
+    "subSegment": "RM-SOLV",
+    "stockUom": "L",
+    "purchaseUom": "DRUM",
+    "salesUom": "L",
+    "standardSupplierId": "SUP-0037",
+    "standardSupplierCode": "S/00037",
+    "hsnCode": "29051100",
+    "regulatedItem": true,
+    "standardCost": 7.932,
+    "lastPurchasePrice": 8.249,
+    "leadTimeDays": 26,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "RM - Raw Material"
+  },
+  {
+    "id": "ITM-0048",
+    "code": "CP/RM/SOL",
+    "runningNumber": "000048",
+    "description": "Biotin Pharma Solvent",
+    "shortDescription": "Biotin Pharma Solvent",
+    "type": "RAWMATERIAL",
+    "status": "ONBOARDED",
+    "department": "CP",
+    "segment": "RM",
+    "subSegment": "RM-SOLV",
+    "stockUom": "L",
+    "purchaseUom": "DRUM",
+    "salesUom": "L",
+    "standardSupplierId": "SUP-0030",
+    "standardSupplierCode": "S/00030",
+    "hsnCode": "29051100",
+    "regulatedItem": true,
+    "standardCost": 5.245,
+    "lastPurchasePrice": 5.227,
+    "leadTimeDays": 28,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "RM - Raw Material"
+  },
+  {
+    "id": "ITM-0049",
+    "code": "CP/RM/SOL",
+    "runningNumber": "000049",
+    "description": "Magnesium Pharma Solvent",
+    "shortDescription": "Magnesium Pharma Solvent",
+    "type": "RAWMATERIAL",
+    "status": "ONBOARDED",
+    "department": "CP",
+    "segment": "RM",
+    "subSegment": "RM-SOLV",
+    "stockUom": "L",
+    "purchaseUom": "DRUM",
+    "salesUom": "L",
+    "standardSupplierId": "SUP-0010",
+    "standardSupplierCode": "S/00010",
+    "hsnCode": "29051100",
+    "regulatedItem": true,
+    "standardCost": 7.754,
+    "lastPurchasePrice": 7.489,
+    "leadTimeDays": 32,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "RM - Raw Material"
+  },
+  {
+    "id": "ITM-0050",
+    "code": "CP/RM/SOL",
+    "runningNumber": "000050",
+    "description": "Potassium Pharma Solvent",
+    "shortDescription": "Potassium Pharma Solvent",
+    "type": "RAWMATERIAL",
+    "status": "ONBOARDED",
+    "department": "CP",
+    "segment": "RM",
+    "subSegment": "RM-SOLV",
+    "stockUom": "L",
+    "purchaseUom": "DRUM",
+    "salesUom": "L",
+    "standardSupplierId": "SUP-0001",
+    "standardSupplierCode": "S/00001",
+    "hsnCode": "29051100",
+    "regulatedItem": true,
+    "standardCost": 4.373,
+    "lastPurchasePrice": 4.162,
+    "leadTimeDays": 25,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "RM - Raw Material"
+  },
+  {
+    "id": "ITM-0051",
+    "code": "ME/PM/FCT",
+    "runningNumber": "000051",
+    "description": "Camphor Folding Carton 3-ply",
+    "shortDescription": "Camphor Folding Carton 3-ply",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-FCTN",
+    "stockUom": "EA",
+    "purchaseUom": "CTN",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0005",
+    "standardSupplierCode": "S/00005",
+    "hsnCode": "48191000",
+    "regulatedItem": false,
+    "standardCost": 0.115,
+    "lastPurchasePrice": 0.106,
+    "leadTimeDays": 19,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0052",
+    "code": "ME/PM/FCT",
+    "runningNumber": "000052",
+    "description": "Lactose Folding Carton 3-ply",
+    "shortDescription": "Lactose Folding Carton 3-ply",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-FCTN",
+    "stockUom": "EA",
+    "purchaseUom": "CTN",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0005",
+    "standardSupplierCode": "S/00005",
+    "hsnCode": "48191000",
+    "regulatedItem": false,
+    "standardCost": 0.114,
+    "lastPurchasePrice": 0.13,
+    "leadTimeDays": 15,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": false,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0053",
+    "code": "ME/PM/FCT",
+    "runningNumber": "000053",
+    "description": "Niacinamide Folding Carton 3-ply",
+    "shortDescription": "Niacinamide Folding Carton 3-ply",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-FCTN",
+    "stockUom": "EA",
+    "purchaseUom": "CTN",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0005",
+    "standardSupplierCode": "S/00005",
+    "hsnCode": "48191000",
+    "regulatedItem": false,
+    "standardCost": 0.12,
+    "lastPurchasePrice": 0.13,
+    "leadTimeDays": 17,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0054",
+    "code": "ME/PM/FCT",
+    "runningNumber": "000054",
+    "description": "Niacinamide Folding Carton 3-ply",
+    "shortDescription": "Niacinamide Folding Carton 3-ply",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-FCTN",
+    "stockUom": "EA",
+    "purchaseUom": "CTN",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0005",
+    "standardSupplierCode": "S/00005",
+    "hsnCode": "48191000",
+    "regulatedItem": false,
+    "standardCost": 0.095,
+    "lastPurchasePrice": 0.093,
+    "leadTimeDays": 17,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": false,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0055",
+    "code": "ME/PM/FCT",
+    "runningNumber": "000055",
+    "description": "Vitamin D3 D3 Folding Carton 3-ply",
+    "shortDescription": "Vitamin D3 Folding Carton 3-ply",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-FCTN",
+    "stockUom": "EA",
+    "purchaseUom": "CTN",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0005",
+    "standardSupplierCode": "S/00005",
+    "hsnCode": "48191000",
+    "regulatedItem": false,
+    "standardCost": 0.087,
+    "lastPurchasePrice": 0.084,
+    "leadTimeDays": 17,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": false,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0056",
+    "code": "ME/PM/FCT",
+    "runningNumber": "000056",
+    "description": "Ascorbic Folding Carton 3-ply",
+    "shortDescription": "Ascorbic Folding Carton 3-ply",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-FCTN",
+    "stockUom": "EA",
+    "purchaseUom": "CTN",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0005",
+    "standardSupplierCode": "S/00005",
+    "hsnCode": "48191000",
+    "regulatedItem": false,
+    "standardCost": 0.14,
+    "lastPurchasePrice": 0.148,
+    "leadTimeDays": 16,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0057",
+    "code": "ME/PM/FCT",
+    "runningNumber": "000057",
+    "description": "Probiotic Folding Carton 3-ply",
+    "shortDescription": "Probiotic Folding Carton 3-ply",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-FCTN",
+    "stockUom": "EA",
+    "purchaseUom": "CTN",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0005",
+    "standardSupplierCode": "S/00005",
+    "hsnCode": "48191000",
+    "regulatedItem": false,
+    "standardCost": 0.132,
+    "lastPurchasePrice": 0.151,
+    "leadTimeDays": 21,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0058",
+    "code": "ME/PM/FCT",
+    "runningNumber": "000058",
+    "description": "Salicylic Folding Carton 3-ply",
+    "shortDescription": "Salicylic Folding Carton 3-ply",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-FCTN",
+    "stockUom": "EA",
+    "purchaseUom": "CTN",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0005",
+    "standardSupplierCode": "S/00005",
+    "hsnCode": "48191000",
+    "regulatedItem": false,
+    "standardCost": 0.106,
+    "lastPurchasePrice": 0.108,
+    "leadTimeDays": 19,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0059",
+    "code": "ME/PM/FCT",
+    "runningNumber": "000059",
+    "description": "Probiotic Folding Carton 3-ply",
+    "shortDescription": "Probiotic Folding Carton 3-ply",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-FCTN",
+    "stockUom": "EA",
+    "purchaseUom": "CTN",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0005",
+    "standardSupplierCode": "S/00005",
+    "hsnCode": "48191000",
+    "regulatedItem": false,
+    "standardCost": 0.118,
+    "lastPurchasePrice": 0.108,
+    "leadTimeDays": 21,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0060",
+    "code": "ME/PM/FCT",
+    "runningNumber": "000060",
+    "description": "Zinc Folding Carton 3-ply",
+    "shortDescription": "Zinc Folding Carton 3-ply",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-FCTN",
+    "stockUom": "EA",
+    "purchaseUom": "CTN",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0005",
+    "standardSupplierCode": "S/00005",
+    "hsnCode": "48191000",
+    "regulatedItem": false,
+    "standardCost": 0.062,
+    "lastPurchasePrice": 0.064,
+    "leadTimeDays": 21,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": false,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0061",
+    "code": "ME/PM/FCT",
+    "runningNumber": "000061",
+    "description": "Zinc Folding Carton 3-ply",
+    "shortDescription": "Zinc Folding Carton 3-ply",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-FCTN",
+    "stockUom": "EA",
+    "purchaseUom": "CTN",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0005",
+    "standardSupplierCode": "S/00005",
+    "hsnCode": "48191000",
+    "regulatedItem": false,
+    "standardCost": 0.148,
+    "lastPurchasePrice": 0.15,
+    "leadTimeDays": 18,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": false,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0062",
+    "code": "ME/PM/FCT",
+    "runningNumber": "000062",
+    "description": "Collagen Folding Carton 3-ply",
+    "shortDescription": "Collagen Folding Carton 3-ply",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-FCTN",
+    "stockUom": "EA",
+    "purchaseUom": "CTN",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0005",
+    "standardSupplierCode": "S/00005",
+    "hsnCode": "48191000",
+    "regulatedItem": false,
+    "standardCost": 0.117,
+    "lastPurchasePrice": 0.113,
+    "leadTimeDays": 19,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0063",
+    "code": "ME/PM/FCT",
+    "runningNumber": "000063",
+    "description": "Omega-3 Folding Carton 3-ply",
+    "shortDescription": "Omega-3 Folding Carton 3-ply",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-FCTN",
+    "stockUom": "EA",
+    "purchaseUom": "CTN",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0005",
+    "standardSupplierCode": "S/00005",
+    "hsnCode": "48191000",
+    "regulatedItem": false,
+    "standardCost": 0.084,
+    "lastPurchasePrice": 0.077,
+    "leadTimeDays": 18,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0064",
+    "code": "ME/PM/FCT",
+    "runningNumber": "000064",
+    "description": "Ibuprofen Folding Carton 3-ply",
+    "shortDescription": "Ibuprofen Folding Carton 3-ply",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-FCTN",
+    "stockUom": "EA",
+    "purchaseUom": "CTN",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0005",
+    "standardSupplierCode": "S/00005",
+    "hsnCode": "48191000",
+    "regulatedItem": false,
+    "standardCost": 0.075,
+    "lastPurchasePrice": 0.081,
+    "leadTimeDays": 16,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0065",
+    "code": "ME/PM/FCT",
+    "runningNumber": "000065",
+    "description": "Cetirizine Folding Carton 3-ply",
+    "shortDescription": "Cetirizine Folding Carton 3-ply",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-FCTN",
+    "stockUom": "EA",
+    "purchaseUom": "CTN",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0005",
+    "standardSupplierCode": "S/00005",
+    "hsnCode": "48191000",
+    "regulatedItem": false,
+    "standardCost": 0.151,
+    "lastPurchasePrice": 0.136,
+    "leadTimeDays": 22,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": false,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0066",
+    "code": "ME/PM/FCT",
+    "runningNumber": "000066",
+    "description": "Vitamin C C Folding Carton 3-ply",
+    "shortDescription": "Vitamin C Folding Carton 3-ply",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-FCTN",
+    "stockUom": "EA",
+    "purchaseUom": "CTN",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0005",
+    "standardSupplierCode": "S/00005",
+    "hsnCode": "48191000",
+    "regulatedItem": false,
+    "standardCost": 0.071,
+    "lastPurchasePrice": 0.079,
+    "leadTimeDays": 15,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0067",
+    "code": "ME/PM/FCT",
+    "runningNumber": "000067",
+    "description": "Loratadine Folding Carton 3-ply",
+    "shortDescription": "Loratadine Folding Carton 3-ply",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-FCTN",
+    "stockUom": "EA",
+    "purchaseUom": "CTN",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0005",
+    "standardSupplierCode": "S/00005",
+    "hsnCode": "48191000",
+    "regulatedItem": false,
+    "standardCost": 0.094,
+    "lastPurchasePrice": 0.107,
+    "leadTimeDays": 17,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": false,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0068",
+    "code": "ME/PM/FCT",
+    "runningNumber": "000068",
+    "description": "Sodium Folding Carton 3-ply",
+    "shortDescription": "Sodium Folding Carton 3-ply",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-FCTN",
+    "stockUom": "EA",
+    "purchaseUom": "CTN",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0005",
+    "standardSupplierCode": "S/00005",
+    "hsnCode": "48191000",
+    "regulatedItem": false,
+    "standardCost": 0.147,
+    "lastPurchasePrice": 0.155,
+    "leadTimeDays": 15,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0069",
+    "code": "ME/PM/FCT",
+    "runningNumber": "000069",
+    "description": "Lutein Folding Carton 3-ply",
+    "shortDescription": "Lutein Folding Carton 3-ply",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-FCTN",
+    "stockUom": "EA",
+    "purchaseUom": "CTN",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0005",
+    "standardSupplierCode": "S/00005",
+    "hsnCode": "48191000",
+    "regulatedItem": false,
+    "standardCost": 0.137,
+    "lastPurchasePrice": 0.138,
+    "leadTimeDays": 15,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0070",
+    "code": "ME/PM/FCT",
+    "runningNumber": "000070",
+    "description": "Vitamin C C Folding Carton 3-ply",
+    "shortDescription": "Vitamin C Folding Carton 3-ply",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-FCTN",
+    "stockUom": "EA",
+    "purchaseUom": "CTN",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0005",
+    "standardSupplierCode": "S/00005",
+    "hsnCode": "48191000",
+    "regulatedItem": false,
+    "standardCost": 0.093,
+    "lastPurchasePrice": 0.088,
+    "leadTimeDays": 15,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0071",
+    "code": "ME/PM/FCT",
+    "runningNumber": "000071",
+    "description": "Potassium Folding Carton 3-ply",
+    "shortDescription": "Potassium Folding Carton 3-ply",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-FCTN",
+    "stockUom": "EA",
+    "purchaseUom": "CTN",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0005",
+    "standardSupplierCode": "S/00005",
+    "hsnCode": "48191000",
+    "regulatedItem": false,
+    "standardCost": 0.146,
+    "lastPurchasePrice": 0.143,
+    "leadTimeDays": 23,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0072",
+    "code": "ME/PM/FCT",
+    "runningNumber": "000072",
+    "description": "Sodium Folding Carton 3-ply",
+    "shortDescription": "Sodium Folding Carton 3-ply",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-FCTN",
+    "stockUom": "EA",
+    "purchaseUom": "CTN",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0005",
+    "standardSupplierCode": "S/00005",
+    "hsnCode": "48191000",
+    "regulatedItem": false,
+    "standardCost": 0.152,
+    "lastPurchasePrice": 0.172,
+    "leadTimeDays": 17,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": false,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0073",
+    "code": "ME/PM/FCT",
+    "runningNumber": "000073",
+    "description": "Sorbitol Folding Carton 3-ply",
+    "shortDescription": "Sorbitol Folding Carton 3-ply",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-FCTN",
+    "stockUom": "EA",
+    "purchaseUom": "CTN",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0005",
+    "standardSupplierCode": "S/00005",
+    "hsnCode": "48191000",
+    "regulatedItem": false,
+    "standardCost": 0.121,
+    "lastPurchasePrice": 0.109,
+    "leadTimeDays": 16,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0074",
+    "code": "ME/PM/FCT",
+    "runningNumber": "000074",
+    "description": "Sodium Folding Carton 3-ply",
+    "shortDescription": "Sodium Folding Carton 3-ply",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-FCTN",
+    "stockUom": "EA",
+    "purchaseUom": "CTN",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0005",
+    "standardSupplierCode": "S/00005",
+    "hsnCode": "48191000",
+    "regulatedItem": false,
+    "standardCost": 0.095,
+    "lastPurchasePrice": 0.093,
+    "leadTimeDays": 16,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": false,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0075",
+    "code": "ME/PM/SHI",
+    "runningNumber": "000075",
+    "description": "Zinc Corrugated Shipper 5-ply",
+    "shortDescription": "Zinc Corrugated Shipper 5-ply",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-SHIP",
+    "stockUom": "EA",
+    "purchaseUom": "BAG",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0024",
+    "standardSupplierCode": "S/00024",
+    "hsnCode": "48191000",
+    "regulatedItem": false,
+    "standardCost": 0.518,
+    "lastPurchasePrice": 0.583,
+    "leadTimeDays": 17,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": false,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0076",
+    "code": "ME/PM/SHI",
+    "runningNumber": "000076",
+    "description": "Cellulose Corrugated Shipper 5-ply",
+    "shortDescription": "Cellulose Corrugated Shipper 5-ply",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-SHIP",
+    "stockUom": "EA",
+    "purchaseUom": "BAG",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0047",
+    "standardSupplierCode": "S/00047",
+    "hsnCode": "48191000",
+    "regulatedItem": false,
+    "standardCost": 0.569,
+    "lastPurchasePrice": 0.577,
+    "leadTimeDays": 15,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0077",
+    "code": "ME/PM/SHI",
+    "runningNumber": "000077",
+    "description": "Lutein Corrugated Shipper 5-ply",
+    "shortDescription": "Lutein Corrugated Shipper 5-ply",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-SHIP",
+    "stockUom": "EA",
+    "purchaseUom": "BAG",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0001",
+    "standardSupplierCode": "S/00001",
+    "hsnCode": "48191000",
+    "regulatedItem": false,
+    "standardCost": 0.274,
+    "lastPurchasePrice": 0.274,
+    "leadTimeDays": 16,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0078",
+    "code": "ME/PM/SHI",
+    "runningNumber": "000078",
+    "description": "Ibuprofen Corrugated Shipper 5-ply",
+    "shortDescription": "Ibuprofen Corrugated Shipper 5-ply",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-SHIP",
+    "stockUom": "EA",
+    "purchaseUom": "BAG",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0022",
+    "standardSupplierCode": "S/00022",
+    "hsnCode": "48191000",
+    "regulatedItem": false,
+    "standardCost": 0.468,
+    "lastPurchasePrice": 0.449,
+    "leadTimeDays": 16,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0079",
+    "code": "ME/PM/SHI",
+    "runningNumber": "000079",
+    "description": "Cetirizine Corrugated Shipper 5-ply",
+    "shortDescription": "Cetirizine Corrugated Shipper 5-ply",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-SHIP",
+    "stockUom": "EA",
+    "purchaseUom": "BAG",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0047",
+    "standardSupplierCode": "S/00047",
+    "hsnCode": "48191000",
+    "regulatedItem": false,
+    "standardCost": 0.277,
+    "lastPurchasePrice": 0.304,
+    "leadTimeDays": 17,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0080",
+    "code": "ME/PM/SHI",
+    "runningNumber": "000080",
+    "description": "Collagen Corrugated Shipper 5-ply",
+    "shortDescription": "Collagen Corrugated Shipper 5-ply",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-SHIP",
+    "stockUom": "EA",
+    "purchaseUom": "BAG",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0031",
+    "standardSupplierCode": "S/00031",
+    "hsnCode": "48191000",
+    "regulatedItem": false,
+    "standardCost": 0.65,
+    "lastPurchasePrice": 0.715,
+    "leadTimeDays": 15,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0081",
+    "code": "ME/PM/SHI",
+    "runningNumber": "000081",
+    "description": "Sorbitol Corrugated Shipper 5-ply",
+    "shortDescription": "Sorbitol Corrugated Shipper 5-ply",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-SHIP",
+    "stockUom": "EA",
+    "purchaseUom": "BAG",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0039",
+    "standardSupplierCode": "S/00039",
+    "hsnCode": "48191000",
+    "regulatedItem": false,
+    "standardCost": 0.641,
+    "lastPurchasePrice": 0.642,
+    "leadTimeDays": 16,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0082",
+    "code": "ME/PM/SHI",
+    "runningNumber": "000082",
+    "description": "Biotin Corrugated Shipper 5-ply",
+    "shortDescription": "Biotin Corrugated Shipper 5-ply",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-SHIP",
+    "stockUom": "EA",
+    "purchaseUom": "BAG",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0019",
+    "standardSupplierCode": "S/00019",
+    "hsnCode": "48191000",
+    "regulatedItem": false,
+    "standardCost": 0.445,
+    "lastPurchasePrice": 0.485,
+    "leadTimeDays": 14,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0083",
+    "code": "ME/PM/SHI",
+    "runningNumber": "000083",
+    "description": "Folic Corrugated Shipper 5-ply",
+    "shortDescription": "Folic Corrugated Shipper 5-ply",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-SHIP",
+    "stockUom": "EA",
+    "purchaseUom": "BAG",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0035",
+    "standardSupplierCode": "S/00035",
+    "hsnCode": "48191000",
+    "regulatedItem": false,
+    "standardCost": 0.379,
+    "lastPurchasePrice": 0.373,
+    "leadTimeDays": 18,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0084",
+    "code": "ME/PM/SHI",
+    "runningNumber": "000084",
+    "description": "Menthol Corrugated Shipper 5-ply",
+    "shortDescription": "Menthol Corrugated Shipper 5-ply",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-SHIP",
+    "stockUom": "EA",
+    "purchaseUom": "BAG",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0021",
+    "standardSupplierCode": "S/00021",
+    "hsnCode": "48191000",
+    "regulatedItem": false,
+    "standardCost": 0.627,
+    "lastPurchasePrice": 0.661,
+    "leadTimeDays": 19,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": false,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0085",
+    "code": "ME/PM/SHI",
+    "runningNumber": "000085",
+    "description": "Omega-3 Corrugated Shipper 5-ply",
+    "shortDescription": "Omega-3 Corrugated Shipper 5-ply",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-SHIP",
+    "stockUom": "EA",
+    "purchaseUom": "BAG",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0035",
+    "standardSupplierCode": "S/00035",
+    "hsnCode": "48191000",
+    "regulatedItem": false,
+    "standardCost": 0.725,
+    "lastPurchasePrice": 0.659,
+    "leadTimeDays": 13,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": false,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0086",
+    "code": "ME/PM/SHI",
+    "runningNumber": "000086",
+    "description": "Folic Corrugated Shipper 5-ply",
+    "shortDescription": "Folic Corrugated Shipper 5-ply",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-SHIP",
+    "stockUom": "EA",
+    "purchaseUom": "BAG",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0016",
+    "standardSupplierCode": "S/00016",
+    "hsnCode": "48191000",
+    "regulatedItem": false,
+    "standardCost": 0.372,
+    "lastPurchasePrice": 0.394,
+    "leadTimeDays": 20,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0087",
+    "code": "ME/PM/PSL",
+    "runningNumber": "000087",
+    "description": "Sorbitol Pressure-Sensitive Label",
+    "shortDescription": "Sorbitol Pressure-Sensitive Label",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-PSL",
+    "stockUom": "EA",
+    "purchaseUom": "ROLL",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0037",
+    "standardSupplierCode": "S/00037",
+    "hsnCode": "48211000",
+    "regulatedItem": false,
+    "standardCost": 0.016,
+    "lastPurchasePrice": 0.017,
+    "leadTimeDays": 25,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0088",
+    "code": "ME/PM/PSL",
+    "runningNumber": "000088",
+    "description": "Cetirizine Pressure-Sensitive Label",
+    "shortDescription": "Cetirizine Pressure-Sensitive Label",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-PSL",
+    "stockUom": "EA",
+    "purchaseUom": "ROLL",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0042",
+    "standardSupplierCode": "S/00042",
+    "hsnCode": "48211000",
+    "regulatedItem": false,
+    "standardCost": 0.008,
+    "lastPurchasePrice": 0.007,
+    "leadTimeDays": 21,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0089",
+    "code": "ME/PM/PSL",
+    "runningNumber": "000089",
+    "description": "Titanium Dioxide Dioxide Pressure-Sensitive Label",
+    "shortDescription": "Titanium Dioxide Pressure-Sensitive Labe",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-PSL",
+    "stockUom": "EA",
+    "purchaseUom": "ROLL",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0012",
+    "standardSupplierCode": "S/00012",
+    "hsnCode": "48211000",
+    "regulatedItem": false,
+    "standardCost": 0.018,
+    "lastPurchasePrice": 0.019,
+    "leadTimeDays": 19,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0090",
+    "code": "ME/PM/PSL",
+    "runningNumber": "000090",
+    "description": "Vitamin C C Pressure-Sensitive Label",
+    "shortDescription": "Vitamin C Pressure-Sensitive Label",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-PSL",
+    "stockUom": "EA",
+    "purchaseUom": "ROLL",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0026",
+    "standardSupplierCode": "S/00026",
+    "hsnCode": "48211000",
+    "regulatedItem": false,
+    "standardCost": 0.02,
+    "lastPurchasePrice": 0.019,
+    "leadTimeDays": 24,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": false,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0091",
+    "code": "ME/PM/PSL",
+    "runningNumber": "000091",
+    "description": "Paracetamol Pressure-Sensitive Label",
+    "shortDescription": "Paracetamol Pressure-Sensitive Label",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-PSL",
+    "stockUom": "EA",
+    "purchaseUom": "ROLL",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0008",
+    "standardSupplierCode": "S/00008",
+    "hsnCode": "48211000",
+    "regulatedItem": false,
+    "standardCost": 0.021,
+    "lastPurchasePrice": 0.022,
+    "leadTimeDays": 19,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0092",
+    "code": "ME/PM/PSL",
+    "runningNumber": "000092",
+    "description": "Potassium Pressure-Sensitive Label",
+    "shortDescription": "Potassium Pressure-Sensitive Label",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-PSL",
+    "stockUom": "EA",
+    "purchaseUom": "ROLL",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0033",
+    "standardSupplierCode": "S/00033",
+    "hsnCode": "48211000",
+    "regulatedItem": false,
+    "standardCost": 0.014,
+    "lastPurchasePrice": 0.013,
+    "leadTimeDays": 23,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0093",
+    "code": "ME/PM/PSL",
+    "runningNumber": "000093",
+    "description": "Hyaluronic Pressure-Sensitive Label",
+    "shortDescription": "Hyaluronic Pressure-Sensitive Label",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-PSL",
+    "stockUom": "EA",
+    "purchaseUom": "ROLL",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0033",
+    "standardSupplierCode": "S/00033",
+    "hsnCode": "48211000",
+    "regulatedItem": false,
+    "standardCost": 0.008,
+    "lastPurchasePrice": 0.008,
+    "leadTimeDays": 23,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": false,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0094",
+    "code": "ME/PM/PSL",
+    "runningNumber": "000094",
+    "description": "Camphor Pressure-Sensitive Label",
+    "shortDescription": "Camphor Pressure-Sensitive Label",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-PSL",
+    "stockUom": "EA",
+    "purchaseUom": "ROLL",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0012",
+    "standardSupplierCode": "S/00012",
+    "hsnCode": "48211000",
+    "regulatedItem": false,
+    "standardCost": 0.021,
+    "lastPurchasePrice": 0.024,
+    "leadTimeDays": 23,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0095",
+    "code": "ME/PM/PSL",
+    "runningNumber": "000095",
+    "description": "Sorbitol Pressure-Sensitive Label",
+    "shortDescription": "Sorbitol Pressure-Sensitive Label",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-PSL",
+    "stockUom": "EA",
+    "purchaseUom": "ROLL",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0011",
+    "standardSupplierCode": "S/00011",
+    "hsnCode": "48211000",
+    "regulatedItem": false,
+    "standardCost": 0.015,
+    "lastPurchasePrice": 0.016,
+    "leadTimeDays": 23,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0096",
+    "code": "ME/PM/PSL",
+    "runningNumber": "000096",
+    "description": "Magnesium Pressure-Sensitive Label",
+    "shortDescription": "Magnesium Pressure-Sensitive Label",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-PSL",
+    "stockUom": "EA",
+    "purchaseUom": "ROLL",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0021",
+    "standardSupplierCode": "S/00021",
+    "hsnCode": "48211000",
+    "regulatedItem": false,
+    "standardCost": 0.01,
+    "lastPurchasePrice": 0.011,
+    "leadTimeDays": 20,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": false,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0097",
+    "code": "ME/PM/PSL",
+    "runningNumber": "000097",
+    "description": "Niacinamide Pressure-Sensitive Label",
+    "shortDescription": "Niacinamide Pressure-Sensitive Label",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-PSL",
+    "stockUom": "EA",
+    "purchaseUom": "ROLL",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0025",
+    "standardSupplierCode": "S/00025",
+    "hsnCode": "48211000",
+    "regulatedItem": false,
+    "standardCost": 0.008,
+    "lastPurchasePrice": 0.009,
+    "leadTimeDays": 18,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": false,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0098",
+    "code": "ME/PM/PSL",
+    "runningNumber": "000098",
+    "description": "Sodium Pressure-Sensitive Label",
+    "shortDescription": "Sodium Pressure-Sensitive Label",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-PSL",
+    "stockUom": "EA",
+    "purchaseUom": "ROLL",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0024",
+    "standardSupplierCode": "S/00024",
+    "hsnCode": "48211000",
+    "regulatedItem": false,
+    "standardCost": 0.015,
+    "lastPurchasePrice": 0.015,
+    "leadTimeDays": 18,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0099",
+    "code": "ME/PM/PSL",
+    "runningNumber": "000099",
+    "description": "Omega-3 Pressure-Sensitive Label",
+    "shortDescription": "Omega-3 Pressure-Sensitive Label",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-PSL",
+    "stockUom": "EA",
+    "purchaseUom": "ROLL",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0001",
+    "standardSupplierCode": "S/00001",
+    "hsnCode": "48211000",
+    "regulatedItem": false,
+    "standardCost": 0.017,
+    "lastPurchasePrice": 0.015,
+    "leadTimeDays": 23,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": false,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0100",
+    "code": "ME/PM/PSL",
+    "runningNumber": "000100",
+    "description": "Zinc Pressure-Sensitive Label",
+    "shortDescription": "Zinc Pressure-Sensitive Label",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-PSL",
+    "stockUom": "EA",
+    "purchaseUom": "ROLL",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0009",
+    "standardSupplierCode": "S/00009",
+    "hsnCode": "48211000",
+    "regulatedItem": false,
+    "standardCost": 0.022,
+    "lastPurchasePrice": 0.022,
+    "leadTimeDays": 21,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0101",
+    "code": "ME/PM/PSL",
+    "runningNumber": "000101",
+    "description": "Calcium Pressure-Sensitive Label",
+    "shortDescription": "Calcium Pressure-Sensitive Label",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-PSL",
+    "stockUom": "EA",
+    "purchaseUom": "ROLL",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0025",
+    "standardSupplierCode": "S/00025",
+    "hsnCode": "48211000",
+    "regulatedItem": false,
+    "standardCost": 0.009,
+    "lastPurchasePrice": 0.009,
+    "leadTimeDays": 26,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": false,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0102",
+    "code": "ME/PM/PSL",
+    "runningNumber": "000102",
+    "description": "Collagen Pressure-Sensitive Label",
+    "shortDescription": "Collagen Pressure-Sensitive Label",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-PSL",
+    "stockUom": "EA",
+    "purchaseUom": "ROLL",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0047",
+    "standardSupplierCode": "S/00047",
+    "hsnCode": "48211000",
+    "regulatedItem": false,
+    "standardCost": 0.01,
+    "lastPurchasePrice": 0.009,
+    "leadTimeDays": 25,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": false,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0103",
+    "code": "ME/PM/PSL",
+    "runningNumber": "000103",
+    "description": "Biotin Pressure-Sensitive Label",
+    "shortDescription": "Biotin Pressure-Sensitive Label",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-PSL",
+    "stockUom": "EA",
+    "purchaseUom": "ROLL",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0042",
+    "standardSupplierCode": "S/00042",
+    "hsnCode": "48211000",
+    "regulatedItem": false,
+    "standardCost": 0.018,
+    "lastPurchasePrice": 0.018,
+    "leadTimeDays": 21,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": false,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0104",
+    "code": "ME/PM/PSL",
+    "runningNumber": "000104",
+    "description": "Sodium Pressure-Sensitive Label",
+    "shortDescription": "Sodium Pressure-Sensitive Label",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-PSL",
+    "stockUom": "EA",
+    "purchaseUom": "ROLL",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0044",
+    "standardSupplierCode": "S/00044",
+    "hsnCode": "48211000",
+    "regulatedItem": false,
+    "standardCost": 0.014,
+    "lastPurchasePrice": 0.015,
+    "leadTimeDays": 25,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": false,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0105",
+    "code": "ME/PM/PSL",
+    "runningNumber": "000105",
+    "description": "Salicylic Pressure-Sensitive Label",
+    "shortDescription": "Salicylic Pressure-Sensitive Label",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-PSL",
+    "stockUom": "EA",
+    "purchaseUom": "ROLL",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0025",
+    "standardSupplierCode": "S/00025",
+    "hsnCode": "48211000",
+    "regulatedItem": false,
+    "standardCost": 0.02,
+    "lastPurchasePrice": 0.02,
+    "leadTimeDays": 20,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": false,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0106",
+    "code": "ME/PM/PSL",
+    "runningNumber": "000106",
+    "description": "Omega-3 Pressure-Sensitive Label",
+    "shortDescription": "Omega-3 Pressure-Sensitive Label",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-PSL",
+    "stockUom": "EA",
+    "purchaseUom": "ROLL",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0020",
+    "standardSupplierCode": "S/00020",
+    "hsnCode": "48211000",
+    "regulatedItem": false,
+    "standardCost": 0.016,
+    "lastPurchasePrice": 0.015,
+    "leadTimeDays": 19,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": false,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0107",
+    "code": "ME/PM/PSL",
+    "runningNumber": "000107",
+    "description": "Loratadine Pressure-Sensitive Label",
+    "shortDescription": "Loratadine Pressure-Sensitive Label",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-PSL",
+    "stockUom": "EA",
+    "purchaseUom": "ROLL",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0028",
+    "standardSupplierCode": "S/00028",
+    "hsnCode": "48211000",
+    "regulatedItem": false,
+    "standardCost": 0.016,
+    "lastPurchasePrice": 0.016,
+    "leadTimeDays": 24,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0108",
+    "code": "ME/PM/PSL",
+    "runningNumber": "000108",
+    "description": "Vitamin D3 D3 Pressure-Sensitive Label",
+    "shortDescription": "Vitamin D3 Pressure-Sensitive Label",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-PSL",
+    "stockUom": "EA",
+    "purchaseUom": "ROLL",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0001",
+    "standardSupplierCode": "S/00001",
+    "hsnCode": "48211000",
+    "regulatedItem": false,
+    "standardCost": 0.017,
+    "lastPurchasePrice": 0.018,
+    "leadTimeDays": 22,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0109",
+    "code": "ME/PM/HDP",
+    "runningNumber": "000109",
+    "description": "Menthol HDPE Bottle",
+    "shortDescription": "Menthol HDPE Bottle",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-HDPE",
+    "stockUom": "EA",
+    "purchaseUom": "CTN",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0006",
+    "standardSupplierCode": "S/00006",
+    "hsnCode": "39233010",
+    "regulatedItem": false,
+    "standardCost": 0.104,
+    "lastPurchasePrice": 0.112,
+    "leadTimeDays": 12,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0110",
+    "code": "ME/PM/HDP",
+    "runningNumber": "000110",
+    "description": "Vitamin D3 D3 HDPE Bottle",
+    "shortDescription": "Vitamin D3 HDPE Bottle",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-HDPE",
+    "stockUom": "EA",
+    "purchaseUom": "CTN",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0006",
+    "standardSupplierCode": "S/00006",
+    "hsnCode": "39233010",
+    "regulatedItem": false,
+    "standardCost": 0.046,
+    "lastPurchasePrice": 0.043,
+    "leadTimeDays": 16,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0111",
+    "code": "ME/PM/HDP",
+    "runningNumber": "000111",
+    "description": "Probiotic HDPE Bottle",
+    "shortDescription": "Probiotic HDPE Bottle",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-HDPE",
+    "stockUom": "EA",
+    "purchaseUom": "CTN",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0006",
+    "standardSupplierCode": "S/00006",
+    "hsnCode": "39233010",
+    "regulatedItem": false,
+    "standardCost": 0.091,
+    "lastPurchasePrice": 0.103,
+    "leadTimeDays": 16,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0112",
+    "code": "ME/PM/HDP",
+    "runningNumber": "000112",
+    "description": "Lutein HDPE Bottle",
+    "shortDescription": "Lutein HDPE Bottle",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-HDPE",
+    "stockUom": "EA",
+    "purchaseUom": "CTN",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0006",
+    "standardSupplierCode": "S/00006",
+    "hsnCode": "39233010",
+    "regulatedItem": false,
+    "standardCost": 0.038,
+    "lastPurchasePrice": 0.043,
+    "leadTimeDays": 14,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0113",
+    "code": "ME/PM/HDP",
+    "runningNumber": "000113",
+    "description": "Collagen HDPE Bottle",
+    "shortDescription": "Collagen HDPE Bottle",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-HDPE",
+    "stockUom": "EA",
+    "purchaseUom": "CTN",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0006",
+    "standardSupplierCode": "S/00006",
+    "hsnCode": "39233010",
+    "regulatedItem": false,
+    "standardCost": 0.1,
+    "lastPurchasePrice": 0.113,
+    "leadTimeDays": 19,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": false,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0114",
+    "code": "ME/PM/HDP",
+    "runningNumber": "000114",
+    "description": "Ascorbic HDPE Bottle",
+    "shortDescription": "Ascorbic HDPE Bottle",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-HDPE",
+    "stockUom": "EA",
+    "purchaseUom": "CTN",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0006",
+    "standardSupplierCode": "S/00006",
+    "hsnCode": "39233010",
+    "regulatedItem": false,
+    "standardCost": 0.048,
+    "lastPurchasePrice": 0.054,
+    "leadTimeDays": 13,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0115",
+    "code": "ME/PM/HDP",
+    "runningNumber": "000115",
+    "description": "Hyaluronic HDPE Bottle",
+    "shortDescription": "Hyaluronic HDPE Bottle",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-HDPE",
+    "stockUom": "EA",
+    "purchaseUom": "CTN",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0006",
+    "standardSupplierCode": "S/00006",
+    "hsnCode": "39233010",
+    "regulatedItem": false,
+    "standardCost": 0.091,
+    "lastPurchasePrice": 0.097,
+    "leadTimeDays": 15,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0116",
+    "code": "ME/PM/HDP",
+    "runningNumber": "000116",
+    "description": "Magnesium HDPE Bottle",
+    "shortDescription": "Magnesium HDPE Bottle",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-HDPE",
+    "stockUom": "EA",
+    "purchaseUom": "CTN",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0006",
+    "standardSupplierCode": "S/00006",
+    "hsnCode": "39233010",
+    "regulatedItem": false,
+    "standardCost": 0.091,
+    "lastPurchasePrice": 0.094,
+    "leadTimeDays": 14,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0117",
+    "code": "ME/PM/HDP",
+    "runningNumber": "000117",
+    "description": "Magnesium HDPE Bottle",
+    "shortDescription": "Magnesium HDPE Bottle",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-HDPE",
+    "stockUom": "EA",
+    "purchaseUom": "CTN",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0006",
+    "standardSupplierCode": "S/00006",
+    "hsnCode": "39233010",
+    "regulatedItem": false,
+    "standardCost": 0.05,
+    "lastPurchasePrice": 0.045,
+    "leadTimeDays": 19,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0118",
+    "code": "ME/PM/HDP",
+    "runningNumber": "000118",
+    "description": "Vitamin D3 D3 HDPE Bottle",
+    "shortDescription": "Vitamin D3 HDPE Bottle",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-HDPE",
+    "stockUom": "EA",
+    "purchaseUom": "CTN",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0006",
+    "standardSupplierCode": "S/00006",
+    "hsnCode": "39233010",
+    "regulatedItem": false,
+    "standardCost": 0.085,
+    "lastPurchasePrice": 0.082,
+    "leadTimeDays": 11,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": false,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0119",
+    "code": "ME/PM/HDP",
+    "runningNumber": "000119",
+    "description": "Collagen HDPE Bottle",
+    "shortDescription": "Collagen HDPE Bottle",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-HDPE",
+    "stockUom": "EA",
+    "purchaseUom": "CTN",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0006",
+    "standardSupplierCode": "S/00006",
+    "hsnCode": "39233010",
+    "regulatedItem": false,
+    "standardCost": 0.066,
+    "lastPurchasePrice": 0.062,
+    "leadTimeDays": 13,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": false,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0120",
+    "code": "ME/PM/HDP",
+    "runningNumber": "000120",
+    "description": "Hyaluronic HDPE Bottle",
+    "shortDescription": "Hyaluronic HDPE Bottle",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-HDPE",
+    "stockUom": "EA",
+    "purchaseUom": "CTN",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0006",
+    "standardSupplierCode": "S/00006",
+    "hsnCode": "39233010",
+    "regulatedItem": false,
+    "standardCost": 0.087,
+    "lastPurchasePrice": 0.087,
+    "leadTimeDays": 18,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0121",
+    "code": "ME/PM/HDP",
+    "runningNumber": "000121",
+    "description": "Menthol HDPE Bottle",
+    "shortDescription": "Menthol HDPE Bottle",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-HDPE",
+    "stockUom": "EA",
+    "purchaseUom": "CTN",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0006",
+    "standardSupplierCode": "S/00006",
+    "hsnCode": "39233010",
+    "regulatedItem": false,
+    "standardCost": 0.079,
+    "lastPurchasePrice": 0.088,
+    "leadTimeDays": 17,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0122",
+    "code": "ME/PM/HDP",
+    "runningNumber": "000122",
+    "description": "Collagen HDPE Bottle",
+    "shortDescription": "Collagen HDPE Bottle",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-HDPE",
+    "stockUom": "EA",
+    "purchaseUom": "CTN",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0006",
+    "standardSupplierCode": "S/00006",
+    "hsnCode": "39233010",
+    "regulatedItem": false,
+    "standardCost": 0.047,
+    "lastPurchasePrice": 0.045,
+    "leadTimeDays": 18,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0123",
+    "code": "ME/PM/HDP",
+    "runningNumber": "000123",
+    "description": "Vitamin D3 D3 HDPE Bottle",
+    "shortDescription": "Vitamin D3 HDPE Bottle",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-HDPE",
+    "stockUom": "EA",
+    "purchaseUom": "CTN",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0006",
+    "standardSupplierCode": "S/00006",
+    "hsnCode": "39233010",
+    "regulatedItem": false,
+    "standardCost": 0.041,
+    "lastPurchasePrice": 0.038,
+    "leadTimeDays": 15,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0124",
+    "code": "ME/PM/HDP",
+    "runningNumber": "000124",
+    "description": "Biotin HDPE Bottle",
+    "shortDescription": "Biotin HDPE Bottle",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-HDPE",
+    "stockUom": "EA",
+    "purchaseUom": "CTN",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0006",
+    "standardSupplierCode": "S/00006",
+    "hsnCode": "39233010",
+    "regulatedItem": false,
+    "standardCost": 0.053,
+    "lastPurchasePrice": 0.051,
+    "leadTimeDays": 13,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0125",
+    "code": "ME/PM/HDP",
+    "runningNumber": "000125",
+    "description": "Potassium HDPE Bottle",
+    "shortDescription": "Potassium HDPE Bottle",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-HDPE",
+    "stockUom": "EA",
+    "purchaseUom": "CTN",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0006",
+    "standardSupplierCode": "S/00006",
+    "hsnCode": "39233010",
+    "regulatedItem": false,
+    "standardCost": 0.055,
+    "lastPurchasePrice": 0.051,
+    "leadTimeDays": 16,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0126",
+    "code": "ME/PM/HDP",
+    "runningNumber": "000126",
+    "description": "Sorbitol HDPE Bottle",
+    "shortDescription": "Sorbitol HDPE Bottle",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-HDPE",
+    "stockUom": "EA",
+    "purchaseUom": "CTN",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0006",
+    "standardSupplierCode": "S/00006",
+    "hsnCode": "39233010",
+    "regulatedItem": false,
+    "standardCost": 0.093,
+    "lastPurchasePrice": 0.104,
+    "leadTimeDays": 19,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": false,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0127",
+    "code": "ME/PM/GLS",
+    "runningNumber": "000127",
+    "description": "Folic Amber Glass Bottle",
+    "shortDescription": "Folic Amber Glass Bottle",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-GLS",
+    "stockUom": "EA",
+    "purchaseUom": "CTN",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0017",
+    "standardSupplierCode": "S/00017",
+    "hsnCode": "70109000",
+    "regulatedItem": false,
+    "standardCost": 0.176,
+    "lastPurchasePrice": 0.193,
+    "leadTimeDays": 39,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0128",
+    "code": "ME/PM/GLS",
+    "runningNumber": "000128",
+    "description": "Camphor Amber Glass Bottle",
+    "shortDescription": "Camphor Amber Glass Bottle",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-GLS",
+    "stockUom": "EA",
+    "purchaseUom": "CTN",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0029",
+    "standardSupplierCode": "S/00029",
+    "hsnCode": "70109000",
+    "regulatedItem": false,
+    "standardCost": 0.137,
+    "lastPurchasePrice": 0.131,
+    "leadTimeDays": 34,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0129",
+    "code": "ME/PM/GLS",
+    "runningNumber": "000129",
+    "description": "Sodium Amber Glass Bottle",
+    "shortDescription": "Sodium Amber Glass Bottle",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-GLS",
+    "stockUom": "EA",
+    "purchaseUom": "CTN",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0038",
+    "standardSupplierCode": "S/00038",
+    "hsnCode": "70109000",
+    "regulatedItem": false,
+    "standardCost": 0.252,
+    "lastPurchasePrice": 0.229,
+    "leadTimeDays": 40,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0130",
+    "code": "ME/PM/GLS",
+    "runningNumber": "000130",
+    "description": "Titanium Dioxide Dioxide Amber Glass Bottle",
+    "shortDescription": "Titanium Dioxide Amber Glass Bottle",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-GLS",
+    "stockUom": "EA",
+    "purchaseUom": "CTN",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0010",
+    "standardSupplierCode": "S/00010",
+    "hsnCode": "70109000",
+    "regulatedItem": false,
+    "standardCost": 0.268,
+    "lastPurchasePrice": 0.307,
+    "leadTimeDays": 32,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0131",
+    "code": "ME/PM/GLS",
+    "runningNumber": "000131",
+    "description": "Aloe Amber Glass Bottle",
+    "shortDescription": "Aloe Amber Glass Bottle",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-GLS",
+    "stockUom": "EA",
+    "purchaseUom": "CTN",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0033",
+    "standardSupplierCode": "S/00033",
+    "hsnCode": "70109000",
+    "regulatedItem": false,
+    "standardCost": 0.236,
+    "lastPurchasePrice": 0.228,
+    "leadTimeDays": 32,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0132",
+    "code": "ME/PM/GLS",
+    "runningNumber": "000132",
+    "description": "Folic Amber Glass Bottle",
+    "shortDescription": "Folic Amber Glass Bottle",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-GLS",
+    "stockUom": "EA",
+    "purchaseUom": "CTN",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0011",
+    "standardSupplierCode": "S/00011",
+    "hsnCode": "70109000",
+    "regulatedItem": false,
+    "standardCost": 0.376,
+    "lastPurchasePrice": 0.384,
+    "leadTimeDays": 32,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0133",
+    "code": "ME/PM/GLS",
+    "runningNumber": "000133",
+    "description": "Cellulose Amber Glass Bottle",
+    "shortDescription": "Cellulose Amber Glass Bottle",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-GLS",
+    "stockUom": "EA",
+    "purchaseUom": "CTN",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0027",
+    "standardSupplierCode": "S/00027",
+    "hsnCode": "70109000",
+    "regulatedItem": false,
+    "standardCost": 0.243,
+    "lastPurchasePrice": 0.231,
+    "leadTimeDays": 39,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0134",
+    "code": "ME/PM/GLS",
+    "runningNumber": "000134",
+    "description": "Sorbitol Amber Glass Bottle",
+    "shortDescription": "Sorbitol Amber Glass Bottle",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-GLS",
+    "stockUom": "EA",
+    "purchaseUom": "CTN",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0024",
+    "standardSupplierCode": "S/00024",
+    "hsnCode": "70109000",
+    "regulatedItem": false,
+    "standardCost": 0.144,
+    "lastPurchasePrice": 0.153,
+    "leadTimeDays": 35,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0135",
+    "code": "ME/PM/GLS",
+    "runningNumber": "000135",
+    "description": "Vitamin D3 D3 Amber Glass Bottle",
+    "shortDescription": "Vitamin D3 Amber Glass Bottle",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-GLS",
+    "stockUom": "EA",
+    "purchaseUom": "CTN",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0018",
+    "standardSupplierCode": "S/00018",
+    "hsnCode": "70109000",
+    "regulatedItem": false,
+    "standardCost": 0.127,
+    "lastPurchasePrice": 0.125,
+    "leadTimeDays": 32,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": false,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0136",
+    "code": "ME/PM/GLS",
+    "runningNumber": "000136",
+    "description": "Camphor Amber Glass Bottle",
+    "shortDescription": "Camphor Amber Glass Bottle",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-GLS",
+    "stockUom": "EA",
+    "purchaseUom": "CTN",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0003",
+    "standardSupplierCode": "S/00003",
+    "hsnCode": "70109000",
+    "regulatedItem": false,
+    "standardCost": 0.181,
+    "lastPurchasePrice": 0.197,
+    "leadTimeDays": 40,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0137",
+    "code": "ME/PM/GLS",
+    "runningNumber": "000137",
+    "description": "Folic Amber Glass Bottle",
+    "shortDescription": "Folic Amber Glass Bottle",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-GLS",
+    "stockUom": "EA",
+    "purchaseUom": "CTN",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0027",
+    "standardSupplierCode": "S/00027",
+    "hsnCode": "70109000",
+    "regulatedItem": false,
+    "standardCost": 0.271,
+    "lastPurchasePrice": 0.262,
+    "leadTimeDays": 40,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0138",
+    "code": "ME/PM/GLS",
+    "runningNumber": "000138",
+    "description": "Lutein Amber Glass Bottle",
+    "shortDescription": "Lutein Amber Glass Bottle",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-GLS",
+    "stockUom": "EA",
+    "purchaseUom": "CTN",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0005",
+    "standardSupplierCode": "S/00005",
+    "hsnCode": "70109000",
+    "regulatedItem": false,
+    "standardCost": 0.244,
+    "lastPurchasePrice": 0.245,
+    "leadTimeDays": 40,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0139",
+    "code": "ME/PM/CRC",
+    "runningNumber": "000139",
+    "description": "Zinc Child-Resistant Closure",
+    "shortDescription": "Zinc Child-Resistant Closure",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-CRC",
+    "stockUom": "EA",
+    "purchaseUom": "BAG",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0007",
+    "standardSupplierCode": "S/00007",
+    "hsnCode": "39235010",
+    "regulatedItem": false,
+    "standardCost": 0.036,
+    "lastPurchasePrice": 0.035,
+    "leadTimeDays": 42,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": false,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0140",
+    "code": "ME/PM/CRC",
+    "runningNumber": "000140",
+    "description": "Sodium Child-Resistant Closure",
+    "shortDescription": "Sodium Child-Resistant Closure",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-CRC",
+    "stockUom": "EA",
+    "purchaseUom": "BAG",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0007",
+    "standardSupplierCode": "S/00007",
+    "hsnCode": "39235010",
+    "regulatedItem": false,
+    "standardCost": 0.028,
+    "lastPurchasePrice": 0.03,
+    "leadTimeDays": 40,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0141",
+    "code": "ME/PM/CRC",
+    "runningNumber": "000141",
+    "description": "Lutein Child-Resistant Closure",
+    "shortDescription": "Lutein Child-Resistant Closure",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-CRC",
+    "stockUom": "EA",
+    "purchaseUom": "BAG",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0007",
+    "standardSupplierCode": "S/00007",
+    "hsnCode": "39235010",
+    "regulatedItem": false,
+    "standardCost": 0.042,
+    "lastPurchasePrice": 0.038,
+    "leadTimeDays": 43,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0142",
+    "code": "ME/PM/CRC",
+    "runningNumber": "000142",
+    "description": "Calcium Child-Resistant Closure",
+    "shortDescription": "Calcium Child-Resistant Closure",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-CRC",
+    "stockUom": "EA",
+    "purchaseUom": "BAG",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0007",
+    "standardSupplierCode": "S/00007",
+    "hsnCode": "39235010",
+    "regulatedItem": false,
+    "standardCost": 0.025,
+    "lastPurchasePrice": 0.026,
+    "leadTimeDays": 41,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0143",
+    "code": "ME/PM/CRC",
+    "runningNumber": "000143",
+    "description": "Folic Child-Resistant Closure",
+    "shortDescription": "Folic Child-Resistant Closure",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-CRC",
+    "stockUom": "EA",
+    "purchaseUom": "BAG",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0007",
+    "standardSupplierCode": "S/00007",
+    "hsnCode": "39235010",
+    "regulatedItem": false,
+    "standardCost": 0.052,
+    "lastPurchasePrice": 0.05,
+    "leadTimeDays": 44,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0144",
+    "code": "ME/PM/CRC",
+    "runningNumber": "000144",
+    "description": "Camphor Child-Resistant Closure",
+    "shortDescription": "Camphor Child-Resistant Closure",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-CRC",
+    "stockUom": "EA",
+    "purchaseUom": "BAG",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0007",
+    "standardSupplierCode": "S/00007",
+    "hsnCode": "39235010",
+    "regulatedItem": false,
+    "standardCost": 0.044,
+    "lastPurchasePrice": 0.045,
+    "leadTimeDays": 38,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0145",
+    "code": "ME/PM/CRC",
+    "runningNumber": "000145",
+    "description": "Biotin Child-Resistant Closure",
+    "shortDescription": "Biotin Child-Resistant Closure",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-CRC",
+    "stockUom": "EA",
+    "purchaseUom": "BAG",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0007",
+    "standardSupplierCode": "S/00007",
+    "hsnCode": "39235010",
+    "regulatedItem": false,
+    "standardCost": 0.045,
+    "lastPurchasePrice": 0.05,
+    "leadTimeDays": 40,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": false,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0146",
+    "code": "ME/PM/CRC",
+    "runningNumber": "000146",
+    "description": "Lactose Child-Resistant Closure",
+    "shortDescription": "Lactose Child-Resistant Closure",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-CRC",
+    "stockUom": "EA",
+    "purchaseUom": "BAG",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0007",
+    "standardSupplierCode": "S/00007",
+    "hsnCode": "39235010",
+    "regulatedItem": false,
+    "standardCost": 0.055,
+    "lastPurchasePrice": 0.061,
+    "leadTimeDays": 43,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0147",
+    "code": "ME/PM/CRC",
+    "runningNumber": "000147",
+    "description": "Biotin Child-Resistant Closure",
+    "shortDescription": "Biotin Child-Resistant Closure",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-CRC",
+    "stockUom": "EA",
+    "purchaseUom": "BAG",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0007",
+    "standardSupplierCode": "S/00007",
+    "hsnCode": "39235010",
+    "regulatedItem": false,
+    "standardCost": 0.057,
+    "lastPurchasePrice": 0.055,
+    "leadTimeDays": 45,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0148",
+    "code": "ME/PM/CRC",
+    "runningNumber": "000148",
+    "description": "Sorbitol Child-Resistant Closure",
+    "shortDescription": "Sorbitol Child-Resistant Closure",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-CRC",
+    "stockUom": "EA",
+    "purchaseUom": "BAG",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0007",
+    "standardSupplierCode": "S/00007",
+    "hsnCode": "39235010",
+    "regulatedItem": false,
+    "standardCost": 0.048,
+    "lastPurchasePrice": 0.055,
+    "leadTimeDays": 39,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": false,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0149",
+    "code": "ME/PM/CRC",
+    "runningNumber": "000149",
+    "description": "Omega-3 Child-Resistant Closure",
+    "shortDescription": "Omega-3 Child-Resistant Closure",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-CRC",
+    "stockUom": "EA",
+    "purchaseUom": "BAG",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0007",
+    "standardSupplierCode": "S/00007",
+    "hsnCode": "39235010",
+    "regulatedItem": false,
+    "standardCost": 0.045,
+    "lastPurchasePrice": 0.047,
+    "leadTimeDays": 39,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0150",
+    "code": "ME/PM/CRC",
+    "runningNumber": "000150",
+    "description": "Sodium Child-Resistant Closure",
+    "shortDescription": "Sodium Child-Resistant Closure",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-CRC",
+    "stockUom": "EA",
+    "purchaseUom": "BAG",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0007",
+    "standardSupplierCode": "S/00007",
+    "hsnCode": "39235010",
+    "regulatedItem": false,
+    "standardCost": 0.046,
+    "lastPurchasePrice": 0.047,
+    "leadTimeDays": 40,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0151",
+    "code": "ME/PM/CRC",
+    "runningNumber": "000151",
+    "description": "Hyaluronic Child-Resistant Closure",
+    "shortDescription": "Hyaluronic Child-Resistant Closure",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-CRC",
+    "stockUom": "EA",
+    "purchaseUom": "BAG",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0007",
+    "standardSupplierCode": "S/00007",
+    "hsnCode": "39235010",
+    "regulatedItem": false,
+    "standardCost": 0.045,
+    "lastPurchasePrice": 0.044,
+    "leadTimeDays": 43,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0152",
+    "code": "ME/PM/CRC",
+    "runningNumber": "000152",
+    "description": "Sodium Child-Resistant Closure",
+    "shortDescription": "Sodium Child-Resistant Closure",
+    "type": "COMPONENT",
+    "status": "ONBOARDED",
+    "department": "ME",
+    "segment": "PM",
+    "subSegment": "PM-CRC",
+    "stockUom": "EA",
+    "purchaseUom": "BAG",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0007",
+    "standardSupplierCode": "S/00007",
+    "hsnCode": "39235010",
+    "regulatedItem": false,
+    "standardCost": 0.046,
+    "lastPurchasePrice": 0.046,
+    "leadTimeDays": 43,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0153",
+    "code": "SR/MRO/BRG",
+    "runningNumber": "000153",
+    "description": "Cetirizine Bearing Assembly",
+    "shortDescription": "Cetirizine Bearing Assembly",
+    "type": "SPARE PART",
+    "status": "ONBOARDED",
+    "department": "SR",
+    "segment": "MRO",
+    "subSegment": "MRO-BRG",
+    "stockUom": "EA",
+    "purchaseUom": "EA",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0026",
+    "standardSupplierCode": "S/00026",
+    "hsnCode": "84821000",
+    "regulatedItem": false,
+    "standardCost": 146.945,
+    "lastPurchasePrice": 158.37,
+    "leadTimeDays": 19,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0154",
+    "code": "SR/MRO/BRG",
+    "runningNumber": "000154",
+    "description": "Lutein Bearing Assembly",
+    "shortDescription": "Lutein Bearing Assembly",
+    "type": "SPARE PART",
+    "status": "ONBOARDED",
+    "department": "SR",
+    "segment": "MRO",
+    "subSegment": "MRO-BRG",
+    "stockUom": "EA",
+    "purchaseUom": "EA",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0027",
+    "standardSupplierCode": "S/00027",
+    "hsnCode": "84821000",
+    "regulatedItem": false,
+    "standardCost": 81.264,
+    "lastPurchasePrice": 89.86,
+    "leadTimeDays": 24,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0155",
+    "code": "SR/MRO/BRG",
+    "runningNumber": "000155",
+    "description": "Paracetamol Bearing Assembly",
+    "shortDescription": "Paracetamol Bearing Assembly",
+    "type": "SPARE PART",
+    "status": "ONBOARDED",
+    "department": "SR",
+    "segment": "MRO",
+    "subSegment": "MRO-BRG",
+    "stockUom": "EA",
+    "purchaseUom": "EA",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0035",
+    "standardSupplierCode": "S/00035",
+    "hsnCode": "84821000",
+    "regulatedItem": false,
+    "standardCost": 95.677,
+    "lastPurchasePrice": 94.664,
+    "leadTimeDays": 21,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": false,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0156",
+    "code": "SR/MRO/BRG",
+    "runningNumber": "000156",
+    "description": "Cellulose Bearing Assembly",
+    "shortDescription": "Cellulose Bearing Assembly",
+    "type": "SPARE PART",
+    "status": "ONBOARDED",
+    "department": "SR",
+    "segment": "MRO",
+    "subSegment": "MRO-BRG",
+    "stockUom": "EA",
+    "purchaseUom": "EA",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0024",
+    "standardSupplierCode": "S/00024",
+    "hsnCode": "84821000",
+    "regulatedItem": false,
+    "standardCost": 155.557,
+    "lastPurchasePrice": 149.233,
+    "leadTimeDays": 23,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0157",
+    "code": "SR/MRO/BRG",
+    "runningNumber": "000157",
+    "description": "Hyaluronic Bearing Assembly",
+    "shortDescription": "Hyaluronic Bearing Assembly",
+    "type": "SPARE PART",
+    "status": "ONBOARDED",
+    "department": "SR",
+    "segment": "MRO",
+    "subSegment": "MRO-BRG",
+    "stockUom": "EA",
+    "purchaseUom": "EA",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0002",
+    "standardSupplierCode": "S/00002",
+    "hsnCode": "84821000",
+    "regulatedItem": false,
+    "standardCost": 158.722,
+    "lastPurchasePrice": 180.58,
+    "leadTimeDays": 26,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0158",
+    "code": "SR/MRO/BRG",
+    "runningNumber": "000158",
+    "description": "Loratadine Bearing Assembly",
+    "shortDescription": "Loratadine Bearing Assembly",
+    "type": "SPARE PART",
+    "status": "ONBOARDED",
+    "department": "SR",
+    "segment": "MRO",
+    "subSegment": "MRO-BRG",
+    "stockUom": "EA",
+    "purchaseUom": "EA",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0040",
+    "standardSupplierCode": "S/00040",
+    "hsnCode": "84821000",
+    "regulatedItem": false,
+    "standardCost": 98.819,
+    "lastPurchasePrice": 107.193,
+    "leadTimeDays": 22,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": false,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0159",
+    "code": "SR/MRO/BRG",
+    "runningNumber": "000159",
+    "description": "Calcium Bearing Assembly",
+    "shortDescription": "Calcium Bearing Assembly",
+    "type": "SPARE PART",
+    "status": "ONBOARDED",
+    "department": "SR",
+    "segment": "MRO",
+    "subSegment": "MRO-BRG",
+    "stockUom": "EA",
+    "purchaseUom": "EA",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0014",
+    "standardSupplierCode": "S/00014",
+    "hsnCode": "84821000",
+    "regulatedItem": false,
+    "standardCost": 105.04,
+    "lastPurchasePrice": 109.027,
+    "leadTimeDays": 23,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0160",
+    "code": "SR/MRO/BRG",
+    "runningNumber": "000160",
+    "description": "Vitamin C C Bearing Assembly",
+    "shortDescription": "Vitamin C Bearing Assembly",
+    "type": "SPARE PART",
+    "status": "ONBOARDED",
+    "department": "SR",
+    "segment": "MRO",
+    "subSegment": "MRO-BRG",
+    "stockUom": "EA",
+    "purchaseUom": "EA",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0047",
+    "standardSupplierCode": "S/00047",
+    "hsnCode": "84821000",
+    "regulatedItem": false,
+    "standardCost": 62.129,
+    "lastPurchasePrice": 57.882,
+    "leadTimeDays": 21,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0161",
+    "code": "SR/MRO/BRG",
+    "runningNumber": "000161",
+    "description": "Benzoyl Bearing Assembly",
+    "shortDescription": "Benzoyl Bearing Assembly",
+    "type": "SPARE PART",
+    "status": "ONBOARDED",
+    "department": "SR",
+    "segment": "MRO",
+    "subSegment": "MRO-BRG",
+    "stockUom": "EA",
+    "purchaseUom": "EA",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0006",
+    "standardSupplierCode": "S/00006",
+    "hsnCode": "84821000",
+    "regulatedItem": false,
+    "standardCost": 86.567,
+    "lastPurchasePrice": 81.084,
+    "leadTimeDays": 23,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0162",
+    "code": "SR/MRO/BRG",
+    "runningNumber": "000162",
+    "description": "Hyaluronic Bearing Assembly",
+    "shortDescription": "Hyaluronic Bearing Assembly",
+    "type": "SPARE PART",
+    "status": "ONBOARDED",
+    "department": "SR",
+    "segment": "MRO",
+    "subSegment": "MRO-BRG",
+    "stockUom": "EA",
+    "purchaseUom": "EA",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0008",
+    "standardSupplierCode": "S/00008",
+    "hsnCode": "84821000",
+    "regulatedItem": false,
+    "standardCost": 60.616,
+    "lastPurchasePrice": 60.8,
+    "leadTimeDays": 20,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0163",
+    "code": "SR/MRO/BRG",
+    "runningNumber": "000163",
+    "description": "Salicylic Bearing Assembly",
+    "shortDescription": "Salicylic Bearing Assembly",
+    "type": "SPARE PART",
+    "status": "ONBOARDED",
+    "department": "SR",
+    "segment": "MRO",
+    "subSegment": "MRO-BRG",
+    "stockUom": "EA",
+    "purchaseUom": "EA",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0001",
+    "standardSupplierCode": "S/00001",
+    "hsnCode": "84821000",
+    "regulatedItem": false,
+    "standardCost": 115.755,
+    "lastPurchasePrice": 125.801,
+    "leadTimeDays": 25,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0164",
+    "code": "SR/MRO/BRG",
+    "runningNumber": "000164",
+    "description": "Salicylic Bearing Assembly",
+    "shortDescription": "Salicylic Bearing Assembly",
+    "type": "SPARE PART",
+    "status": "ONBOARDED",
+    "department": "SR",
+    "segment": "MRO",
+    "subSegment": "MRO-BRG",
+    "stockUom": "EA",
+    "purchaseUom": "EA",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0017",
+    "standardSupplierCode": "S/00017",
+    "hsnCode": "84821000",
+    "regulatedItem": false,
+    "standardCost": 115.231,
+    "lastPurchasePrice": 127.145,
+    "leadTimeDays": 26,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": false,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0165",
+    "code": "SR/MRO/FLT",
+    "runningNumber": "000165",
+    "description": "Omega-3 Cartridge Filter",
+    "shortDescription": "Omega-3 Cartridge Filter",
+    "type": "CONSUMABLE",
+    "status": "ONBOARDED",
+    "department": "SR",
+    "segment": "MRO",
+    "subSegment": "MRO-FLT",
+    "stockUom": "EA",
+    "purchaseUom": "BOX",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0011",
+    "standardSupplierCode": "S/00011",
+    "hsnCode": "84212300",
+    "regulatedItem": false,
+    "standardCost": 22.986,
+    "lastPurchasePrice": 25.384,
+    "leadTimeDays": 17,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": false,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0166",
+    "code": "SR/MRO/FLT",
+    "runningNumber": "000166",
+    "description": "Probiotic Cartridge Filter",
+    "shortDescription": "Probiotic Cartridge Filter",
+    "type": "CONSUMABLE",
+    "status": "ONBOARDED",
+    "department": "SR",
+    "segment": "MRO",
+    "subSegment": "MRO-FLT",
+    "stockUom": "EA",
+    "purchaseUom": "BOX",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0020",
+    "standardSupplierCode": "S/00020",
+    "hsnCode": "84212300",
+    "regulatedItem": false,
+    "standardCost": 19.78,
+    "lastPurchasePrice": 19.582,
+    "leadTimeDays": 13,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0167",
+    "code": "SR/MRO/FLT",
+    "runningNumber": "000167",
+    "description": "Biotin Cartridge Filter",
+    "shortDescription": "Biotin Cartridge Filter",
+    "type": "CONSUMABLE",
+    "status": "ONBOARDED",
+    "department": "SR",
+    "segment": "MRO",
+    "subSegment": "MRO-FLT",
+    "stockUom": "EA",
+    "purchaseUom": "BOX",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0012",
+    "standardSupplierCode": "S/00012",
+    "hsnCode": "84212300",
+    "regulatedItem": false,
+    "standardCost": 16.143,
+    "lastPurchasePrice": 14.627,
+    "leadTimeDays": 14,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0168",
+    "code": "SR/MRO/FLT",
+    "runningNumber": "000168",
+    "description": "Magnesium Cartridge Filter",
+    "shortDescription": "Magnesium Cartridge Filter",
+    "type": "CONSUMABLE",
+    "status": "ONBOARDED",
+    "department": "SR",
+    "segment": "MRO",
+    "subSegment": "MRO-FLT",
+    "stockUom": "EA",
+    "purchaseUom": "BOX",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0009",
+    "standardSupplierCode": "S/00009",
+    "hsnCode": "84212300",
+    "regulatedItem": false,
+    "standardCost": 30.602,
+    "lastPurchasePrice": 33.009,
+    "leadTimeDays": 16,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0169",
+    "code": "SR/MRO/FLT",
+    "runningNumber": "000169",
+    "description": "Benzoyl Cartridge Filter",
+    "shortDescription": "Benzoyl Cartridge Filter",
+    "type": "CONSUMABLE",
+    "status": "ONBOARDED",
+    "department": "SR",
+    "segment": "MRO",
+    "subSegment": "MRO-FLT",
+    "stockUom": "EA",
+    "purchaseUom": "BOX",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0038",
+    "standardSupplierCode": "S/00038",
+    "hsnCode": "84212300",
+    "regulatedItem": false,
+    "standardCost": 21.726,
+    "lastPurchasePrice": 22.361,
+    "leadTimeDays": 17,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0170",
+    "code": "SR/MRO/FLT",
+    "runningNumber": "000170",
+    "description": "Calcium Cartridge Filter",
+    "shortDescription": "Calcium Cartridge Filter",
+    "type": "CONSUMABLE",
+    "status": "ONBOARDED",
+    "department": "SR",
+    "segment": "MRO",
+    "subSegment": "MRO-FLT",
+    "stockUom": "EA",
+    "purchaseUom": "BOX",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0037",
+    "standardSupplierCode": "S/00037",
+    "hsnCode": "84212300",
+    "regulatedItem": false,
+    "standardCost": 14.442,
+    "lastPurchasePrice": 16.603,
+    "leadTimeDays": 14,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0171",
+    "code": "SR/MRO/FLT",
+    "runningNumber": "000171",
+    "description": "Probiotic Cartridge Filter",
+    "shortDescription": "Probiotic Cartridge Filter",
+    "type": "CONSUMABLE",
+    "status": "ONBOARDED",
+    "department": "SR",
+    "segment": "MRO",
+    "subSegment": "MRO-FLT",
+    "stockUom": "EA",
+    "purchaseUom": "BOX",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0040",
+    "standardSupplierCode": "S/00040",
+    "hsnCode": "84212300",
+    "regulatedItem": false,
+    "standardCost": 11.029,
+    "lastPurchasePrice": 11.771,
+    "leadTimeDays": 9,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0172",
+    "code": "SR/MRO/FLT",
+    "runningNumber": "000172",
+    "description": "Cetirizine Cartridge Filter",
+    "shortDescription": "Cetirizine Cartridge Filter",
+    "type": "CONSUMABLE",
+    "status": "ONBOARDED",
+    "department": "SR",
+    "segment": "MRO",
+    "subSegment": "MRO-FLT",
+    "stockUom": "EA",
+    "purchaseUom": "BOX",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0033",
+    "standardSupplierCode": "S/00033",
+    "hsnCode": "84212300",
+    "regulatedItem": false,
+    "standardCost": 14.231,
+    "lastPurchasePrice": 13.091,
+    "leadTimeDays": 17,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": false,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0173",
+    "code": "SR/MRO/FLT",
+    "runningNumber": "000173",
+    "description": "Biotin Cartridge Filter",
+    "shortDescription": "Biotin Cartridge Filter",
+    "type": "CONSUMABLE",
+    "status": "ONBOARDED",
+    "department": "SR",
+    "segment": "MRO",
+    "subSegment": "MRO-FLT",
+    "stockUom": "EA",
+    "purchaseUom": "BOX",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0007",
+    "standardSupplierCode": "S/00007",
+    "hsnCode": "84212300",
+    "regulatedItem": false,
+    "standardCost": 13.073,
+    "lastPurchasePrice": 13.742,
+    "leadTimeDays": 14,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0174",
+    "code": "SR/MRO/FLT",
+    "runningNumber": "000174",
+    "description": "Vitamin D3 D3 Cartridge Filter",
+    "shortDescription": "Vitamin D3 Cartridge Filter",
+    "type": "CONSUMABLE",
+    "status": "ONBOARDED",
+    "department": "SR",
+    "segment": "MRO",
+    "subSegment": "MRO-FLT",
+    "stockUom": "EA",
+    "purchaseUom": "BOX",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0005",
+    "standardSupplierCode": "S/00005",
+    "hsnCode": "84212300",
+    "regulatedItem": false,
+    "standardCost": 20.541,
+    "lastPurchasePrice": 22.733,
+    "leadTimeDays": 10,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": false,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0175",
+    "code": "EL/MRO/ELC",
+    "runningNumber": "000175",
+    "description": "Lactose Control Relay",
+    "shortDescription": "Lactose Control Relay",
+    "type": "SPARE PART",
+    "status": "ONBOARDED",
+    "department": "EL",
+    "segment": "MRO",
+    "subSegment": "MRO-ELC",
+    "stockUom": "EA",
+    "purchaseUom": "EA",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0026",
+    "standardSupplierCode": "S/00026",
+    "hsnCode": "85364900",
+    "regulatedItem": false,
+    "standardCost": 72.299,
+    "lastPurchasePrice": 71.594,
+    "leadTimeDays": 19,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0176",
+    "code": "EL/MRO/ELC",
+    "runningNumber": "000176",
+    "description": "Zinc Control Relay",
+    "shortDescription": "Zinc Control Relay",
+    "type": "SPARE PART",
+    "status": "ONBOARDED",
+    "department": "EL",
+    "segment": "MRO",
+    "subSegment": "MRO-ELC",
+    "stockUom": "EA",
+    "purchaseUom": "EA",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0014",
+    "standardSupplierCode": "S/00014",
+    "hsnCode": "85364900",
+    "regulatedItem": false,
+    "standardCost": 39.019,
+    "lastPurchasePrice": 44.666,
+    "leadTimeDays": 22,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0177",
+    "code": "EL/MRO/ELC",
+    "runningNumber": "000177",
+    "description": "Lactose Control Relay",
+    "shortDescription": "Lactose Control Relay",
+    "type": "SPARE PART",
+    "status": "ONBOARDED",
+    "department": "EL",
+    "segment": "MRO",
+    "subSegment": "MRO-ELC",
+    "stockUom": "EA",
+    "purchaseUom": "EA",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0009",
+    "standardSupplierCode": "S/00009",
+    "hsnCode": "85364900",
+    "regulatedItem": false,
+    "standardCost": 36.715,
+    "lastPurchasePrice": 33.668,
+    "leadTimeDays": 17,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0178",
+    "code": "EL/MRO/ELC",
+    "runningNumber": "000178",
+    "description": "Potassium Control Relay",
+    "shortDescription": "Potassium Control Relay",
+    "type": "SPARE PART",
+    "status": "ONBOARDED",
+    "department": "EL",
+    "segment": "MRO",
+    "subSegment": "MRO-ELC",
+    "stockUom": "EA",
+    "purchaseUom": "EA",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0039",
+    "standardSupplierCode": "S/00039",
+    "hsnCode": "85364900",
+    "regulatedItem": false,
+    "standardCost": 59.937,
+    "lastPurchasePrice": 59.847,
+    "leadTimeDays": 24,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": false,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0179",
+    "code": "EL/MRO/ELC",
+    "runningNumber": "000179",
+    "description": "Paracetamol Control Relay",
+    "shortDescription": "Paracetamol Control Relay",
+    "type": "SPARE PART",
+    "status": "ONBOARDED",
+    "department": "EL",
+    "segment": "MRO",
+    "subSegment": "MRO-ELC",
+    "stockUom": "EA",
+    "purchaseUom": "EA",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0031",
+    "standardSupplierCode": "S/00031",
+    "hsnCode": "85364900",
+    "regulatedItem": false,
+    "standardCost": 33.166,
+    "lastPurchasePrice": 35.701,
+    "leadTimeDays": 22,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0180",
+    "code": "EL/MRO/ELC",
+    "runningNumber": "000180",
+    "description": "Menthol Control Relay",
+    "shortDescription": "Menthol Control Relay",
+    "type": "SPARE PART",
+    "status": "ONBOARDED",
+    "department": "EL",
+    "segment": "MRO",
+    "subSegment": "MRO-ELC",
+    "stockUom": "EA",
+    "purchaseUom": "EA",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0037",
+    "standardSupplierCode": "S/00037",
+    "hsnCode": "85364900",
+    "regulatedItem": false,
+    "standardCost": 53.012,
+    "lastPurchasePrice": 50.823,
+    "leadTimeDays": 21,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": false,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0181",
+    "code": "EL/MRO/ELC",
+    "runningNumber": "000181",
+    "description": "Sodium Control Relay",
+    "shortDescription": "Sodium Control Relay",
+    "type": "SPARE PART",
+    "status": "ONBOARDED",
+    "department": "EL",
+    "segment": "MRO",
+    "subSegment": "MRO-ELC",
+    "stockUom": "EA",
+    "purchaseUom": "EA",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0034",
+    "standardSupplierCode": "S/00034",
+    "hsnCode": "85364900",
+    "regulatedItem": false,
+    "standardCost": 49.194,
+    "lastPurchasePrice": 51.127,
+    "leadTimeDays": 21,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0182",
+    "code": "EL/MRO/ELC",
+    "runningNumber": "000182",
+    "description": "Ascorbic Control Relay",
+    "shortDescription": "Ascorbic Control Relay",
+    "type": "SPARE PART",
+    "status": "ONBOARDED",
+    "department": "EL",
+    "segment": "MRO",
+    "subSegment": "MRO-ELC",
+    "stockUom": "EA",
+    "purchaseUom": "EA",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0042",
+    "standardSupplierCode": "S/00042",
+    "hsnCode": "85364900",
+    "regulatedItem": false,
+    "standardCost": 63.734,
+    "lastPurchasePrice": 71.28,
+    "leadTimeDays": 24,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": false,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0183",
+    "code": "EL/MRO/ELC",
+    "runningNumber": "000183",
+    "description": "Calcium Control Relay",
+    "shortDescription": "Calcium Control Relay",
+    "type": "SPARE PART",
+    "status": "ONBOARDED",
+    "department": "EL",
+    "segment": "MRO",
+    "subSegment": "MRO-ELC",
+    "stockUom": "EA",
+    "purchaseUom": "EA",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0019",
+    "standardSupplierCode": "S/00019",
+    "hsnCode": "85364900",
+    "regulatedItem": false,
+    "standardCost": 75.091,
+    "lastPurchasePrice": 77.802,
+    "leadTimeDays": 24,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0184",
+    "code": "EL/MRO/ELC",
+    "runningNumber": "000184",
+    "description": "Calcium Control Relay",
+    "shortDescription": "Calcium Control Relay",
+    "type": "SPARE PART",
+    "status": "ONBOARDED",
+    "department": "EL",
+    "segment": "MRO",
+    "subSegment": "MRO-ELC",
+    "stockUom": "EA",
+    "purchaseUom": "EA",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0008",
+    "standardSupplierCode": "S/00008",
+    "hsnCode": "85364900",
+    "regulatedItem": false,
+    "standardCost": 71.365,
+    "lastPurchasePrice": 65.508,
+    "leadTimeDays": 21,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0185",
+    "code": "EL/MRO/ELC",
+    "runningNumber": "000185",
+    "description": "Sorbitol Control Relay",
+    "shortDescription": "Sorbitol Control Relay",
+    "type": "SPARE PART",
+    "status": "ONBOARDED",
+    "department": "EL",
+    "segment": "MRO",
+    "subSegment": "MRO-ELC",
+    "stockUom": "EA",
+    "purchaseUom": "EA",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0020",
+    "standardSupplierCode": "S/00020",
+    "hsnCode": "85364900",
+    "regulatedItem": false,
+    "standardCost": 36.397,
+    "lastPurchasePrice": 33.375,
+    "leadTimeDays": 24,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": false,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0186",
+    "code": "EL/MRO/ELC",
+    "runningNumber": "000186",
+    "description": "Loratadine Control Relay",
+    "shortDescription": "Loratadine Control Relay",
+    "type": "SPARE PART",
+    "status": "ONBOARDED",
+    "department": "EL",
+    "segment": "MRO",
+    "subSegment": "MRO-ELC",
+    "stockUom": "EA",
+    "purchaseUom": "EA",
+    "salesUom": "EA",
+    "standardSupplierId": "SUP-0043",
+    "standardSupplierCode": "S/00043",
+    "hsnCode": "85364900",
+    "regulatedItem": false,
+    "standardCost": 34.122,
+    "lastPurchasePrice": 31.167,
+    "leadTimeDays": 17,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0187",
+    "code": "AD/SVC/CAL",
+    "runningNumber": "000187",
+    "description": "Biotin Calibration Service",
+    "shortDescription": "Biotin Calibration Service",
+    "type": "SERVICE",
+    "status": "ONBOARDED",
+    "department": "AD",
+    "segment": "SVC",
+    "subSegment": "SVC-CAL",
+    "stockUom": "JOB",
+    "purchaseUom": "JOB",
+    "salesUom": "JOB",
+    "standardSupplierId": "SUP-0020",
+    "standardSupplierCode": "S/00020",
+    "hsnCode": null,
+    "regulatedItem": false,
+    "standardCost": 1.684,
+    "lastPurchasePrice": 1.888,
+    "leadTimeDays": 9,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0188",
+    "code": "AD/SVC/CAL",
+    "runningNumber": "000188",
+    "description": "Sodium Calibration Service",
+    "shortDescription": "Sodium Calibration Service",
+    "type": "SERVICE",
+    "status": "ONBOARDED",
+    "department": "AD",
+    "segment": "SVC",
+    "subSegment": "SVC-CAL",
+    "stockUom": "JOB",
+    "purchaseUom": "JOB",
+    "salesUom": "JOB",
+    "standardSupplierId": "SUP-0047",
+    "standardSupplierCode": "S/00047",
+    "hsnCode": null,
+    "regulatedItem": false,
+    "standardCost": 1.67,
+    "lastPurchasePrice": 1.698,
+    "leadTimeDays": 4,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0189",
+    "code": "AD/SVC/CAL",
+    "runningNumber": "000189",
+    "description": "Vitamin D3 D3 Calibration Service",
+    "shortDescription": "Vitamin D3 Calibration Service",
+    "type": "SERVICE",
+    "status": "ONBOARDED",
+    "department": "AD",
+    "segment": "SVC",
+    "subSegment": "SVC-CAL",
+    "stockUom": "JOB",
+    "purchaseUom": "JOB",
+    "salesUom": "JOB",
+    "standardSupplierId": "SUP-0004",
+    "standardSupplierCode": "S/00004",
+    "hsnCode": null,
+    "regulatedItem": false,
+    "standardCost": 0.654,
+    "lastPurchasePrice": 0.74,
+    "leadTimeDays": 5,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0190",
+    "code": "AD/SVC/CAL",
+    "runningNumber": "000190",
+    "description": "Zinc Calibration Service",
+    "shortDescription": "Zinc Calibration Service",
+    "type": "SERVICE",
+    "status": "ONBOARDED",
+    "department": "AD",
+    "segment": "SVC",
+    "subSegment": "SVC-CAL",
+    "stockUom": "JOB",
+    "purchaseUom": "JOB",
+    "salesUom": "JOB",
+    "standardSupplierId": "SUP-0018",
+    "standardSupplierCode": "S/00018",
+    "hsnCode": null,
+    "regulatedItem": false,
+    "standardCost": 1.331,
+    "lastPurchasePrice": 1.276,
+    "leadTimeDays": 6,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0191",
+    "code": "AD/SVC/CAL",
+    "runningNumber": "000191",
+    "description": "Calcium Calibration Service",
+    "shortDescription": "Calcium Calibration Service",
+    "type": "SERVICE",
+    "status": "ONBOARDED",
+    "department": "AD",
+    "segment": "SVC",
+    "subSegment": "SVC-CAL",
+    "stockUom": "JOB",
+    "purchaseUom": "JOB",
+    "salesUom": "JOB",
+    "standardSupplierId": "SUP-0012",
+    "standardSupplierCode": "S/00012",
+    "hsnCode": null,
+    "regulatedItem": false,
+    "standardCost": 1.643,
+    "lastPurchasePrice": 1.519,
+    "leadTimeDays": 6,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": false,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0192",
+    "code": "AD/SVC/CAL",
+    "runningNumber": "000192",
+    "description": "Vitamin D3 D3 Calibration Service",
+    "shortDescription": "Vitamin D3 Calibration Service",
+    "type": "SERVICE",
+    "status": "ONBOARDED",
+    "department": "AD",
+    "segment": "SVC",
+    "subSegment": "SVC-CAL",
+    "stockUom": "JOB",
+    "purchaseUom": "JOB",
+    "salesUom": "JOB",
+    "standardSupplierId": "SUP-0021",
+    "standardSupplierCode": "S/00021",
+    "hsnCode": null,
+    "regulatedItem": false,
+    "standardCost": 1.069,
+    "lastPurchasePrice": 1.117,
+    "leadTimeDays": 5,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0193",
+    "code": "AD/SVC/CAL",
+    "runningNumber": "000193",
+    "description": "Salicylic Calibration Service",
+    "shortDescription": "Salicylic Calibration Service",
+    "type": "SERVICE",
+    "status": "ONBOARDED",
+    "department": "AD",
+    "segment": "SVC",
+    "subSegment": "SVC-CAL",
+    "stockUom": "JOB",
+    "purchaseUom": "JOB",
+    "salesUom": "JOB",
+    "standardSupplierId": "SUP-0029",
+    "standardSupplierCode": "S/00029",
+    "hsnCode": null,
+    "regulatedItem": false,
+    "standardCost": 0.837,
+    "lastPurchasePrice": 0.861,
+    "leadTimeDays": 9,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0194",
+    "code": "AD/SVC/CAL",
+    "runningNumber": "000194",
+    "description": "Menthol Calibration Service",
+    "shortDescription": "Menthol Calibration Service",
+    "type": "SERVICE",
+    "status": "ONBOARDED",
+    "department": "AD",
+    "segment": "SVC",
+    "subSegment": "SVC-CAL",
+    "stockUom": "JOB",
+    "purchaseUom": "JOB",
+    "salesUom": "JOB",
+    "standardSupplierId": "SUP-0013",
+    "standardSupplierCode": "S/00013",
+    "hsnCode": null,
+    "regulatedItem": false,
+    "standardCost": 1.249,
+    "lastPurchasePrice": 1.406,
+    "leadTimeDays": 4,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0195",
+    "code": "AD/SVC/MNT",
+    "runningNumber": "000195",
+    "description": "Folic AMC Maintenance",
+    "shortDescription": "Folic AMC Maintenance",
+    "type": "SERVICE",
+    "status": "ONBOARDED",
+    "department": "AD",
+    "segment": "SVC",
+    "subSegment": "SVC-MNT",
+    "stockUom": "JOB",
+    "purchaseUom": "JOB",
+    "salesUom": "JOB",
+    "standardSupplierId": "SUP-0012",
+    "standardSupplierCode": "S/00012",
+    "hsnCode": null,
+    "regulatedItem": false,
+    "standardCost": 1.181,
+    "lastPurchasePrice": 1.218,
+    "leadTimeDays": 8,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0196",
+    "code": "AD/SVC/MNT",
+    "runningNumber": "000196",
+    "description": "Sodium AMC Maintenance",
+    "shortDescription": "Sodium AMC Maintenance",
+    "type": "SERVICE",
+    "status": "ONBOARDED",
+    "department": "AD",
+    "segment": "SVC",
+    "subSegment": "SVC-MNT",
+    "stockUom": "JOB",
+    "purchaseUom": "JOB",
+    "salesUom": "JOB",
+    "standardSupplierId": "SUP-0004",
+    "standardSupplierCode": "S/00004",
+    "hsnCode": null,
+    "regulatedItem": false,
+    "standardCost": 1.678,
+    "lastPurchasePrice": 1.551,
+    "leadTimeDays": 12,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0197",
+    "code": "AD/SVC/MNT",
+    "runningNumber": "000197",
+    "description": "Probiotic AMC Maintenance",
+    "shortDescription": "Probiotic AMC Maintenance",
+    "type": "SERVICE",
+    "status": "ONBOARDED",
+    "department": "AD",
+    "segment": "SVC",
+    "subSegment": "SVC-MNT",
+    "stockUom": "JOB",
+    "purchaseUom": "JOB",
+    "salesUom": "JOB",
+    "standardSupplierId": "SUP-0042",
+    "standardSupplierCode": "S/00042",
+    "hsnCode": null,
+    "regulatedItem": false,
+    "standardCost": 0.937,
+    "lastPurchasePrice": 0.862,
+    "leadTimeDays": 11,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": false,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0198",
+    "code": "AD/SVC/MNT",
+    "runningNumber": "000198",
+    "description": "Cellulose AMC Maintenance",
+    "shortDescription": "Cellulose AMC Maintenance",
+    "type": "SERVICE",
+    "status": "ONBOARDED",
+    "department": "AD",
+    "segment": "SVC",
+    "subSegment": "SVC-MNT",
+    "stockUom": "JOB",
+    "purchaseUom": "JOB",
+    "salesUom": "JOB",
+    "standardSupplierId": "SUP-0043",
+    "standardSupplierCode": "S/00043",
+    "hsnCode": null,
+    "regulatedItem": false,
+    "standardCost": 1.787,
+    "lastPurchasePrice": 1.912,
+    "leadTimeDays": 8,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0199",
+    "code": "AD/SVC/MNT",
+    "runningNumber": "000199",
+    "description": "Hyaluronic AMC Maintenance",
+    "shortDescription": "Hyaluronic AMC Maintenance",
+    "type": "SERVICE",
+    "status": "ONBOARDED",
+    "department": "AD",
+    "segment": "SVC",
+    "subSegment": "SVC-MNT",
+    "stockUom": "JOB",
+    "purchaseUom": "JOB",
+    "salesUom": "JOB",
+    "standardSupplierId": "SUP-0013",
+    "standardSupplierCode": "S/00013",
+    "hsnCode": null,
+    "regulatedItem": false,
+    "standardCost": 1.387,
+    "lastPurchasePrice": 1.546,
+    "leadTimeDays": 10,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0200",
+    "code": "AD/SVC/MNT",
+    "runningNumber": "000200",
+    "description": "Menthol AMC Maintenance",
+    "shortDescription": "Menthol AMC Maintenance",
+    "type": "SERVICE",
+    "status": "ONBOARDED",
+    "department": "AD",
+    "segment": "SVC",
+    "subSegment": "SVC-MNT",
+    "stockUom": "JOB",
+    "purchaseUom": "JOB",
+    "salesUom": "JOB",
+    "standardSupplierId": "SUP-0032",
+    "standardSupplierCode": "S/00032",
+    "hsnCode": null,
+    "regulatedItem": false,
+    "standardCost": 0.949,
+    "lastPurchasePrice": 0.987,
+    "leadTimeDays": 8,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": false,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0201",
+    "code": "AD/SVC/MNT",
+    "runningNumber": "000201",
+    "description": "Sodium AMC Maintenance",
+    "shortDescription": "Sodium AMC Maintenance",
+    "type": "SERVICE",
+    "status": "PENDING_APPROVAL",
+    "department": "AD",
+    "segment": "SVC",
+    "subSegment": "SVC-MNT",
+    "stockUom": "JOB",
+    "purchaseUom": "JOB",
+    "salesUom": "JOB",
+    "standardSupplierId": "SUP-0041",
+    "standardSupplierCode": "S/00041",
+    "hsnCode": null,
+    "regulatedItem": false,
+    "standardCost": 1.018,
+    "lastPurchasePrice": 0.972,
+    "leadTimeDays": 9,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": false,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0202",
+    "code": "AD/SVC/MNT",
+    "runningNumber": "000202",
+    "description": "Vitamin D3 D3 AMC Maintenance",
+    "shortDescription": "Vitamin D3 AMC Maintenance",
+    "type": "SERVICE",
+    "status": "PENDING_ONBOARDING",
+    "department": "AD",
+    "segment": "SVC",
+    "subSegment": "SVC-MNT",
+    "stockUom": "JOB",
+    "purchaseUom": "JOB",
+    "salesUom": "JOB",
+    "standardSupplierId": "SUP-0035",
+    "standardSupplierCode": "S/00035",
+    "hsnCode": null,
+    "regulatedItem": false,
+    "standardCost": 0.611,
+    "lastPurchasePrice": 0.575,
+    "leadTimeDays": 9,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0203",
+    "code": "AD/SVC/FRT",
+    "runningNumber": "000203",
+    "description": "Vitamin D3 D3 Freight and Clearing",
+    "shortDescription": "Vitamin D3 Freight and Clearing",
+    "type": "SERVICE",
+    "status": "ONBOARDED",
+    "department": "AD",
+    "segment": "SVC",
+    "subSegment": "SVC-FRT",
+    "stockUom": "JOB",
+    "purchaseUom": "JOB",
+    "salesUom": "JOB",
+    "standardSupplierId": "SUP-0008",
+    "standardSupplierCode": "S/00008",
+    "hsnCode": null,
+    "regulatedItem": false,
+    "standardCost": 0.686,
+    "lastPurchasePrice": 0.725,
+    "leadTimeDays": 6,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0204",
+    "code": "AD/SVC/FRT",
+    "runningNumber": "000204",
+    "description": "Loratadine Freight and Clearing",
+    "shortDescription": "Loratadine Freight and Clearing",
+    "type": "SERVICE",
+    "status": "ONBOARDED",
+    "department": "AD",
+    "segment": "SVC",
+    "subSegment": "SVC-FRT",
+    "stockUom": "JOB",
+    "purchaseUom": "JOB",
+    "salesUom": "JOB",
+    "standardSupplierId": "SUP-0008",
+    "standardSupplierCode": "S/00008",
+    "hsnCode": null,
+    "regulatedItem": false,
+    "standardCost": 1.268,
+    "lastPurchasePrice": 1.201,
+    "leadTimeDays": 8,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": false,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0205",
+    "code": "AD/SVC/FRT",
+    "runningNumber": "000205",
+    "description": "Folic Freight and Clearing",
+    "shortDescription": "Folic Freight and Clearing",
+    "type": "SERVICE",
+    "status": "ONBOARDED",
+    "department": "AD",
+    "segment": "SVC",
+    "subSegment": "SVC-FRT",
+    "stockUom": "JOB",
+    "purchaseUom": "JOB",
+    "salesUom": "JOB",
+    "standardSupplierId": "SUP-0008",
+    "standardSupplierCode": "S/00008",
+    "hsnCode": null,
+    "regulatedItem": false,
+    "standardCost": 1.098,
+    "lastPurchasePrice": 1.248,
+    "leadTimeDays": 5,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0206",
+    "code": "AD/SVC/FRT",
+    "runningNumber": "000206",
+    "description": "Lutein Freight and Clearing",
+    "shortDescription": "Lutein Freight and Clearing",
+    "type": "SERVICE",
+    "status": "ONBOARDED",
+    "department": "AD",
+    "segment": "SVC",
+    "subSegment": "SVC-FRT",
+    "stockUom": "JOB",
+    "purchaseUom": "JOB",
+    "salesUom": "JOB",
+    "standardSupplierId": "SUP-0008",
+    "standardSupplierCode": "S/00008",
+    "hsnCode": null,
+    "regulatedItem": false,
+    "standardCost": 1.604,
+    "lastPurchasePrice": 1.77,
+    "leadTimeDays": 3,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": false,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0207",
+    "code": "AD/SVC/FRT",
+    "runningNumber": "000207",
+    "description": "Glycerin Freight and Clearing",
+    "shortDescription": "Glycerin Freight and Clearing",
+    "type": "SERVICE",
+    "status": "ONBOARDED",
+    "department": "AD",
+    "segment": "SVC",
+    "subSegment": "SVC-FRT",
+    "stockUom": "JOB",
+    "purchaseUom": "JOB",
+    "salesUom": "JOB",
+    "standardSupplierId": "SUP-0008",
+    "standardSupplierCode": "S/00008",
+    "hsnCode": null,
+    "regulatedItem": false,
+    "standardCost": 0.739,
+    "lastPurchasePrice": 0.79,
+    "leadTimeDays": 3,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0208",
+    "code": "AD/SVC/FRT",
+    "runningNumber": "000208",
+    "description": "Benzoyl Freight and Clearing",
+    "shortDescription": "Benzoyl Freight and Clearing",
+    "type": "SERVICE",
+    "status": "ONBOARDED",
+    "department": "AD",
+    "segment": "SVC",
+    "subSegment": "SVC-FRT",
+    "stockUom": "JOB",
+    "purchaseUom": "JOB",
+    "salesUom": "JOB",
+    "standardSupplierId": "SUP-0008",
+    "standardSupplierCode": "S/00008",
+    "hsnCode": null,
+    "regulatedItem": false,
+    "standardCost": 1.086,
+    "lastPurchasePrice": 1.041,
+    "leadTimeDays": 2,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0209",
+    "code": "AD/SVC/FRT",
+    "runningNumber": "000209",
+    "description": "Vitamin C C Freight and Clearing",
+    "shortDescription": "Vitamin C Freight and Clearing",
+    "type": "SERVICE",
+    "status": "ONBOARDED",
+    "department": "AD",
+    "segment": "SVC",
+    "subSegment": "SVC-FRT",
+    "stockUom": "JOB",
+    "purchaseUom": "JOB",
+    "salesUom": "JOB",
+    "standardSupplierId": "SUP-0008",
+    "standardSupplierCode": "S/00008",
+    "hsnCode": null,
+    "regulatedItem": false,
+    "standardCost": 1.496,
+    "lastPurchasePrice": 1.368,
+    "leadTimeDays": 2,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": true,
+    "itemAccountGroup": "FG - Finished Goods"
+  },
+  {
+    "id": "ITM-0210",
+    "code": "AD/SVC/FRT",
+    "runningNumber": "000210",
+    "description": "Vitamin C C Freight and Clearing",
+    "shortDescription": "Vitamin C Freight and Clearing",
+    "type": "SERVICE",
+    "status": "ONBOARDED",
+    "department": "AD",
+    "segment": "SVC",
+    "subSegment": "SVC-FRT",
+    "stockUom": "JOB",
+    "purchaseUom": "JOB",
+    "salesUom": "JOB",
+    "standardSupplierId": "SUP-0008",
+    "standardSupplierCode": "S/00008",
+    "hsnCode": null,
+    "regulatedItem": false,
+    "standardCost": 0.694,
+    "lastPurchasePrice": 0.785,
+    "leadTimeDays": 2,
+    "sourcePriorities": [
+      {
+        "sourceType": "PURCHASED",
+        "priority": 1
+      }
+    ],
+    "isErpSynced": false,
+    "itemAccountGroup": "FG - Finished Goods"
+  }
+]

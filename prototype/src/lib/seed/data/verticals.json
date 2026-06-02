@@ -1,0 +1,22 @@
+[
+  {
+    "id": "V-REQ",
+    "name": "Req Department",
+    "code": "REQD"
+  },
+  {
+    "id": "V-PROC",
+    "name": "Procurement",
+    "code": "PROC"
+  },
+  {
+    "id": "V-FIN",
+    "name": "Finance",
+    "code": "FIN"
+  },
+  {
+    "id": "V-MGMT",
+    "name": "Management",
+    "code": "MGMT"
+  }
+]

@@ -1,0 +1,17 @@
+{
+  "entity": "Designation",
+  "description": "An access-master record for a job seniority level. There are 7 ranks; the rank drives the 'same-or-higher rank' eligibility check for assignment and reassignment (axiom A5) and a sufficiently senior assignee acting as approver. A designation can also carry permissions, one of the four RBAC grant sources. A user references one designation.",
+  "primaryDomain": "01-configuration",
+  "lifecycleEnum": null,
+  "fields": [
+    {"name": "designationId", "label": "Designation No.", "dataType": "text", "cardinality": "one", "mandatory": "yes", "mandatoryCondition": null, "default": "computed", "enumDomain": null, "enumValues": null, "referenceTarget": null, "validation": "system-generated; unique; immutable", "computedFormula": "generated on create", "computedVsEntered": "auto", "isAuto": true, "owningRole": "Platform/System", "purpose": "Stable key a user's designationId foreign-keys to so a designation can be renamed or re-ranked without re-keying every user.", "source": "RA", "scorIso": "OE5"},
+    {"name": "name", "label": "Designation Name", "dataType": "text", "cardinality": "one", "mandatory": "yes", "mandatoryCondition": null, "default": null, "enumDomain": null, "enumValues": null, "referenceTarget": null, "validation": "non-blank; unique; e.g. Officer, Manager, Head, Director; the display field for the designation reference", "computedFormula": null, "computedVsEntered": "entered", "isAuto": false, "owningRole": "Administrator", "purpose": "The title shown in the user form's designation dropdown; the label an admin recognizes when setting a user's seniority.", "source": "RA", "scorIso": "OE5"},
+    {"name": "rank", "label": "Rank", "dataType": "integer", "cardinality": "one", "mandatory": "yes", "mandatoryCondition": null, "default": null, "enumDomain": null, "enumValues": null, "referenceTarget": null, "validation": ">= 1; one of the 7 levels; higher number = more senior; used in same-or-higher comparisons", "computedFormula": null, "computedVsEntered": "entered", "isAuto": false, "owningRole": "Administrator", "purpose": "The numeric seniority the assignment/reassignment eligibility check reads ('assigner rank >= the stage's required rank', a sufficiently senior assignee may approve); the single field axiom A5's rank guard compares.", "source": "RA", "scorIso": "OE5"},
+    {"name": "permissions", "label": "Permissions", "dataType": "reference", "cardinality": "many", "mandatory": "no", "mandatoryCondition": null, "default": "[]", "enumDomain": null, "enumValues": null, "referenceTarget": "Permission.value", "validation": "namespaced permission values granted to holders of this designation; one of the four grant sources unioned into the effective set", "computedFormula": null, "computedVsEntered": "entered", "isAuto": false, "owningRole": "Administrator", "purpose": "Permissions every holder of the designation gets regardless of role (the designation grant source); deduplicated into the user's effective set alongside role, user-grant, and business-unit permissions.", "source": "RA", "scorIso": "OE5"}
+  ],
+  "relationships": [
+    {"name": "heldBy", "type": "1:N", "target": "User", "fk": "designationId"},
+    {"name": "grants", "type": "N:M", "target": "Permission", "fk": "permissions"}
+  ],
+  "invariants": ["A5 rank drives assignment/reassignment eligibility (assigner rank >= required); an APPROVED stage cannot be reassigned", "A13 audit + SSE on every committed change", "7 ranks; permissions are one of the four RBAC grant sources"]
+}

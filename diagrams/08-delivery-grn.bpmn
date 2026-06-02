@@ -1,0 +1,704 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+                  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+                  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+                  id="Definitions_DeliveryGrnInspection" targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:collaboration id="Collaboration_DeliveryGrnInspection">
+    <bpmn:participant id="Participant_DeliveryGrnInspection" name="08 - Delivery, Goods Receipt and Inspection" processRef="Process_DeliveryGrnInspection" />
+  </bpmn:collaboration>
+  <bpmn:process id="Process_DeliveryGrnInspection" isExecutable="false">
+    <bpmn:laneSet id="LaneSet_DeliveryGrnInspection">
+      <bpmn:lane id="L_supplier" name="Supplier / Vendor">
+        <bpmn:flowNodeRef>Start</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Dispatch</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_buyer" name="Procurement / Buyer">
+        <bpmn:flowNodeRef>GwMode</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>TrackAir</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>TrackSea</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>TrackRoad</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>TrackCourier</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GwRoadBorder</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ConfirmArrival</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ChaseCoa</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>AmendPo</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_tax" name="Tax / Compliance">
+        <bpmn:flowNodeRef>Customs</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_recv" name="Receiving / Warehouse">
+        <bpmn:flowNodeRef>GwPartial</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>RecordBlock</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GwCategory</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>StoreReceive</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GwCoa</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GwTolerance</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>RaiseGrn</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GwMore</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_qc" name="Quality">
+        <bpmn:flowNodeRef>QcInspect</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GwQc</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Ncr</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_eng" name="Engineering">
+        <bpmn:flowNodeRef>EngReceive</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GwEngOk</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>CloseRequisition</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_sys" name="Platform / System">
+        <bpmn:flowNodeRef>EtaAlarm</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GwOverdue</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>OverdueReminder</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GrIr</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DeliveryStatus</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>End</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="Start" name="PO acknowledged, goods ready to dispatch">
+      <bpmn:documentation>Entry trigger: the PurchaseOrder is in status acknowledged (diagram 05) and the supplier is ready to dispatch. Contract / constant-supply lines that were marked Delivered at agreement time (framework call-off) NEVER enter inbound tracking; they go straight to receipt. Requisition stage at entry = ORDERED; this diagram advances it to PARTIAL_DELIVERY then POST_DELIVERY. [SCOR S2.2 Schedule Product Delivery | source: AB delivery-tracking + RA stage model]</bpmn:documentation>
+      <bpmn:outgoing>f1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:userTask id="Dispatch" name="Dispatch goods, share shipment documents">
+      <bpmn:documentation>Supplier dispatches and (always AFTER dispatch) shares documents via the authenticated external form (email + OTP): commercial invoice, packing list, certificate of origin, and the transport document for the mode. Owning role: Supplier (suppliers.update own records, scoped). Documents stored at two levels (platform-services 8): per-shipment docs (AWB/BL/LR/tracking, Bayan, health cert, DG declaration) against this consignment; permanent docs (COA batch, MSDS, certs) against the supplier master. Fields captured at dispatch by the buyer/handler: carrier/line name (text, mandatory), containerNumber (text, optional, sea/road), awbBlReference (text, mandatory), vesselTrackingUrl (URL, optional, e.g. vesseltracking.com), initialEta (date, mandatory). [SCOR S2.3 Manage Inbound Transport | ISO 8.4.3(a) | source: AB delivery-tracking + factory-import import-docs]</bpmn:documentation>
+      <bpmn:incoming>f1</bpmn:incoming>
+      <bpmn:outgoing>f2</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="GwMode" name="Transport mode?">
+      <bpmn:documentation>Buyer/Procurement Handler records inbound tracking. Field transportMode (dropdown, mandatory, no default) exact value set {Air | Sea | Road | Courier}. Branch expression: transportMode == 'Air' -&gt; Air block; == 'Sea' -&gt; Sea block; == 'Road' -&gt; Road block; == 'Courier' -&gt; Courier block. Tracking is fully MANUAL (meet-7): the handler enters and updates in-transit status from external carrier/vessel sites; there is NO auto-fetch from carrier portals (out of scope). Requester, manager and procurement all see the same read view. [SCOR S2.3 | source: AB delivery-tracking GW_mode]</bpmn:documentation>
+      <bpmn:incoming>f2</bpmn:incoming>
+      <bpmn:outgoing>f3</bpmn:outgoing>
+      <bpmn:outgoing>f4</bpmn:outgoing>
+      <bpmn:outgoing>f5</bpmn:outgoing>
+      <bpmn:outgoing>f6</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="TrackAir" name="Track by air (AWB)">
+      <bpmn:documentation>Air-mode tracking block. Fields: mawbNumber / hawbNumber (text, mandatory - Master and House Air Waybill), airline (text, mandatory), flightNumber (text, mandatory), originAirport (text/IATA, mandatory), destinationAirport (text/IATA, mandatory), freightForwarder (ref Supplier or text, optional - appointed by buyer when incoterm is Ex-Works/FOB), etd (date, optional editable), eta (date, mandatory, editable). Validation: incoterm consistency (data-model: FOB/CIF are sea-only; air uses FCA/CPT/CIP/DAP) is enforced at PO; here only the air document set is required. Routes to customs (import). [SCOR S2.3 | ISO 8.4.3 | source: AB Air branch]</bpmn:documentation>
+      <bpmn:incoming>f3</bpmn:incoming>
+      <bpmn:outgoing>f7</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="TrackSea" name="Track by sea (Bill of Lading)">
+      <bpmn:documentation>Sea-mode tracking block. Fields: blNumber (text, mandatory - Bill of Lading), vessel (text, mandatory), pol (text - Port of Loading, mandatory), pod (text - Port of Discharge, mandatory), etd (date, optional editable), eta (date, mandatory editable), containerNumber (text, optional). Rule: a sea consignment is ALWAYS followed by a road-haulage leg from the discharge port to site AFTER customs (arrival is confirmed only after that leg). Routes to customs. [SCOR S2.3 | source: AB Sea branch + road-haulage rule]</bpmn:documentation>
+      <bpmn:incoming>f4</bpmn:incoming>
+      <bpmn:outgoing>f8</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="TrackRoad" name="Track by road (consignment note)">
+      <bpmn:documentation>Road-mode tracking block. Fields: lrNumber (text, mandatory - consignment note / Lorry Receipt), roadTransporter (text, mandatory), eta (date, mandatory editable). Gateway after this block (GwRoadBorder): international road from Saudi/UAE also clears a border Bayan -&gt; customs; purely domestic road -&gt; direct to arrival. [SCOR S2.3 | source: AB Road branch]</bpmn:documentation>
+      <bpmn:incoming>f5</bpmn:incoming>
+      <bpmn:outgoing>f9</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="TrackCourier" name="Track by courier (tracking number)">
+      <bpmn:documentation>Courier-mode tracking block. Fields: courierTrackingNumber (text, mandatory), courierCompany (text, mandatory), eta (date, mandatory editable). No customs node in the model for courier (de minimis / courier-cleared); proceeds direct to arrival. [SCOR S2.3 | source: AB Courier branch]</bpmn:documentation>
+      <bpmn:incoming>f6</bpmn:incoming>
+      <bpmn:outgoing>f12</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="GwRoadBorder" name="International road (border Bayan)?">
+      <bpmn:documentation>Branch expression: roadOrigin in {Saudi, UAE, other cross-border} -&gt; customs (border Bayan / bill of entry required); roadOrigin == domestic -&gt; EtaAlarm (skip customs). [SCOR S2.3/OE8 | source: AB road border rule]</bpmn:documentation>
+      <bpmn:incoming>f9</bpmn:incoming>
+      <bpmn:outgoing>f10</bpmn:outgoing>
+      <bpmn:outgoing>f11</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="Customs" name="Customs clearance (Bayan / bill of entry)">
+      <bpmn:documentation>Clearing / customs agent performs clearance AFTER arrival of an import consignment (air, sea, and cross-border road). Fields: boeNumber (text, mandatory - Bill of Entry / Bayan number), clearanceBy (ref User/agent, mandatory - records authorizing clearing agent), bayanDate (date, mandatory), dutyAmount (number &gt;= 0, optional - actual landed duty, feeds landed cost), homeMOOWR (boolean, optional - bonded/MOOWR scheme flag, RA block field). Required regulatory documents validated here: ministry permits for regulated chemicals (with expiry + quantity, alerted on selection and ~1 week before expiry); healthCertificate for food raw material (legalized, mandatory if category is food RM - HARD requirement); dgDeclaration (UN number + class, mandatory if dangerous-goods flag). Owning role: Tax/Compliance (customs.manage). Reverse-charge / import VAT flagged for the invoice (tax service). [SCOR S2.3 / OE8 Regulatory and Compliance | ISO 8.4.3 | source: AB customs + factory-import import-docs]</bpmn:documentation>
+      <bpmn:incoming>f7</bpmn:incoming>
+      <bpmn:incoming>f8</bpmn:incoming>
+      <bpmn:incoming>f10</bpmn:incoming>
+      <bpmn:outgoing>f13</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:intermediateCatchEvent id="EtaAlarm" name="ETA-approaching alarm">
+      <bpmn:documentation>Timer event. The platform fires an automatic ETA-APPROACHING ALARM a few days before the recorded eta (configurable lead, default 5 days; example: eta 10 June -&gt; alarm 5 June) to handler, requester and manager via the notification service. The handler may revise eta at any point from the carrier / vessel-tracking site (eta is editable throughout the voyage); each revision re-arms the alarm and is audited. This is a monitoring beat, not a gate; flow continues to overdue detection. [SCOR S2.3 | source: AB ETA alarm + platform-services notifications]</bpmn:documentation>
+      <bpmn:incoming>f11</bpmn:incoming>
+      <bpmn:incoming>f12</bpmn:incoming>
+      <bpmn:incoming>f13</bpmn:incoming>
+      <bpmn:outgoing>f14</bpmn:outgoing>
+      <bpmn:timerEventDefinition />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:exclusiveGateway id="GwOverdue" name="Committed delivery date passed without receipt?">
+      <bpmn:documentation>Branch expression: today (start-of-today) &gt; PO committed deliveryDate AND no goods received against the consignment -&gt; overdue reminder; else -&gt; arrival confirmation. Overdue lowers the supplier delivery score (OTD / OTIF inputs, analytics service). Null committed date never overdue. [SCOR S2.3 / RL.2.6 Delivery Performance to Original Supplier Commit Date | source: AB late-delivery reminder]</bpmn:documentation>
+      <bpmn:incoming>f14</bpmn:incoming>
+      <bpmn:incoming>f17</bpmn:incoming>
+      <bpmn:outgoing>f15</bpmn:outgoing>
+      <bpmn:outgoing>f16</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sendTask id="OverdueReminder" name="Send overdue reminder, dock supplier score">
+      <bpmn:documentation>System sends a reminder to supplier + procurement (notification service) and records a delivery-delay event that feeds the supplier scorecard delivery dimension (OTD, two-factor OTIF, RL.2.6). Non-blocking: the consignment can still be received late. Loops back to await arrival. For services, tracking is just the completion date with the same late reminder. [SCOR RL.2.6 | ISO 8.4.1 monitoring | source: AB late reminder + analytics service]</bpmn:documentation>
+      <bpmn:incoming>f15</bpmn:incoming>
+      <bpmn:outgoing>f17</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:userTask id="ConfirmArrival" name="Confirm arrival at site">
+      <bpmn:documentation>Handler confirms arrival at site (for sea/air, only AFTER the road-haulage leg from discharge port; for domestic road/courier, on delivery). On arrival, goods + documents (including COA for regulated items) are checked in at the receiving store and handed to receiving/inspection. Sets the consignment to delivered-pending-inspection. [SCOR S2.4 Receive Product | source: AB arrival + handoff to receiving]</bpmn:documentation>
+      <bpmn:incoming>f16</bpmn:incoming>
+      <bpmn:outgoing>f18</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="GwPartial" name="Full or partial consignment?">
+      <bpmn:documentation>Branch expression: this consignment fulfils all open PO line quantities -&gt; single full receipt path; otherwise -&gt; partial path (one TicketPartialDeliveryBlock per inbound consignment; multiple blocks/GRNs per PO allowed). Both branches converge into the category gateway; the difference is only that partial creates one block now and the flow re-enters for the next batch. Labels/cartons typically arrive in several partial deliveries; contract glass bottles treat each truckload as a full receipt. [SCOR S2.4 | source: RA partial-delivery blocks + AB partial GRNs]</bpmn:documentation>
+      <bpmn:incoming>f18</bpmn:incoming>
+      <bpmn:outgoing>f19</bpmn:outgoing>
+      <bpmn:outgoing>f20</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="RecordBlock" name="Record partial-delivery block">
+      <bpmn:documentation>At PARTIAL_DELIVERY stage, add one TicketPartialDeliveryBlock per inbound consignment via PATCH /api/ticket/:id/fields (partialDeliveryBlocks, deletedBlockIds). Block fields (RA model): trackingNumber_MAWB_HAWB (text), boeNumber (text - from customs), clearanceBy (ref/text - from customs), homeMOOWR (boolean), actualDeliveryDate (date, mandatory), erpGrNumber (text - GR number from ERP), erpCcNumber (text), carrier (text), courierCargo (text), itemsDelivery (JSON array of {ticketItemId (string), quantity (finite number)}; may list a subset of lines; invalid entries [non-string id or non-finite qty] skipped silently; null/empty -&gt; empty). Delivered quantity is aggregated per ticketItemId across ALL blocks (summed, no de-dup, order-dependent). Field history written with entityType PARTIAL_DELIVERY_BLOCK, referenceId = block id; SSE ticket.updated + audit. Owning role: Receiving (delivery.record). [SCOR S2.4 | ISO 8.6 | source: RA partial-delivery block]</bpmn:documentation>
+      <bpmn:incoming>f20</bpmn:incoming>
+      <bpmn:outgoing>f21</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="GwCategory" name="Materials or spares/services?">
+      <bpmn:documentation>Branch expression on requisition.category: category in {Items} resolving to materials (raw material / packaging material, S2 Direct) -&gt; Materials path (Store -&gt; QC -&gt; GRN). category in {Spares, Services, ProductDesign-maintenance} (S3 Indirect / T3 MRO / T2 Service) -&gt; Spares/Services path (Engineering receives, closes requisition, NO GRN). QA/QC always compares against the requisition; the PO stays procurement-only (QA/QC do not see the PO). [SCOR S2.4/S2.5 | source: AB receiving GW_cat]</bpmn:documentation>
+      <bpmn:incoming>f19</bpmn:incoming>
+      <bpmn:incoming>f21</bpmn:incoming>
+      <bpmn:incoming>f42</bpmn:incoming>
+      <bpmn:outgoing>f22</bpmn:outgoing>
+      <bpmn:outgoing>f23</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="StoreReceive" name="Store receives, send COA + sample to QC">
+      <bpmn:documentation>Materials path. The receiving store (e.g. Barka stores for Oman Chemical / Oman Agro; Vadi Kabir for Oman Hygienic) receives against the requisition and sends the COA (certificate of analysis) + a physical sample to Quality. Fields: receivedQuantity per line (number &gt;= 0, mandatory), receivingStore (dropdown of warehouses, mandatory), coaAttached (boolean), sampleSentToQc (boolean). Owning role: Receiving (delivery.record). [SCOR S2.4 Receive Product | ISO 8.6 | source: AB materials path]</bpmn:documentation>
+      <bpmn:incoming>f22</bpmn:incoming>
+      <bpmn:outgoing>f24</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="GwCoa" name="COA received?">
+      <bpmn:documentation>HARD BLOCK gateway. Branch expression: coaAttached == true -&gt; proceed to QC inspection; coaAttached == false -&gt; chase supplier for COA (loop). For regulated / OTC / pharma items no inspection and no GRN may proceed without the COA on file. This is the certificate-of-analysis hard block. [SCOR S2.5 | ISO 8.4.3(b) release control / 8.6 | source: AB + factory-import COA gate]</bpmn:documentation>
+      <bpmn:incoming>f24</bpmn:incoming>
+      <bpmn:incoming>f27</bpmn:incoming>
+      <bpmn:outgoing>f25</bpmn:outgoing>
+      <bpmn:outgoing>f26</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sendTask id="ChaseCoa" name="Chase supplier for COA">
+      <bpmn:documentation>Handler chases the supplier for the missing COA (notification on the order thread). Flow loops back to the COA gate; no QC, no GRN until received. [SCOR S2.5 | ISO 8.6 | source: factory-import COA chase loop]</bpmn:documentation>
+      <bpmn:incoming>f26</bpmn:incoming>
+      <bpmn:outgoing>f27</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:userTask id="QcInspect" name="QC inspect and test sample">
+      <bpmn:documentation>Quality inspects/tests the sample against the requisition and COA/MSDS. Most lots are cleared same / next day; some label or moisture issues surface 10-15 days later. Inspection level is risk-based per item criticality (ISO 8.4.2: skip-lot / sampling / 100% / source / CoC-only - configurable). Fields recorded: inspectionResult (computed from sub-checks), defectQuantity (number &gt;= 0), inspectionNotes (text), testAttachments (files). Owning role: Quality (qc.inspect). [SCOR S2.5 Inspect and Verify | ISO 8.6 release verification | source: AB QC]</bpmn:documentation>
+      <bpmn:incoming>f25</bpmn:incoming>
+      <bpmn:outgoing>f28</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="GwQc" name="QC approved?">
+      <bpmn:documentation>Branch expression: qcDecision == 'approve' -&gt; quantity tolerance check; qcDecision == 'reject' (reject / quarantine) -&gt; raise NCR (diagram 11). On approve, QC retains conformity evidence + traceability to the authorizing person (ISO 8.6). Owning role: Quality (qc.approve / qc.reject). [SCOR S2.5 | ISO 8.6 -&gt; 8.7 | source: AB QC approve/reject]</bpmn:documentation>
+      <bpmn:incoming>f28</bpmn:incoming>
+      <bpmn:outgoing>f29</bpmn:outgoing>
+      <bpmn:outgoing>f30</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="Ncr" name="Raise NCR -&gt; RMA / CAPA (diagram 11)">
+      <bpmn:documentation>Reject / quarantine -&gt; log non-conformance (NCR). Fields (AB): itemName (ref, mandatory), deliveryNoteNumber (text, mandatory), deliveryDate (date, mandatory), descriptionOfNonCompliance (text, mandatory), percentNonConformance (number 0-100, mandatory), image (file, optional). Raisable by QC, factory manager (FM), or requester. NCRs can also be raised AFTER GRN when QC finds damage / off-spec later. Handler resolves with supplier (replace / credit / corrective action); disposition return/rework/concession/scrap; feeds supplier rating and may SUSPEND the supplier. Full flow in diagram 11. On accepted/resolved it returns to the GRN step. [SCOR S2.5 / S4 | ISO 8.7 nonconforming -&gt; 10.2 CAPA -&gt; 8.4.1 | source: AB NCR + build-new CAPA]</bpmn:documentation>
+      <bpmn:incoming>f30</bpmn:incoming>
+      <bpmn:incoming>f39</bpmn:incoming>
+      <bpmn:outgoing>f31</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="GwTolerance" name="Quantity variance to PO?">
+      <bpmn:documentation>Branch expression: abs(actualReceivedQty - poLineQty) / poLineQty &lt;= lineTolerancePercent (configurable, default band +/-5% to +/-10% for labels/cartons/printed packaging) -&gt; within tolerance, raise GRN directly; variance within tolerance but != 0 AND item is tolerance-eligible -&gt; amend PO qty to actual first. No-tolerance items (RM in fixed packs, contract glass bottles) have lineTolerancePercent = 0 and skip the amend. Variance beyond tolerance is not silently accepted: it routes to NCR / buyer review. [SCOR S2.6 | source: AB +/-5-10% tolerance rule]</bpmn:documentation>
+      <bpmn:incoming>f29</bpmn:incoming>
+      <bpmn:outgoing>f32</bpmn:outgoing>
+      <bpmn:outgoing>f33</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="AmendPo" name="Amend PO quantity to actual (within tolerance)">
+      <bpmn:documentation>For tolerance-eligible items (labels/cartons/printed packaging) the handler adjusts PO line quantity to the actual delivered quantity BEFORE the GRN, so the GRN and three-way match reconcile. Every PO edit is audited and visible to the purchaser; the handler can flag for sign-off. PO must still be in the editable-until-first-receipt window for this line. Owning role: Buyer (po.amend). [SCOR S2.6 | ISO 8.4.3 | source: AB PO-qty adjustment]</bpmn:documentation>
+      <bpmn:incoming>f32</bpmn:incoming>
+      <bpmn:outgoing>f34</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="RaiseGrn" name="Raise GRN (links requisition + PO)">
+      <bpmn:documentation>Store raises the Goods Receipt Note linking the requisition + PO reference; this feeds invoicing and payment. One PO can produce SEVERAL GRNs for partial deliveries; each block/consignment yields its own GRN. Fields: grnNumber (auto, mandatory), poReference (ref, mandatory), requisitionReference (ref, mandatory), receivedLines [{poLineId, acceptedQty, rejectedQty}], grnDate (date, default today). Owning role: Receiving (grn.raise; conditional Quality after QC pass). [SCOR S2.6 Transfer Product | ISO 8.6 release record | source: AB GRN + RA erpGrNumber]</bpmn:documentation>
+      <bpmn:incoming>f31</bpmn:incoming>
+      <bpmn:incoming>f33</bpmn:incoming>
+      <bpmn:incoming>f34</bpmn:incoming>
+      <bpmn:outgoing>f35</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="GrIr" name="Accrue GR/IR, relieve commitment to actual">
+      <bpmn:documentation>At GR the platform posts a GrIrEntry: accrue a liability to the GR/IR clearing account for the received quantity x agreed price (status accrued; poLineId, grnId, invoiceId null until matched, accruedAmount). This decouples receiving from invoicing (enables goods-received-not-invoiced reconciliation). Simultaneously the commitment is relieved to actual: Commitment committed -= amount, Budget actual += amount (budget/commitment service). GR/IR is cleared later when the invoice is matched (diagram 09). [SCOR S2.6 -&gt; S2.7 | ISO 8.6 | source: build-new GR/IR + commitment]</bpmn:documentation>
+      <bpmn:incoming>f35</bpmn:incoming>
+      <bpmn:outgoing>f36</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="EngReceive" name="Engineering receives spares/services directly">
+      <bpmn:documentation>Spares / Services path. Spares are received DIRECTLY by Engineering - no Stores, no QC, no GRN. Engineering checks against the requisition they raised. For service contracts Engineering gives the completion green signal the same way. Fields: receivedAgainstRequisition (boolean), conformsToOrder (boolean). Owning role: Engineering (delivery.record conditional, no GRN). [SCOR S2.4 / T3 MRO / T2 Service | source: AB spares/engineering path]</bpmn:documentation>
+      <bpmn:incoming>f23</bpmn:incoming>
+      <bpmn:outgoing>f37</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="GwEngOk" name="Received as per order?">
+      <bpmn:documentation>Branch expression: conformsToOrder == true -&gt; Engineering closes the requisition; conformsToOrder == false -&gt; route to handler for NCR resolution (same NCR path as materials, diagram 11). [SCOR S2.5 | source: AB engineering check]</bpmn:documentation>
+      <bpmn:incoming>f37</bpmn:incoming>
+      <bpmn:outgoing>f38</bpmn:outgoing>
+      <bpmn:outgoing>f39</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="CloseRequisition" name="Close requisition 'received as per order' (no GRN)">
+      <bpmn:documentation>Engineering closes the requisition with a single 'received as per order' field; NO GRN is raised. This makes the match TWO-WAY (PO + invoice, no GRN) downstream (diagram 09), with milestone acceptance for service POs. For service contracts the completion green signal closes the requisition the same way. Fields: receivedAsPerOrder (boolean, mandatory true to close), completionDate (date). Owning role: Engineering. [SCOR S2.6 | source: AB spares closure, no GRN]</bpmn:documentation>
+      <bpmn:incoming>f38</bpmn:incoming>
+      <bpmn:outgoing>f40</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="DeliveryStatus" name="Derive delivery status, advance stage">
+      <bpmn:documentation>Delivery status is DERIVED on demand (never stored) per item then rolled up. Item status precedence: delivered (ordered&gt;0 AND aggregated delivered&gt;=ordered; over-delivery counts) &gt; partial (delivered&gt;0 AND &lt;ordered) &gt; overdue (delivered=0 AND needDate &lt; start-of-today; null needDate never overdue) &gt; upcoming (delivered=0, not overdue). Item progress = min(round(delivered/ordered*100),100), 0 if ordered=0; pending = max(ordered-delivered,0). Ticket status precedence: all delivered &gt; any delivered-or-partial (=partial) &gt; any overdue &gt; upcoming; ticket progress = round(fullyDeliveredItems/totalItems*100). Stage advance PARTIAL_DELIVERY -&gt; POST_DELIVERY via POST /api/ticket/:id/move-stage validates Partial Delivery mandatory fields (ticket + per block [block index in error] + payment schedules); blocked -&gt; remainingStageFields[]. Advancing does NOT complete the ticket (COMPLETED still needs POST_DELIVERY + all verticals APPROVED). [SCOR S2.4 | source: RA derived status + stage advance]</bpmn:documentation>
+      <bpmn:incoming>f36</bpmn:incoming>
+      <bpmn:incoming>f40</bpmn:incoming>
+      <bpmn:outgoing>f41</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="GwMore" name="More partial deliveries expected on this PO?">
+      <bpmn:documentation>Branch expression: any PO line has pending = max(ordered - aggregatedDelivered, 0) &gt; 0 AND further consignments expected -&gt; re-enter receiving for the next batch (Store receives / Engineering receives); else -&gt; proceed to invoicing (diagram 09). Each new batch re-enters at the receive step and produces its own block + GRN. [SCOR S2.4 | source: AB partial re-entry + RA aggregation]</bpmn:documentation>
+      <bpmn:incoming>f41</bpmn:incoming>
+      <bpmn:outgoing>f42</bpmn:outgoing>
+      <bpmn:outgoing>f43</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="End" name="Received and inspected -&gt; invoicing (diagram 09)">
+      <bpmn:documentation>Outcome: goods received and (for materials) QC-passed with GRN raised and GR/IR accrued, or spares/services received by Engineering with the requisition closed (no GRN). Hands off to diagram 09 invoice capture and matching: GRN present -&gt; three-way; no GRN -&gt; two-way. [SCOR S2.6 -&gt; S2.7 | source: build-new]</bpmn:documentation>
+      <bpmn:incoming>f43</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="f1" sourceRef="Start" targetRef="Dispatch" />
+    <bpmn:sequenceFlow id="f2" sourceRef="Dispatch" targetRef="GwMode" />
+    <bpmn:sequenceFlow id="f3" name="Air" sourceRef="GwMode" targetRef="TrackAir" />
+    <bpmn:sequenceFlow id="f4" name="Sea" sourceRef="GwMode" targetRef="TrackSea" />
+    <bpmn:sequenceFlow id="f5" name="Road" sourceRef="GwMode" targetRef="TrackRoad" />
+    <bpmn:sequenceFlow id="f6" name="Courier" sourceRef="GwMode" targetRef="TrackCourier" />
+    <bpmn:sequenceFlow id="f7" name="import clearance" sourceRef="TrackAir" targetRef="Customs" />
+    <bpmn:sequenceFlow id="f8" name="import clearance" sourceRef="TrackSea" targetRef="Customs" />
+    <bpmn:sequenceFlow id="f9" sourceRef="TrackRoad" targetRef="GwRoadBorder" />
+    <bpmn:sequenceFlow id="f10" name="cross-border (Saudi/UAE)" sourceRef="GwRoadBorder" targetRef="Customs" />
+    <bpmn:sequenceFlow id="f11" name="domestic" sourceRef="GwRoadBorder" targetRef="EtaAlarm" />
+    <bpmn:sequenceFlow id="f12" name="no customs node" sourceRef="TrackCourier" targetRef="EtaAlarm" />
+    <bpmn:sequenceFlow id="f13" sourceRef="Customs" targetRef="EtaAlarm" />
+    <bpmn:sequenceFlow id="f14" sourceRef="EtaAlarm" targetRef="GwOverdue" />
+    <bpmn:sequenceFlow id="f15" name="committed date passed, not received" sourceRef="GwOverdue" targetRef="OverdueReminder" />
+    <bpmn:sequenceFlow id="f16" name="on/within commit, arrived" sourceRef="GwOverdue" targetRef="ConfirmArrival" />
+    <bpmn:sequenceFlow id="f17" name="await arrival (re-check)" sourceRef="OverdueReminder" targetRef="GwOverdue" />
+    <bpmn:sequenceFlow id="f18" sourceRef="ConfirmArrival" targetRef="GwPartial" />
+    <bpmn:sequenceFlow id="f19" name="full receipt" sourceRef="GwPartial" targetRef="GwCategory" />
+    <bpmn:sequenceFlow id="f20" name="partial consignment" sourceRef="GwPartial" targetRef="RecordBlock" />
+    <bpmn:sequenceFlow id="f21" sourceRef="RecordBlock" targetRef="GwCategory" />
+    <bpmn:sequenceFlow id="f22" name="materials (RM/PM, S2 direct)" sourceRef="GwCategory" targetRef="StoreReceive" />
+    <bpmn:sequenceFlow id="f23" name="spares/services (S3/T2/T3)" sourceRef="GwCategory" targetRef="EngReceive" />
+    <bpmn:sequenceFlow id="f24" sourceRef="StoreReceive" targetRef="GwCoa" />
+    <bpmn:sequenceFlow id="f25" name="COA on file" sourceRef="GwCoa" targetRef="QcInspect" />
+    <bpmn:sequenceFlow id="f26" name="no COA (HARD BLOCK)" sourceRef="GwCoa" targetRef="ChaseCoa" />
+    <bpmn:sequenceFlow id="f27" name="COA chased (loop)" sourceRef="ChaseCoa" targetRef="GwCoa" />
+    <bpmn:sequenceFlow id="f28" sourceRef="QcInspect" targetRef="GwQc" />
+    <bpmn:sequenceFlow id="f29" name="approved" sourceRef="GwQc" targetRef="GwTolerance" />
+    <bpmn:sequenceFlow id="f30" name="rejected / quarantine" sourceRef="GwQc" targetRef="Ncr" />
+    <bpmn:sequenceFlow id="f31" name="resolved / accepted qty" sourceRef="Ncr" targetRef="RaiseGrn" />
+    <bpmn:sequenceFlow id="f32" name="within tolerance, qty != ordered" sourceRef="GwTolerance" targetRef="AmendPo" />
+    <bpmn:sequenceFlow id="f33" name="no variance / no-tolerance item" sourceRef="GwTolerance" targetRef="RaiseGrn" />
+    <bpmn:sequenceFlow id="f34" sourceRef="AmendPo" targetRef="RaiseGrn" />
+    <bpmn:sequenceFlow id="f35" sourceRef="RaiseGrn" targetRef="GrIr" />
+    <bpmn:sequenceFlow id="f36" sourceRef="GrIr" targetRef="DeliveryStatus" />
+    <bpmn:sequenceFlow id="f37" sourceRef="EngReceive" targetRef="GwEngOk" />
+    <bpmn:sequenceFlow id="f38" name="as per order" sourceRef="GwEngOk" targetRef="CloseRequisition" />
+    <bpmn:sequenceFlow id="f39" name="not as per order" sourceRef="GwEngOk" targetRef="Ncr" />
+    <bpmn:sequenceFlow id="f40" sourceRef="CloseRequisition" targetRef="DeliveryStatus" />
+    <bpmn:sequenceFlow id="f41" sourceRef="DeliveryStatus" targetRef="GwMore" />
+    <bpmn:sequenceFlow id="f42" name="more batches expected (re-enter)" sourceRef="GwMore" targetRef="GwCategory" />
+    <bpmn:sequenceFlow id="f43" name="all lines received" sourceRef="GwMore" targetRef="End" />
+    <bpmn:textAnnotation id="NoteModes">
+      <bpmn:text>Inbound tracking is fully manual (no carrier-portal auto-fetch). transportMode {Air|Sea|Road|Courier} drives the document set: Air = MAWB/HAWB + airline/flight + origin/dest airport; Sea = B/L + vessel + POL/POD (always a road-haulage leg after customs); Road = LR + transporter (cross-border clears a border Bayan); Courier = tracking number (no customs node). ETA is editable throughout; the ETA-approaching alarm fires a configurable lead (default 5 days) before ETA to handler, requester and manager.</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Assoc_DeliveryGrnInspection_1" sourceRef="GwMode" targetRef="NoteModes" />
+    <bpmn:textAnnotation id="NotePaths">
+      <bpmn:text>Two receipt paths. Materials (RM/PM): Store receives -&gt; COA + sample to QC -&gt; QC inspect (HARD BLOCK if no COA) -&gt; qty tolerance (+/-5-10% amends PO before GRN for labels/cartons; 0% for fixed-pack RM and contract glass) -&gt; GRN raised -&gt; GR/IR accrued + commitment relieved to actual. Spares/Services: Engineering receives directly -&gt; closes requisition 'received as per order' (NO GRN) -&gt; downstream match is TWO-WAY. QC/QA always compare against the requisition; the PO stays procurement-only.</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Assoc_DeliveryGrnInspection_2" sourceRef="GwCategory" targetRef="NotePaths" />
+    <bpmn:textAnnotation id="NoteStatus">
+      <bpmn:text>Derived delivery status (never stored, recomputed live): item delivered (delivered&gt;=ordered) &gt; partial (0&lt;delivered&lt;ordered) &gt; overdue (delivered=0 AND needDate&lt;start-of-today; null needDate never overdue) &gt; upcoming. Ticket: all delivered &gt; any partial &gt; any overdue &gt; upcoming. Multiple GRNs/blocks per PO for partial deliveries; delivered qty aggregated per ticketItemId across all blocks. Stage advances PARTIAL_DELIVERY -&gt; POST_DELIVERY when mandatory block + schedule fields are filled; advancing does not COMPLETE the ticket (needs all verticals APPROVED).</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Assoc_DeliveryGrnInspection_3" sourceRef="DeliveryStatus" targetRef="NoteStatus" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagram_DeliveryGrnInspection">
+    <bpmndi:BPMNPlane id="Plane_DeliveryGrnInspection" bpmnElement="Collaboration_DeliveryGrnInspection">
+      <bpmndi:BPMNShape id="Participant_DeliveryGrnInspection_di" bpmnElement="Participant_DeliveryGrnInspection" isHorizontal="true">
+        <dc:Bounds x="160" y="80" width="4820" height="1120" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_supplier_di" bpmnElement="L_supplier" isHorizontal="true">
+        <dc:Bounds x="190" y="80" width="4790" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_buyer_di" bpmnElement="L_buyer" isHorizontal="true">
+        <dc:Bounds x="190" y="240" width="4790" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_tax_di" bpmnElement="L_tax" isHorizontal="true">
+        <dc:Bounds x="190" y="400" width="4790" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_recv_di" bpmnElement="L_recv" isHorizontal="true">
+        <dc:Bounds x="190" y="560" width="4790" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_qc_di" bpmnElement="L_qc" isHorizontal="true">
+        <dc:Bounds x="190" y="720" width="4790" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_eng_di" bpmnElement="L_eng" isHorizontal="true">
+        <dc:Bounds x="190" y="880" width="4790" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_sys_di" bpmnElement="L_sys" isHorizontal="true">
+        <dc:Bounds x="190" y="1040" width="4790" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Start_di" bpmnElement="Start">
+        <dc:Bounds x="267" y="142" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="257" y="182" width="56" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Dispatch_di" bpmnElement="Dispatch">
+        <dc:Bounds x="415" y="120" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GwMode_di" bpmnElement="GwMode" isMarkerVisible="true">
+        <dc:Bounds x="640" y="295" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="630" y="349" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TrackAir_di" bpmnElement="TrackAir">
+        <dc:Bounds x="795" y="280" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TrackSea_di" bpmnElement="TrackSea">
+        <dc:Bounds x="1175" y="280" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TrackRoad_di" bpmnElement="TrackRoad">
+        <dc:Bounds x="1365" y="280" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TrackCourier_di" bpmnElement="TrackCourier">
+        <dc:Bounds x="1555" y="280" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GwRoadBorder_di" bpmnElement="GwRoadBorder" isMarkerVisible="true">
+        <dc:Bounds x="1020" y="295" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1010" y="349" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Customs_di" bpmnElement="Customs">
+        <dc:Bounds x="1175" y="440" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EtaAlarm_di" bpmnElement="EtaAlarm">
+        <dc:Bounds x="1407" y="1102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1397" y="1142" width="56" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GwOverdue_di" bpmnElement="GwOverdue" isMarkerVisible="true">
+        <dc:Bounds x="1590" y="1095" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1580" y="1149" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="OverdueReminder_di" bpmnElement="OverdueReminder">
+        <dc:Bounds x="1745" y="1080" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ConfirmArrival_di" bpmnElement="ConfirmArrival">
+        <dc:Bounds x="1935" y="280" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GwPartial_di" bpmnElement="GwPartial" isMarkerVisible="true">
+        <dc:Bounds x="2160" y="615" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2150" y="669" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="RecordBlock_di" bpmnElement="RecordBlock">
+        <dc:Bounds x="2315" y="600" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GwCategory_di" bpmnElement="GwCategory" isMarkerVisible="true">
+        <dc:Bounds x="2540" y="615" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2530" y="669" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StoreReceive_di" bpmnElement="StoreReceive">
+        <dc:Bounds x="2695" y="600" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GwCoa_di" bpmnElement="GwCoa" isMarkerVisible="true">
+        <dc:Bounds x="2920" y="615" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2910" y="669" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ChaseCoa_di" bpmnElement="ChaseCoa">
+        <dc:Bounds x="3075" y="280" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="QcInspect_di" bpmnElement="QcInspect">
+        <dc:Bounds x="3265" y="760" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GwQc_di" bpmnElement="GwQc" isMarkerVisible="true">
+        <dc:Bounds x="3490" y="775" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3480" y="829" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Ncr_di" bpmnElement="Ncr">
+        <dc:Bounds x="3645" y="760" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GwTolerance_di" bpmnElement="GwTolerance" isMarkerVisible="true">
+        <dc:Bounds x="3680" y="615" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3670" y="669" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="AmendPo_di" bpmnElement="AmendPo">
+        <dc:Bounds x="3835" y="280" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="RaiseGrn_di" bpmnElement="RaiseGrn">
+        <dc:Bounds x="4025" y="600" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GrIr_di" bpmnElement="GrIr">
+        <dc:Bounds x="4215" y="1080" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EngReceive_di" bpmnElement="EngReceive">
+        <dc:Bounds x="2695" y="920" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GwEngOk_di" bpmnElement="GwEngOk" isMarkerVisible="true">
+        <dc:Bounds x="2920" y="935" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2910" y="989" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CloseRequisition_di" bpmnElement="CloseRequisition">
+        <dc:Bounds x="3075" y="920" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DeliveryStatus_di" bpmnElement="DeliveryStatus">
+        <dc:Bounds x="4405" y="1080" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GwMore_di" bpmnElement="GwMore" isMarkerVisible="true">
+        <dc:Bounds x="4630" y="615" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="4620" y="669" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_di" bpmnElement="End">
+        <dc:Bounds x="4827" y="1102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="4817" y="1142" width="56" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="f1_di" bpmnElement="f1">
+        <di:waypoint x="303" y="160" />
+        <di:waypoint x="415" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f2_di" bpmnElement="f2">
+        <di:waypoint x="535" y="160" />
+        <di:waypoint x="588" y="160" />
+        <di:waypoint x="588" y="320" />
+        <di:waypoint x="640" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f3_di" bpmnElement="f3">
+        <di:waypoint x="690" y="320" />
+        <di:waypoint x="795" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f4_di" bpmnElement="f4">
+        <di:waypoint x="690" y="320" />
+        <di:waypoint x="1175" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f5_di" bpmnElement="f5">
+        <di:waypoint x="690" y="320" />
+        <di:waypoint x="1365" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f6_di" bpmnElement="f6">
+        <di:waypoint x="690" y="320" />
+        <di:waypoint x="1555" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f7_di" bpmnElement="f7">
+        <di:waypoint x="915" y="320" />
+        <di:waypoint x="1045" y="320" />
+        <di:waypoint x="1045" y="480" />
+        <di:waypoint x="1175" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f8_di" bpmnElement="f8">
+        <di:waypoint x="1295" y="320" />
+        <di:waypoint x="1315" y="320" />
+        <di:waypoint x="1315" y="480" />
+        <di:waypoint x="1175" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f9_di" bpmnElement="f9">
+        <di:waypoint x="1425" y="360" />
+        <di:waypoint x="1425" y="390" />
+        <di:waypoint x="1045" y="390" />
+        <di:waypoint x="1045" y="345" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f10_di" bpmnElement="f10">
+        <di:waypoint x="1070" y="320" />
+        <di:waypoint x="1123" y="320" />
+        <di:waypoint x="1123" y="480" />
+        <di:waypoint x="1175" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f11_di" bpmnElement="f11">
+        <di:waypoint x="1070" y="320" />
+        <di:waypoint x="1239" y="320" />
+        <di:waypoint x="1239" y="1120" />
+        <di:waypoint x="1407" y="1120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f12_di" bpmnElement="f12">
+        <di:waypoint x="1555" y="320" />
+        <di:waypoint x="1499" y="320" />
+        <di:waypoint x="1499" y="1120" />
+        <di:waypoint x="1443" y="1120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f13_di" bpmnElement="f13">
+        <di:waypoint x="1295" y="480" />
+        <di:waypoint x="1351" y="480" />
+        <di:waypoint x="1351" y="1120" />
+        <di:waypoint x="1407" y="1120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f14_di" bpmnElement="f14">
+        <di:waypoint x="1443" y="1120" />
+        <di:waypoint x="1590" y="1120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f15_di" bpmnElement="f15">
+        <di:waypoint x="1640" y="1120" />
+        <di:waypoint x="1745" y="1120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f16_di" bpmnElement="f16">
+        <di:waypoint x="1640" y="1120" />
+        <di:waypoint x="1788" y="1120" />
+        <di:waypoint x="1788" y="320" />
+        <di:waypoint x="1935" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f17_di" bpmnElement="f17">
+        <di:waypoint x="1805" y="1160" />
+        <di:waypoint x="1805" y="1190" />
+        <di:waypoint x="1615" y="1190" />
+        <di:waypoint x="1615" y="1145" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f18_di" bpmnElement="f18">
+        <di:waypoint x="2055" y="320" />
+        <di:waypoint x="2108" y="320" />
+        <di:waypoint x="2108" y="640" />
+        <di:waypoint x="2160" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f19_di" bpmnElement="f19">
+        <di:waypoint x="2210" y="640" />
+        <di:waypoint x="2540" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f20_di" bpmnElement="f20">
+        <di:waypoint x="2210" y="640" />
+        <di:waypoint x="2315" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f21_di" bpmnElement="f21">
+        <di:waypoint x="2435" y="640" />
+        <di:waypoint x="2540" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f22_di" bpmnElement="f22">
+        <di:waypoint x="2590" y="640" />
+        <di:waypoint x="2695" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f23_di" bpmnElement="f23">
+        <di:waypoint x="2590" y="640" />
+        <di:waypoint x="2643" y="640" />
+        <di:waypoint x="2643" y="960" />
+        <di:waypoint x="2695" y="960" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f24_di" bpmnElement="f24">
+        <di:waypoint x="2815" y="640" />
+        <di:waypoint x="2920" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f25_di" bpmnElement="f25">
+        <di:waypoint x="2970" y="640" />
+        <di:waypoint x="3118" y="640" />
+        <di:waypoint x="3118" y="800" />
+        <di:waypoint x="3265" y="800" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f26_di" bpmnElement="f26">
+        <di:waypoint x="2970" y="640" />
+        <di:waypoint x="3023" y="640" />
+        <di:waypoint x="3023" y="320" />
+        <di:waypoint x="3075" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f27_di" bpmnElement="f27">
+        <di:waypoint x="3075" y="320" />
+        <di:waypoint x="3023" y="320" />
+        <di:waypoint x="3023" y="640" />
+        <di:waypoint x="2970" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f28_di" bpmnElement="f28">
+        <di:waypoint x="3385" y="800" />
+        <di:waypoint x="3490" y="800" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f29_di" bpmnElement="f29">
+        <di:waypoint x="3540" y="800" />
+        <di:waypoint x="3610" y="800" />
+        <di:waypoint x="3610" y="640" />
+        <di:waypoint x="3680" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f30_di" bpmnElement="f30">
+        <di:waypoint x="3540" y="800" />
+        <di:waypoint x="3645" y="800" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f31_di" bpmnElement="f31">
+        <di:waypoint x="3765" y="800" />
+        <di:waypoint x="3895" y="800" />
+        <di:waypoint x="3895" y="640" />
+        <di:waypoint x="4025" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f32_di" bpmnElement="f32">
+        <di:waypoint x="3730" y="640" />
+        <di:waypoint x="3783" y="640" />
+        <di:waypoint x="3783" y="320" />
+        <di:waypoint x="3835" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f33_di" bpmnElement="f33">
+        <di:waypoint x="3730" y="640" />
+        <di:waypoint x="4025" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f34_di" bpmnElement="f34">
+        <di:waypoint x="3955" y="320" />
+        <di:waypoint x="3990" y="320" />
+        <di:waypoint x="3990" y="640" />
+        <di:waypoint x="4025" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f35_di" bpmnElement="f35">
+        <di:waypoint x="4145" y="640" />
+        <di:waypoint x="4180" y="640" />
+        <di:waypoint x="4180" y="1120" />
+        <di:waypoint x="4215" y="1120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f36_di" bpmnElement="f36">
+        <di:waypoint x="4335" y="1120" />
+        <di:waypoint x="4405" y="1120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f37_di" bpmnElement="f37">
+        <di:waypoint x="2815" y="960" />
+        <di:waypoint x="2920" y="960" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f38_di" bpmnElement="f38">
+        <di:waypoint x="2970" y="960" />
+        <di:waypoint x="3075" y="960" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f39_di" bpmnElement="f39">
+        <di:waypoint x="2970" y="960" />
+        <di:waypoint x="3308" y="960" />
+        <di:waypoint x="3308" y="800" />
+        <di:waypoint x="3645" y="800" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f40_di" bpmnElement="f40">
+        <di:waypoint x="3195" y="960" />
+        <di:waypoint x="3800" y="960" />
+        <di:waypoint x="3800" y="1120" />
+        <di:waypoint x="4405" y="1120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f41_di" bpmnElement="f41">
+        <di:waypoint x="4525" y="1120" />
+        <di:waypoint x="4578" y="1120" />
+        <di:waypoint x="4578" y="640" />
+        <di:waypoint x="4630" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f42_di" bpmnElement="f42">
+        <di:waypoint x="4655" y="665" />
+        <di:waypoint x="4655" y="695" />
+        <di:waypoint x="2565" y="695" />
+        <di:waypoint x="2565" y="665" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f43_di" bpmnElement="f43">
+        <di:waypoint x="4680" y="640" />
+        <di:waypoint x="4754" y="640" />
+        <di:waypoint x="4754" y="1120" />
+        <di:waypoint x="4827" y="1120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="NoteModes_di" bpmnElement="NoteModes">
+        <dc:Bounds x="160" y="1240" width="1600" height="100" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Assoc_DeliveryGrnInspection_1_di" bpmnElement="Assoc_DeliveryGrnInspection_1">
+        <di:waypoint x="665" y="345" />
+        <di:waypoint x="260" y="1240" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="NotePaths_di" bpmnElement="NotePaths">
+        <dc:Bounds x="160" y="1350" width="1600" height="100" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Assoc_DeliveryGrnInspection_2_di" bpmnElement="Assoc_DeliveryGrnInspection_2">
+        <di:waypoint x="2565" y="665" />
+        <di:waypoint x="260" y="1350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="NoteStatus_di" bpmnElement="NoteStatus">
+        <dc:Bounds x="160" y="1460" width="1600" height="100" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Assoc_DeliveryGrnInspection_3_di" bpmnElement="Assoc_DeliveryGrnInspection_3">
+        <di:waypoint x="4465" y="1160" />
+        <di:waypoint x="260" y="1460" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

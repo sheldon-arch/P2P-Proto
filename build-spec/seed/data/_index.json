@@ -1,0 +1,39 @@
+{
+  "company": "Meridian Consumer Health",
+  "baseCurrency": "USD",
+  "demoToday": "2026-06-01",
+  "seed": 20260601,
+  "historyWindowMonths": 12,
+  "counts": {
+    "currencies": 8,
+    "uoms": 25,
+    "payment_terms": 7,
+    "tax_codes": 10,
+    "warehouses": 6,
+    "segments": 27,
+    "projects": 12,
+    "budgets": 44,
+    "verticals": 4,
+    "designations": 7,
+    "roles": 2,
+    "users": 22,
+    "suppliers": 52,
+    "items": 210,
+    "history_tickets": 180,
+    "ncrs": 9,
+    "supplier_scorecards": 46,
+    "live_tickets": 10,
+    "live_rfqs": 1,
+    "live_quotes": 3,
+    "live_invoices": 4,
+    "live_installments": 3,
+    "live_returns": 1,
+    "live_capas": 1
+  },
+  "hero": {
+    "requisition": "TKT-HERO",
+    "rfq": "RFQ-HERO",
+    "note": "cheapest unit (Helvetia) != lowest landed (Synthex); BioCore +7% spike"
+  },
+  "kpiNote": "OTIF ~94% (2-factor), perfect-order ~89% (4-factor, < OTIF), DPO ~45d, spend ~$125M/12mo, grades 25A/18B/3C"
+}

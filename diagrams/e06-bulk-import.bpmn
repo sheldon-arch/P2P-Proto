@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+                  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+                  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+                  id="Definitions_E06BulkImport" targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:collaboration id="Collaboration_E06BulkImport">
+    <bpmn:participant id="Participant_E06BulkImport" name="e06 - Bulk Import All-or-Nothing" processRef="Process_E06BulkImport" />
+  </bpmn:collaboration>
+  <bpmn:process id="Process_E06BulkImport" isExecutable="false">
+    <bpmn:laneSet id="LaneSet_E06BulkImport">
+      <bpmn:lane id="L_admin" name="Administrator">
+        <bpmn:flowNodeRef>Start</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_sys" name="Platform / System">
+        <bpmn:flowNodeRef>Parse</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GwReadable</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GwSheet</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GwDataRows</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GwHeaders</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ValidateRows</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GwAnyErrors</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>RejectAll</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>UpsertTxn</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GwCommit</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Rollback</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Audit</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Result</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>EndOk</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>EndReject</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="Start" name="Upload XLSX / CSV for a master">
+      <bpmn:documentation>Trigger: an administrator uploads a workbook (XLSX or CSV) for one master entity. One generic pipeline serves every master: suppliers, items, UoM, currency, segments, payment terms, warehouses, asset proposals, supplier groups, tax codes. Field masterType (dropdown, mandatory) selects the schema and the natural key. File picked via the import action (permission *.import, e.g. suppliers.import / items.import; Admin always). [SCOR OE4 | source: RA bulk import e06]</bpmn:documentation>
+      <bpmn:outgoing>f1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="Parse" name="Parse workbook">
+      <bpmn:documentation>System parses the uploaded file into rows. Row numbering convention: header row = 1, first data row = 2 (used in every error message so the admin can find the cell). No data is written during parse. [SCOR OE4 | source: RA parse + row-number convention]</bpmn:documentation>
+      <bpmn:incoming>f1</bpmn:incoming>
+      <bpmn:outgoing>f2</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="GwReadable" name="File readable?">
+      <bpmn:documentation>Expression: parser opened the file AND format in {XLSX, CSV} AND not corrupt/empty-bytes. False -&gt; BadRequest 'file not readable / unsupported format', abort (nothing written). True -&gt; check the sheet. [SCOR OE4 | source: RA pipeline guard 1]</bpmn:documentation>
+      <bpmn:incoming>f2</bpmn:incoming>
+      <bpmn:outgoing>f3</bpmn:outgoing>
+      <bpmn:outgoing>f4</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="GwSheet" name="Expected sheet present?">
+      <bpmn:documentation>Expression: the workbook contains the expected sheet for masterType (XLSX) or the CSV has a content block. False -&gt; BadRequest 'expected sheet missing', abort. True -&gt; check for data rows. [SCOR OE4 | source: RA pipeline guard 2]</bpmn:documentation>
+      <bpmn:incoming>f3</bpmn:incoming>
+      <bpmn:outgoing>f5</bpmn:outgoing>
+      <bpmn:outgoing>f6</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="GwDataRows" name="At least one data row?">
+      <bpmn:documentation>Expression: rowCount &gt; 1 (more than the header row). False -&gt; BadRequest 'no data rows', abort. True -&gt; validate headers. [SCOR OE4 | source: RA pipeline guard 3]</bpmn:documentation>
+      <bpmn:incoming>f5</bpmn:incoming>
+      <bpmn:outgoing>f7</bpmn:outgoing>
+      <bpmn:outgoing>f8</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="GwHeaders" name="Headers exactly match schema?">
+      <bpmn:documentation>Exact header validation. Expression: set(actualHeaders) == set(expectedHeaders for masterType): NO missing columns AND NO extra columns AND no duplicates. A mismatch is a STRUCTURAL failure reported before any row work. False -&gt; BadRequest listing the missing and the extra headers, abort. True -&gt; per-row validation. [SCOR OE4 | source: RA exact-header validation, no missing/extra]</bpmn:documentation>
+      <bpmn:incoming>f7</bpmn:incoming>
+      <bpmn:outgoing>f9</bpmn:outgoing>
+      <bpmn:outgoing>f10</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="ValidateRows" name="Validate every row + resolve refs, ACCUMULATE errors">
+      <bpmn:documentation>Iterate every data row (NEVER fail-fast). Per row: type/format/required-field checks against the masterType schema, then resolve foreign references (e.g. a supplier's group, an item's UoM/segment) via the entity normalizer. Each failure is appended to an error list as {row, header/field, reason} using the header=1/first-data=2 numbering. The loop continues to the last row so the admin sees ALL problems in one pass, not just the first. No write occurs in this step. [SCOR OE4 | ISO 7.5 | source: RA accumulate-all-errors, never fail-fast]</bpmn:documentation>
+      <bpmn:incoming>f9</bpmn:incoming>
+      <bpmn:outgoing>f11</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="GwAnyErrors" name="Any row errors accumulated?">
+      <bpmn:documentation>Expression: errorList.length &gt; 0. True -&gt; emit ONE BadRequest whose body lists every {row, reason}; NOTHING is written (the whole file is rejected together). False -&gt; proceed to the single-transaction upsert. [SCOR OE4 | source: RA one-error-response, all-or-nothing]</bpmn:documentation>
+      <bpmn:incoming>f11</bpmn:incoming>
+      <bpmn:outgoing>f12</bpmn:outgoing>
+      <bpmn:outgoing>f13</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="RejectAll" name="Return one BadRequest listing all {row, reason}; write nothing">
+      <bpmn:documentation>Single 400 response with the full error list (every failing row and reason). No partial import: zero rows are written. The admin fixes the file and re-uploads. Audit logs the rejected import attempt with the error count. [SCOR OE4 | ISO 7.5 records | source: RA reject-all]</bpmn:documentation>
+      <bpmn:incoming>f12</bpmn:incoming>
+      <bpmn:outgoing>f14</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="UpsertTxn" name="Single transaction: upsert by natural key">
+      <bpmn:documentation>Open ONE database transaction. For each row, upsert by the master's NATURAL KEY (e.g. supplier code S/#####, item code DEP/SG/SSG/######, UoM code, currency code, tax code): existing key -&gt; UPDATE (count as updated), new key -&gt; INSERT (count as created; imported records default PENDING_ONBOARDING for supplier/item). All rows share the one transaction. [SCOR OE4 | source: RA natural-key upsert, single transaction]</bpmn:documentation>
+      <bpmn:incoming>f13</bpmn:incoming>
+      <bpmn:outgoing>f15</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="GwCommit" name="All rows persisted without error?">
+      <bpmn:documentation>Expression: every upsert in the transaction succeeded (no DB constraint violation, no late integrity error). True -&gt; COMMIT all. False -&gt; ROLLBACK all (commit-all-or-rollback-all); return a 500/409 with the failure; nothing persists. There is no partial commit. [SCOR OE4 | source: RA commit-or-rollback-all]</bpmn:documentation>
+      <bpmn:incoming>f15</bpmn:incoming>
+      <bpmn:outgoing>f16</bpmn:outgoing>
+      <bpmn:outgoing>f17</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="Rollback" name="Rollback all; report failure">
+      <bpmn:documentation>Roll the single transaction back so no rows persist, and report the failure. The pre-write validation already caught content errors; a rollback here is for an integrity/DB error during write. Audit logs the failed transaction. [SCOR OE4 | ISO 7.5 | source: RA rollback-all]</bpmn:documentation>
+      <bpmn:incoming>f17</bpmn:incoming>
+      <bpmn:outgoing>f18</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Audit" name="Commit, audit, emit SSE">
+      <bpmn:documentation>On commit: write an append-only audit entry (category admin) recording masterType, created count, updated count, and the actor; emit SSE so master lists refresh. Imported supplier/item rows that were inserted are PENDING_ONBOARDING and enter the onboarding queue (06/07). [SCOR OE4 | ISO 7.5 records | source: platform-services audit + RA]</bpmn:documentation>
+      <bpmn:incoming>f16</bpmn:incoming>
+      <bpmn:outgoing>f19</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Result" name="Return {created, updated}">
+      <bpmn:documentation>Respond with the summary {created: n, updated: m}. This is the success contract of the pipeline; combined with the all-or-nothing rule it guarantees the import either fully applied or not at all. [SCOR OE4 | source: RA result contract]</bpmn:documentation>
+      <bpmn:incoming>f19</bpmn:incoming>
+      <bpmn:outgoing>f20</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="EndOk" name="Import committed">
+      <bpmn:documentation>Master data updated atomically; counts returned; audit + SSE emitted. [SCOR OE4 | source: RA]</bpmn:documentation>
+      <bpmn:incoming>f20</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="EndReject" name="Import rejected; nothing written">
+      <bpmn:documentation>Terminal reject path for a structural failure (unreadable / no sheet / no rows / header mismatch) or accumulated row errors. The whole file is rejected; the admin corrects and re-uploads. [SCOR OE4 | source: RA all-or-nothing]</bpmn:documentation>
+      <bpmn:incoming>f4</bpmn:incoming>
+      <bpmn:incoming>f6</bpmn:incoming>
+      <bpmn:incoming>f8</bpmn:incoming>
+      <bpmn:incoming>f10</bpmn:incoming>
+      <bpmn:incoming>f14</bpmn:incoming>
+      <bpmn:incoming>f18</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="f1" sourceRef="Start" targetRef="Parse" />
+    <bpmn:sequenceFlow id="f2" sourceRef="Parse" targetRef="GwReadable" />
+    <bpmn:sequenceFlow id="f3" name="readable" sourceRef="GwReadable" targetRef="GwSheet" />
+    <bpmn:sequenceFlow id="f4" name="not readable -&gt; BadRequest" sourceRef="GwReadable" targetRef="EndReject" />
+    <bpmn:sequenceFlow id="f5" name="sheet present" sourceRef="GwSheet" targetRef="GwDataRows" />
+    <bpmn:sequenceFlow id="f6" name="sheet missing -&gt; BadRequest" sourceRef="GwSheet" targetRef="EndReject" />
+    <bpmn:sequenceFlow id="f7" name="rows &gt; 1" sourceRef="GwDataRows" targetRef="GwHeaders" />
+    <bpmn:sequenceFlow id="f8" name="no data rows -&gt; BadRequest" sourceRef="GwDataRows" targetRef="EndReject" />
+    <bpmn:sequenceFlow id="f9" name="headers exact" sourceRef="GwHeaders" targetRef="ValidateRows" />
+    <bpmn:sequenceFlow id="f10" name="missing/extra header -&gt; BadRequest" sourceRef="GwHeaders" targetRef="EndReject" />
+    <bpmn:sequenceFlow id="f11" sourceRef="ValidateRows" targetRef="GwAnyErrors" />
+    <bpmn:sequenceFlow id="f12" name="errorList.length &gt; 0" sourceRef="GwAnyErrors" targetRef="RejectAll" />
+    <bpmn:sequenceFlow id="f13" name="no errors" sourceRef="GwAnyErrors" targetRef="UpsertTxn" />
+    <bpmn:sequenceFlow id="f14" sourceRef="RejectAll" targetRef="EndReject" />
+    <bpmn:sequenceFlow id="f15" sourceRef="UpsertTxn" targetRef="GwCommit" />
+    <bpmn:sequenceFlow id="f16" name="all rows persisted -&gt; COMMIT" sourceRef="GwCommit" targetRef="Audit" />
+    <bpmn:sequenceFlow id="f17" name="any failure -&gt; ROLLBACK" sourceRef="GwCommit" targetRef="Rollback" />
+    <bpmn:sequenceFlow id="f18" sourceRef="Rollback" targetRef="EndReject" />
+    <bpmn:sequenceFlow id="f19" sourceRef="Audit" targetRef="Result" />
+    <bpmn:sequenceFlow id="f20" sourceRef="Result" targetRef="EndOk" />
+    <bpmn:textAnnotation id="NoteBulk">
+      <bpmn:text>Never fail-fast: validation accumulates EVERY row error and reports them together with row numbers (header = 1, first data = 2). All-or-nothing: a single transaction upserts by natural key; commit all on success, rollback all on any failure. A structural failure (unreadable / missing sheet / no data rows / missing or extra header) or any accumulated row error rejects the whole file with one BadRequest and writes nothing. Success returns {created, updated}.</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Assoc_E06BulkImport_1" sourceRef="ValidateRows" targetRef="NoteBulk" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagram_E06BulkImport">
+    <bpmndi:BPMNPlane id="Plane_E06BulkImport" bpmnElement="Collaboration_E06BulkImport">
+      <bpmndi:BPMNShape id="Participant_E06BulkImport_di" bpmnElement="Participant_E06BulkImport" isHorizontal="true">
+        <dc:Bounds x="160" y="80" width="3110" height="320" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_admin_di" bpmnElement="L_admin" isHorizontal="true">
+        <dc:Bounds x="190" y="80" width="3080" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_sys_di" bpmnElement="L_sys" isHorizontal="true">
+        <dc:Bounds x="190" y="240" width="3080" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Start_di" bpmnElement="Start">
+        <dc:Bounds x="267" y="142" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="257" y="182" width="56" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Parse_di" bpmnElement="Parse">
+        <dc:Bounds x="415" y="280" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GwReadable_di" bpmnElement="GwReadable" isMarkerVisible="true">
+        <dc:Bounds x="640" y="295" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="630" y="349" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GwSheet_di" bpmnElement="GwSheet" isMarkerVisible="true">
+        <dc:Bounds x="830" y="295" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="820" y="349" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GwDataRows_di" bpmnElement="GwDataRows" isMarkerVisible="true">
+        <dc:Bounds x="1020" y="295" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1010" y="349" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GwHeaders_di" bpmnElement="GwHeaders" isMarkerVisible="true">
+        <dc:Bounds x="1210" y="295" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1200" y="349" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ValidateRows_di" bpmnElement="ValidateRows">
+        <dc:Bounds x="1365" y="280" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GwAnyErrors_di" bpmnElement="GwAnyErrors" isMarkerVisible="true">
+        <dc:Bounds x="1590" y="295" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1580" y="349" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="RejectAll_di" bpmnElement="RejectAll">
+        <dc:Bounds x="1745" y="280" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UpsertTxn_di" bpmnElement="UpsertTxn">
+        <dc:Bounds x="2695" y="280" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GwCommit_di" bpmnElement="GwCommit" isMarkerVisible="true">
+        <dc:Bounds x="1970" y="295" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1960" y="349" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Rollback_di" bpmnElement="Rollback">
+        <dc:Bounds x="2125" y="280" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Audit_di" bpmnElement="Audit">
+        <dc:Bounds x="2885" y="280" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Result_di" bpmnElement="Result">
+        <dc:Bounds x="2315" y="280" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndOk_di" bpmnElement="EndOk">
+        <dc:Bounds x="2547" y="302" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2537" y="342" width="56" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndReject_di" bpmnElement="EndReject">
+        <dc:Bounds x="3117" y="302" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3107" y="342" width="56" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="f1_di" bpmnElement="f1">
+        <di:waypoint x="303" y="160" />
+        <di:waypoint x="359" y="160" />
+        <di:waypoint x="359" y="320" />
+        <di:waypoint x="415" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f2_di" bpmnElement="f2">
+        <di:waypoint x="535" y="320" />
+        <di:waypoint x="640" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f3_di" bpmnElement="f3">
+        <di:waypoint x="690" y="320" />
+        <di:waypoint x="830" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f4_di" bpmnElement="f4">
+        <di:waypoint x="690" y="320" />
+        <di:waypoint x="3117" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f5_di" bpmnElement="f5">
+        <di:waypoint x="880" y="320" />
+        <di:waypoint x="1020" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f6_di" bpmnElement="f6">
+        <di:waypoint x="880" y="320" />
+        <di:waypoint x="3117" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f7_di" bpmnElement="f7">
+        <di:waypoint x="1070" y="320" />
+        <di:waypoint x="1210" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f8_di" bpmnElement="f8">
+        <di:waypoint x="1070" y="320" />
+        <di:waypoint x="3117" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f9_di" bpmnElement="f9">
+        <di:waypoint x="1260" y="320" />
+        <di:waypoint x="1365" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f10_di" bpmnElement="f10">
+        <di:waypoint x="1260" y="320" />
+        <di:waypoint x="3117" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f11_di" bpmnElement="f11">
+        <di:waypoint x="1485" y="320" />
+        <di:waypoint x="1590" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f12_di" bpmnElement="f12">
+        <di:waypoint x="1640" y="320" />
+        <di:waypoint x="1745" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f13_di" bpmnElement="f13">
+        <di:waypoint x="1640" y="320" />
+        <di:waypoint x="2695" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f14_di" bpmnElement="f14">
+        <di:waypoint x="1865" y="320" />
+        <di:waypoint x="3117" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f15_di" bpmnElement="f15">
+        <di:waypoint x="2755" y="360" />
+        <di:waypoint x="2755" y="390" />
+        <di:waypoint x="1995" y="390" />
+        <di:waypoint x="1995" y="345" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f16_di" bpmnElement="f16">
+        <di:waypoint x="2020" y="320" />
+        <di:waypoint x="2885" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f17_di" bpmnElement="f17">
+        <di:waypoint x="2020" y="320" />
+        <di:waypoint x="2125" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f18_di" bpmnElement="f18">
+        <di:waypoint x="2245" y="320" />
+        <di:waypoint x="3117" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f19_di" bpmnElement="f19">
+        <di:waypoint x="2945" y="360" />
+        <di:waypoint x="2945" y="390" />
+        <di:waypoint x="2375" y="390" />
+        <di:waypoint x="2375" y="360" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f20_di" bpmnElement="f20">
+        <di:waypoint x="2435" y="320" />
+        <di:waypoint x="2547" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="NoteBulk_di" bpmnElement="NoteBulk">
+        <dc:Bounds x="160" y="440" width="1600" height="100" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Assoc_E06BulkImport_1_di" bpmnElement="Assoc_E06BulkImport_1">
+        <di:waypoint x="1425" y="360" />
+        <di:waypoint x="260" y="440" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

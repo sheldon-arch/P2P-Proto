@@ -1,0 +1,14 @@
+{
+  "entity": "SupplierGroup",
+  "description": "A reference grouping for suppliers (commercial group, category, or parent organization) that suppliers are bucketed into for consolidated spend reporting, group-level terms, and supplier-base analytics. Maintained as master data with the group name as its natural key for bulk-import upsert.",
+  "primaryDomain": "06-supplier-onboarding",
+  "lifecycleEnum": null,
+  "fields": [
+    {"name": "name", "label": "Group Name", "dataType": "text", "cardinality": "one", "mandatory": "yes", "mandatoryCondition": null, "default": null, "enumDomain": null, "enumValues": null, "referenceTarget": null, "validation": "required; unique; natural key for bulk-import upsert (duplicates last-wins)", "computedFormula": null, "computedVsEntered": "entered", "isAuto": false, "owningRole": "Buyer", "purpose": "The unique group name that suppliers reference and that consolidated spend/analytics group by; being the natural key lets the group be created/updated by name on bulk import without surrogate-id management.", "source": "RA", "scorIso": "OE4"},
+    {"name": "description", "label": "Description", "dataType": "textarea", "cardinality": "one", "mandatory": "no", "mandatoryCondition": null, "default": null, "enumDomain": null, "enumValues": null, "referenceTarget": null, "validation": "optional; max 2000 chars", "computedFormula": null, "computedVsEntered": "entered", "isAuto": false, "owningRole": "Buyer", "purpose": "A human-readable note on what the group represents (category scope, parent entity) so users picking a group in the supplier form understand its meaning.", "source": "RA", "scorIso": "OE4"}
+  ],
+  "relationships": [
+    {"name": "groups", "type": "1:N", "target": "Supplier", "fk": "groupId"}
+  ],
+  "invariants": ["A13 audit (category SUPPLIER) + SSE on every change"]
+}

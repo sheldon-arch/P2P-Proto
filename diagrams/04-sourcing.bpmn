@@ -1,0 +1,481 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+                  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+                  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+                  id="Definitions_SourcingRfqAward" targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:collaboration id="Collaboration_SourcingRfqAward">
+    <bpmn:participant id="Participant_SourcingRfqAward" name="Unified Procure-to-Pay - Sourcing and RFQ to Award and Contract (Diagram 04)" processRef="Process_SourcingRfqAward" />
+  </bpmn:collaboration>
+  <bpmn:process id="Process_SourcingRfqAward" isExecutable="false">
+    <bpmn:laneSet id="LaneSet_SourcingRfqAward">
+      <bpmn:lane id="L_req" name="Requester">
+        <bpmn:flowNodeRef>Start</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_buyer" name="Procurement / Buyer">
+        <bpmn:flowNodeRef>DefineNeed</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>MarketAnalysis</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>SourcingStrategyGate</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>FrameworkCallOff</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Prequalify</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>FloatRfq</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>NegotiateGate</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>SelectSupplier</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Award</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_supplier" name="Supplier / Vendor">
+        <bpmn:flowNodeRef>SubmitQuote</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Negotiate</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_appr" name="Approver">
+        <bpmn:flowNodeRef>AwardApprovalGate</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_qc" name="Quality">
+        <bpmn:flowNodeRef>QualityCoaGate</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_sys" name="Platform / System">
+        <bpmn:flowNodeRef>SendInvite</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>IncotermValidGate</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>LandedCost</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>RankScore</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>RegulatedGate</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ReadyForPo</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>End</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="Start" name="Approved requisition ready for sourcing">
+      <bpmn:documentation>Trigger: a requisition has reached FULLY_APPROVED in Diagram 03 and is released to sourcing. Carries: requisitionId (immutable identifier), departmentId, category {Items|Spares|Services|ProductDesign}, purchaseType {Local|Import}, lines (itemId or free-text, quantity, UoM, needDate, productUsedFor, HS code, line note, attachments), currency, totalAmountInBase, projectId/costCenterId. The Procurement Head assigns a Procurement Handler (buyer) to the requisition (auto-assignment rules by category/store may apply; Head can override; handler notified, assignment date stamped for SLA). The requester is not told local vs import; the handler decides. [SCOR S1.1 Define Business Need | source: AB requisition-to-handler + RA released-on-approval]</bpmn:documentation>
+      <bpmn:outgoing>f1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:userTask id="DefineNeed" name="S1.1 Define business need (specs, qty, target, criticality)">
+      <bpmn:documentation>Buyer confirms and structures the business need from the requisition: specification per line, quantity and UoM, required delivery date, internalTargetPrice (number, optional, owning role Buyer; NEVER sent to a supplier - internal benchmark only), item criticality / regulated flag (drives the Quality COA/MSDS gate later), single-source vs competitive intent. Fields: needSpec (text, mandatory), targetQuantity (number &gt; 0, mandatory), internalTargetPrice (number &gt;= 0, optional, hidden from supplier), regulatedItem (boolean, default false, set true for OTC/pharma-grade RM and PM and regulated chemicals), criticalityTier {Low|Medium|High|Critical} (default Medium). Owning role: Procurement/Buyer (rfq.create precursor). [SCOR S1.1 Define Business Need | ISO 8.4.1 | source: AB internal target price + RA structure]</bpmn:documentation>
+      <bpmn:incoming>f1</bpmn:incoming>
+      <bpmn:outgoing>f2</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="MarketAnalysis" name="S1.2 Supply market analysis / new-supplier discovery">
+      <bpmn:documentation>Buyer analyses the supply market and discovers candidate suppliers (S1.2/S1.4 (incl. pre-procurement market testing) Conduct Supply Market Analysis; S1.5 Source the Supply Market). Sources scanned: existing approved-vendor list (AVL), unsolicited supplier inquiries on record, external market references (Go Forward, Global Source Products, Alibaba, IndiaMART) for price context, market-price watch. Captures: candidateSupplierIds[] (from master), newSupplierLeads[] (name + contact for discovery), marketPriceContext (last-purchase price + reference quotes, used later for the abnormal-price-spike flag and savings baseline). Owning role: Procurement/Buyer (suppliers.view, rfq.create). [SCOR S1.2 Conduct Supply Market Analysis + S1.5 Source the Supply Market | source: AB market references + RA AVL]</bpmn:documentation>
+      <bpmn:incoming>f2</bpmn:incoming>
+      <bpmn:outgoing>f3</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="SourcingStrategyGate" name="S1.3 Repeat / preferred / framework, or competitive event?">
+      <bpmn:documentation>Branch expression (S1.3 Develop Sourcing Strategy): isFrameworkCallOff == true OR (hasPreferredSupplier == true AND withinFrameworkCeiling). TRUE -&gt; bypass the competitive event and release against the framework / preferred supplier (FrameworkCallOff). FALSE -&gt; run a competitive RFQ event (Prequalify). isFrameworkCallOff is true when an active FrameworkAgreement covers the item and quantity is within its remaining ceiling. hasPreferredSupplier is true when a supplier holds sustained Grade A (preferred) status for the category and the buy is repeat. Services note: often only 1-2 capable contractors exist, so a sub-three-supplier or single-provider event is normal and is taken on this branch when a preferred/sole provider applies. Owning role: Procurement/Buyer. [SCOR S1.3 Develop Sourcing Strategy + S1.7 Determine Level of Collaboration | source: AB repeat/preferred + data-model FrameworkAgreement/CallOffRelease]</bpmn:documentation>
+      <bpmn:incoming>f3</bpmn:incoming>
+      <bpmn:outgoing>f4</bpmn:outgoing>
+      <bpmn:outgoing>f5</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="FrameworkCallOff" name="Release call-off against framework / preferred supplier">
+      <bpmn:documentation>Buyer releases a CallOffRelease against an active FrameworkAgreement (no re-sourcing). Fields: frameworkAgreementId (mandatory, reference), requisitionId, quantity (number &gt; 0, must keep cumulative draw-down &lt;= framework ceiling), value (auto = quantity x agreedPrice from framework), agreedPrice (read-only from framework), paymentTerms / deliveryTerms / incoterm (read-only from framework). Effect: draws down the framework's remaining quantity/value ceiling; skips RFQ, quote, negotiation, and comparison; produces an award-equivalent record that flows straight to the award-readiness step. Permission: calloff.release (Buyer, Requester against framework, or Administrator). Guard: framework status == ACTIVE and within validity dates and remaining ceiling &gt;= this draw. Owning role: Procurement/Buyer. [SCOR S1.3/OE6 | source: data-model FrameworkAgreement + CallOffRelease | platform-services]</bpmn:documentation>
+      <bpmn:incoming>f4</bpmn:incoming>
+      <bpmn:outgoing>f6</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Prequalify" name="S1.6 Prequalify suppliers (AVL, certs, risk)">
+      <bpmn:documentation>Buyer prequalifies the candidate suppliers before inviting them (S1.6 Prequalify Suppliers). Checks against the supplier master: status == ONBOARDED (not PENDING/SUSPENDED/OFFBOARDED), valid certifications for the category (ISO 9001 plus sector certs; binary 100% gate), risk tier within tolerance (ISO 31000), security / ESG / continuity attributes where required (ISO 28000/20400/22301). A new supplier lead that is not yet onboarded is routed to supplier onboarding (Diagram 06) and cannot be invited until ONBOARDED with qualification complete (for OTC/pharma-grade RM and PM this includes three-batch COAs plus samples). Output: invitableSupplierIds[] (prequalified pool). Permission: supplier.qualify (Buyer), with Quality conditional on quality criteria and Tax/Compliance conditional on risk/compliance. Owning role: Procurement/Buyer. [SCOR S1.6 Prequalify Suppliers | ISO 8.4.1 + 28000/31000/20400 | source: AB one-time qualification + RA lifecycle gate]</bpmn:documentation>
+      <bpmn:incoming>f5</bpmn:incoming>
+      <bpmn:outgoing>f7</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="FloatRfq" name="S1.8 Invite to tender / float RFQ to &gt;= 3 suppliers">
+      <bpmn:documentation>Buyer floats the RFQ (S1.8 Invite to Tender/Request for Quotation) to at least three prequalified suppliers (services excepted: only 1-2 capable contractors is normal, and a single-provider service requisition is allowed). The system creates one RFQ with an auto reference that links all responses back to the requisition. RFQ fields SENT to suppliers: requisition reference (auto), line items (description, quantity, UoM, HS code, need date), payment-terms request, delivery-terms request, response deadline (date-time, mandatory), template variant {Import | Local | Service}. RFQ field NOT sent: internalTargetPrice (internal benchmark only, never transmitted). Delivery channel: a unique-link form per supplier, opened on mobile, authenticated by email + OTP, with email plus manual-entry as fallback. Selecting a regulated chemical item surfaces permit expiry / quantity alerts (about one week before expiry) to the head and handler. Permission: rfq.create, rfq.invite (Buyer / Administrator). Owning role: Procurement/Buyer. [SCOR S1.8 Invite to Tender/RFQ | source: AB &gt;=3 suppliers + unique-link email+OTP form, internal target never sent]</bpmn:documentation>
+      <bpmn:incoming>f7</bpmn:incoming>
+      <bpmn:incoming>f21</bpmn:incoming>
+      <bpmn:outgoing>f8</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sendTask id="SendInvite" name="Send unique-link RFQ invitations (email + OTP)">
+      <bpmn:documentation>System sends each invited supplier a templated email carrying a unique authenticated link to the RFQ form, secured by email + OTP (pre-validation on send and on sign-in). One link per supplier scopes the supplier to its own quote only. Emits NOTIFY_RFQ_INVITE per supplier + audit. Delivery failures are logged, not retried (fire-and-forget post-commit). Owning role: Platform/System. [SCOR S1.8 | source: AB unique-link + RA email-OTP identity | platform-services 5/10]</bpmn:documentation>
+      <bpmn:incoming>f8</bpmn:incoming>
+      <bpmn:outgoing>f9</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:userTask id="SubmitQuote" name="S1.8 Supplier submits quotation (form)">
+      <bpmn:documentation>Each invited supplier submits a quotation on its unique form (supplier is the sole editor of its own quote; handler enters manually only as fallback, usual for services). Item-RFQ quote fields: price (number &gt; 0, mandatory, in quote currency); paymentTerms (dropdown, mandatory, exact value set {100% advance | part-advance + against documents | part-advance + against shipment | 30/70 | net 30 | net 60 | net 90}); deliveryTerms (text, mandatory); incoterm (dropdown, mandatory, exact value set {EXW | FOB | CIF | CFR | FCA | CPT | CIP | DAP}); die/cylinder charges (number &gt;= 0, optional, default 0); documentation charges (number &gt;= 0, optional, default 0); notes (text, optional); attachments (files, optional). Service-quote fields differ: contract period {yearly|quarterly|monthly} + start/duration/end, number of days, hours/labour, completion period, site, area (sq ft / m2), precise item description, no freight fields. The incoterm is validated against transport mode at submit (see IncotermValidGate). Permission: quote.capture (Supplier own quote). Owning role: Supplier/Vendor. [SCOR S1.8/S1.9 | source: AB quote fields + payment-terms and incoterm value sets]</bpmn:documentation>
+      <bpmn:incoming>f9</bpmn:incoming>
+      <bpmn:incoming>f12</bpmn:incoming>
+      <bpmn:outgoing>f10</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="IncotermValidGate" name="Incoterm valid for transport mode?">
+      <bpmn:documentation>Branch expression (Incoterms 2020 validation): incoterm is consistent with transportMode. Rule: FOB, CIF, CFR are SEA / inland-waterway only; for air, road, courier, or multimodal use FCA, CPT, CIP, or DAP; EXW is mode-agnostic. Concretely: if transportMode != SEA AND incoterm IN {FOB, CIF, CFR} -&gt; INVALID. TRUE (valid) -&gt; accept the quote and proceed to the negotiation decision. FALSE (invalid) -&gt; reject the submission with a validation message, return the supplier to the form to correct the incoterm (loops back to SubmitQuote). Owning role: Platform/System. [SCOR S1.8 | source: data-model Incoterms 2020 validate-vs-mode | AB incoterm set]</bpmn:documentation>
+      <bpmn:incoming>f10</bpmn:incoming>
+      <bpmn:outgoing>f11</bpmn:outgoing>
+      <bpmn:outgoing>f12</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="NegotiateGate" name="Negotiate this quote?">
+      <bpmn:documentation>Branch expression: buyerWantsNegotiation == true. Negotiation happens off-system (call / WhatsApp / meeting); the gateway records the buyer's decision. TRUE -&gt; Negotiate (supplier re-opens the SAME form to submit the revised price). FALSE -&gt; the quote is final for this supplier and joins the comparison set. Response timing (submit and revise timestamps) is tracked for the supplier scorecard responsiveness dimension. Owning role: Procurement/Buyer. [SCOR S1.10 Negotiate | source: AB negotiation loop, supplier sole editor]</bpmn:documentation>
+      <bpmn:incoming>f11</bpmn:incoming>
+      <bpmn:incoming>f15</bpmn:incoming>
+      <bpmn:outgoing>f13</bpmn:outgoing>
+      <bpmn:outgoing>f14</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="Negotiate" name="Negotiation: supplier re-opens same form, resubmits price">
+      <bpmn:documentation>If a revised price is agreed off-system, the SUPPLIER re-opens the SAME RFQ form (same unique link, email + OTP) and submits the new price and any changed terms; the quote record is versioned with revisedAt while keeping the same quotationId (supplier is sole editor; handler enters manually only as a fallback, usual for services). Each revision re-runs the incoterm validation. Loops back to NegotiateGate so multiple rounds are possible until the buyer marks the quote final. Permission: quote.capture (Supplier own quote). Owning role: Supplier/Vendor. [SCOR S1.10 | source: AB negotiation re-open same form + revisedAt]</bpmn:documentation>
+      <bpmn:incoming>f13</bpmn:incoming>
+      <bpmn:outgoing>f15</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="LandedCost" name="S1.9 Compute normalized landed cost per quote">
+      <bpmn:documentation>System computes a normalized landed cost so quotes compare like-for-like (S1.9 Analyze Offers). Formula: landedCost = quote price + freight + insurance + duty - exemption + local POD (port-of-discharge charges) + local POL (port-of-loading charges) + customs clearance + demurrage/storage + miscellaneous + documentation. Insurance is the I in CIF; insurance and demurrage were added after review. Damage is tracked SEPARATELY (not added into the landed-cost comparison number). Actual charges are entered at invoice time; any missing value falls back to the AVERAGE of that charge from past orders (averaging fallback) so a comparison is never blocked by a missing input. Always-present local charges per AB: port storage, Bayan, VAT and duty, courier, sample, bank; miscellaneous includes health/normal inspection, detention, CHA/agency, artwork, die/cylinder. Output: landedCostInBase per quote (FX-normalized via the FX service for cross-currency quotes). Owning role: Platform/System. [SCOR S1.9 Analyze Offers and Select Suppliers | source: AB landed-cost formula + averaging fallback | data-model LandedCost | platform-services 3]</bpmn:documentation>
+      <bpmn:incoming>f14</bpmn:incoming>
+      <bpmn:outgoing>f16</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="RankScore" name="S1.9 Rank suppliers, scorecard-weighted, colour-code, flag spikes">
+      <bpmn:documentation>System ranks the three-or-more quotes best to worst (S1.9). Ranking inputs: normalized landedCostInBase, plus delivery time, quality, price, responsiveness, weighted by the supplier scorecard composite (two-stage scoring: normalize each metric to 0-100 vs configurable bands, then weighted roll-up; default weights 40 delivery / 30 quality / 20 cost / 10 service, pharma raises quality; compliance is a GATE not a weighted input; grade A &gt;= 90 / B 70-89 / C &lt; 70). Colour-coding: green / amber / red per quote against the bands. Abnormal-price-spike flag: raise a flag when a quote price &gt; 105% of the last purchase price for the item (spike threshold &gt; 5%, comparison against marketPriceContext). Savings are REPORTED not gated: worst-best spread across quotes plus negotiation savings vs the baseline (baseline = last purchase price); negative if the result is an extra expense. A preferred-supplier recommendation is surfaced. Owning role: Platform/System. [SCOR S1.9 | source: AB ranking + colour-code + &gt;5% spike flag + savings reported | procurement-metrics-kpis scorecard | platform-services 9]</bpmn:documentation>
+      <bpmn:incoming>f16</bpmn:incoming>
+      <bpmn:incoming>f24</bpmn:incoming>
+      <bpmn:outgoing>f17</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="RegulatedGate" name="Regulated item requiring COA / MSDS review?">
+      <bpmn:documentation>Branch expression: regulatedItem == true (set at DefineNeed for OTC / pharma-grade RM and PM and regulated chemicals). TRUE -&gt; QualityCoaGate (Quality must approve COA / MSDS before selection can proceed). FALSE -&gt; SelectSupplier directly. The Quality gate sits between the final quote and the comparison/selection for regulated items. Owning role: Platform/System. [SCOR S1.9 | ISO 8.4.1 / 8.6 | source: AB QC COA/MSDS gate for regulated items]</bpmn:documentation>
+      <bpmn:incoming>f17</bpmn:incoming>
+      <bpmn:outgoing>f18</bpmn:outgoing>
+      <bpmn:outgoing>f19</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="QualityCoaGate" name="Quality reviews COA / MSDS (regulated gate)">
+      <bpmn:documentation>Quality reviews the Certificate of Analysis (COA) and Material Safety Data Sheet (MSDS) for the regulated item before the supplier can be selected. Actions: 'Approve COA/MSDS' (effect: clears the gate, proceed to SelectSupplier; records qcApprovedBy + qcApprovedAt) or 'Reject' (effect: the supplier/quote is disqualified for this regulated item; mandatory field rejectReason; the buyer must source an alternative or obtain compliant documentation, looping back to FloatRfq). This is a HARD gate: no selection of a regulated item without QC approval of COA/MSDS. Permission: qc.approve / qc.reject (Quality). Owning role: Quality. [SCOR S1.9 | ISO 8.6 release verification + 8.4.1 | source: AB QC gate for regulated chemicals]</bpmn:documentation>
+      <bpmn:incoming>f18</bpmn:incoming>
+      <bpmn:outgoing>f20</bpmn:outgoing>
+      <bpmn:outgoing>f21</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="SelectSupplier" name="S1.9 Select supplier (justify non-top pick)">
+      <bpmn:documentation>Buyer selects one supplier/quote from the ranked, colour-coded comparison. Fields: selectedQuotationId (mandatory, reference), selectionRationale (text, optional unless non-top pick), justificationForNonTopPick (text, MANDATORY when selectedQuotationId is not the rank-1 quote - the buyer must justify any non-top pick). The selection is the buyer's recommendation; it does not bind until the award is approved (next gate). Permission: supplier.select, quote.compare (Buyer; Approver conditional review; Administrator). Owning role: Procurement/Buyer. [SCOR S1.9 Analyze Offers and Select Suppliers | source: AB select + justify non-top pick]</bpmn:documentation>
+      <bpmn:incoming>f19</bpmn:incoming>
+      <bpmn:incoming>f20</bpmn:incoming>
+      <bpmn:outgoing>f22</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="AwardApprovalGate" name="Award selection approved?">
+      <bpmn:documentation>Branch expression: awardDecision == 'APPROVE'. The Procurement Head (or the award-approval stage approver) reviews the selected supplier/quote and the justification. TRUE -&gt; Award (capture contract terms). FALSE (awardDecision == 'RECOMPARE', mandatory field recompareNote) -&gt; loop back to RankScore for re-comparison (the buyer may re-rank, re-negotiate, or re-select). SoD: the award approver is not the buyer who made the selection. This award approval is itself routed through the configurable approval engine (Diagram 03) when configured as an award stage. Permission: award.approve (Approver / Head / Management conditional; Administrator). Owning role: Approver. [SCOR S1.10 | source: AB head-approves-selection or send-back + Diagram 03 engine]</bpmn:documentation>
+      <bpmn:incoming>f22</bpmn:incoming>
+      <bpmn:outgoing>f23</bpmn:outgoing>
+      <bpmn:outgoing>f24</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="Award" name="S1.10 Award and capture contract terms (+ renewal date)">
+      <bpmn:documentation>Buyer awards the business to the approved supplier and captures the contract/agreement (S1.10 Negotiate and Award Contract; OE6 Contracts and Agreements). Contract fields: contractId (auto), supplierId, requisitionId, awardedQuotationId, terms (text, the agreed payment/delivery/incoterm/scope), validityStart / validityEnd (dates), renewalDate (date, drives a 15-day-before renewal reminder), priceList / agreedPrices, scopeOfWork. For repeat/indirect categories the award may create or extend a FrameworkAgreement (ceiling quantity/value). Effect: supplier/quote locked as the source of truth for the PO; emits NOTIFY_AWARD + audit; schedules the contract-renewal reminder. Permission: contract.manage, award.approve precursor (Buyer / Administrator). Owning role: Procurement/Buyer. [SCOR S1.10 Negotiate and Award Contract + OE6 | source: AB contract capture + 15-day renewal reminder | data-model Contract/Agreement]</bpmn:documentation>
+      <bpmn:incoming>f23</bpmn:incoming>
+      <bpmn:outgoing>f25</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="ReadyForPo" name="Ready for PO (award released to ordering)">
+      <bpmn:documentation>System marks the award ready for purchase-order creation: links awardedQuotationId, supplierId, contractId, and the requisition lines into a PO-ready package (agreed price, payment terms, delivery terms, incoterm, contract reference). Emits SSE {requisitionId} + audit 'READY_FOR_PO'. Handover to Diagram 05 (Issue PO): budget is HARD-committed at PO issue, not here. Owning role: Platform/System. [SCOR S1.10 -&gt; S2.1 | source: build-new handover to PO]</bpmn:documentation>
+      <bpmn:incoming>f6</bpmn:incoming>
+      <bpmn:incoming>f25</bpmn:incoming>
+      <bpmn:outgoing>f26</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="End" name="Sourcing complete, ready for purchase order">
+      <bpmn:documentation>Terminal node. The awarded supplier, quote, and contract proceed to Diagram 05 (purchase order). [SCOR S1.10 | source: build-new]</bpmn:documentation>
+      <bpmn:incoming>f26</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="f1" sourceRef="Start" targetRef="DefineNeed" />
+    <bpmn:sequenceFlow id="f2" sourceRef="DefineNeed" targetRef="MarketAnalysis" />
+    <bpmn:sequenceFlow id="f3" sourceRef="MarketAnalysis" targetRef="SourcingStrategyGate" />
+    <bpmn:sequenceFlow id="f4" name="framework call-off / preferred bypass" sourceRef="SourcingStrategyGate" targetRef="FrameworkCallOff" />
+    <bpmn:sequenceFlow id="f5" name="competitive event" sourceRef="SourcingStrategyGate" targetRef="Prequalify" />
+    <bpmn:sequenceFlow id="f6" name="no re-sourcing, straight to PO-ready" sourceRef="FrameworkCallOff" targetRef="ReadyForPo" />
+    <bpmn:sequenceFlow id="f7" sourceRef="Prequalify" targetRef="FloatRfq" />
+    <bpmn:sequenceFlow id="f8" sourceRef="FloatRfq" targetRef="SendInvite" />
+    <bpmn:sequenceFlow id="f9" name="unique link per supplier" sourceRef="SendInvite" targetRef="SubmitQuote" />
+    <bpmn:sequenceFlow id="f10" sourceRef="SubmitQuote" targetRef="IncotermValidGate" />
+    <bpmn:sequenceFlow id="f11" name="incoterm valid for mode" sourceRef="IncotermValidGate" targetRef="NegotiateGate" />
+    <bpmn:sequenceFlow id="f12" name="invalid (FOB/CIF/CFR not sea), correct" sourceRef="IncotermValidGate" targetRef="SubmitQuote" />
+    <bpmn:sequenceFlow id="f13" name="buyer negotiates" sourceRef="NegotiateGate" targetRef="Negotiate" />
+    <bpmn:sequenceFlow id="f14" name="quote final" sourceRef="NegotiateGate" targetRef="LandedCost" />
+    <bpmn:sequenceFlow id="f15" name="revised price resubmitted, same form" sourceRef="Negotiate" targetRef="NegotiateGate" />
+    <bpmn:sequenceFlow id="f16" sourceRef="LandedCost" targetRef="RankScore" />
+    <bpmn:sequenceFlow id="f17" sourceRef="RankScore" targetRef="RegulatedGate" />
+    <bpmn:sequenceFlow id="f18" name="regulatedItem == true" sourceRef="RegulatedGate" targetRef="QualityCoaGate" />
+    <bpmn:sequenceFlow id="f19" name="not regulated" sourceRef="RegulatedGate" targetRef="SelectSupplier" />
+    <bpmn:sequenceFlow id="f20" name="COA/MSDS approved" sourceRef="QualityCoaGate" targetRef="SelectSupplier" />
+    <bpmn:sequenceFlow id="f21" name="COA/MSDS rejected, re-source" sourceRef="QualityCoaGate" targetRef="FloatRfq" />
+    <bpmn:sequenceFlow id="f22" sourceRef="SelectSupplier" targetRef="AwardApprovalGate" />
+    <bpmn:sequenceFlow id="f23" name="awardDecision == APPROVE" sourceRef="AwardApprovalGate" targetRef="Award" />
+    <bpmn:sequenceFlow id="f24" name="awardDecision == RECOMPARE" sourceRef="AwardApprovalGate" targetRef="RankScore" />
+    <bpmn:sequenceFlow id="f25" sourceRef="Award" targetRef="ReadyForPo" />
+    <bpmn:sequenceFlow id="f26" sourceRef="ReadyForPo" targetRef="End" />
+    <bpmn:textAnnotation id="NoteInternalTarget">
+      <bpmn:text>internalTargetPrice is an internal benchmark only and is NEVER sent to any supplier or shown on the RFQ form. It seeds the savings baseline alongside last-purchase price and informs the abnormal-price-spike flag.</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Assoc_SourcingRfqAward_1" sourceRef="FloatRfq" targetRef="NoteInternalTarget" />
+    <bpmn:textAnnotation id="NoteLandedCost">
+      <bpmn:text>Landed cost = quote + freight + insurance + duty - exemption + local POD + local POL + customs clearance + demurrage/storage + misc + documentation. Damage is tracked separately, never folded into the comparison number. Missing charges fall back to the average of that charge from past orders so a comparison is never blocked.</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Assoc_SourcingRfqAward_2" sourceRef="LandedCost" targetRef="NoteLandedCost" />
+    <bpmn:textAnnotation id="NoteRanking">
+      <bpmn:text>Rank three-or-more quotes best to worst on normalized landed cost plus the scorecard-weighted composite (default 40 delivery / 30 quality / 20 cost / 10 service; compliance is a pass/fail gate, not weighted). Colour-code green/amber/red. Flag any quote price more than 5% above last purchase price. Savings are reported, not gated. The buyer must justify any non-top pick.</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Assoc_SourcingRfqAward_3" sourceRef="RankScore" targetRef="NoteRanking" />
+    <bpmn:textAnnotation id="NotePaymentIncoterm">
+      <bpmn:text>Payment terms dropdown (exact set): 100% advance | part-advance + against documents | part-advance + against shipment | 30/70 | net 30 | net 60 | net 90. Incoterm dropdown (exact set): EXW | FOB | CIF | CFR | FCA | CPT | CIP | DAP. FOB/CIF/CFR are sea-only; air/road/courier/multimodal use FCA/CPT/CIP/DAP.</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Assoc_SourcingRfqAward_4" sourceRef="SubmitQuote" targetRef="NotePaymentIncoterm" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagram_SourcingRfqAward">
+    <bpmndi:BPMNPlane id="Plane_SourcingRfqAward" bpmnElement="Collaboration_SourcingRfqAward">
+      <bpmndi:BPMNShape id="Participant_SourcingRfqAward_di" bpmnElement="Participant_SourcingRfqAward" isHorizontal="true">
+        <dc:Bounds x="160" y="80" width="3870" height="960" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_req_di" bpmnElement="L_req" isHorizontal="true">
+        <dc:Bounds x="190" y="80" width="3840" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_buyer_di" bpmnElement="L_buyer" isHorizontal="true">
+        <dc:Bounds x="190" y="240" width="3840" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_supplier_di" bpmnElement="L_supplier" isHorizontal="true">
+        <dc:Bounds x="190" y="400" width="3840" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_appr_di" bpmnElement="L_appr" isHorizontal="true">
+        <dc:Bounds x="190" y="560" width="3840" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_qc_di" bpmnElement="L_qc" isHorizontal="true">
+        <dc:Bounds x="190" y="720" width="3840" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_sys_di" bpmnElement="L_sys" isHorizontal="true">
+        <dc:Bounds x="190" y="880" width="3840" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Start_di" bpmnElement="Start">
+        <dc:Bounds x="267" y="142" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="257" y="182" width="56" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DefineNeed_di" bpmnElement="DefineNeed">
+        <dc:Bounds x="415" y="280" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="MarketAnalysis_di" bpmnElement="MarketAnalysis">
+        <dc:Bounds x="605" y="280" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SourcingStrategyGate_di" bpmnElement="SourcingStrategyGate" isMarkerVisible="true">
+        <dc:Bounds x="830" y="295" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="820" y="349" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="FrameworkCallOff_di" bpmnElement="FrameworkCallOff">
+        <dc:Bounds x="985" y="280" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Prequalify_di" bpmnElement="Prequalify">
+        <dc:Bounds x="1175" y="280" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="FloatRfq_di" bpmnElement="FloatRfq">
+        <dc:Bounds x="1365" y="280" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SendInvite_di" bpmnElement="SendInvite">
+        <dc:Bounds x="1365" y="920" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SubmitQuote_di" bpmnElement="SubmitQuote">
+        <dc:Bounds x="1555" y="440" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="IncotermValidGate_di" bpmnElement="IncotermValidGate" isMarkerVisible="true">
+        <dc:Bounds x="1780" y="935" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1770" y="989" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="NegotiateGate_di" bpmnElement="NegotiateGate" isMarkerVisible="true">
+        <dc:Bounds x="1970" y="295" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1960" y="349" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Negotiate_di" bpmnElement="Negotiate">
+        <dc:Bounds x="2125" y="440" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="LandedCost_di" bpmnElement="LandedCost">
+        <dc:Bounds x="2315" y="920" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="RankScore_di" bpmnElement="RankScore">
+        <dc:Bounds x="2505" y="920" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="RegulatedGate_di" bpmnElement="RegulatedGate" isMarkerVisible="true">
+        <dc:Bounds x="2730" y="935" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2720" y="989" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="QualityCoaGate_di" bpmnElement="QualityCoaGate">
+        <dc:Bounds x="2885" y="760" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SelectSupplier_di" bpmnElement="SelectSupplier">
+        <dc:Bounds x="3075" y="280" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="AwardApprovalGate_di" bpmnElement="AwardApprovalGate" isMarkerVisible="true">
+        <dc:Bounds x="3300" y="615" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3290" y="669" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Award_di" bpmnElement="Award">
+        <dc:Bounds x="3455" y="280" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ReadyForPo_di" bpmnElement="ReadyForPo">
+        <dc:Bounds x="3645" y="920" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_di" bpmnElement="End">
+        <dc:Bounds x="3877" y="942" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3867" y="982" width="56" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="f1_di" bpmnElement="f1">
+        <di:waypoint x="303" y="160" />
+        <di:waypoint x="359" y="160" />
+        <di:waypoint x="359" y="320" />
+        <di:waypoint x="415" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f2_di" bpmnElement="f2">
+        <di:waypoint x="535" y="320" />
+        <di:waypoint x="605" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f3_di" bpmnElement="f3">
+        <di:waypoint x="725" y="320" />
+        <di:waypoint x="830" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f4_di" bpmnElement="f4">
+        <di:waypoint x="880" y="320" />
+        <di:waypoint x="985" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f5_di" bpmnElement="f5">
+        <di:waypoint x="880" y="320" />
+        <di:waypoint x="1175" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f6_di" bpmnElement="f6">
+        <di:waypoint x="1105" y="320" />
+        <di:waypoint x="2375" y="320" />
+        <di:waypoint x="2375" y="960" />
+        <di:waypoint x="3645" y="960" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f7_di" bpmnElement="f7">
+        <di:waypoint x="1295" y="320" />
+        <di:waypoint x="1365" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f8_di" bpmnElement="f8">
+        <di:waypoint x="1485" y="320" />
+        <di:waypoint x="1505" y="320" />
+        <di:waypoint x="1505" y="960" />
+        <di:waypoint x="1365" y="960" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f9_di" bpmnElement="f9">
+        <di:waypoint x="1485" y="960" />
+        <di:waypoint x="1520" y="960" />
+        <di:waypoint x="1520" y="480" />
+        <di:waypoint x="1555" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f10_di" bpmnElement="f10">
+        <di:waypoint x="1675" y="480" />
+        <di:waypoint x="1728" y="480" />
+        <di:waypoint x="1728" y="960" />
+        <di:waypoint x="1780" y="960" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f11_di" bpmnElement="f11">
+        <di:waypoint x="1830" y="960" />
+        <di:waypoint x="1900" y="960" />
+        <di:waypoint x="1900" y="320" />
+        <di:waypoint x="1970" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f12_di" bpmnElement="f12">
+        <di:waypoint x="1780" y="960" />
+        <di:waypoint x="1728" y="960" />
+        <di:waypoint x="1728" y="480" />
+        <di:waypoint x="1675" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f13_di" bpmnElement="f13">
+        <di:waypoint x="2020" y="320" />
+        <di:waypoint x="2073" y="320" />
+        <di:waypoint x="2073" y="480" />
+        <di:waypoint x="2125" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f14_di" bpmnElement="f14">
+        <di:waypoint x="2020" y="320" />
+        <di:waypoint x="2168" y="320" />
+        <di:waypoint x="2168" y="960" />
+        <di:waypoint x="2315" y="960" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f15_di" bpmnElement="f15">
+        <di:waypoint x="2125" y="480" />
+        <di:waypoint x="2073" y="480" />
+        <di:waypoint x="2073" y="320" />
+        <di:waypoint x="2020" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f16_di" bpmnElement="f16">
+        <di:waypoint x="2435" y="960" />
+        <di:waypoint x="2505" y="960" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f17_di" bpmnElement="f17">
+        <di:waypoint x="2625" y="960" />
+        <di:waypoint x="2730" y="960" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f18_di" bpmnElement="f18">
+        <di:waypoint x="2780" y="960" />
+        <di:waypoint x="2833" y="960" />
+        <di:waypoint x="2833" y="800" />
+        <di:waypoint x="2885" y="800" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f19_di" bpmnElement="f19">
+        <di:waypoint x="2780" y="960" />
+        <di:waypoint x="2928" y="960" />
+        <di:waypoint x="2928" y="320" />
+        <di:waypoint x="3075" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f20_di" bpmnElement="f20">
+        <di:waypoint x="3005" y="800" />
+        <di:waypoint x="3040" y="800" />
+        <di:waypoint x="3040" y="320" />
+        <di:waypoint x="3075" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f21_di" bpmnElement="f21">
+        <di:waypoint x="2885" y="800" />
+        <di:waypoint x="2185" y="800" />
+        <di:waypoint x="2185" y="320" />
+        <di:waypoint x="1485" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f22_di" bpmnElement="f22">
+        <di:waypoint x="3195" y="320" />
+        <di:waypoint x="3248" y="320" />
+        <di:waypoint x="3248" y="640" />
+        <di:waypoint x="3300" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f23_di" bpmnElement="f23">
+        <di:waypoint x="3350" y="640" />
+        <di:waypoint x="3403" y="640" />
+        <di:waypoint x="3403" y="320" />
+        <di:waypoint x="3455" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f24_di" bpmnElement="f24">
+        <di:waypoint x="3300" y="640" />
+        <di:waypoint x="2963" y="640" />
+        <di:waypoint x="2963" y="960" />
+        <di:waypoint x="2625" y="960" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f25_di" bpmnElement="f25">
+        <di:waypoint x="3575" y="320" />
+        <di:waypoint x="3610" y="320" />
+        <di:waypoint x="3610" y="960" />
+        <di:waypoint x="3645" y="960" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f26_di" bpmnElement="f26">
+        <di:waypoint x="3765" y="960" />
+        <di:waypoint x="3877" y="960" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="NoteInternalTarget_di" bpmnElement="NoteInternalTarget">
+        <dc:Bounds x="160" y="1080" width="1600" height="100" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Assoc_SourcingRfqAward_1_di" bpmnElement="Assoc_SourcingRfqAward_1">
+        <di:waypoint x="1425" y="360" />
+        <di:waypoint x="260" y="1080" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="NoteLandedCost_di" bpmnElement="NoteLandedCost">
+        <dc:Bounds x="160" y="1190" width="1600" height="100" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Assoc_SourcingRfqAward_2_di" bpmnElement="Assoc_SourcingRfqAward_2">
+        <di:waypoint x="2375" y="1000" />
+        <di:waypoint x="260" y="1190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="NoteRanking_di" bpmnElement="NoteRanking">
+        <dc:Bounds x="160" y="1300" width="1600" height="100" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Assoc_SourcingRfqAward_3_di" bpmnElement="Assoc_SourcingRfqAward_3">
+        <di:waypoint x="2565" y="1000" />
+        <di:waypoint x="260" y="1300" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="NotePaymentIncoterm_di" bpmnElement="NotePaymentIncoterm">
+        <dc:Bounds x="160" y="1410" width="1600" height="100" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Assoc_SourcingRfqAward_4_di" bpmnElement="Assoc_SourcingRfqAward_4">
+        <di:waypoint x="1615" y="520" />
+        <di:waypoint x="260" y="1410" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

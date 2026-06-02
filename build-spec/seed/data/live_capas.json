@@ -1,0 +1,13 @@
+[
+  {
+    "id": "CAPA-LV-1",
+    "ncrId": "NCR-LV-1",
+    "supplierId": "SUP-0009",
+    "rootCause": "Supplier process drift on a key step",
+    "action": "Supplier 8D corrective action; revalidation of 3 batches",
+    "effectivenessReview": "pending",
+    "status": "OPEN",
+    "consecutiveBelowPeriods": 2,
+    "willSuspend": true
+  }
+]

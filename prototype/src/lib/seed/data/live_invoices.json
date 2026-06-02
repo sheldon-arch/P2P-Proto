@@ -1,0 +1,62 @@
+[
+  {
+    "id": "INV-LV-10",
+    "ticketId": "TKT-LV-010",
+    "supplierId": "SUP-0006",
+    "invoiceNumber": "SUP-INV-8800",
+    "invoiceDate": "2026-05-24",
+    "amount": 560.0,
+    "taxAmount": 100.8,
+    "currency": "USD",
+    "matchType": "THREE_WAY",
+    "matchStatus": "exception",
+    "exceptionType": "price-variance",
+    "routedTo": "U-BUY1",
+    "onHold": false
+  },
+  {
+    "id": "INV-LV-11",
+    "ticketId": "TKT-LV-011",
+    "supplierId": "SUP-0007",
+    "invoiceNumber": "SUP-INV-8801",
+    "invoiceDate": "2026-05-24",
+    "amount": 70.0,
+    "taxAmount": 12.6,
+    "currency": "AED",
+    "matchType": "THREE_WAY",
+    "matchStatus": "exception",
+    "exceptionType": "qty-over",
+    "routedTo": "U-RECV1",
+    "onHold": false
+  },
+  {
+    "id": "INV-LV-12",
+    "ticketId": "TKT-LV-012",
+    "supplierId": "SUP-0008",
+    "invoiceNumber": "SUP-INV-8802",
+    "invoiceDate": "2026-05-24",
+    "amount": 110.0,
+    "taxAmount": 12.1,
+    "currency": "USD",
+    "matchType": "THREE_WAY",
+    "matchStatus": "exception",
+    "exceptionType": "tax-mismatch",
+    "routedTo": "U-TAX1",
+    "onHold": false
+  },
+  {
+    "id": "INV-LV-13",
+    "ticketId": "TKT-LV-013",
+    "supplierId": "SUP-0006",
+    "invoiceNumber": "SUP-INV-8803",
+    "invoiceDate": "2026-05-24",
+    "amount": 1120.0,
+    "taxAmount": 201.6,
+    "currency": "USD",
+    "matchType": "THREE_WAY",
+    "matchStatus": "exception",
+    "exceptionType": "duplicate-invoice",
+    "routedTo": "U-FINMK1",
+    "onHold": true
+  }
+]

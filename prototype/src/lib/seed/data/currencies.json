@@ -1,0 +1,66 @@
+[
+  {
+    "isoCode": "USD",
+    "numericIsoCode": "840",
+    "symbol": "$",
+    "description": "US Dollar",
+    "isBase": true,
+    "decimals": 2
+  },
+  {
+    "isoCode": "EUR",
+    "numericIsoCode": "978",
+    "symbol": "\u20ac",
+    "description": "Euro",
+    "isBase": false,
+    "decimals": 2
+  },
+  {
+    "isoCode": "INR",
+    "numericIsoCode": "356",
+    "symbol": "\u20b9",
+    "description": "Indian Rupee",
+    "isBase": false,
+    "decimals": 2
+  },
+  {
+    "isoCode": "AED",
+    "numericIsoCode": "784",
+    "symbol": "\u062f.\u0625",
+    "description": "UAE Dirham",
+    "isBase": false,
+    "decimals": 2
+  },
+  {
+    "isoCode": "CHF",
+    "numericIsoCode": "756",
+    "symbol": "CHF",
+    "description": "Swiss Franc",
+    "isBase": false,
+    "decimals": 2
+  },
+  {
+    "isoCode": "GBP",
+    "numericIsoCode": "826",
+    "symbol": "\u00a3",
+    "description": "Pound Sterling",
+    "isBase": false,
+    "decimals": 2
+  },
+  {
+    "isoCode": "CNY",
+    "numericIsoCode": "156",
+    "symbol": "\u00a5",
+    "description": "Chinese Yuan",
+    "isBase": false,
+    "decimals": 2
+  },
+  {
+    "isoCode": "SGD",
+    "numericIsoCode": "702",
+    "symbol": "S$",
+    "description": "Singapore Dollar",
+    "isBase": false,
+    "decimals": 2
+  }
+]

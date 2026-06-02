@@ -1,0 +1,3935 @@
+[
+  {
+    "id": "TL-000001",
+    "ticketId": "TKT-01000",
+    "itemId": "ITM-0203",
+    "quantity": 500,
+    "unitOfMeasure": "JOB",
+    "unitPrice": 0.725,
+    "needDate": "2025-11-22"
+  },
+  {
+    "id": "TL-000001",
+    "ticketId": "TKT-01000",
+    "itemId": "ITM-0206",
+    "quantity": 20000,
+    "unitOfMeasure": "JOB",
+    "unitPrice": 1.77,
+    "needDate": "2025-11-19"
+  },
+  {
+    "id": "TL-000001",
+    "ticketId": "TKT-01000",
+    "itemId": "ITM-0207",
+    "quantity": 2500,
+    "unitOfMeasure": "JOB",
+    "unitPrice": 0.79,
+    "needDate": "2025-11-19"
+  },
+  {
+    "id": "TL-000001",
+    "ticketId": "TKT-01000",
+    "itemId": "ITM-0184",
+    "quantity": 10000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 65.508,
+    "needDate": "2025-12-07"
+  },
+  {
+    "id": "TL-000005",
+    "ticketId": "TKT-01001",
+    "itemId": "ITM-0048",
+    "quantity": 20000,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 5.227,
+    "needDate": "2026-04-16"
+  },
+  {
+    "id": "TL-000005",
+    "ticketId": "TKT-01001",
+    "itemId": "ITM-0048",
+    "quantity": 40000,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 5.227,
+    "needDate": "2026-04-16"
+  },
+  {
+    "id": "TL-000005",
+    "ticketId": "TKT-01001",
+    "itemId": "ITM-0048",
+    "quantity": 2500,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 5.227,
+    "needDate": "2026-04-16"
+  },
+  {
+    "id": "TL-000005",
+    "ticketId": "TKT-01001",
+    "itemId": "ITM-0048",
+    "quantity": 5000,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 5.227,
+    "needDate": "2026-04-16"
+  },
+  {
+    "id": "TL-000009",
+    "ticketId": "TKT-01002",
+    "itemId": "ITM-0198",
+    "quantity": 500,
+    "unitOfMeasure": "JOB",
+    "unitPrice": 1.912,
+    "needDate": "2026-02-22"
+  },
+  {
+    "id": "TL-000009",
+    "ticketId": "TKT-01002",
+    "itemId": "ITM-0186",
+    "quantity": 10000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 31.167,
+    "needDate": "2026-03-03"
+  },
+  {
+    "id": "TL-000009",
+    "ticketId": "TKT-01002",
+    "itemId": "ITM-0186",
+    "quantity": 1000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 31.167,
+    "needDate": "2026-03-03"
+  },
+  {
+    "id": "TL-000009",
+    "ticketId": "TKT-01002",
+    "itemId": "ITM-0198",
+    "quantity": 1000,
+    "unitOfMeasure": "JOB",
+    "unitPrice": 1.912,
+    "needDate": "2026-02-22"
+  },
+  {
+    "id": "TL-000013",
+    "ticketId": "TKT-01003",
+    "itemId": "ITM-0048",
+    "quantity": 500,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 5.227,
+    "needDate": "2026-02-16"
+  },
+  {
+    "id": "TL-000013",
+    "ticketId": "TKT-01003",
+    "itemId": "ITM-0048",
+    "quantity": 1000,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 5.227,
+    "needDate": "2026-02-16"
+  },
+  {
+    "id": "TL-000015",
+    "ticketId": "TKT-01004",
+    "itemId": "ITM-0193",
+    "quantity": 1000,
+    "unitOfMeasure": "JOB",
+    "unitPrice": 0.861,
+    "needDate": "2025-07-24"
+  },
+  {
+    "id": "TL-000015",
+    "ticketId": "TKT-01004",
+    "itemId": "ITM-0128",
+    "quantity": 2500,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.131,
+    "needDate": "2025-08-18"
+  },
+  {
+    "id": "TL-000017",
+    "ticketId": "TKT-01005",
+    "itemId": "ITM-0086",
+    "quantity": 2500,
+    "unitOfMeasure": "BAG",
+    "unitPrice": 0.394,
+    "needDate": "2025-10-18"
+  },
+  {
+    "id": "TL-000017",
+    "ticketId": "TKT-01005",
+    "itemId": "ITM-0086",
+    "quantity": 500,
+    "unitOfMeasure": "BAG",
+    "unitPrice": 0.394,
+    "needDate": "2025-10-18"
+  },
+  {
+    "id": "TL-000019",
+    "ticketId": "TKT-01006",
+    "itemId": "ITM-0091",
+    "quantity": 20000,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.022,
+    "needDate": "2025-11-02"
+  },
+  {
+    "id": "TL-000019",
+    "ticketId": "TKT-01006",
+    "itemId": "ITM-0210",
+    "quantity": 5000,
+    "unitOfMeasure": "JOB",
+    "unitPrice": 0.785,
+    "needDate": "2025-10-16"
+  },
+  {
+    "id": "TL-000021",
+    "ticketId": "TKT-01007",
+    "itemId": "ITM-0177",
+    "quantity": 20000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 33.668,
+    "needDate": "2025-11-05"
+  },
+  {
+    "id": "TL-000022",
+    "ticketId": "TKT-01008",
+    "itemId": "ITM-0186",
+    "quantity": 2500,
+    "unitOfMeasure": "EA",
+    "unitPrice": 31.167,
+    "needDate": "2025-09-18"
+  },
+  {
+    "id": "TL-000022",
+    "ticketId": "TKT-01008",
+    "itemId": "ITM-0198",
+    "quantity": 10000,
+    "unitOfMeasure": "JOB",
+    "unitPrice": 1.912,
+    "needDate": "2025-09-09"
+  },
+  {
+    "id": "TL-000022",
+    "ticketId": "TKT-01008",
+    "itemId": "ITM-0186",
+    "quantity": 500,
+    "unitOfMeasure": "EA",
+    "unitPrice": 31.167,
+    "needDate": "2025-09-18"
+  },
+  {
+    "id": "TL-000022",
+    "ticketId": "TKT-01008",
+    "itemId": "ITM-0186",
+    "quantity": 1000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 31.167,
+    "needDate": "2025-09-18"
+  },
+  {
+    "id": "TL-000026",
+    "ticketId": "TKT-01009",
+    "itemId": "ITM-0117",
+    "quantity": 20000,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.045,
+    "needDate": "2025-07-09"
+  },
+  {
+    "id": "TL-000027",
+    "ticketId": "TKT-01010",
+    "itemId": "ITM-0050",
+    "quantity": 2500,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 4.162,
+    "needDate": "2026-03-10"
+  },
+  {
+    "id": "TL-000027",
+    "ticketId": "TKT-01010",
+    "itemId": "ITM-0001",
+    "quantity": 500,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 363.662,
+    "needDate": "2026-04-29"
+  },
+  {
+    "id": "TL-000027",
+    "ticketId": "TKT-01010",
+    "itemId": "ITM-0004",
+    "quantity": 1000,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 252.921,
+    "needDate": "2026-04-27"
+  },
+  {
+    "id": "TL-000030",
+    "ticketId": "TKT-01011",
+    "itemId": "ITM-0164",
+    "quantity": 20000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 127.145,
+    "needDate": "2025-11-12"
+  },
+  {
+    "id": "TL-000030",
+    "ticketId": "TKT-01011",
+    "itemId": "ITM-0127",
+    "quantity": 2500,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.193,
+    "needDate": "2025-11-25"
+  },
+  {
+    "id": "TL-000030",
+    "ticketId": "TKT-01011",
+    "itemId": "ITM-0127",
+    "quantity": 20000,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.193,
+    "needDate": "2025-11-25"
+  },
+  {
+    "id": "TL-000030",
+    "ticketId": "TKT-01011",
+    "itemId": "ITM-0164",
+    "quantity": 40000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 127.145,
+    "needDate": "2025-11-12"
+  },
+  {
+    "id": "TL-000034",
+    "ticketId": "TKT-01012",
+    "itemId": "ITM-0049",
+    "quantity": 40000,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 7.489,
+    "needDate": "2026-03-31"
+  },
+  {
+    "id": "TL-000035",
+    "ticketId": "TKT-01013",
+    "itemId": "ITM-0127",
+    "quantity": 1000,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.193,
+    "needDate": "2026-03-21"
+  },
+  {
+    "id": "TL-000036",
+    "ticketId": "TKT-01014",
+    "itemId": "ITM-0137",
+    "quantity": 40000,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.262,
+    "needDate": "2026-02-15"
+  },
+  {
+    "id": "TL-000036",
+    "ticketId": "TKT-01014",
+    "itemId": "ITM-0133",
+    "quantity": 40000,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.231,
+    "needDate": "2026-02-14"
+  },
+  {
+    "id": "TL-000036",
+    "ticketId": "TKT-01014",
+    "itemId": "ITM-0133",
+    "quantity": 20000,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.231,
+    "needDate": "2026-02-14"
+  },
+  {
+    "id": "TL-000036",
+    "ticketId": "TKT-01014",
+    "itemId": "ITM-0137",
+    "quantity": 5000,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.262,
+    "needDate": "2026-02-15"
+  },
+  {
+    "id": "TL-000040",
+    "ticketId": "TKT-01015",
+    "itemId": "ITM-0176",
+    "quantity": 2500,
+    "unitOfMeasure": "EA",
+    "unitPrice": 44.666,
+    "needDate": "2025-10-20"
+  },
+  {
+    "id": "TL-000040",
+    "ticketId": "TKT-01015",
+    "itemId": "ITM-0159",
+    "quantity": 5000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 109.027,
+    "needDate": "2025-10-21"
+  },
+  {
+    "id": "TL-000042",
+    "ticketId": "TKT-01016",
+    "itemId": "ITM-0170",
+    "quantity": 2500,
+    "unitOfMeasure": "BOX",
+    "unitPrice": 16.603,
+    "needDate": "2025-09-22"
+  },
+  {
+    "id": "TL-000042",
+    "ticketId": "TKT-01016",
+    "itemId": "ITM-0087",
+    "quantity": 500,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.017,
+    "needDate": "2025-10-03"
+  },
+  {
+    "id": "TL-000042",
+    "ticketId": "TKT-01016",
+    "itemId": "ITM-0087",
+    "quantity": 2500,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.017,
+    "needDate": "2025-10-03"
+  },
+  {
+    "id": "TL-000042",
+    "ticketId": "TKT-01016",
+    "itemId": "ITM-0180",
+    "quantity": 20000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 50.823,
+    "needDate": "2025-09-29"
+  },
+  {
+    "id": "TL-000046",
+    "ticketId": "TKT-01017",
+    "itemId": "ITM-0169",
+    "quantity": 500,
+    "unitOfMeasure": "BOX",
+    "unitPrice": 22.361,
+    "needDate": "2025-12-07"
+  },
+  {
+    "id": "TL-000046",
+    "ticketId": "TKT-01017",
+    "itemId": "ITM-0169",
+    "quantity": 5000,
+    "unitOfMeasure": "BOX",
+    "unitPrice": 22.361,
+    "needDate": "2025-12-07"
+  },
+  {
+    "id": "TL-000048",
+    "ticketId": "TKT-01018",
+    "itemId": "ITM-0048",
+    "quantity": 5000,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 5.227,
+    "needDate": "2026-03-13"
+  },
+  {
+    "id": "TL-000049",
+    "ticketId": "TKT-01019",
+    "itemId": "ITM-0158",
+    "quantity": 2500,
+    "unitOfMeasure": "EA",
+    "unitPrice": 107.193,
+    "needDate": "2025-11-14"
+  },
+  {
+    "id": "TL-000049",
+    "ticketId": "TKT-01019",
+    "itemId": "ITM-0158",
+    "quantity": 5000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 107.193,
+    "needDate": "2025-11-14"
+  },
+  {
+    "id": "TL-000049",
+    "ticketId": "TKT-01019",
+    "itemId": "ITM-0158",
+    "quantity": 5000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 107.193,
+    "needDate": "2025-11-14"
+  },
+  {
+    "id": "TL-000049",
+    "ticketId": "TKT-01019",
+    "itemId": "ITM-0158",
+    "quantity": 500,
+    "unitOfMeasure": "EA",
+    "unitPrice": 107.193,
+    "needDate": "2025-11-14"
+  },
+  {
+    "id": "TL-000053",
+    "ticketId": "TKT-01020",
+    "itemId": "ITM-0187",
+    "quantity": 5000,
+    "unitOfMeasure": "JOB",
+    "unitPrice": 1.888,
+    "needDate": "2025-07-29"
+  },
+  {
+    "id": "TL-000053",
+    "ticketId": "TKT-01020",
+    "itemId": "ITM-0187",
+    "quantity": 10000,
+    "unitOfMeasure": "JOB",
+    "unitPrice": 1.888,
+    "needDate": "2025-07-29"
+  },
+  {
+    "id": "TL-000053",
+    "ticketId": "TKT-01020",
+    "itemId": "ITM-0166",
+    "quantity": 5000,
+    "unitOfMeasure": "BOX",
+    "unitPrice": 19.582,
+    "needDate": "2025-08-02"
+  },
+  {
+    "id": "TL-000056",
+    "ticketId": "TKT-01021",
+    "itemId": "ITM-0049",
+    "quantity": 5000,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 7.489,
+    "needDate": "2026-05-15"
+  },
+  {
+    "id": "TL-000056",
+    "ticketId": "TKT-01021",
+    "itemId": "ITM-0130",
+    "quantity": 20000,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.307,
+    "needDate": "2026-05-15"
+  },
+  {
+    "id": "TL-000056",
+    "ticketId": "TKT-01021",
+    "itemId": "ITM-0130",
+    "quantity": 2500,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.307,
+    "needDate": "2026-05-15"
+  },
+  {
+    "id": "TL-000059",
+    "ticketId": "TKT-01022",
+    "itemId": "ITM-0206",
+    "quantity": 20000,
+    "unitOfMeasure": "JOB",
+    "unitPrice": 1.77,
+    "needDate": "2025-12-14"
+  },
+  {
+    "id": "TL-000060",
+    "ticketId": "TKT-01023",
+    "itemId": "ITM-0201",
+    "quantity": 1000,
+    "unitOfMeasure": "JOB",
+    "unitPrice": 0.972,
+    "needDate": "2025-12-14"
+  },
+  {
+    "id": "TL-000060",
+    "ticketId": "TKT-01023",
+    "itemId": "ITM-0201",
+    "quantity": 40000,
+    "unitOfMeasure": "JOB",
+    "unitPrice": 0.972,
+    "needDate": "2025-12-14"
+  },
+  {
+    "id": "TL-000060",
+    "ticketId": "TKT-01023",
+    "itemId": "ITM-0201",
+    "quantity": 40000,
+    "unitOfMeasure": "JOB",
+    "unitPrice": 0.972,
+    "needDate": "2025-12-14"
+  },
+  {
+    "id": "TL-000063",
+    "ticketId": "TKT-01024",
+    "itemId": "ITM-0047",
+    "quantity": 10000,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 8.249,
+    "needDate": "2025-08-22"
+  },
+  {
+    "id": "TL-000063",
+    "ticketId": "TKT-01024",
+    "itemId": "ITM-0047",
+    "quantity": 20000,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 8.249,
+    "needDate": "2025-08-22"
+  },
+  {
+    "id": "TL-000063",
+    "ticketId": "TKT-01024",
+    "itemId": "ITM-0087",
+    "quantity": 20000,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.017,
+    "needDate": "2025-08-21"
+  },
+  {
+    "id": "TL-000063",
+    "ticketId": "TKT-01024",
+    "itemId": "ITM-0170",
+    "quantity": 40000,
+    "unitOfMeasure": "BOX",
+    "unitPrice": 16.603,
+    "needDate": "2025-08-10"
+  },
+  {
+    "id": "TL-000067",
+    "ticketId": "TKT-01025",
+    "itemId": "ITM-0045",
+    "quantity": 5000,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 5.522,
+    "needDate": "2026-03-19"
+  },
+  {
+    "id": "TL-000068",
+    "ticketId": "TKT-01026",
+    "itemId": "ITM-0107",
+    "quantity": 5000,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.016,
+    "needDate": "2025-07-28"
+  },
+  {
+    "id": "TL-000068",
+    "ticketId": "TKT-01026",
+    "itemId": "ITM-0107",
+    "quantity": 20000,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.016,
+    "needDate": "2025-07-28"
+  },
+  {
+    "id": "TL-000068",
+    "ticketId": "TKT-01026",
+    "itemId": "ITM-0107",
+    "quantity": 10000,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.016,
+    "needDate": "2025-07-28"
+  },
+  {
+    "id": "TL-000068",
+    "ticketId": "TKT-01026",
+    "itemId": "ITM-0107",
+    "quantity": 40000,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.016,
+    "needDate": "2025-07-28"
+  },
+  {
+    "id": "TL-000072",
+    "ticketId": "TKT-01027",
+    "itemId": "ITM-0161",
+    "quantity": 20000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 81.084,
+    "needDate": "2026-05-12"
+  },
+  {
+    "id": "TL-000072",
+    "ticketId": "TKT-01027",
+    "itemId": "ITM-0124",
+    "quantity": 10000,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.051,
+    "needDate": "2026-05-02"
+  },
+  {
+    "id": "TL-000072",
+    "ticketId": "TKT-01027",
+    "itemId": "ITM-0124",
+    "quantity": 2500,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.051,
+    "needDate": "2026-05-02"
+  },
+  {
+    "id": "TL-000075",
+    "ticketId": "TKT-01028",
+    "itemId": "ITM-0107",
+    "quantity": 10000,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.016,
+    "needDate": "2025-12-23"
+  },
+  {
+    "id": "TL-000075",
+    "ticketId": "TKT-01028",
+    "itemId": "ITM-0107",
+    "quantity": 1000,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.016,
+    "needDate": "2025-12-23"
+  },
+  {
+    "id": "TL-000077",
+    "ticketId": "TKT-01029",
+    "itemId": "ITM-0011",
+    "quantity": 500,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 303.965,
+    "needDate": "2026-04-30"
+  },
+  {
+    "id": "TL-000077",
+    "ticketId": "TKT-01029",
+    "itemId": "ITM-0010",
+    "quantity": 5000,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 198.669,
+    "needDate": "2026-04-24"
+  },
+  {
+    "id": "TL-000077",
+    "ticketId": "TKT-01029",
+    "itemId": "ITM-0007",
+    "quantity": 1000,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 135.965,
+    "needDate": "2026-05-02"
+  },
+  {
+    "id": "TL-000080",
+    "ticketId": "TKT-01030",
+    "itemId": "ITM-0149",
+    "quantity": 20000,
+    "unitOfMeasure": "BAG",
+    "unitPrice": 0.047,
+    "needDate": "2025-08-04"
+  },
+  {
+    "id": "TL-000080",
+    "ticketId": "TKT-01030",
+    "itemId": "ITM-0142",
+    "quantity": 40000,
+    "unitOfMeasure": "BAG",
+    "unitPrice": 0.026,
+    "needDate": "2025-08-06"
+  },
+  {
+    "id": "TL-000080",
+    "ticketId": "TKT-01030",
+    "itemId": "ITM-0141",
+    "quantity": 10000,
+    "unitOfMeasure": "BAG",
+    "unitPrice": 0.038,
+    "needDate": "2025-08-08"
+  },
+  {
+    "id": "TL-000083",
+    "ticketId": "TKT-01031",
+    "itemId": "ITM-0103",
+    "quantity": 5000,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.018,
+    "needDate": "2026-02-24"
+  },
+  {
+    "id": "TL-000083",
+    "ticketId": "TKT-01031",
+    "itemId": "ITM-0088",
+    "quantity": 5000,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.007,
+    "needDate": "2026-02-24"
+  },
+  {
+    "id": "TL-000083",
+    "ticketId": "TKT-01031",
+    "itemId": "ITM-0103",
+    "quantity": 5000,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.018,
+    "needDate": "2026-02-24"
+  },
+  {
+    "id": "TL-000086",
+    "ticketId": "TKT-01032",
+    "itemId": "ITM-0169",
+    "quantity": 10000,
+    "unitOfMeasure": "BOX",
+    "unitPrice": 22.361,
+    "needDate": "2026-04-27"
+  },
+  {
+    "id": "TL-000086",
+    "ticketId": "TKT-01032",
+    "itemId": "ITM-0169",
+    "quantity": 5000,
+    "unitOfMeasure": "BOX",
+    "unitPrice": 22.361,
+    "needDate": "2026-04-27"
+  },
+  {
+    "id": "TL-000086",
+    "ticketId": "TKT-01032",
+    "itemId": "ITM-0129",
+    "quantity": 40000,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.229,
+    "needDate": "2026-05-20"
+  },
+  {
+    "id": "TL-000086",
+    "ticketId": "TKT-01032",
+    "itemId": "ITM-0169",
+    "quantity": 2500,
+    "unitOfMeasure": "BOX",
+    "unitPrice": 22.361,
+    "needDate": "2026-04-27"
+  },
+  {
+    "id": "TL-000090",
+    "ticketId": "TKT-01033",
+    "itemId": "ITM-0186",
+    "quantity": 40000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 31.167,
+    "needDate": "2026-02-07"
+  },
+  {
+    "id": "TL-000090",
+    "ticketId": "TKT-01033",
+    "itemId": "ITM-0198",
+    "quantity": 40000,
+    "unitOfMeasure": "JOB",
+    "unitPrice": 1.912,
+    "needDate": "2026-01-29"
+  },
+  {
+    "id": "TL-000090",
+    "ticketId": "TKT-01033",
+    "itemId": "ITM-0198",
+    "quantity": 500,
+    "unitOfMeasure": "JOB",
+    "unitPrice": 1.912,
+    "needDate": "2026-01-29"
+  },
+  {
+    "id": "TL-000093",
+    "ticketId": "TKT-01034",
+    "itemId": "ITM-0082",
+    "quantity": 1000,
+    "unitOfMeasure": "BAG",
+    "unitPrice": 0.485,
+    "needDate": "2025-07-22"
+  },
+  {
+    "id": "TL-000094",
+    "ticketId": "TKT-01035",
+    "itemId": "ITM-0097",
+    "quantity": 20000,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.009,
+    "needDate": "2026-02-11"
+  },
+  {
+    "id": "TL-000094",
+    "ticketId": "TKT-01035",
+    "itemId": "ITM-0097",
+    "quantity": 40000,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.009,
+    "needDate": "2026-02-11"
+  },
+  {
+    "id": "TL-000094",
+    "ticketId": "TKT-01035",
+    "itemId": "ITM-0101",
+    "quantity": 5000,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.009,
+    "needDate": "2026-02-19"
+  },
+  {
+    "id": "TL-000097",
+    "ticketId": "TKT-01036",
+    "itemId": "ITM-0183",
+    "quantity": 2500,
+    "unitOfMeasure": "EA",
+    "unitPrice": 77.802,
+    "needDate": "2025-12-30"
+  },
+  {
+    "id": "TL-000097",
+    "ticketId": "TKT-01036",
+    "itemId": "ITM-0082",
+    "quantity": 40000,
+    "unitOfMeasure": "BAG",
+    "unitPrice": 0.485,
+    "needDate": "2025-12-20"
+  },
+  {
+    "id": "TL-000097",
+    "ticketId": "TKT-01036",
+    "itemId": "ITM-0183",
+    "quantity": 20000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 77.802,
+    "needDate": "2025-12-30"
+  },
+  {
+    "id": "TL-000097",
+    "ticketId": "TKT-01036",
+    "itemId": "ITM-0183",
+    "quantity": 2500,
+    "unitOfMeasure": "EA",
+    "unitPrice": 77.802,
+    "needDate": "2025-12-30"
+  },
+  {
+    "id": "TL-000101",
+    "ticketId": "TKT-01037",
+    "itemId": "ITM-0080",
+    "quantity": 1000,
+    "unitOfMeasure": "BAG",
+    "unitPrice": 0.715,
+    "needDate": "2025-11-30"
+  },
+  {
+    "id": "TL-000101",
+    "ticketId": "TKT-01037",
+    "itemId": "ITM-0080",
+    "quantity": 20000,
+    "unitOfMeasure": "BAG",
+    "unitPrice": 0.715,
+    "needDate": "2025-11-30"
+  },
+  {
+    "id": "TL-000103",
+    "ticketId": "TKT-01038",
+    "itemId": "ITM-0104",
+    "quantity": 1000,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.015,
+    "needDate": "2025-12-30"
+  },
+  {
+    "id": "TL-000103",
+    "ticketId": "TKT-01038",
+    "itemId": "ITM-0104",
+    "quantity": 5000,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.015,
+    "needDate": "2025-12-30"
+  },
+  {
+    "id": "TL-000105",
+    "ticketId": "TKT-01039",
+    "itemId": "ITM-0153",
+    "quantity": 20000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 158.37,
+    "needDate": "2026-02-03"
+  },
+  {
+    "id": "TL-000105",
+    "ticketId": "TKT-01039",
+    "itemId": "ITM-0175",
+    "quantity": 20000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 71.594,
+    "needDate": "2026-02-03"
+  },
+  {
+    "id": "TL-000107",
+    "ticketId": "TKT-01040",
+    "itemId": "ITM-0053",
+    "quantity": 20000,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.13,
+    "needDate": "2025-09-14"
+  },
+  {
+    "id": "TL-000107",
+    "ticketId": "TKT-01040",
+    "itemId": "ITM-0053",
+    "quantity": 1000,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.13,
+    "needDate": "2025-09-14"
+  },
+  {
+    "id": "TL-000109",
+    "ticketId": "TKT-01041",
+    "itemId": "ITM-0178",
+    "quantity": 500,
+    "unitOfMeasure": "EA",
+    "unitPrice": 59.847,
+    "needDate": "2026-01-18"
+  },
+  {
+    "id": "TL-000109",
+    "ticketId": "TKT-01041",
+    "itemId": "ITM-0178",
+    "quantity": 1000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 59.847,
+    "needDate": "2026-01-18"
+  },
+  {
+    "id": "TL-000109",
+    "ticketId": "TKT-01041",
+    "itemId": "ITM-0178",
+    "quantity": 1000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 59.847,
+    "needDate": "2026-01-18"
+  },
+  {
+    "id": "TL-000112",
+    "ticketId": "TKT-01042",
+    "itemId": "ITM-0049",
+    "quantity": 20000,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 7.489,
+    "needDate": "2025-11-24"
+  },
+  {
+    "id": "TL-000112",
+    "ticketId": "TKT-01042",
+    "itemId": "ITM-0049",
+    "quantity": 20000,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 7.489,
+    "needDate": "2025-11-24"
+  },
+  {
+    "id": "TL-000112",
+    "ticketId": "TKT-01042",
+    "itemId": "ITM-0130",
+    "quantity": 40000,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.307,
+    "needDate": "2025-11-24"
+  },
+  {
+    "id": "TL-000115",
+    "ticketId": "TKT-01043",
+    "itemId": "ITM-0008",
+    "quantity": 40000,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 116.763,
+    "needDate": "2026-06-28"
+  },
+  {
+    "id": "TL-000115",
+    "ticketId": "TKT-01043",
+    "itemId": "ITM-0017",
+    "quantity": 10000,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 294.95,
+    "needDate": "2026-06-23"
+  },
+  {
+    "id": "TL-000115",
+    "ticketId": "TKT-01043",
+    "itemId": "ITM-0136",
+    "quantity": 1000,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.197,
+    "needDate": "2026-05-19"
+  },
+  {
+    "id": "TL-000115",
+    "ticketId": "TKT-01043",
+    "itemId": "ITM-0003",
+    "quantity": 1000,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 339.639,
+    "needDate": "2026-06-22"
+  },
+  {
+    "id": "TL-000119",
+    "ticketId": "TKT-01044",
+    "itemId": "ITM-0065",
+    "quantity": 20000,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.136,
+    "needDate": "2025-12-01"
+  },
+  {
+    "id": "TL-000119",
+    "ticketId": "TKT-01044",
+    "itemId": "ITM-0053",
+    "quantity": 40000,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.13,
+    "needDate": "2025-11-26"
+  },
+  {
+    "id": "TL-000119",
+    "ticketId": "TKT-01044",
+    "itemId": "ITM-0068",
+    "quantity": 10000,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.155,
+    "needDate": "2025-11-24"
+  },
+  {
+    "id": "TL-000119",
+    "ticketId": "TKT-01044",
+    "itemId": "ITM-0072",
+    "quantity": 500,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.172,
+    "needDate": "2025-11-26"
+  },
+  {
+    "id": "TL-000123",
+    "ticketId": "TKT-01045",
+    "itemId": "ITM-0163",
+    "quantity": 40000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 125.801,
+    "needDate": "2026-02-05"
+  },
+  {
+    "id": "TL-000124",
+    "ticketId": "TKT-01046",
+    "itemId": "ITM-0131",
+    "quantity": 5000,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.228,
+    "needDate": "2025-10-08"
+  },
+  {
+    "id": "TL-000124",
+    "ticketId": "TKT-01046",
+    "itemId": "ITM-0092",
+    "quantity": 20000,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.013,
+    "needDate": "2025-09-29"
+  },
+  {
+    "id": "TL-000126",
+    "ticketId": "TKT-01047",
+    "itemId": "ITM-0178",
+    "quantity": 2500,
+    "unitOfMeasure": "EA",
+    "unitPrice": 59.847,
+    "needDate": "2025-08-02"
+  },
+  {
+    "id": "TL-000126",
+    "ticketId": "TKT-01047",
+    "itemId": "ITM-0178",
+    "quantity": 20000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 59.847,
+    "needDate": "2025-08-02"
+  },
+  {
+    "id": "TL-000126",
+    "ticketId": "TKT-01047",
+    "itemId": "ITM-0178",
+    "quantity": 2500,
+    "unitOfMeasure": "EA",
+    "unitPrice": 59.847,
+    "needDate": "2025-08-02"
+  },
+  {
+    "id": "TL-000126",
+    "ticketId": "TKT-01047",
+    "itemId": "ITM-0178",
+    "quantity": 1000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 59.847,
+    "needDate": "2025-08-02"
+  },
+  {
+    "id": "TL-000130",
+    "ticketId": "TKT-01048",
+    "itemId": "ITM-0075",
+    "quantity": 2500,
+    "unitOfMeasure": "BAG",
+    "unitPrice": 0.583,
+    "needDate": "2025-11-26"
+  },
+  {
+    "id": "TL-000130",
+    "ticketId": "TKT-01048",
+    "itemId": "ITM-0098",
+    "quantity": 500,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.015,
+    "needDate": "2025-11-27"
+  },
+  {
+    "id": "TL-000132",
+    "ticketId": "TKT-01049",
+    "itemId": "ITM-0201",
+    "quantity": 2500,
+    "unitOfMeasure": "JOB",
+    "unitPrice": 0.972,
+    "needDate": "2026-02-09"
+  },
+  {
+    "id": "TL-000132",
+    "ticketId": "TKT-01049",
+    "itemId": "ITM-0201",
+    "quantity": 2500,
+    "unitOfMeasure": "JOB",
+    "unitPrice": 0.972,
+    "needDate": "2026-02-09"
+  },
+  {
+    "id": "TL-000132",
+    "ticketId": "TKT-01049",
+    "itemId": "ITM-0201",
+    "quantity": 20000,
+    "unitOfMeasure": "JOB",
+    "unitPrice": 0.972,
+    "needDate": "2026-02-09"
+  },
+  {
+    "id": "TL-000135",
+    "ticketId": "TKT-01050",
+    "itemId": "ITM-0086",
+    "quantity": 20000,
+    "unitOfMeasure": "BAG",
+    "unitPrice": 0.394,
+    "needDate": "2025-11-10"
+  },
+  {
+    "id": "TL-000135",
+    "ticketId": "TKT-01050",
+    "itemId": "ITM-0086",
+    "quantity": 2500,
+    "unitOfMeasure": "BAG",
+    "unitPrice": 0.394,
+    "needDate": "2025-11-10"
+  },
+  {
+    "id": "TL-000135",
+    "ticketId": "TKT-01050",
+    "itemId": "ITM-0086",
+    "quantity": 40000,
+    "unitOfMeasure": "BAG",
+    "unitPrice": 0.394,
+    "needDate": "2025-11-10"
+  },
+  {
+    "id": "TL-000135",
+    "ticketId": "TKT-01050",
+    "itemId": "ITM-0086",
+    "quantity": 20000,
+    "unitOfMeasure": "BAG",
+    "unitPrice": 0.394,
+    "needDate": "2025-11-10"
+  },
+  {
+    "id": "TL-000139",
+    "ticketId": "TKT-01051",
+    "itemId": "ITM-0136",
+    "quantity": 10000,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.197,
+    "needDate": "2026-01-11"
+  },
+  {
+    "id": "TL-000139",
+    "ticketId": "TKT-01051",
+    "itemId": "ITM-0136",
+    "quantity": 5000,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.197,
+    "needDate": "2026-01-11"
+  },
+  {
+    "id": "TL-000139",
+    "ticketId": "TKT-01051",
+    "itemId": "ITM-0017",
+    "quantity": 40000,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 294.95,
+    "needDate": "2026-02-15"
+  },
+  {
+    "id": "TL-000139",
+    "ticketId": "TKT-01051",
+    "itemId": "ITM-0136",
+    "quantity": 500,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.197,
+    "needDate": "2026-01-11"
+  },
+  {
+    "id": "TL-000143",
+    "ticketId": "TKT-01052",
+    "itemId": "ITM-0185",
+    "quantity": 40000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 33.375,
+    "needDate": "2026-05-21"
+  },
+  {
+    "id": "TL-000144",
+    "ticketId": "TKT-01053",
+    "itemId": "ITM-0096",
+    "quantity": 1000,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.011,
+    "needDate": "2026-02-19"
+  },
+  {
+    "id": "TL-000144",
+    "ticketId": "TKT-01053",
+    "itemId": "ITM-0192",
+    "quantity": 500,
+    "unitOfMeasure": "JOB",
+    "unitPrice": 1.117,
+    "needDate": "2026-02-04"
+  },
+  {
+    "id": "TL-000146",
+    "ticketId": "TKT-01054",
+    "itemId": "ITM-0097",
+    "quantity": 40000,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.009,
+    "needDate": "2025-08-07"
+  },
+  {
+    "id": "TL-000146",
+    "ticketId": "TKT-01054",
+    "itemId": "ITM-0097",
+    "quantity": 20000,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.009,
+    "needDate": "2025-08-07"
+  },
+  {
+    "id": "TL-000146",
+    "ticketId": "TKT-01054",
+    "itemId": "ITM-0097",
+    "quantity": 1000,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.009,
+    "needDate": "2025-08-07"
+  },
+  {
+    "id": "TL-000149",
+    "ticketId": "TKT-01055",
+    "itemId": "ITM-0048",
+    "quantity": 10000,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 5.227,
+    "needDate": "2026-01-27"
+  },
+  {
+    "id": "TL-000149",
+    "ticketId": "TKT-01055",
+    "itemId": "ITM-0048",
+    "quantity": 5000,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 5.227,
+    "needDate": "2026-01-27"
+  },
+  {
+    "id": "TL-000149",
+    "ticketId": "TKT-01055",
+    "itemId": "ITM-0048",
+    "quantity": 2500,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 5.227,
+    "needDate": "2026-01-27"
+  },
+  {
+    "id": "TL-000149",
+    "ticketId": "TKT-01055",
+    "itemId": "ITM-0048",
+    "quantity": 20000,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 5.227,
+    "needDate": "2026-01-27"
+  },
+  {
+    "id": "TL-000153",
+    "ticketId": "TKT-01056",
+    "itemId": "ITM-0063",
+    "quantity": 10000,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.077,
+    "needDate": "2025-12-10"
+  },
+  {
+    "id": "TL-000153",
+    "ticketId": "TKT-01056",
+    "itemId": "ITM-0063",
+    "quantity": 500,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.077,
+    "needDate": "2025-12-10"
+  },
+  {
+    "id": "TL-000155",
+    "ticketId": "TKT-01057",
+    "itemId": "ITM-0039",
+    "quantity": 40000,
+    "unitOfMeasure": "BAG",
+    "unitPrice": 22.288,
+    "needDate": "2026-01-17"
+  },
+  {
+    "id": "TL-000156",
+    "ticketId": "TKT-01058",
+    "itemId": "ITM-0087",
+    "quantity": 5000,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.017,
+    "needDate": "2025-08-17"
+  },
+  {
+    "id": "TL-000156",
+    "ticketId": "TKT-01058",
+    "itemId": "ITM-0087",
+    "quantity": 40000,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.017,
+    "needDate": "2025-08-17"
+  },
+  {
+    "id": "TL-000156",
+    "ticketId": "TKT-01058",
+    "itemId": "ITM-0087",
+    "quantity": 40000,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.017,
+    "needDate": "2025-08-17"
+  },
+  {
+    "id": "TL-000159",
+    "ticketId": "TKT-01059",
+    "itemId": "ITM-0090",
+    "quantity": 5000,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.019,
+    "needDate": "2025-07-31"
+  },
+  {
+    "id": "TL-000159",
+    "ticketId": "TKT-01059",
+    "itemId": "ITM-0175",
+    "quantity": 500,
+    "unitOfMeasure": "EA",
+    "unitPrice": 71.594,
+    "needDate": "2025-07-26"
+  },
+  {
+    "id": "TL-000159",
+    "ticketId": "TKT-01059",
+    "itemId": "ITM-0153",
+    "quantity": 1000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 158.37,
+    "needDate": "2025-07-26"
+  },
+  {
+    "id": "TL-000162",
+    "ticketId": "TKT-01060",
+    "itemId": "ITM-0045",
+    "quantity": 10000,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 5.522,
+    "needDate": "2026-03-10"
+  },
+  {
+    "id": "TL-000163",
+    "ticketId": "TKT-01061",
+    "itemId": "ITM-0048",
+    "quantity": 500,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 5.227,
+    "needDate": "2025-12-02"
+  },
+  {
+    "id": "TL-000164",
+    "ticketId": "TKT-01062",
+    "itemId": "ITM-0091",
+    "quantity": 10000,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.022,
+    "needDate": "2026-01-31"
+  },
+  {
+    "id": "TL-000164",
+    "ticketId": "TKT-01062",
+    "itemId": "ITM-0162",
+    "quantity": 10000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 60.8,
+    "needDate": "2026-02-01"
+  },
+  {
+    "id": "TL-000164",
+    "ticketId": "TKT-01062",
+    "itemId": "ITM-0204",
+    "quantity": 5000,
+    "unitOfMeasure": "JOB",
+    "unitPrice": 1.201,
+    "needDate": "2026-01-20"
+  },
+  {
+    "id": "TL-000164",
+    "ticketId": "TKT-01062",
+    "itemId": "ITM-0208",
+    "quantity": 2500,
+    "unitOfMeasure": "JOB",
+    "unitPrice": 1.041,
+    "needDate": "2026-01-14"
+  },
+  {
+    "id": "TL-000168",
+    "ticketId": "TKT-01063",
+    "itemId": "ITM-0088",
+    "quantity": 5000,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.007,
+    "needDate": "2025-11-15"
+  },
+  {
+    "id": "TL-000169",
+    "ticketId": "TKT-01064",
+    "itemId": "ITM-0095",
+    "quantity": 20000,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.016,
+    "needDate": "2026-01-14"
+  },
+  {
+    "id": "TL-000170",
+    "ticketId": "TKT-01065",
+    "itemId": "ITM-0152",
+    "quantity": 1000,
+    "unitOfMeasure": "BAG",
+    "unitPrice": 0.046,
+    "needDate": "2025-07-25"
+  },
+  {
+    "id": "TL-000170",
+    "ticketId": "TKT-01065",
+    "itemId": "ITM-0140",
+    "quantity": 5000,
+    "unitOfMeasure": "BAG",
+    "unitPrice": 0.03,
+    "needDate": "2025-07-22"
+  },
+  {
+    "id": "TL-000170",
+    "ticketId": "TKT-01065",
+    "itemId": "ITM-0150",
+    "quantity": 1000,
+    "unitOfMeasure": "BAG",
+    "unitPrice": 0.047,
+    "needDate": "2025-07-22"
+  },
+  {
+    "id": "TL-000170",
+    "ticketId": "TKT-01065",
+    "itemId": "ITM-0139",
+    "quantity": 20000,
+    "unitOfMeasure": "BAG",
+    "unitPrice": 0.035,
+    "needDate": "2025-07-24"
+  },
+  {
+    "id": "TL-000174",
+    "ticketId": "TKT-01066",
+    "itemId": "ITM-0190",
+    "quantity": 500,
+    "unitOfMeasure": "JOB",
+    "unitPrice": 1.276,
+    "needDate": "2025-09-16"
+  },
+  {
+    "id": "TL-000174",
+    "ticketId": "TKT-01066",
+    "itemId": "ITM-0190",
+    "quantity": 5000,
+    "unitOfMeasure": "JOB",
+    "unitPrice": 1.276,
+    "needDate": "2025-09-16"
+  },
+  {
+    "id": "TL-000176",
+    "ticketId": "TKT-01067",
+    "itemId": "ITM-0047",
+    "quantity": 500,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 8.249,
+    "needDate": "2026-01-24"
+  },
+  {
+    "id": "TL-000176",
+    "ticketId": "TKT-01067",
+    "itemId": "ITM-0170",
+    "quantity": 500,
+    "unitOfMeasure": "BOX",
+    "unitPrice": 16.603,
+    "needDate": "2026-01-12"
+  },
+  {
+    "id": "TL-000176",
+    "ticketId": "TKT-01067",
+    "itemId": "ITM-0180",
+    "quantity": 20000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 50.823,
+    "needDate": "2026-01-19"
+  },
+  {
+    "id": "TL-000179",
+    "ticketId": "TKT-01068",
+    "itemId": "ITM-0108",
+    "quantity": 1000,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.018,
+    "needDate": "2025-08-31"
+  },
+  {
+    "id": "TL-000179",
+    "ticketId": "TKT-01068",
+    "itemId": "ITM-0050",
+    "quantity": 40000,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 4.162,
+    "needDate": "2025-09-03"
+  },
+  {
+    "id": "TL-000181",
+    "ticketId": "TKT-01069",
+    "itemId": "ITM-0181",
+    "quantity": 10000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 51.127,
+    "needDate": "2025-08-18"
+  },
+  {
+    "id": "TL-000181",
+    "ticketId": "TKT-01069",
+    "itemId": "ITM-0181",
+    "quantity": 40000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 51.127,
+    "needDate": "2025-08-18"
+  },
+  {
+    "id": "TL-000181",
+    "ticketId": "TKT-01069",
+    "itemId": "ITM-0181",
+    "quantity": 10000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 51.127,
+    "needDate": "2025-08-18"
+  },
+  {
+    "id": "TL-000181",
+    "ticketId": "TKT-01069",
+    "itemId": "ITM-0181",
+    "quantity": 2500,
+    "unitOfMeasure": "EA",
+    "unitPrice": 51.127,
+    "needDate": "2025-08-18"
+  },
+  {
+    "id": "TL-000185",
+    "ticketId": "TKT-01070",
+    "itemId": "ITM-0049",
+    "quantity": 500,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 7.489,
+    "needDate": "2026-03-30"
+  },
+  {
+    "id": "TL-000186",
+    "ticketId": "TKT-01071",
+    "itemId": "ITM-0180",
+    "quantity": 40000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 50.823,
+    "needDate": "2025-07-25"
+  },
+  {
+    "id": "TL-000187",
+    "ticketId": "TKT-01072",
+    "itemId": "ITM-0193",
+    "quantity": 40000,
+    "unitOfMeasure": "JOB",
+    "unitPrice": 0.861,
+    "needDate": "2025-12-17"
+  },
+  {
+    "id": "TL-000188",
+    "ticketId": "TKT-01073",
+    "itemId": "ITM-0201",
+    "quantity": 500,
+    "unitOfMeasure": "JOB",
+    "unitPrice": 0.972,
+    "needDate": "2026-01-01"
+  },
+  {
+    "id": "TL-000188",
+    "ticketId": "TKT-01073",
+    "itemId": "ITM-0201",
+    "quantity": 40000,
+    "unitOfMeasure": "JOB",
+    "unitPrice": 0.972,
+    "needDate": "2026-01-01"
+  },
+  {
+    "id": "TL-000188",
+    "ticketId": "TKT-01073",
+    "itemId": "ITM-0201",
+    "quantity": 20000,
+    "unitOfMeasure": "JOB",
+    "unitPrice": 0.972,
+    "needDate": "2026-01-01"
+  },
+  {
+    "id": "TL-000188",
+    "ticketId": "TKT-01073",
+    "itemId": "ITM-0201",
+    "quantity": 40000,
+    "unitOfMeasure": "JOB",
+    "unitPrice": 0.972,
+    "needDate": "2026-01-01"
+  },
+  {
+    "id": "TL-000192",
+    "ticketId": "TKT-01074",
+    "itemId": "ITM-0107",
+    "quantity": 500,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.016,
+    "needDate": "2026-05-07"
+  },
+  {
+    "id": "TL-000192",
+    "ticketId": "TKT-01074",
+    "itemId": "ITM-0107",
+    "quantity": 2500,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.016,
+    "needDate": "2026-05-07"
+  },
+  {
+    "id": "TL-000192",
+    "ticketId": "TKT-01074",
+    "itemId": "ITM-0107",
+    "quantity": 10000,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.016,
+    "needDate": "2026-05-07"
+  },
+  {
+    "id": "TL-000195",
+    "ticketId": "TKT-01075",
+    "itemId": "ITM-0075",
+    "quantity": 500,
+    "unitOfMeasure": "BAG",
+    "unitPrice": 0.583,
+    "needDate": "2026-01-21"
+  },
+  {
+    "id": "TL-000195",
+    "ticketId": "TKT-01075",
+    "itemId": "ITM-0075",
+    "quantity": 1000,
+    "unitOfMeasure": "BAG",
+    "unitPrice": 0.583,
+    "needDate": "2026-01-21"
+  },
+  {
+    "id": "TL-000195",
+    "ticketId": "TKT-01075",
+    "itemId": "ITM-0075",
+    "quantity": 40000,
+    "unitOfMeasure": "BAG",
+    "unitPrice": 0.583,
+    "needDate": "2026-01-21"
+  },
+  {
+    "id": "TL-000195",
+    "ticketId": "TKT-01075",
+    "itemId": "ITM-0098",
+    "quantity": 2500,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.015,
+    "needDate": "2026-01-22"
+  },
+  {
+    "id": "TL-000199",
+    "ticketId": "TKT-01076",
+    "itemId": "ITM-0047",
+    "quantity": 500,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 8.249,
+    "needDate": "2025-08-05"
+  },
+  {
+    "id": "TL-000200",
+    "ticketId": "TKT-01077",
+    "itemId": "ITM-0063",
+    "quantity": 10000,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.077,
+    "needDate": "2025-07-05"
+  },
+  {
+    "id": "TL-000200",
+    "ticketId": "TKT-01077",
+    "itemId": "ITM-0138",
+    "quantity": 20000,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.245,
+    "needDate": "2025-07-27"
+  },
+  {
+    "id": "TL-000202",
+    "ticketId": "TKT-01078",
+    "itemId": "ITM-0078",
+    "quantity": 20000,
+    "unitOfMeasure": "BAG",
+    "unitPrice": 0.449,
+    "needDate": "2026-03-19"
+  },
+  {
+    "id": "TL-000202",
+    "ticketId": "TKT-01078",
+    "itemId": "ITM-0078",
+    "quantity": 20000,
+    "unitOfMeasure": "BAG",
+    "unitPrice": 0.449,
+    "needDate": "2026-03-19"
+  },
+  {
+    "id": "TL-000202",
+    "ticketId": "TKT-01078",
+    "itemId": "ITM-0078",
+    "quantity": 5000,
+    "unitOfMeasure": "BAG",
+    "unitPrice": 0.449,
+    "needDate": "2026-03-19"
+  },
+  {
+    "id": "TL-000205",
+    "ticketId": "TKT-01079",
+    "itemId": "ITM-0180",
+    "quantity": 5000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 50.823,
+    "needDate": "2025-09-18"
+  },
+  {
+    "id": "TL-000206",
+    "ticketId": "TKT-01080",
+    "itemId": "ITM-0179",
+    "quantity": 5000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 35.701,
+    "needDate": "2025-12-15"
+  },
+  {
+    "id": "TL-000206",
+    "ticketId": "TKT-01080",
+    "itemId": "ITM-0179",
+    "quantity": 5000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 35.701,
+    "needDate": "2025-12-15"
+  },
+  {
+    "id": "TL-000206",
+    "ticketId": "TKT-01080",
+    "itemId": "ITM-0179",
+    "quantity": 500,
+    "unitOfMeasure": "EA",
+    "unitPrice": 35.701,
+    "needDate": "2025-12-15"
+  },
+  {
+    "id": "TL-000206",
+    "ticketId": "TKT-01080",
+    "itemId": "ITM-0080",
+    "quantity": 500,
+    "unitOfMeasure": "BAG",
+    "unitPrice": 0.715,
+    "needDate": "2025-12-08"
+  },
+  {
+    "id": "TL-000210",
+    "ticketId": "TKT-01081",
+    "itemId": "ITM-0164",
+    "quantity": 20000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 127.145,
+    "needDate": "2025-10-16"
+  },
+  {
+    "id": "TL-000211",
+    "ticketId": "TKT-01082",
+    "itemId": "ITM-0183",
+    "quantity": 10000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 77.802,
+    "needDate": "2026-04-07"
+  },
+  {
+    "id": "TL-000211",
+    "ticketId": "TKT-01082",
+    "itemId": "ITM-0183",
+    "quantity": 5000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 77.802,
+    "needDate": "2026-04-07"
+  },
+  {
+    "id": "TL-000211",
+    "ticketId": "TKT-01082",
+    "itemId": "ITM-0183",
+    "quantity": 500,
+    "unitOfMeasure": "EA",
+    "unitPrice": 77.802,
+    "needDate": "2026-04-07"
+  },
+  {
+    "id": "TL-000214",
+    "ticketId": "TKT-01083",
+    "itemId": "ITM-0130",
+    "quantity": 10000,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.307,
+    "needDate": "2026-04-01"
+  },
+  {
+    "id": "TL-000214",
+    "ticketId": "TKT-01083",
+    "itemId": "ITM-0049",
+    "quantity": 2500,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 7.489,
+    "needDate": "2026-04-01"
+  },
+  {
+    "id": "TL-000214",
+    "ticketId": "TKT-01083",
+    "itemId": "ITM-0049",
+    "quantity": 1000,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 7.489,
+    "needDate": "2026-04-01"
+  },
+  {
+    "id": "TL-000214",
+    "ticketId": "TKT-01083",
+    "itemId": "ITM-0049",
+    "quantity": 40000,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 7.489,
+    "needDate": "2026-04-01"
+  },
+  {
+    "id": "TL-000218",
+    "ticketId": "TKT-01084",
+    "itemId": "ITM-0086",
+    "quantity": 10000,
+    "unitOfMeasure": "BAG",
+    "unitPrice": 0.394,
+    "needDate": "2025-11-25"
+  },
+  {
+    "id": "TL-000218",
+    "ticketId": "TKT-01084",
+    "itemId": "ITM-0086",
+    "quantity": 500,
+    "unitOfMeasure": "BAG",
+    "unitPrice": 0.394,
+    "needDate": "2025-11-25"
+  },
+  {
+    "id": "TL-000218",
+    "ticketId": "TKT-01084",
+    "itemId": "ITM-0086",
+    "quantity": 5000,
+    "unitOfMeasure": "BAG",
+    "unitPrice": 0.394,
+    "needDate": "2025-11-25"
+  },
+  {
+    "id": "TL-000218",
+    "ticketId": "TKT-01084",
+    "itemId": "ITM-0086",
+    "quantity": 40000,
+    "unitOfMeasure": "BAG",
+    "unitPrice": 0.394,
+    "needDate": "2025-11-25"
+  },
+  {
+    "id": "TL-000222",
+    "ticketId": "TKT-01085",
+    "itemId": "ITM-0202",
+    "quantity": 40000,
+    "unitOfMeasure": "JOB",
+    "unitPrice": 0.575,
+    "needDate": "2026-04-02"
+  },
+  {
+    "id": "TL-000222",
+    "ticketId": "TKT-01085",
+    "itemId": "ITM-0083",
+    "quantity": 2500,
+    "unitOfMeasure": "BAG",
+    "unitPrice": 0.373,
+    "needDate": "2026-04-11"
+  },
+  {
+    "id": "TL-000222",
+    "ticketId": "TKT-01085",
+    "itemId": "ITM-0085",
+    "quantity": 1000,
+    "unitOfMeasure": "BAG",
+    "unitPrice": 0.659,
+    "needDate": "2026-04-06"
+  },
+  {
+    "id": "TL-000225",
+    "ticketId": "TKT-01086",
+    "itemId": "ITM-0191",
+    "quantity": 10000,
+    "unitOfMeasure": "JOB",
+    "unitPrice": 1.519,
+    "needDate": "2025-10-28"
+  },
+  {
+    "id": "TL-000225",
+    "ticketId": "TKT-01086",
+    "itemId": "ITM-0089",
+    "quantity": 40000,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.019,
+    "needDate": "2025-11-10"
+  },
+  {
+    "id": "TL-000225",
+    "ticketId": "TKT-01086",
+    "itemId": "ITM-0046",
+    "quantity": 500,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 4.813,
+    "needDate": "2025-11-21"
+  },
+  {
+    "id": "TL-000228",
+    "ticketId": "TKT-01087",
+    "itemId": "ITM-0080",
+    "quantity": 5000,
+    "unitOfMeasure": "BAG",
+    "unitPrice": 0.715,
+    "needDate": "2025-07-20"
+  },
+  {
+    "id": "TL-000228",
+    "ticketId": "TKT-01087",
+    "itemId": "ITM-0179",
+    "quantity": 20000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 35.701,
+    "needDate": "2025-07-27"
+  },
+  {
+    "id": "TL-000230",
+    "ticketId": "TKT-01088",
+    "itemId": "ITM-0121",
+    "quantity": 500,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.088,
+    "needDate": "2025-07-25"
+  },
+  {
+    "id": "TL-000230",
+    "ticketId": "TKT-01088",
+    "itemId": "ITM-0124",
+    "quantity": 10000,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.051,
+    "needDate": "2025-07-21"
+  },
+  {
+    "id": "TL-000230",
+    "ticketId": "TKT-01088",
+    "itemId": "ITM-0124",
+    "quantity": 500,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.051,
+    "needDate": "2025-07-21"
+  },
+  {
+    "id": "TL-000230",
+    "ticketId": "TKT-01088",
+    "itemId": "ITM-0109",
+    "quantity": 40000,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.112,
+    "needDate": "2025-07-20"
+  },
+  {
+    "id": "TL-000234",
+    "ticketId": "TKT-01089",
+    "itemId": "ITM-0169",
+    "quantity": 20000,
+    "unitOfMeasure": "BOX",
+    "unitPrice": 22.361,
+    "needDate": "2026-04-12"
+  },
+  {
+    "id": "TL-000234",
+    "ticketId": "TKT-01089",
+    "itemId": "ITM-0129",
+    "quantity": 5000,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.229,
+    "needDate": "2026-05-05"
+  },
+  {
+    "id": "TL-000236",
+    "ticketId": "TKT-01090",
+    "itemId": "ITM-0104",
+    "quantity": 10000,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.015,
+    "needDate": "2025-09-21"
+  },
+  {
+    "id": "TL-000236",
+    "ticketId": "TKT-01090",
+    "itemId": "ITM-0104",
+    "quantity": 1000,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.015,
+    "needDate": "2025-09-21"
+  },
+  {
+    "id": "TL-000236",
+    "ticketId": "TKT-01090",
+    "itemId": "ITM-0104",
+    "quantity": 500,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.015,
+    "needDate": "2025-09-21"
+  },
+  {
+    "id": "TL-000239",
+    "ticketId": "TKT-01091",
+    "itemId": "ITM-0121",
+    "quantity": 500,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.088,
+    "needDate": "2026-01-13"
+  },
+  {
+    "id": "TL-000239",
+    "ticketId": "TKT-01091",
+    "itemId": "ITM-0121",
+    "quantity": 10000,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.088,
+    "needDate": "2026-01-13"
+  },
+  {
+    "id": "TL-000241",
+    "ticketId": "TKT-01092",
+    "itemId": "ITM-0080",
+    "quantity": 1000,
+    "unitOfMeasure": "BAG",
+    "unitPrice": 0.715,
+    "needDate": "2025-11-30"
+  },
+  {
+    "id": "TL-000241",
+    "ticketId": "TKT-01092",
+    "itemId": "ITM-0179",
+    "quantity": 1000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 35.701,
+    "needDate": "2025-12-07"
+  },
+  {
+    "id": "TL-000241",
+    "ticketId": "TKT-01092",
+    "itemId": "ITM-0080",
+    "quantity": 10000,
+    "unitOfMeasure": "BAG",
+    "unitPrice": 0.715,
+    "needDate": "2025-11-30"
+  },
+  {
+    "id": "TL-000241",
+    "ticketId": "TKT-01092",
+    "itemId": "ITM-0080",
+    "quantity": 40000,
+    "unitOfMeasure": "BAG",
+    "unitPrice": 0.715,
+    "needDate": "2025-11-30"
+  },
+  {
+    "id": "TL-000245",
+    "ticketId": "TKT-01093",
+    "itemId": "ITM-0049",
+    "quantity": 10000,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 7.489,
+    "needDate": "2025-09-23"
+  },
+  {
+    "id": "TL-000245",
+    "ticketId": "TKT-01093",
+    "itemId": "ITM-0130",
+    "quantity": 5000,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.307,
+    "needDate": "2025-09-23"
+  },
+  {
+    "id": "TL-000247",
+    "ticketId": "TKT-01094",
+    "itemId": "ITM-0104",
+    "quantity": 10000,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.015,
+    "needDate": "2026-05-11"
+  },
+  {
+    "id": "TL-000247",
+    "ticketId": "TKT-01094",
+    "itemId": "ITM-0104",
+    "quantity": 1000,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.015,
+    "needDate": "2026-05-11"
+  },
+  {
+    "id": "TL-000247",
+    "ticketId": "TKT-01094",
+    "itemId": "ITM-0104",
+    "quantity": 20000,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.015,
+    "needDate": "2026-05-11"
+  },
+  {
+    "id": "TL-000250",
+    "ticketId": "TKT-01095",
+    "itemId": "ITM-0201",
+    "quantity": 1000,
+    "unitOfMeasure": "JOB",
+    "unitPrice": 0.972,
+    "needDate": "2025-06-26"
+  },
+  {
+    "id": "TL-000250",
+    "ticketId": "TKT-01095",
+    "itemId": "ITM-0201",
+    "quantity": 40000,
+    "unitOfMeasure": "JOB",
+    "unitPrice": 0.972,
+    "needDate": "2025-06-26"
+  },
+  {
+    "id": "TL-000250",
+    "ticketId": "TKT-01095",
+    "itemId": "ITM-0201",
+    "quantity": 20000,
+    "unitOfMeasure": "JOB",
+    "unitPrice": 0.972,
+    "needDate": "2025-06-26"
+  },
+  {
+    "id": "TL-000250",
+    "ticketId": "TKT-01095",
+    "itemId": "ITM-0201",
+    "quantity": 5000,
+    "unitOfMeasure": "JOB",
+    "unitPrice": 0.972,
+    "needDate": "2025-06-26"
+  },
+  {
+    "id": "TL-000254",
+    "ticketId": "TKT-01096",
+    "itemId": "ITM-0183",
+    "quantity": 10000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 77.802,
+    "needDate": "2026-01-30"
+  },
+  {
+    "id": "TL-000254",
+    "ticketId": "TKT-01096",
+    "itemId": "ITM-0082",
+    "quantity": 10000,
+    "unitOfMeasure": "BAG",
+    "unitPrice": 0.485,
+    "needDate": "2026-01-20"
+  },
+  {
+    "id": "TL-000256",
+    "ticketId": "TKT-01097",
+    "itemId": "ITM-0192",
+    "quantity": 1000,
+    "unitOfMeasure": "JOB",
+    "unitPrice": 1.117,
+    "needDate": "2025-08-22"
+  },
+  {
+    "id": "TL-000257",
+    "ticketId": "TKT-01098",
+    "itemId": "ITM-0152",
+    "quantity": 1000,
+    "unitOfMeasure": "BAG",
+    "unitPrice": 0.046,
+    "needDate": "2025-09-27"
+  },
+  {
+    "id": "TL-000257",
+    "ticketId": "TKT-01098",
+    "itemId": "ITM-0152",
+    "quantity": 40000,
+    "unitOfMeasure": "BAG",
+    "unitPrice": 0.046,
+    "needDate": "2025-09-27"
+  },
+  {
+    "id": "TL-000257",
+    "ticketId": "TKT-01098",
+    "itemId": "ITM-0152",
+    "quantity": 10000,
+    "unitOfMeasure": "BAG",
+    "unitPrice": 0.046,
+    "needDate": "2025-09-27"
+  },
+  {
+    "id": "TL-000257",
+    "ticketId": "TKT-01098",
+    "itemId": "ITM-0152",
+    "quantity": 40000,
+    "unitOfMeasure": "BAG",
+    "unitPrice": 0.046,
+    "needDate": "2025-09-27"
+  },
+  {
+    "id": "TL-000261",
+    "ticketId": "TKT-01099",
+    "itemId": "ITM-0146",
+    "quantity": 40000,
+    "unitOfMeasure": "BAG",
+    "unitPrice": 0.061,
+    "needDate": "2025-12-09"
+  },
+  {
+    "id": "TL-000261",
+    "ticketId": "TKT-01099",
+    "itemId": "ITM-0173",
+    "quantity": 5000,
+    "unitOfMeasure": "BOX",
+    "unitPrice": 13.742,
+    "needDate": "2025-11-10"
+  },
+  {
+    "id": "TL-000261",
+    "ticketId": "TKT-01099",
+    "itemId": "ITM-0173",
+    "quantity": 40000,
+    "unitOfMeasure": "BOX",
+    "unitPrice": 13.742,
+    "needDate": "2025-11-10"
+  },
+  {
+    "id": "TL-000264",
+    "ticketId": "TKT-01100",
+    "itemId": "ITM-0166",
+    "quantity": 40000,
+    "unitOfMeasure": "BOX",
+    "unitPrice": 19.582,
+    "needDate": "2025-11-25"
+  },
+  {
+    "id": "TL-000264",
+    "ticketId": "TKT-01100",
+    "itemId": "ITM-0185",
+    "quantity": 40000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 33.375,
+    "needDate": "2025-12-06"
+  },
+  {
+    "id": "TL-000266",
+    "ticketId": "TKT-01101",
+    "itemId": "ITM-0183",
+    "quantity": 20000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 77.802,
+    "needDate": "2025-11-21"
+  },
+  {
+    "id": "TL-000267",
+    "ticketId": "TKT-01102",
+    "itemId": "ITM-0101",
+    "quantity": 500,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.009,
+    "needDate": "2025-09-17"
+  },
+  {
+    "id": "TL-000267",
+    "ticketId": "TKT-01102",
+    "itemId": "ITM-0105",
+    "quantity": 20000,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.02,
+    "needDate": "2025-09-11"
+  },
+  {
+    "id": "TL-000267",
+    "ticketId": "TKT-01102",
+    "itemId": "ITM-0105",
+    "quantity": 500,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.02,
+    "needDate": "2025-09-11"
+  },
+  {
+    "id": "TL-000270",
+    "ticketId": "TKT-01103",
+    "itemId": "ITM-0080",
+    "quantity": 40000,
+    "unitOfMeasure": "BAG",
+    "unitPrice": 0.715,
+    "needDate": "2025-12-19"
+  },
+  {
+    "id": "TL-000270",
+    "ticketId": "TKT-01103",
+    "itemId": "ITM-0179",
+    "quantity": 20000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 35.701,
+    "needDate": "2025-12-26"
+  },
+  {
+    "id": "TL-000272",
+    "ticketId": "TKT-01104",
+    "itemId": "ITM-0049",
+    "quantity": 5000,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 7.489,
+    "needDate": "2026-02-25"
+  },
+  {
+    "id": "TL-000272",
+    "ticketId": "TKT-01104",
+    "itemId": "ITM-0130",
+    "quantity": 2500,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.307,
+    "needDate": "2026-02-25"
+  },
+  {
+    "id": "TL-000274",
+    "ticketId": "TKT-01105",
+    "itemId": "ITM-0200",
+    "quantity": 40000,
+    "unitOfMeasure": "JOB",
+    "unitPrice": 0.987,
+    "needDate": "2025-07-15"
+  },
+  {
+    "id": "TL-000275",
+    "ticketId": "TKT-01106",
+    "itemId": "ITM-0197",
+    "quantity": 2500,
+    "unitOfMeasure": "JOB",
+    "unitPrice": 0.862,
+    "needDate": "2026-02-09"
+  },
+  {
+    "id": "TL-000276",
+    "ticketId": "TKT-01107",
+    "itemId": "ITM-0020",
+    "quantity": 10000,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 143.896,
+    "needDate": "2026-07-06"
+  },
+  {
+    "id": "TL-000276",
+    "ticketId": "TKT-01107",
+    "itemId": "ITM-0011",
+    "quantity": 20000,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 303.965,
+    "needDate": "2026-07-05"
+  },
+  {
+    "id": "TL-000276",
+    "ticketId": "TKT-01107",
+    "itemId": "ITM-0011",
+    "quantity": 5000,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 303.965,
+    "needDate": "2026-07-05"
+  },
+  {
+    "id": "TL-000279",
+    "ticketId": "TKT-01108",
+    "itemId": "ITM-0044",
+    "quantity": 5000,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 4.94,
+    "needDate": "2026-05-08"
+  },
+  {
+    "id": "TL-000279",
+    "ticketId": "TKT-01108",
+    "itemId": "ITM-0044",
+    "quantity": 20000,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 4.94,
+    "needDate": "2026-05-08"
+  },
+  {
+    "id": "TL-000279",
+    "ticketId": "TKT-01108",
+    "itemId": "ITM-0171",
+    "quantity": 20000,
+    "unitOfMeasure": "BOX",
+    "unitPrice": 11.771,
+    "needDate": "2026-04-17"
+  },
+  {
+    "id": "TL-000282",
+    "ticketId": "TKT-01109",
+    "itemId": "ITM-0187",
+    "quantity": 20000,
+    "unitOfMeasure": "JOB",
+    "unitPrice": 1.888,
+    "needDate": "2025-12-16"
+  },
+  {
+    "id": "TL-000282",
+    "ticketId": "TKT-01109",
+    "itemId": "ITM-0187",
+    "quantity": 40000,
+    "unitOfMeasure": "JOB",
+    "unitPrice": 1.888,
+    "needDate": "2025-12-16"
+  },
+  {
+    "id": "TL-000282",
+    "ticketId": "TKT-01109",
+    "itemId": "ITM-0166",
+    "quantity": 5000,
+    "unitOfMeasure": "BOX",
+    "unitPrice": 19.582,
+    "needDate": "2025-12-20"
+  },
+  {
+    "id": "TL-000282",
+    "ticketId": "TKT-01109",
+    "itemId": "ITM-0166",
+    "quantity": 10000,
+    "unitOfMeasure": "BOX",
+    "unitPrice": 19.582,
+    "needDate": "2025-12-20"
+  },
+  {
+    "id": "TL-000286",
+    "ticketId": "TKT-01110",
+    "itemId": "ITM-0164",
+    "quantity": 40000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 127.145,
+    "needDate": "2026-01-04"
+  },
+  {
+    "id": "TL-000286",
+    "ticketId": "TKT-01110",
+    "itemId": "ITM-0164",
+    "quantity": 20000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 127.145,
+    "needDate": "2026-01-04"
+  },
+  {
+    "id": "TL-000286",
+    "ticketId": "TKT-01110",
+    "itemId": "ITM-0164",
+    "quantity": 10000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 127.145,
+    "needDate": "2026-01-04"
+  },
+  {
+    "id": "TL-000286",
+    "ticketId": "TKT-01110",
+    "itemId": "ITM-0127",
+    "quantity": 40000,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.193,
+    "needDate": "2026-01-17"
+  },
+  {
+    "id": "TL-000290",
+    "ticketId": "TKT-01111",
+    "itemId": "ITM-0107",
+    "quantity": 1000,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.016,
+    "needDate": "2025-12-22"
+  },
+  {
+    "id": "TL-000291",
+    "ticketId": "TKT-01112",
+    "itemId": "ITM-0091",
+    "quantity": 20000,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.022,
+    "needDate": "2026-03-18"
+  },
+  {
+    "id": "TL-000291",
+    "ticketId": "TKT-01112",
+    "itemId": "ITM-0208",
+    "quantity": 10000,
+    "unitOfMeasure": "JOB",
+    "unitPrice": 1.041,
+    "needDate": "2026-03-01"
+  },
+  {
+    "id": "TL-000291",
+    "ticketId": "TKT-01112",
+    "itemId": "ITM-0204",
+    "quantity": 500,
+    "unitOfMeasure": "JOB",
+    "unitPrice": 1.201,
+    "needDate": "2026-03-07"
+  },
+  {
+    "id": "TL-000294",
+    "ticketId": "TKT-01113",
+    "itemId": "ITM-0179",
+    "quantity": 2500,
+    "unitOfMeasure": "EA",
+    "unitPrice": 35.701,
+    "needDate": "2026-03-27"
+  },
+  {
+    "id": "TL-000295",
+    "ticketId": "TKT-01114",
+    "itemId": "ITM-0078",
+    "quantity": 1000,
+    "unitOfMeasure": "BAG",
+    "unitPrice": 0.449,
+    "needDate": "2026-02-17"
+  },
+  {
+    "id": "TL-000296",
+    "ticketId": "TKT-01115",
+    "itemId": "ITM-0158",
+    "quantity": 500,
+    "unitOfMeasure": "EA",
+    "unitPrice": 107.193,
+    "needDate": "2025-10-24"
+  },
+  {
+    "id": "TL-000297",
+    "ticketId": "TKT-01116",
+    "itemId": "ITM-0198",
+    "quantity": 10000,
+    "unitOfMeasure": "JOB",
+    "unitPrice": 1.912,
+    "needDate": "2025-12-08"
+  },
+  {
+    "id": "TL-000297",
+    "ticketId": "TKT-01116",
+    "itemId": "ITM-0198",
+    "quantity": 5000,
+    "unitOfMeasure": "JOB",
+    "unitPrice": 1.912,
+    "needDate": "2025-12-08"
+  },
+  {
+    "id": "TL-000299",
+    "ticketId": "TKT-01117",
+    "itemId": "ITM-0048",
+    "quantity": 5000,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 5.227,
+    "needDate": "2026-02-05"
+  },
+  {
+    "id": "TL-000300",
+    "ticketId": "TKT-01118",
+    "itemId": "ITM-0164",
+    "quantity": 20000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 127.145,
+    "needDate": "2026-05-01"
+  },
+  {
+    "id": "TL-000300",
+    "ticketId": "TKT-01118",
+    "itemId": "ITM-0127",
+    "quantity": 40000,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.193,
+    "needDate": "2026-05-14"
+  },
+  {
+    "id": "TL-000300",
+    "ticketId": "TKT-01118",
+    "itemId": "ITM-0127",
+    "quantity": 40000,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.193,
+    "needDate": "2026-05-14"
+  },
+  {
+    "id": "TL-000303",
+    "ticketId": "TKT-01119",
+    "itemId": "ITM-0158",
+    "quantity": 10000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 107.193,
+    "needDate": "2025-11-19"
+  },
+  {
+    "id": "TL-000304",
+    "ticketId": "TKT-01120",
+    "itemId": "ITM-0158",
+    "quantity": 40000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 107.193,
+    "needDate": "2025-11-11"
+  },
+  {
+    "id": "TL-000304",
+    "ticketId": "TKT-01120",
+    "itemId": "ITM-0044",
+    "quantity": 500,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 4.94,
+    "needDate": "2025-11-19"
+  },
+  {
+    "id": "TL-000306",
+    "ticketId": "TKT-01121",
+    "itemId": "ITM-0011",
+    "quantity": 5000,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 303.965,
+    "needDate": "2026-02-12"
+  },
+  {
+    "id": "TL-000307",
+    "ticketId": "TKT-01122",
+    "itemId": "ITM-0040",
+    "quantity": 40000,
+    "unitOfMeasure": "BAG",
+    "unitPrice": 15.903,
+    "needDate": "2025-07-29"
+  },
+  {
+    "id": "TL-000307",
+    "ticketId": "TKT-01122",
+    "itemId": "ITM-0040",
+    "quantity": 1000,
+    "unitOfMeasure": "BAG",
+    "unitPrice": 15.903,
+    "needDate": "2025-07-29"
+  },
+  {
+    "id": "TL-000309",
+    "ticketId": "TKT-01123",
+    "itemId": "ITM-0043",
+    "quantity": 500,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 8.019,
+    "needDate": "2025-12-22"
+  },
+  {
+    "id": "TL-000309",
+    "ticketId": "TKT-01123",
+    "itemId": "ITM-0194",
+    "quantity": 1000,
+    "unitOfMeasure": "JOB",
+    "unitPrice": 1.406,
+    "needDate": "2025-11-30"
+  },
+  {
+    "id": "TL-000311",
+    "ticketId": "TKT-01124",
+    "itemId": "ITM-0043",
+    "quantity": 40000,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 8.019,
+    "needDate": "2025-08-25"
+  },
+  {
+    "id": "TL-000311",
+    "ticketId": "TKT-01124",
+    "itemId": "ITM-0194",
+    "quantity": 2500,
+    "unitOfMeasure": "JOB",
+    "unitPrice": 1.406,
+    "needDate": "2025-08-03"
+  },
+  {
+    "id": "TL-000313",
+    "ticketId": "TKT-01125",
+    "itemId": "ITM-0083",
+    "quantity": 500,
+    "unitOfMeasure": "BAG",
+    "unitPrice": 0.373,
+    "needDate": "2026-03-09"
+  },
+  {
+    "id": "TL-000313",
+    "ticketId": "TKT-01125",
+    "itemId": "ITM-0155",
+    "quantity": 500,
+    "unitOfMeasure": "EA",
+    "unitPrice": 94.664,
+    "needDate": "2026-03-12"
+  },
+  {
+    "id": "TL-000315",
+    "ticketId": "TKT-01126",
+    "itemId": "ITM-0127",
+    "quantity": 20000,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.193,
+    "needDate": "2025-10-01"
+  },
+  {
+    "id": "TL-000316",
+    "ticketId": "TKT-01127",
+    "itemId": "ITM-0194",
+    "quantity": 500,
+    "unitOfMeasure": "JOB",
+    "unitPrice": 1.406,
+    "needDate": "2026-04-24"
+  },
+  {
+    "id": "TL-000317",
+    "ticketId": "TKT-01128",
+    "itemId": "ITM-0133",
+    "quantity": 40000,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.231,
+    "needDate": "2025-11-03"
+  },
+  {
+    "id": "TL-000317",
+    "ticketId": "TKT-01128",
+    "itemId": "ITM-0133",
+    "quantity": 500,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.231,
+    "needDate": "2025-11-03"
+  },
+  {
+    "id": "TL-000317",
+    "ticketId": "TKT-01128",
+    "itemId": "ITM-0133",
+    "quantity": 10000,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.231,
+    "needDate": "2025-11-03"
+  },
+  {
+    "id": "TL-000317",
+    "ticketId": "TKT-01128",
+    "itemId": "ITM-0154",
+    "quantity": 1000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 89.86,
+    "needDate": "2025-10-19"
+  },
+  {
+    "id": "TL-000321",
+    "ticketId": "TKT-01129",
+    "itemId": "ITM-0038",
+    "quantity": 20000,
+    "unitOfMeasure": "BAG",
+    "unitPrice": 15.416,
+    "needDate": "2025-10-30"
+  },
+  {
+    "id": "TL-000322",
+    "ticketId": "TKT-01130",
+    "itemId": "ITM-0020",
+    "quantity": 5000,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 143.896,
+    "needDate": "2026-05-03"
+  },
+  {
+    "id": "TL-000323",
+    "ticketId": "TKT-01131",
+    "itemId": "ITM-0034",
+    "quantity": 20000,
+    "unitOfMeasure": "BAG",
+    "unitPrice": 19.519,
+    "needDate": "2025-10-10"
+  },
+  {
+    "id": "TL-000324",
+    "ticketId": "TKT-01132",
+    "itemId": "ITM-0135",
+    "quantity": 40000,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.125,
+    "needDate": "2026-02-28"
+  },
+  {
+    "id": "TL-000324",
+    "ticketId": "TKT-01132",
+    "itemId": "ITM-0135",
+    "quantity": 20000,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.125,
+    "needDate": "2026-02-28"
+  },
+  {
+    "id": "TL-000326",
+    "ticketId": "TKT-01133",
+    "itemId": "ITM-0047",
+    "quantity": 5000,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 8.249,
+    "needDate": "2026-01-09"
+  },
+  {
+    "id": "TL-000327",
+    "ticketId": "TKT-01134",
+    "itemId": "ITM-0039",
+    "quantity": 1000,
+    "unitOfMeasure": "BAG",
+    "unitPrice": 22.288,
+    "needDate": "2025-09-05"
+  },
+  {
+    "id": "TL-000327",
+    "ticketId": "TKT-01134",
+    "itemId": "ITM-0189",
+    "quantity": 1000,
+    "unitOfMeasure": "JOB",
+    "unitPrice": 0.74,
+    "needDate": "2025-08-14"
+  },
+  {
+    "id": "TL-000327",
+    "ticketId": "TKT-01134",
+    "itemId": "ITM-0023",
+    "quantity": 10000,
+    "unitOfMeasure": "BAG",
+    "unitPrice": 18.864,
+    "needDate": "2025-09-11"
+  },
+  {
+    "id": "TL-000330",
+    "ticketId": "TKT-01135",
+    "itemId": "ITM-0017",
+    "quantity": 1000,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 294.95,
+    "needDate": "2025-11-16"
+  },
+  {
+    "id": "TL-000331",
+    "ticketId": "TKT-01136",
+    "itemId": "ITM-0194",
+    "quantity": 1000,
+    "unitOfMeasure": "JOB",
+    "unitPrice": 1.406,
+    "needDate": "2026-02-28"
+  },
+  {
+    "id": "TL-000331",
+    "ticketId": "TKT-01136",
+    "itemId": "ITM-0194",
+    "quantity": 20000,
+    "unitOfMeasure": "JOB",
+    "unitPrice": 1.406,
+    "needDate": "2026-02-28"
+  },
+  {
+    "id": "TL-000333",
+    "ticketId": "TKT-01137",
+    "itemId": "ITM-0181",
+    "quantity": 500,
+    "unitOfMeasure": "EA",
+    "unitPrice": 51.127,
+    "needDate": "2026-04-04"
+  },
+  {
+    "id": "TL-000333",
+    "ticketId": "TKT-01137",
+    "itemId": "ITM-0181",
+    "quantity": 5000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 51.127,
+    "needDate": "2026-04-04"
+  },
+  {
+    "id": "TL-000333",
+    "ticketId": "TKT-01137",
+    "itemId": "ITM-0181",
+    "quantity": 500,
+    "unitOfMeasure": "EA",
+    "unitPrice": 51.127,
+    "needDate": "2026-04-04"
+  },
+  {
+    "id": "TL-000333",
+    "ticketId": "TKT-01137",
+    "itemId": "ITM-0181",
+    "quantity": 2500,
+    "unitOfMeasure": "EA",
+    "unitPrice": 51.127,
+    "needDate": "2026-04-04"
+  },
+  {
+    "id": "TL-000337",
+    "ticketId": "TKT-01138",
+    "itemId": "ITM-0103",
+    "quantity": 10000,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.018,
+    "needDate": "2026-03-12"
+  },
+  {
+    "id": "TL-000338",
+    "ticketId": "TKT-01139",
+    "itemId": "ITM-0090",
+    "quantity": 5000,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.019,
+    "needDate": "2025-07-26"
+  },
+  {
+    "id": "TL-000339",
+    "ticketId": "TKT-01140",
+    "itemId": "ITM-0184",
+    "quantity": 10000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 65.508,
+    "needDate": "2025-07-12"
+  },
+  {
+    "id": "TL-000339",
+    "ticketId": "TKT-01140",
+    "itemId": "ITM-0207",
+    "quantity": 20000,
+    "unitOfMeasure": "JOB",
+    "unitPrice": 0.79,
+    "needDate": "2025-06-24"
+  },
+  {
+    "id": "TL-000341",
+    "ticketId": "TKT-01141",
+    "itemId": "ITM-0077",
+    "quantity": 1000,
+    "unitOfMeasure": "BAG",
+    "unitPrice": 0.274,
+    "needDate": "2025-06-27"
+  },
+  {
+    "id": "TL-000341",
+    "ticketId": "TKT-01141",
+    "itemId": "ITM-0108",
+    "quantity": 1000,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.018,
+    "needDate": "2025-07-03"
+  },
+  {
+    "id": "TL-000341",
+    "ticketId": "TKT-01141",
+    "itemId": "ITM-0013",
+    "quantity": 1000,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 233.102,
+    "needDate": "2025-08-30"
+  },
+  {
+    "id": "TL-000341",
+    "ticketId": "TKT-01141",
+    "itemId": "ITM-0009",
+    "quantity": 20000,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 190.858,
+    "needDate": "2025-08-30"
+  },
+  {
+    "id": "TL-000345",
+    "ticketId": "TKT-01142",
+    "itemId": "ITM-0132",
+    "quantity": 40000,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.384,
+    "needDate": "2026-02-22"
+  },
+  {
+    "id": "TL-000345",
+    "ticketId": "TKT-01142",
+    "itemId": "ITM-0095",
+    "quantity": 20000,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.016,
+    "needDate": "2026-02-13"
+  },
+  {
+    "id": "TL-000347",
+    "ticketId": "TKT-01143",
+    "itemId": "ITM-0171",
+    "quantity": 20000,
+    "unitOfMeasure": "BOX",
+    "unitPrice": 11.771,
+    "needDate": "2025-11-09"
+  },
+  {
+    "id": "TL-000347",
+    "ticketId": "TKT-01143",
+    "itemId": "ITM-0044",
+    "quantity": 5000,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 4.94,
+    "needDate": "2025-11-30"
+  },
+  {
+    "id": "TL-000349",
+    "ticketId": "TKT-01144",
+    "itemId": "ITM-0172",
+    "quantity": 2500,
+    "unitOfMeasure": "BOX",
+    "unitPrice": 13.091,
+    "needDate": "2026-01-07"
+  },
+  {
+    "id": "TL-000349",
+    "ticketId": "TKT-01144",
+    "itemId": "ITM-0131",
+    "quantity": 2500,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.228,
+    "needDate": "2026-01-22"
+  },
+  {
+    "id": "TL-000349",
+    "ticketId": "TKT-01144",
+    "itemId": "ITM-0131",
+    "quantity": 1000,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.228,
+    "needDate": "2026-01-22"
+  },
+  {
+    "id": "TL-000352",
+    "ticketId": "TKT-01145",
+    "itemId": "ITM-0080",
+    "quantity": 40000,
+    "unitOfMeasure": "BAG",
+    "unitPrice": 0.715,
+    "needDate": "2026-01-03"
+  },
+  {
+    "id": "TL-000352",
+    "ticketId": "TKT-01145",
+    "itemId": "ITM-0080",
+    "quantity": 10000,
+    "unitOfMeasure": "BAG",
+    "unitPrice": 0.715,
+    "needDate": "2026-01-03"
+  },
+  {
+    "id": "TL-000352",
+    "ticketId": "TKT-01145",
+    "itemId": "ITM-0080",
+    "quantity": 20000,
+    "unitOfMeasure": "BAG",
+    "unitPrice": 0.715,
+    "needDate": "2026-01-03"
+  },
+  {
+    "id": "TL-000355",
+    "ticketId": "TKT-01146",
+    "itemId": "ITM-0181",
+    "quantity": 10000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 51.127,
+    "needDate": "2025-10-09"
+  },
+  {
+    "id": "TL-000355",
+    "ticketId": "TKT-01146",
+    "itemId": "ITM-0181",
+    "quantity": 40000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 51.127,
+    "needDate": "2025-10-09"
+  },
+  {
+    "id": "TL-000355",
+    "ticketId": "TKT-01146",
+    "itemId": "ITM-0181",
+    "quantity": 20000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 51.127,
+    "needDate": "2025-10-09"
+  },
+  {
+    "id": "TL-000358",
+    "ticketId": "TKT-01147",
+    "itemId": "ITM-0049",
+    "quantity": 10000,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 7.489,
+    "needDate": "2025-10-25"
+  },
+  {
+    "id": "TL-000358",
+    "ticketId": "TKT-01147",
+    "itemId": "ITM-0130",
+    "quantity": 5000,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.307,
+    "needDate": "2025-10-25"
+  },
+  {
+    "id": "TL-000358",
+    "ticketId": "TKT-01147",
+    "itemId": "ITM-0130",
+    "quantity": 5000,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.307,
+    "needDate": "2025-10-25"
+  },
+  {
+    "id": "TL-000361",
+    "ticketId": "TKT-01148",
+    "itemId": "ITM-0085",
+    "quantity": 10000,
+    "unitOfMeasure": "BAG",
+    "unitPrice": 0.659,
+    "needDate": "2026-02-28"
+  },
+  {
+    "id": "TL-000362",
+    "ticketId": "TKT-01149",
+    "itemId": "ITM-0182",
+    "quantity": 5000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 71.28,
+    "needDate": "2025-10-30"
+  },
+  {
+    "id": "TL-000363",
+    "ticketId": "TKT-01150",
+    "itemId": "ITM-0129",
+    "quantity": 500,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.229,
+    "needDate": "2025-08-30"
+  },
+  {
+    "id": "TL-000364",
+    "ticketId": "TKT-01151",
+    "itemId": "ITM-0137",
+    "quantity": 500,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.262,
+    "needDate": "2025-12-22"
+  },
+  {
+    "id": "TL-000364",
+    "ticketId": "TKT-01151",
+    "itemId": "ITM-0154",
+    "quantity": 10000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 89.86,
+    "needDate": "2025-12-06"
+  },
+  {
+    "id": "TL-000364",
+    "ticketId": "TKT-01151",
+    "itemId": "ITM-0133",
+    "quantity": 10000,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.231,
+    "needDate": "2025-12-21"
+  },
+  {
+    "id": "TL-000367",
+    "ticketId": "TKT-01152",
+    "itemId": "ITM-0093",
+    "quantity": 500,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.008,
+    "needDate": "2025-10-30"
+  },
+  {
+    "id": "TL-000367",
+    "ticketId": "TKT-01152",
+    "itemId": "ITM-0093",
+    "quantity": 10000,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.008,
+    "needDate": "2025-10-30"
+  },
+  {
+    "id": "TL-000367",
+    "ticketId": "TKT-01152",
+    "itemId": "ITM-0092",
+    "quantity": 5000,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.013,
+    "needDate": "2025-10-30"
+  },
+  {
+    "id": "TL-000370",
+    "ticketId": "TKT-01153",
+    "itemId": "ITM-0022",
+    "quantity": 20000,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 368.357,
+    "needDate": "2026-03-30"
+  },
+  {
+    "id": "TL-000370",
+    "ticketId": "TKT-01153",
+    "itemId": "ITM-0022",
+    "quantity": 500,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 368.357,
+    "needDate": "2026-03-30"
+  },
+  {
+    "id": "TL-000370",
+    "ticketId": "TKT-01153",
+    "itemId": "ITM-0008",
+    "quantity": 500,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 116.763,
+    "needDate": "2026-04-05"
+  },
+  {
+    "id": "TL-000370",
+    "ticketId": "TKT-01153",
+    "itemId": "ITM-0003",
+    "quantity": 500,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 339.639,
+    "needDate": "2026-03-30"
+  },
+  {
+    "id": "TL-000374",
+    "ticketId": "TKT-01154",
+    "itemId": "ITM-0200",
+    "quantity": 2500,
+    "unitOfMeasure": "JOB",
+    "unitPrice": 0.987,
+    "needDate": "2025-11-03"
+  },
+  {
+    "id": "TL-000374",
+    "ticketId": "TKT-01154",
+    "itemId": "ITM-0200",
+    "quantity": 5000,
+    "unitOfMeasure": "JOB",
+    "unitPrice": 0.987,
+    "needDate": "2025-11-03"
+  },
+  {
+    "id": "TL-000376",
+    "ticketId": "TKT-01155",
+    "itemId": "ITM-0074",
+    "quantity": 5000,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.093,
+    "needDate": "2025-11-12"
+  },
+  {
+    "id": "TL-000377",
+    "ticketId": "TKT-01156",
+    "itemId": "ITM-0107",
+    "quantity": 20000,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.016,
+    "needDate": "2026-05-07"
+  },
+  {
+    "id": "TL-000377",
+    "ticketId": "TKT-01156",
+    "itemId": "ITM-0107",
+    "quantity": 2500,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.016,
+    "needDate": "2026-05-07"
+  },
+  {
+    "id": "TL-000377",
+    "ticketId": "TKT-01156",
+    "itemId": "ITM-0107",
+    "quantity": 1000,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.016,
+    "needDate": "2026-05-07"
+  },
+  {
+    "id": "TL-000380",
+    "ticketId": "TKT-01157",
+    "itemId": "ITM-0166",
+    "quantity": 10000,
+    "unitOfMeasure": "BOX",
+    "unitPrice": 19.582,
+    "needDate": "2026-01-17"
+  },
+  {
+    "id": "TL-000380",
+    "ticketId": "TKT-01157",
+    "itemId": "ITM-0166",
+    "quantity": 2500,
+    "unitOfMeasure": "BOX",
+    "unitPrice": 19.582,
+    "needDate": "2026-01-17"
+  },
+  {
+    "id": "TL-000380",
+    "ticketId": "TKT-01157",
+    "itemId": "ITM-0187",
+    "quantity": 20000,
+    "unitOfMeasure": "JOB",
+    "unitPrice": 1.888,
+    "needDate": "2026-01-13"
+  },
+  {
+    "id": "TL-000383",
+    "ticketId": "TKT-01158",
+    "itemId": "ITM-0180",
+    "quantity": 20000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 50.823,
+    "needDate": "2025-12-28"
+  },
+  {
+    "id": "TL-000383",
+    "ticketId": "TKT-01158",
+    "itemId": "ITM-0170",
+    "quantity": 500,
+    "unitOfMeasure": "BOX",
+    "unitPrice": 16.603,
+    "needDate": "2025-12-21"
+  },
+  {
+    "id": "TL-000385",
+    "ticketId": "TKT-01159",
+    "itemId": "ITM-0180",
+    "quantity": 2500,
+    "unitOfMeasure": "EA",
+    "unitPrice": 50.823,
+    "needDate": "2025-12-27"
+  },
+  {
+    "id": "TL-000386",
+    "ticketId": "TKT-01160",
+    "itemId": "ITM-0044",
+    "quantity": 1000,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 4.94,
+    "needDate": "2025-09-08"
+  },
+  {
+    "id": "TL-000387",
+    "ticketId": "TKT-01161",
+    "itemId": "ITM-0092",
+    "quantity": 2500,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.013,
+    "needDate": "2026-02-14"
+  },
+  {
+    "id": "TL-000387",
+    "ticketId": "TKT-01161",
+    "itemId": "ITM-0092",
+    "quantity": 1000,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.013,
+    "needDate": "2026-02-14"
+  },
+  {
+    "id": "TL-000387",
+    "ticketId": "TKT-01161",
+    "itemId": "ITM-0172",
+    "quantity": 20000,
+    "unitOfMeasure": "BOX",
+    "unitPrice": 13.091,
+    "needDate": "2026-02-08"
+  },
+  {
+    "id": "TL-000387",
+    "ticketId": "TKT-01161",
+    "itemId": "ITM-0172",
+    "quantity": 500,
+    "unitOfMeasure": "BOX",
+    "unitPrice": 13.091,
+    "needDate": "2026-02-08"
+  },
+  {
+    "id": "TL-000391",
+    "ticketId": "TKT-01162",
+    "itemId": "ITM-0063",
+    "quantity": 500,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.077,
+    "needDate": "2025-12-29"
+  },
+  {
+    "id": "TL-000391",
+    "ticketId": "TKT-01162",
+    "itemId": "ITM-0063",
+    "quantity": 40000,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.077,
+    "needDate": "2025-12-29"
+  },
+  {
+    "id": "TL-000391",
+    "ticketId": "TKT-01162",
+    "itemId": "ITM-0063",
+    "quantity": 40000,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.077,
+    "needDate": "2025-12-29"
+  },
+  {
+    "id": "TL-000391",
+    "ticketId": "TKT-01162",
+    "itemId": "ITM-0063",
+    "quantity": 40000,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.077,
+    "needDate": "2025-12-29"
+  },
+  {
+    "id": "TL-000395",
+    "ticketId": "TKT-01163",
+    "itemId": "ITM-0193",
+    "quantity": 500,
+    "unitOfMeasure": "JOB",
+    "unitPrice": 0.861,
+    "needDate": "2025-06-19"
+  },
+  {
+    "id": "TL-000395",
+    "ticketId": "TKT-01163",
+    "itemId": "ITM-0128",
+    "quantity": 20000,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.131,
+    "needDate": "2025-07-14"
+  },
+  {
+    "id": "TL-000395",
+    "ticketId": "TKT-01163",
+    "itemId": "ITM-0193",
+    "quantity": 40000,
+    "unitOfMeasure": "JOB",
+    "unitPrice": 0.861,
+    "needDate": "2025-06-19"
+  },
+  {
+    "id": "TL-000395",
+    "ticketId": "TKT-01163",
+    "itemId": "ITM-0193",
+    "quantity": 2500,
+    "unitOfMeasure": "JOB",
+    "unitPrice": 0.861,
+    "needDate": "2025-06-19"
+  },
+  {
+    "id": "TL-000399",
+    "ticketId": "TKT-01164",
+    "itemId": "ITM-0130",
+    "quantity": 500,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.307,
+    "needDate": "2026-02-11"
+  },
+  {
+    "id": "TL-000400",
+    "ticketId": "TKT-01165",
+    "itemId": "ITM-0159",
+    "quantity": 20000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 109.027,
+    "needDate": "2025-09-14"
+  },
+  {
+    "id": "TL-000401",
+    "ticketId": "TKT-01166",
+    "itemId": "ITM-0179",
+    "quantity": 20000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 35.701,
+    "needDate": "2025-10-27"
+  },
+  {
+    "id": "TL-000401",
+    "ticketId": "TKT-01166",
+    "itemId": "ITM-0179",
+    "quantity": 10000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 35.701,
+    "needDate": "2025-10-27"
+  },
+  {
+    "id": "TL-000401",
+    "ticketId": "TKT-01166",
+    "itemId": "ITM-0080",
+    "quantity": 2500,
+    "unitOfMeasure": "BAG",
+    "unitPrice": 0.715,
+    "needDate": "2025-10-20"
+  },
+  {
+    "id": "TL-000404",
+    "ticketId": "TKT-01167",
+    "itemId": "ITM-0091",
+    "quantity": 1000,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.022,
+    "needDate": "2025-12-23"
+  },
+  {
+    "id": "TL-000405",
+    "ticketId": "TKT-01168",
+    "itemId": "ITM-0180",
+    "quantity": 10000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 50.823,
+    "needDate": "2026-04-28"
+  },
+  {
+    "id": "TL-000405",
+    "ticketId": "TKT-01168",
+    "itemId": "ITM-0180",
+    "quantity": 500,
+    "unitOfMeasure": "EA",
+    "unitPrice": 50.823,
+    "needDate": "2026-04-28"
+  },
+  {
+    "id": "TL-000405",
+    "ticketId": "TKT-01168",
+    "itemId": "ITM-0047",
+    "quantity": 10000,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 8.249,
+    "needDate": "2026-05-03"
+  },
+  {
+    "id": "TL-000405",
+    "ticketId": "TKT-01168",
+    "itemId": "ITM-0047",
+    "quantity": 2500,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 8.249,
+    "needDate": "2026-05-03"
+  },
+  {
+    "id": "TL-000409",
+    "ticketId": "TKT-01169",
+    "itemId": "ITM-0089",
+    "quantity": 40000,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.019,
+    "needDate": "2025-10-19"
+  },
+  {
+    "id": "TL-000409",
+    "ticketId": "TKT-01169",
+    "itemId": "ITM-0195",
+    "quantity": 5000,
+    "unitOfMeasure": "JOB",
+    "unitPrice": 1.218,
+    "needDate": "2025-10-08"
+  },
+  {
+    "id": "TL-000411",
+    "ticketId": "TKT-01170",
+    "itemId": "ITM-0156",
+    "quantity": 40000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 149.233,
+    "needDate": "2026-03-02"
+  },
+  {
+    "id": "TL-000411",
+    "ticketId": "TKT-01170",
+    "itemId": "ITM-0156",
+    "quantity": 10000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 149.233,
+    "needDate": "2026-03-02"
+  },
+  {
+    "id": "TL-000411",
+    "ticketId": "TKT-01170",
+    "itemId": "ITM-0156",
+    "quantity": 5000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 149.233,
+    "needDate": "2026-03-02"
+  },
+  {
+    "id": "TL-000411",
+    "ticketId": "TKT-01170",
+    "itemId": "ITM-0156",
+    "quantity": 10000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 149.233,
+    "needDate": "2026-03-02"
+  },
+  {
+    "id": "TL-000415",
+    "ticketId": "TKT-01171",
+    "itemId": "ITM-0182",
+    "quantity": 40000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 71.28,
+    "needDate": "2025-07-05"
+  },
+  {
+    "id": "TL-000415",
+    "ticketId": "TKT-01171",
+    "itemId": "ITM-0103",
+    "quantity": 10000,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.018,
+    "needDate": "2025-07-02"
+  },
+  {
+    "id": "TL-000415",
+    "ticketId": "TKT-01171",
+    "itemId": "ITM-0182",
+    "quantity": 40000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 71.28,
+    "needDate": "2025-07-05"
+  },
+  {
+    "id": "TL-000415",
+    "ticketId": "TKT-01171",
+    "itemId": "ITM-0088",
+    "quantity": 1000,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.007,
+    "needDate": "2025-07-02"
+  },
+  {
+    "id": "TL-000419",
+    "ticketId": "TKT-01172",
+    "itemId": "ITM-0049",
+    "quantity": 2500,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 7.489,
+    "needDate": "2026-02-04"
+  },
+  {
+    "id": "TL-000419",
+    "ticketId": "TKT-01172",
+    "itemId": "ITM-0049",
+    "quantity": 1000,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 7.489,
+    "needDate": "2026-02-04"
+  },
+  {
+    "id": "TL-000419",
+    "ticketId": "TKT-01172",
+    "itemId": "ITM-0049",
+    "quantity": 20000,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 7.489,
+    "needDate": "2026-02-04"
+  },
+  {
+    "id": "TL-000422",
+    "ticketId": "TKT-01173",
+    "itemId": "ITM-0063",
+    "quantity": 500,
+    "unitOfMeasure": "CTN",
+    "unitPrice": 0.077,
+    "needDate": "2025-09-29"
+  },
+  {
+    "id": "TL-000423",
+    "ticketId": "TKT-01174",
+    "itemId": "ITM-0191",
+    "quantity": 10000,
+    "unitOfMeasure": "JOB",
+    "unitPrice": 1.519,
+    "needDate": "2025-09-24"
+  },
+  {
+    "id": "TL-000423",
+    "ticketId": "TKT-01174",
+    "itemId": "ITM-0089",
+    "quantity": 500,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.019,
+    "needDate": "2025-10-07"
+  },
+  {
+    "id": "TL-000423",
+    "ticketId": "TKT-01174",
+    "itemId": "ITM-0195",
+    "quantity": 10000,
+    "unitOfMeasure": "JOB",
+    "unitPrice": 1.218,
+    "needDate": "2025-09-26"
+  },
+  {
+    "id": "TL-000426",
+    "ticketId": "TKT-01175",
+    "itemId": "ITM-0086",
+    "quantity": 20000,
+    "unitOfMeasure": "BAG",
+    "unitPrice": 0.394,
+    "needDate": "2025-09-23"
+  },
+  {
+    "id": "TL-000426",
+    "ticketId": "TKT-01175",
+    "itemId": "ITM-0086",
+    "quantity": 5000,
+    "unitOfMeasure": "BAG",
+    "unitPrice": 0.394,
+    "needDate": "2025-09-23"
+  },
+  {
+    "id": "TL-000428",
+    "ticketId": "TKT-01176",
+    "itemId": "ITM-0048",
+    "quantity": 2500,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 5.227,
+    "needDate": "2025-07-10"
+  },
+  {
+    "id": "TL-000428",
+    "ticketId": "TKT-01176",
+    "itemId": "ITM-0048",
+    "quantity": 20000,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 5.227,
+    "needDate": "2025-07-10"
+  },
+  {
+    "id": "TL-000428",
+    "ticketId": "TKT-01176",
+    "itemId": "ITM-0048",
+    "quantity": 20000,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 5.227,
+    "needDate": "2025-07-10"
+  },
+  {
+    "id": "TL-000428",
+    "ticketId": "TKT-01176",
+    "itemId": "ITM-0048",
+    "quantity": 1000,
+    "unitOfMeasure": "DRUM",
+    "unitPrice": 5.227,
+    "needDate": "2025-07-10"
+  },
+  {
+    "id": "TL-000432",
+    "ticketId": "TKT-01177",
+    "itemId": "ITM-0096",
+    "quantity": 5000,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.011,
+    "needDate": "2025-12-30"
+  },
+  {
+    "id": "TL-000433",
+    "ticketId": "TKT-01178",
+    "itemId": "ITM-0088",
+    "quantity": 40000,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.007,
+    "needDate": "2025-11-21"
+  },
+  {
+    "id": "TL-000433",
+    "ticketId": "TKT-01178",
+    "itemId": "ITM-0182",
+    "quantity": 5000,
+    "unitOfMeasure": "EA",
+    "unitPrice": 71.28,
+    "needDate": "2025-11-24"
+  },
+  {
+    "id": "TL-000433",
+    "ticketId": "TKT-01178",
+    "itemId": "ITM-0197",
+    "quantity": 40000,
+    "unitOfMeasure": "JOB",
+    "unitPrice": 0.862,
+    "needDate": "2025-11-11"
+  },
+  {
+    "id": "TL-000433",
+    "ticketId": "TKT-01178",
+    "itemId": "ITM-0197",
+    "quantity": 10000,
+    "unitOfMeasure": "JOB",
+    "unitPrice": 0.862,
+    "needDate": "2025-11-11"
+  },
+  {
+    "id": "TL-000437",
+    "ticketId": "TKT-01179",
+    "itemId": "ITM-0104",
+    "quantity": 2500,
+    "unitOfMeasure": "ROLL",
+    "unitPrice": 0.015,
+    "needDate": "2025-12-16"
+  }
+]

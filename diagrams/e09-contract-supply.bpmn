@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+                  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+                  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+                  id="Definitions_E09ContractSupply" targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:collaboration id="Collaboration_E09ContractSupply">
+    <bpmn:participant id="Participant_E09ContractSupply" name="e09 - Contract and Constant Supply" processRef="Process_E09ContractSupply" />
+  </bpmn:collaboration>
+  <bpmn:process id="Process_E09ContractSupply" isExecutable="false">
+    <bpmn:laneSet id="LaneSet_E09ContractSupply">
+      <bpmn:lane id="L_appr" name="Approver">
+        <bpmn:flowNodeRef>SupplyDue</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>FloatLoad</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_supplier" name="Supplier / Vendor">
+        <bpmn:flowNodeRef>DeliverInvoice</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_recv" name="Receiving / Warehouse">
+        <bpmn:flowNodeRef>ReceiveForward</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_buyer" name="Procurement / Buyer">
+        <bpmn:flowNodeRef>LogInvoicePoFormat</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_finmaker" name="Finance - Maker">
+        <bpmn:flowNodeRef>Settle</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_sys" name="Platform / System">
+        <bpmn:flowNodeRef>Start</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>RenewalReminder</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>SetDelivered</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>HandToAccounts</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Close</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>End</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="Start" name="Constant-supply contract active">
+      <bpmn:documentation>Trigger context: a pre-priced constant-supply contract is active (e.g. glass bottles delivered daily, LPG, packaging fed continuously to the factory). The contract carries agreed price, validity, and renewal date. This branch SKIPS requisition, RFQ, and PO entirely; supply is called off against the standing contract. [SCOR OE6 contract management / S1.10 | source: AB constant supply]</bpmn:documentation>
+      <bpmn:outgoing>f1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:intermediateCatchEvent id="RenewalReminder" name="Renewal reminder 15 days before expiry">
+      <bpmn:documentation>Timer: 15 days before Contract.renewalDate/validity end, the system fires a renewal reminder to the factory manager + buyer (notification). If renewed, supply continues; if not, the constant-supply branch stops and reverts to normal sourcing. The 15-day lead is the configurable AB contract-renewal reminder. [SCOR OE6 | source: AB 15-day renewal reminder]</bpmn:documentation>
+      <bpmn:incoming>f1</bpmn:incoming>
+      <bpmn:outgoing>f2</bpmn:outgoing>
+      <bpmn:timerEventDefinition />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:exclusiveGateway id="SupplyDue" name="Supply due for this cycle?">
+      <bpmn:documentation>Expression: today &gt;= nextSupplyDate (daily/weekly cadence per contract) AND Contract.status == active AND today &lt;= Contract.validityEnd. True -&gt; factory floats the load/quantity. False (contract expired / not yet due) -&gt; wait or stop. [SCOR OE6 | source: AB supply cadence]</bpmn:documentation>
+      <bpmn:incoming>f2</bpmn:incoming>
+      <bpmn:outgoing>f3</bpmn:outgoing>
+      <bpmn:outgoing>f12</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sendTask id="FloatLoad" name="Factory floats load / quantity to supplier">
+      <bpmn:documentation>The factory manager (Approver lane: factory mgmt) floats the required load/quantity for this cycle directly to the supplier against the contract (e.g. number of bottles for today's production). No requisition, no RFQ, no PO is created; the contract price applies. Captures requestedQuantity, deliveryDate. [SCOR S1.10/OE6 | source: AB factory floats load]</bpmn:documentation>
+      <bpmn:incoming>f3</bpmn:incoming>
+      <bpmn:outgoing>f4</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:sendTask id="DeliverInvoice" name="Supplier delivers + sends invoice">
+      <bpmn:documentation>Supplier delivers the floated quantity and sends the invoice (priced at the contract rate). Documents: delivery note + invoice. No PO acknowledgement step (no PO exists). [SCOR S2.2/S2.3 | source: AB]</bpmn:documentation>
+      <bpmn:incoming>f4</bpmn:incoming>
+      <bpmn:outgoing>f5</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:userTask id="ReceiveForward" name="Stores receive + forward invoice">
+      <bpmn:documentation>Stores receive the goods (count against the floated quantity; QC hard block still applies if the item requires a COA) and forward the supplier invoice to the procurement handler for logging. Captures receivedQuantity, deliveryNoteNumber, actualDeliveryDate. [SCOR S2.4 | ISO 8.6 | source: AB receive + forward]</bpmn:documentation>
+      <bpmn:incoming>f5</bpmn:incoming>
+      <bpmn:outgoing>f6</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="LogInvoicePoFormat" name="Handler logs invoice in PO-format (reduced fields)">
+      <bpmn:documentation>Procurement handler logs the invoice as a lightweight PO-format record with REDUCED fields (supplier, item, quantity, contract price, contract ref, invoice number, invoice date, amount, tax) so the spend ties back to a document for matching and analytics, WITHOUT running the full PO + approval chain. This is the contract-supply substitute for a PO. [SCOR S2.1/OE6 | source: AB PO-format reduced-field log]</bpmn:documentation>
+      <bpmn:incoming>f6</bpmn:incoming>
+      <bpmn:outgoing>f7</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="SetDelivered" name="Set DELIVERED flag (skip delivery tracking)">
+      <bpmn:documentation>System sets the DELIVERED flag on the PO-format record, which SKIPS the normal delivery-tracking/partial-block machinery (constant supply is received continuously; tracking each block is noise). The record goes straight to the financial/match step. Two-way match applies (PO-format + invoice; a GRN exists for goods so three-way is also possible where stores raised one). [SCOR S2.4/S2.6 | source: AB DELIVERED flag skips tracking]</bpmn:documentation>
+      <bpmn:incoming>f7</bpmn:incoming>
+      <bpmn:outgoing>f8</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="HandToAccounts" name="Hand to accounts for settlement">
+      <bpmn:documentation>System routes the PO-format record + invoice to Finance for settlement, accruing against the creditor ledger for the supplier. [SCOR S2.7 | source: AB hand to accounts]</bpmn:documentation>
+      <bpmn:incoming>f8</bpmn:incoming>
+      <bpmn:outgoing>f9</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="Settle" name="Finance settles invoice">
+      <bpmn:documentation>Finance-Maker matches the invoice to the PO-format record at the contract price (two-way; tolerance applies) and settles per the contract payment terms; posts to the creditor ledger. Constant-supply invoices are typically settled periodically (e.g. monthly consolidation) rather than per delivery. [SCOR S2.7 | ISO 8.6 | source: AB settle]</bpmn:documentation>
+      <bpmn:incoming>f9</bpmn:incoming>
+      <bpmn:outgoing>f10</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="Close" name="Close cycle; update ledger + analytics">
+      <bpmn:documentation>System closes the supply cycle: creditor ledger updated, spend tied to the contract for contract-compliance analytics, audit + SSE emitted. Loops to the next supply cycle while the contract remains active. [SCOR OE3/OE6 | source: AB close + analytics]</bpmn:documentation>
+      <bpmn:incoming>f10</bpmn:incoming>
+      <bpmn:outgoing>f11</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="End" name="Cycle settled; await next supply">
+      <bpmn:documentation>Constant-supply cycle complete: goods received, invoice logged in PO-format, DELIVERED flag set, settled, closed. The contract continues to the next cadence until expiry/non-renewal. [SCOR OE6 | source: AB]</bpmn:documentation>
+      <bpmn:incoming>f11</bpmn:incoming>
+      <bpmn:incoming>f12</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="f1" sourceRef="Start" targetRef="RenewalReminder" />
+    <bpmn:sequenceFlow id="f2" sourceRef="RenewalReminder" targetRef="SupplyDue" />
+    <bpmn:sequenceFlow id="f3" name="due + contract active" sourceRef="SupplyDue" targetRef="FloatLoad" />
+    <bpmn:sequenceFlow id="f4" sourceRef="FloatLoad" targetRef="DeliverInvoice" />
+    <bpmn:sequenceFlow id="f5" sourceRef="DeliverInvoice" targetRef="ReceiveForward" />
+    <bpmn:sequenceFlow id="f6" sourceRef="ReceiveForward" targetRef="LogInvoicePoFormat" />
+    <bpmn:sequenceFlow id="f7" sourceRef="LogInvoicePoFormat" targetRef="SetDelivered" />
+    <bpmn:sequenceFlow id="f8" sourceRef="SetDelivered" targetRef="HandToAccounts" />
+    <bpmn:sequenceFlow id="f9" sourceRef="HandToAccounts" targetRef="Settle" />
+    <bpmn:sequenceFlow id="f10" sourceRef="Settle" targetRef="Close" />
+    <bpmn:sequenceFlow id="f11" sourceRef="Close" targetRef="End" />
+    <bpmn:sequenceFlow id="f12" name="expired / not renewed -&gt; stop" sourceRef="SupplyDue" targetRef="End" />
+    <bpmn:textAnnotation id="NoteContract">
+      <bpmn:text>Pre-priced constant supply (glass bottles daily, LPG) runs against a standing contract with NO requisition, RFQ, or PO. A renewal reminder fires 15 days before contract expiry. The factory floats the load/quantity to the supplier; the supplier delivers and invoices at the contract price; stores receive and forward the invoice; the handler logs it in a reduced-field PO-format record; the DELIVERED flag is set to skip delivery tracking; accounts settle (two-way match at contract price) and close. The cycle repeats each cadence until the contract expires or is not renewed.</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Assoc_E09ContractSupply_1" sourceRef="LogInvoicePoFormat" targetRef="NoteContract" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagram_E09ContractSupply">
+    <bpmndi:BPMNPlane id="Plane_E09ContractSupply" bpmnElement="Collaboration_E09ContractSupply">
+      <bpmndi:BPMNShape id="Participant_E09ContractSupply_di" bpmnElement="Participant_E09ContractSupply" isHorizontal="true">
+        <dc:Bounds x="160" y="80" width="2350" height="960" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_appr_di" bpmnElement="L_appr" isHorizontal="true">
+        <dc:Bounds x="190" y="80" width="2320" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_supplier_di" bpmnElement="L_supplier" isHorizontal="true">
+        <dc:Bounds x="190" y="240" width="2320" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_recv_di" bpmnElement="L_recv" isHorizontal="true">
+        <dc:Bounds x="190" y="400" width="2320" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_buyer_di" bpmnElement="L_buyer" isHorizontal="true">
+        <dc:Bounds x="190" y="560" width="2320" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_finmaker_di" bpmnElement="L_finmaker" isHorizontal="true">
+        <dc:Bounds x="190" y="720" width="2320" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_sys_di" bpmnElement="L_sys" isHorizontal="true">
+        <dc:Bounds x="190" y="880" width="2320" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Start_di" bpmnElement="Start">
+        <dc:Bounds x="267" y="942" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="257" y="982" width="56" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="RenewalReminder_di" bpmnElement="RenewalReminder">
+        <dc:Bounds x="457" y="942" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="447" y="982" width="56" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SupplyDue_di" bpmnElement="SupplyDue" isMarkerVisible="true">
+        <dc:Bounds x="640" y="135" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="630" y="189" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="FloatLoad_di" bpmnElement="FloatLoad">
+        <dc:Bounds x="795" y="120" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DeliverInvoice_di" bpmnElement="DeliverInvoice">
+        <dc:Bounds x="985" y="280" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ReceiveForward_di" bpmnElement="ReceiveForward">
+        <dc:Bounds x="1175" y="440" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="LogInvoicePoFormat_di" bpmnElement="LogInvoicePoFormat">
+        <dc:Bounds x="1365" y="600" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SetDelivered_di" bpmnElement="SetDelivered">
+        <dc:Bounds x="1555" y="920" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="HandToAccounts_di" bpmnElement="HandToAccounts">
+        <dc:Bounds x="1745" y="920" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Settle_di" bpmnElement="Settle">
+        <dc:Bounds x="1935" y="760" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Close_di" bpmnElement="Close">
+        <dc:Bounds x="2125" y="920" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_di" bpmnElement="End">
+        <dc:Bounds x="2357" y="942" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2347" y="982" width="56" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="f1_di" bpmnElement="f1">
+        <di:waypoint x="303" y="960" />
+        <di:waypoint x="457" y="960" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f2_di" bpmnElement="f2">
+        <di:waypoint x="493" y="960" />
+        <di:waypoint x="567" y="960" />
+        <di:waypoint x="567" y="160" />
+        <di:waypoint x="640" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f3_di" bpmnElement="f3">
+        <di:waypoint x="690" y="160" />
+        <di:waypoint x="795" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f4_di" bpmnElement="f4">
+        <di:waypoint x="915" y="160" />
+        <di:waypoint x="950" y="160" />
+        <di:waypoint x="950" y="320" />
+        <di:waypoint x="985" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f5_di" bpmnElement="f5">
+        <di:waypoint x="1105" y="320" />
+        <di:waypoint x="1140" y="320" />
+        <di:waypoint x="1140" y="480" />
+        <di:waypoint x="1175" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f6_di" bpmnElement="f6">
+        <di:waypoint x="1295" y="480" />
+        <di:waypoint x="1330" y="480" />
+        <di:waypoint x="1330" y="640" />
+        <di:waypoint x="1365" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f7_di" bpmnElement="f7">
+        <di:waypoint x="1485" y="640" />
+        <di:waypoint x="1520" y="640" />
+        <di:waypoint x="1520" y="960" />
+        <di:waypoint x="1555" y="960" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f8_di" bpmnElement="f8">
+        <di:waypoint x="1675" y="960" />
+        <di:waypoint x="1745" y="960" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f9_di" bpmnElement="f9">
+        <di:waypoint x="1865" y="960" />
+        <di:waypoint x="1900" y="960" />
+        <di:waypoint x="1900" y="800" />
+        <di:waypoint x="1935" y="800" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f10_di" bpmnElement="f10">
+        <di:waypoint x="2055" y="800" />
+        <di:waypoint x="2090" y="800" />
+        <di:waypoint x="2090" y="960" />
+        <di:waypoint x="2125" y="960" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f11_di" bpmnElement="f11">
+        <di:waypoint x="2245" y="960" />
+        <di:waypoint x="2357" y="960" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f12_di" bpmnElement="f12">
+        <di:waypoint x="690" y="160" />
+        <di:waypoint x="1524" y="160" />
+        <di:waypoint x="1524" y="960" />
+        <di:waypoint x="2357" y="960" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="NoteContract_di" bpmnElement="NoteContract">
+        <dc:Bounds x="160" y="1080" width="1600" height="100" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Assoc_E09ContractSupply_1_di" bpmnElement="Assoc_E09ContractSupply_1">
+        <di:waypoint x="1425" y="680" />
+        <di:waypoint x="260" y="1080" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

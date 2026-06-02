@@ -1,0 +1,450 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+                  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+                  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+                  id="Definitions_PurchaseOrder" targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:collaboration id="Collaboration_PurchaseOrder">
+    <bpmn:participant id="Participant_PurchaseOrder" name="Unified P2P - 05 Purchase Order (Issue, Commit, Acknowledge, Amend, Call-off)" processRef="Process_PurchaseOrder" />
+  </bpmn:collaboration>
+  <bpmn:process id="Process_PurchaseOrder" isExecutable="false">
+    <bpmn:laneSet id="LaneSet_PurchaseOrder">
+      <bpmn:lane id="L_buyer" name="Procurement / Buyer">
+        <bpmn:flowNodeRef>Start</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GwOrderMode</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DraftPO</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DraftLines</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>RequestPOApproval</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GwAmend</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>AmendPO</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DraftCallOff</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_appr" name="Approver">
+        <bpmn:flowNodeRef>ApprovePO</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GwApproved</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_budget" name="Budget Owner">
+        <bpmn:flowNodeRef>BudgetCommit</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>BudgetOverride</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_supplier" name="Supplier / Vendor">
+        <bpmn:flowNodeRef>AckPO</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GwAdvance</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_sys" name="Platform / System">
+        <bpmn:flowNodeRef>Encumber</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>IssuePO</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>SendPO</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>TriggerAdvance</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Fulfil</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>CommitCallOff</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>End</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="Start" name="Award approved, ready to order">
+      <bpmn:documentation>Trigger: Diagram 04 (Sourcing) has produced an APPROVED award - a selected Quotation linked to an approved Requisition, with the supplier ONBOARDED (Diagram 06). PO drafting begins from this state. Pre-conditions checked by the System before the form opens: requisition.status = approved (all completions APPROVED), quotation exists and is the selected one, supplier.status = ONBOARDED (not PENDING/SUSPENDED/OFFBOARDED), and budget available for the requisition cost-center/project. [SCOR S2.1 Establish Order Signal | ISO 8.4.3 | source: AB + RA award handoff]</bpmn:documentation>
+      <bpmn:outgoing>f1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:exclusiveGateway id="GwOrderMode" name="Standard PO or framework call-off?">
+      <bpmn:documentation>Routing gate on how the order is placed. Expression: if requisition.frameworkAgreementId is set AND FrameworkAgreement.status = active AND needDate within FrameworkAgreement.validity AND requested item+quantity is within the agreement's remaining ceiling -&gt; CALL-OFF branch (no re-draft of terms). Else -&gt; STANDARD PO branch (full PO draft from requisition + quote). Framework/blanket orders are the repeat/indirect-buy bypass; a call-off draws down the agreed prices/terms without re-sourcing. [SCOR S3.1 / OE6 | source: data-model FrameworkAgreement + CallOffRelease, build-new]</bpmn:documentation>
+      <bpmn:incoming>f1</bpmn:incoming>
+      <bpmn:outgoing>f2</bpmn:outgoing>
+      <bpmn:outgoing>f3</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="DraftPO" name="Draft PO from requisition + awarded quote">
+      <bpmn:documentation>Buyer (permission po.create) opens the in-system PO form, pre-filled from the requisition header and the awarded Quotation. HEADER FIELDS: poNumber (string, auto-generated, configurable pattern - see annotation, immutable once issued); poType (dropdown, mandatory, one of {item | service | maintenance | freight-forwarder}, default derived from requisition.category: Items-&gt;item, Services-&gt;service, factory-maintenance-&gt;maintenance, freight engagement-&gt;freight-forwarder); requisitionRef (reference to Requisition, mandatory, read-only, immutable); quotationRef (reference to Quotation, mandatory, read-only); supplierName + supplierCode (reference to Supplier, mandatory, read-only, code format S/##### from Diagram 06); currency (dropdown, mandatory, default = quotation.currency, value set {USD|OMR|SAR|AED|EUR|CHF|INR} configurable per tenant); exchangeRate (decimal, optional, MANUAL OVERRIDE of the FX service rate - AB; default = live convertToBase rate for currency on PO date, editable; if blank the FX service rate is used; carries rateDate + source); incoterm (dropdown, mandatory, Incoterms 2020 {EXW|FCA|FOB|CFR|CIF|CPT|CIP|DAP|DPU|DDP}, default = quotation.incoterm, validated against transport mode: FOB/CFR/CIF are sea-only, air/multimodal must use FCA/CPT/CIP/DAP); scopeOfWork (long text, mandatory for poType in {service,maintenance}, optional for item, default from quotation/requisition); termsAndConditions (long text, mandatory, EDITABLE, default = tenant standard T&amp;C template, buyer may edit per PO - AB); deliveryPlace (text/reference to warehouse or site address, mandatory); deliveryDate (date, mandatory, default = needDate from requisition, must be &gt;= today); contactPerson (text, mandatory, default = buyer name + phone); isoDocRef (text, optional, the ISO 8.4.3 document reference tag for records traceability); notes (long text, optional); attachments (file[], optional). The form is dynamic: the field engine shows/hides and sets mandatory by poType (service/maintenance hide qty-tolerance + show scopeOfWork + milestone schedule; freight-forwarder shows carrier-ranking ref + AWB/BL placeholder). [SCOR S2.1 | ISO 8.4.3 a-f | source: AB PO form + RA field engine + data-model PurchaseOrder]</bpmn:documentation>
+      <bpmn:incoming>f2</bpmn:incoming>
+      <bpmn:outgoing>f4</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="DraftLines" name="Enter PO lines, tax, tolerance">
+      <bpmn:documentation>Buyer enters one or more PO LINES, defaulted from requisition lines + awarded quote prices. LINE FIELDS: itemRef (reference to Item, mandatory for poType=item, must be an ONBOARDED item or auto-created per Diagram 07; for service/maintenance a free-text service description is allowed); description (text, auto-populated from item, editable); quantity (decimal &gt;0, mandatory); unitOfMeasure (dropdown from UoM master, mandatory, default from item.purchaseUom); agreedPrice (decimal &gt;=0, mandatory, default = quotation line price in PO currency); tolerancePercent (decimal, optional, default 0; for labels/cartons/printed PM set +/-5 to 10 percent so receiving may amend the PO qty to actual delivered before GRN - AB; applies to qty, not price); taxCodeRef (reference to TaxCode master, mandatory where jurisdiction requires, dropdown of codes by type {GST|VAT|duty|reverse-charge}); taxableAmount (decimal, computed = quantity x agreedPrice); taxAmount (decimal, computed = taxableAmount x TaxCode.rate; reverse-charge flag for imports); lineValue (decimal, computed = taxableAmount + taxAmount). HEADER TOTALS computed: poValue = sum(lineValue) in PO currency; poValueInBase = convertToBase(poValue, currency) using exchangeRate override if set else FX service (graceful degradation: on FX failure the original amount is used unconverted, logged - e08). Tax is a first-class LINE attribute so the later three-way match reconciles amounts INCLUDING tax. [SCOR S2.1 | ISO 8.4.3 | source: AB tolerance + data-model POLine/TaxCode + platform-services FX/tax]</bpmn:documentation>
+      <bpmn:incoming>f4</bpmn:incoming>
+      <bpmn:incoming>f9</bpmn:incoming>
+      <bpmn:incoming>f14</bpmn:incoming>
+      <bpmn:outgoing>f5</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="BudgetCommit" name="Budget available for hard commit?">
+      <bpmn:documentation>HARD budget gate (encumbrance), distinct from the soft check at requisition. Expression: if Budget(costCenterId/projectId, period).availableAmount &gt;= poValueInBase -&gt; COMMIT branch (the System will encumber). Else -&gt; OVER-BUDGET branch requiring a Budget Owner override. Approval limits are NOT budget control; this is a funds check. [SCOR OE11 Enterprise Business Planning | source: build-new finance control, data-model Budget/Commitment, platform-services budget service]</bpmn:documentation>
+      <bpmn:incoming>f5</bpmn:incoming>
+      <bpmn:outgoing>f6</bpmn:outgoing>
+      <bpmn:outgoing>f7</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="BudgetOverride" name="Budget Owner approves over-budget override">
+      <bpmn:documentation>Over-budget path. Budget Owner (permission budget.approve) reviews the over-commitment and either APPROVES an override (overrideReason mandatory text, logged to audit; allows the encumbrance to exceed availableAmount) or REJECTS (PO cannot be issued; returns to buyer to revise lines or cancel). FIELDS: decision (dropdown {approve-override | reject}, mandatory); overrideReason (text, mandatory when approve-override); overrideAmount (decimal, read-only = poValueInBase - availableAmount). On reject, the buyer revises the PO (back to DraftLines). [SCOR OE11 | source: build-new]</bpmn:documentation>
+      <bpmn:incoming>f7</bpmn:incoming>
+      <bpmn:outgoing>f8</bpmn:outgoing>
+      <bpmn:outgoing>f9</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="Encumber" name="Create commitment, encumber budget">
+      <bpmn:documentation>System creates a Commitment record (budgetId, poId, amount = poValueInBase, status = committed) and updates the Budget: availableAmount -= poValueInBase, committedAmount += poValueInBase. This encumbrance reserves funds against the cost-center/project for the period and prevents double-spend. The commitment is later relieved to actual at GR/invoice (Diagram 08/09: committedAmount -= amount, actualAmount += amount). Audit entry emitted (category ticket/budget). [SCOR OE11 | source: build-new, data-model Commitment, platform-services 11]</bpmn:documentation>
+      <bpmn:incoming>f6</bpmn:incoming>
+      <bpmn:incoming>f8</bpmn:incoming>
+      <bpmn:outgoing>f10</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="RequestPOApproval" name="Submit PO for approval (SoD)">
+      <bpmn:documentation>Buyer submits the drafted, budget-committed PO for approval (permission po.create + approval.requestApproval). The System routes to a PO approver via the configurable approval engine (by department/category/value). SEGREGATION OF DUTIES INVARIANT: the buyer who created the PO cannot be its approver (po.issue is gated so approverUserId != createdByUserId on this PO); the engine excludes the creator from the eligible approver pool, selecting the nearest-bucket, least-loaded qualified approver. PO state: draft -&gt; awaiting-approval. [SCOR S2.1 / OE2 | ISO 8.4 | source: role-permission-matrix SoD + RA approval engine + build-new]</bpmn:documentation>
+      <bpmn:incoming>f10</bpmn:incoming>
+      <bpmn:outgoing>f11</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="ApprovePO" name="Approve or reject PO">
+      <bpmn:documentation>PO approver (permission po.issue/award.approve, never the creator) reviews lines, value, terms, incoterm, supplier, budget impact. ACTIONS: Approve (decision dropdown {approve | reject}, mandatory) -&gt; PO eligible to issue; Reject -&gt; returns to buyer with mandatory rejectionNote (text) for revision (back to DraftLines, same poNumber retained as draft). Auto-approval may apply within the approver's configured limit (poValueInBase &lt;= approverLimit -&gt; system auto-approves, logged, isAutoApproved = true), reserving manual approval for larger orders (nearest-bucket). [SCOR OE2 | ISO 8.4 | source: RA auto-approval + role-permission-matrix]</bpmn:documentation>
+      <bpmn:incoming>f11</bpmn:incoming>
+      <bpmn:outgoing>f12</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="GwApproved" name="PO approved?">
+      <bpmn:documentation>Expression: if ApprovePO.decision = approve (or auto-approved within limit) -&gt; ISSUE branch. Else -&gt; REVISE branch back to DraftLines (buyer edits per rejectionNote, resubmits; commitment held or recalculated on re-submit). [source: build-new]</bpmn:documentation>
+      <bpmn:incoming>f12</bpmn:incoming>
+      <bpmn:outgoing>f13</bpmn:outgoing>
+      <bpmn:outgoing>f14</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="IssuePO" name="Issue PO, generate number, render PDF">
+      <bpmn:documentation>On approval the System issues the PO: PO state draft -&gt; issued; poNumber finalized from the configurable pattern (default PO-{YYYY}-{#####}, zero-padded sequential per tenant/year; pattern fields {prefix, year, running-counter width} configurable in Admin - see annotation); poNumber becomes immutable. Renders the PO as a PDF document (header + lines + tax + terms + incoterm + delivery + ISO doc ref + contact) and stores it (document storage service). Emits audit entry + SSE (payload {poId}). [SCOR S2.1 | ISO 8.4.3 records, 7.5 | source: AB PDF emit + RA SSE/audit + platform-services 8]</bpmn:documentation>
+      <bpmn:incoming>f13</bpmn:incoming>
+      <bpmn:outgoing>f15</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sendTask id="SendPO" name="Email PO PDF to supplier">
+      <bpmn:documentation>System sends the PO PDF to the supplier's registered contact via the notification service (templated email; system-generated identity, humans CC'd for audit context - AB). Fire-and-forget post-commit; delivery failure logged, not retried. The supplier accesses acknowledgement via an authenticated external form (email + OTP). Legacy fallback only: a manual MS-Word PO, recorded as an attachment, is permitted where a supplier cannot use the portal. [SCOR S2.1 | source: AB PDF send + platform-services 5 notifications]</bpmn:documentation>
+      <bpmn:incoming>f15</bpmn:incoming>
+      <bpmn:incoming>f23</bpmn:incoming>
+      <bpmn:outgoing>f16</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:userTask id="AckPO" name="Supplier acknowledges PO">
+      <bpmn:documentation>Supplier (permission po.acknowledge, scoped to own PO via email+OTP form) reviews and acknowledges the PO before production. ACTION: Acknowledge (sets PO state issued -&gt; acknowledged, records acknowledgedAt + acknowledgedBy); or raise a discrepancy note (free text) which returns the PO to the buyer for amendment (pre-receipt amend path). Acknowledgement is the supplier's acceptance of price, quantity, terms, incoterm, and delivery date. [SCOR S2.1 | ISO 8.4.3(d) provider interaction | source: AB ack + RA supplier portal]</bpmn:documentation>
+      <bpmn:incoming>f16</bpmn:incoming>
+      <bpmn:incoming>f26</bpmn:incoming>
+      <bpmn:outgoing>f17</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="GwAdvance" name="Advance payment due on acknowledgement?">
+      <bpmn:documentation>Expression: if the payment term on the PO/quote is in {100% advance | part-advance + balance against documents | part-advance + balance against shipment received} AND an advance installment is scheduled at the acknowledgement event -&gt; trigger advance. Else (net 30/60/90, 30/70 against later events) -&gt; no advance now, proceed to fulfilment. The advance trigger fires at acknowledgement per the payment schedule. [SCOR S2.7 | source: AB payment terms + RA installments + data-model AdvancePayment]</bpmn:documentation>
+      <bpmn:incoming>f17</bpmn:incoming>
+      <bpmn:outgoing>f18</bpmn:outgoing>
+      <bpmn:outgoing>f19</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="TriggerAdvance" name="Trigger advance payment per schedule">
+      <bpmn:documentation>System raises the advance installment defined on the PO payment schedule and hands it to Finance (Diagram 10 Payments): creates an AdvancePayment (poId, amount = scheduled advance e.g. 100% or 30%, status = requested), to be paid and later recouped against subsequent invoices (recoupedAgainstInvoiceIds). The installment enters the maker/checker payment flow. Does not block fulfilment in this diagram; cross-reference to Diagram 10. [SCOR S2.7 | source: AB advance terms + data-model AdvancePayment, platform-services]</bpmn:documentation>
+      <bpmn:incoming>f18</bpmn:incoming>
+      <bpmn:outgoing>f20</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="GwAmend" name="Pre-receipt amendment needed?">
+      <bpmn:documentation>PO is EDITABLE only until the first goods receipt against it. Expression: if a change is needed (supplier discrepancy, qty tolerance adjustment for labels/cartons, price/term correction) AND no GRN exists yet for the PO (PO state in {issued, acknowledged}, not closed) -&gt; AMEND branch. Else -&gt; no amendment, proceed to fulfilment handoff. After first receipt the PO is locked from edits (only qty-tolerance amend at receiving per Diagram 08 is allowed). [SCOR S2.1 | source: AB editable-until-receipt + data-model PO state machine]</bpmn:documentation>
+      <bpmn:incoming>f19</bpmn:incoming>
+      <bpmn:incoming>f20</bpmn:incoming>
+      <bpmn:outgoing>f21</bpmn:outgoing>
+      <bpmn:outgoing>f22</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="AmendPO" name="Amend PO (audited, re-commit delta)">
+      <bpmn:documentation>Buyer (permission po.amend, never approves own amendment under SoD) edits the PO pre-receipt: quantity (within tolerance or with re-approval), agreedPrice, terms, deliveryDate, incoterm. Every amendment is audited (field-level diff). If poValueInBase changes, the System adjusts the Commitment (delta encumbered or released) and re-checks budget; a material increase re-enters the budget/approval gates. A revised PDF is re-issued and re-sent to the supplier for re-acknowledgement. [SCOR S2.1 | ISO 7.5 records | source: AB amend + build-new commitment delta]</bpmn:documentation>
+      <bpmn:incoming>f21</bpmn:incoming>
+      <bpmn:outgoing>f23</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="Fulfil" name="Hand off to fulfilment / receiving">
+      <bpmn:documentation>System advances the requisition stage INITIATION -&gt; ORDERED and hands the acknowledged PO to the supplier fulfilment + receiving domain (Diagram 08 Delivery/GRN): supplier manufactures and ships, shares dispatch documents, receiving records delivery and raises GRN, QC gate, GR/IR accrual, qty-tolerance amend at receipt. The PO remains open until all lines are received, matched, and paid, then PO state -&gt; closed. [SCOR S2.2-S2.6 | source: data-model PO state + cross-ref Diagram 08]</bpmn:documentation>
+      <bpmn:incoming>f22</bpmn:incoming>
+      <bpmn:outgoing>f24</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="DraftCallOff" name="Draft call-off release against framework">
+      <bpmn:documentation>CALL-OFF branch (framework/blanket order). Buyer (permission calloff.release; Requester may also release against a framework per the matrix) creates a CallOffRelease without re-sourcing: FIELDS frameworkAgreementId (reference, mandatory, must be active and in-validity); requisitionId (reference, mandatory); item + quantity (from requisition, mandatory); price + terms (READ-ONLY, inherited from the FrameworkAgreement agreed prices/terms); value (computed = quantity x agreed price). VALIDATION: drawdown &lt;= FrameworkAgreement remaining ceiling (totalValue/quantity ceiling - already-released); else the release is blocked and a new framework or standard PO is required. [SCOR S3.1 / OE6 | source: data-model FrameworkAgreement/CallOffRelease, build-new]</bpmn:documentation>
+      <bpmn:incoming>f3</bpmn:incoming>
+      <bpmn:outgoing>f25</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="CommitCallOff" name="Draw down ceiling, encumber, emit release">
+      <bpmn:documentation>System records the CallOffRelease, draws down the FrameworkAgreement ceiling (remaining -= value/quantity), creates a Commitment against the budget (encumbers like a PO), generates a release reference (configurable pattern), and emits the release document to the supplier (PDF + notification). No separate competitive approval is needed because the framework was pre-approved; SoD still applies to any value-changing edit. Joins the standard flow at the supplier acknowledgement step. Audit + SSE emitted. [SCOR S3.1 / OE6 | source: build-new, data-model CallOffRelease]</bpmn:documentation>
+      <bpmn:incoming>f25</bpmn:incoming>
+      <bpmn:outgoing>f26</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="End" name="PO live, fulfilment underway">
+      <bpmn:documentation>Terminal for this diagram: PO (or call-off release) is issued, acknowledged, budget-committed, any advance triggered, and handed to fulfilment. Downstream receipt, matching, payment, and closure are Diagrams 08, 09, 10, 12. [source: build-new]</bpmn:documentation>
+      <bpmn:incoming>f24</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="f1" sourceRef="Start" targetRef="GwOrderMode" />
+    <bpmn:sequenceFlow id="f2" name="standard PO" sourceRef="GwOrderMode" targetRef="DraftPO" />
+    <bpmn:sequenceFlow id="f3" name="framework call-off" sourceRef="GwOrderMode" targetRef="DraftCallOff" />
+    <bpmn:sequenceFlow id="f4" sourceRef="DraftPO" targetRef="DraftLines" />
+    <bpmn:sequenceFlow id="f5" sourceRef="DraftLines" targetRef="BudgetCommit" />
+    <bpmn:sequenceFlow id="f6" name="available &gt;= poValueInBase" sourceRef="BudgetCommit" targetRef="Encumber" />
+    <bpmn:sequenceFlow id="f7" name="over budget" sourceRef="BudgetCommit" targetRef="BudgetOverride" />
+    <bpmn:sequenceFlow id="f8" name="override approved" sourceRef="BudgetOverride" targetRef="Encumber" />
+    <bpmn:sequenceFlow id="f9" name="rejected, revise" sourceRef="BudgetOverride" targetRef="DraftLines" />
+    <bpmn:sequenceFlow id="f10" sourceRef="Encumber" targetRef="RequestPOApproval" />
+    <bpmn:sequenceFlow id="f11" sourceRef="RequestPOApproval" targetRef="ApprovePO" />
+    <bpmn:sequenceFlow id="f12" sourceRef="ApprovePO" targetRef="GwApproved" />
+    <bpmn:sequenceFlow id="f13" name="approved" sourceRef="GwApproved" targetRef="IssuePO" />
+    <bpmn:sequenceFlow id="f14" name="rejected, revise" sourceRef="GwApproved" targetRef="DraftLines" />
+    <bpmn:sequenceFlow id="f15" sourceRef="IssuePO" targetRef="SendPO" />
+    <bpmn:sequenceFlow id="f16" sourceRef="SendPO" targetRef="AckPO" />
+    <bpmn:sequenceFlow id="f17" sourceRef="AckPO" targetRef="GwAdvance" />
+    <bpmn:sequenceFlow id="f18" name="advance due" sourceRef="GwAdvance" targetRef="TriggerAdvance" />
+    <bpmn:sequenceFlow id="f19" name="no advance" sourceRef="GwAdvance" targetRef="GwAmend" />
+    <bpmn:sequenceFlow id="f20" sourceRef="TriggerAdvance" targetRef="GwAmend" />
+    <bpmn:sequenceFlow id="f21" name="amend (pre-receipt)" sourceRef="GwAmend" targetRef="AmendPO" />
+    <bpmn:sequenceFlow id="f22" name="no amendment" sourceRef="GwAmend" targetRef="Fulfil" />
+    <bpmn:sequenceFlow id="f23" name="re-issue + re-ack" sourceRef="AmendPO" targetRef="SendPO" />
+    <bpmn:sequenceFlow id="f24" sourceRef="Fulfil" targetRef="End" />
+    <bpmn:sequenceFlow id="f25" sourceRef="DraftCallOff" targetRef="CommitCallOff" />
+    <bpmn:sequenceFlow id="f26" sourceRef="CommitCallOff" targetRef="AckPO" />
+    <bpmn:textAnnotation id="NotePoNumber">
+      <bpmn:text>PO number pattern is configurable (Admin master): default PO-{YYYY}-{#####} = prefix + 4-digit year + zero-padded sequential running counter (width configurable), unique per tenant. Counter is max-existing + 1, generated transactionally at issue (race-safe), then immutable. Call-off releases use a separate configurable release pattern. PO type set {item | service | maintenance | freight-forwarder} drives form fields: service/maintenance use scopeOfWork + milestone acceptance (two-way match, no GRN); freight-forwarder ranks carriers on price/transit-time/local-distribution and tracks AWB/BL.</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Assoc_PurchaseOrder_1" sourceRef="IssuePO" targetRef="NotePoNumber" />
+    <bpmn:textAnnotation id="NoteSod">
+      <bpmn:text>Invariants: buyer who creates a PO cannot approve it (SoD, role-permission-matrix). Budget is HARD-committed (encumbrance) at PO issue, distinct from the soft check at requisition; approval limits are not budget control. PO is editable only until the first goods receipt; after first GRN only the qty-tolerance amend at receiving (Diagram 08) is allowed. Tax is a first-class line attribute so the three-way match (Diagram 09) reconciles amounts including tax. Currency multi-currency with a configurable base; per-PO manual exchange-rate override allowed, else the FX service rate (graceful degradation on failure).</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Assoc_PurchaseOrder_2" sourceRef="RequestPOApproval" targetRef="NoteSod" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagram_PurchaseOrder">
+    <bpmndi:BPMNPlane id="Plane_PurchaseOrder" bpmnElement="Collaboration_PurchaseOrder">
+      <bpmndi:BPMNShape id="Participant_PurchaseOrder_di" bpmnElement="Participant_PurchaseOrder" isHorizontal="true">
+        <dc:Bounds x="160" y="80" width="3680" height="800" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_buyer_di" bpmnElement="L_buyer" isHorizontal="true">
+        <dc:Bounds x="190" y="80" width="3650" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_appr_di" bpmnElement="L_appr" isHorizontal="true">
+        <dc:Bounds x="190" y="240" width="3650" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_budget_di" bpmnElement="L_budget" isHorizontal="true">
+        <dc:Bounds x="190" y="400" width="3650" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_supplier_di" bpmnElement="L_supplier" isHorizontal="true">
+        <dc:Bounds x="190" y="560" width="3650" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_sys_di" bpmnElement="L_sys" isHorizontal="true">
+        <dc:Bounds x="190" y="720" width="3650" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Start_di" bpmnElement="Start">
+        <dc:Bounds x="267" y="142" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="257" y="182" width="56" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GwOrderMode_di" bpmnElement="GwOrderMode" isMarkerVisible="true">
+        <dc:Bounds x="450" y="135" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="440" y="189" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DraftPO_di" bpmnElement="DraftPO">
+        <dc:Bounds x="605" y="120" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DraftLines_di" bpmnElement="DraftLines">
+        <dc:Bounds x="795" y="120" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BudgetCommit_di" bpmnElement="BudgetCommit" isMarkerVisible="true">
+        <dc:Bounds x="1020" y="455" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1010" y="509" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BudgetOverride_di" bpmnElement="BudgetOverride">
+        <dc:Bounds x="1175" y="440" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Encumber_di" bpmnElement="Encumber">
+        <dc:Bounds x="1365" y="760" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="RequestPOApproval_di" bpmnElement="RequestPOApproval">
+        <dc:Bounds x="1555" y="120" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ApprovePO_di" bpmnElement="ApprovePO">
+        <dc:Bounds x="1745" y="280" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GwApproved_di" bpmnElement="GwApproved" isMarkerVisible="true">
+        <dc:Bounds x="1970" y="295" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1960" y="349" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="IssuePO_di" bpmnElement="IssuePO">
+        <dc:Bounds x="2125" y="760" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SendPO_di" bpmnElement="SendPO">
+        <dc:Bounds x="2315" y="760" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="AckPO_di" bpmnElement="AckPO">
+        <dc:Bounds x="2505" y="600" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GwAdvance_di" bpmnElement="GwAdvance" isMarkerVisible="true">
+        <dc:Bounds x="2730" y="615" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2720" y="669" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TriggerAdvance_di" bpmnElement="TriggerAdvance">
+        <dc:Bounds x="2885" y="760" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GwAmend_di" bpmnElement="GwAmend" isMarkerVisible="true">
+        <dc:Bounds x="3110" y="135" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3100" y="189" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="AmendPO_di" bpmnElement="AmendPO">
+        <dc:Bounds x="3265" y="120" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Fulfil_di" bpmnElement="Fulfil">
+        <dc:Bounds x="3455" y="760" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DraftCallOff_di" bpmnElement="DraftCallOff">
+        <dc:Bounds x="985" y="120" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CommitCallOff_di" bpmnElement="CommitCallOff">
+        <dc:Bounds x="1175" y="760" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_di" bpmnElement="End">
+        <dc:Bounds x="3687" y="782" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3677" y="822" width="56" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="f1_di" bpmnElement="f1">
+        <di:waypoint x="303" y="160" />
+        <di:waypoint x="450" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f2_di" bpmnElement="f2">
+        <di:waypoint x="500" y="160" />
+        <di:waypoint x="605" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f3_di" bpmnElement="f3">
+        <di:waypoint x="500" y="160" />
+        <di:waypoint x="985" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f4_di" bpmnElement="f4">
+        <di:waypoint x="725" y="160" />
+        <di:waypoint x="795" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f5_di" bpmnElement="f5">
+        <di:waypoint x="915" y="160" />
+        <di:waypoint x="968" y="160" />
+        <di:waypoint x="968" y="480" />
+        <di:waypoint x="1020" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f6_di" bpmnElement="f6">
+        <di:waypoint x="1070" y="480" />
+        <di:waypoint x="1218" y="480" />
+        <di:waypoint x="1218" y="800" />
+        <di:waypoint x="1365" y="800" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f7_di" bpmnElement="f7">
+        <di:waypoint x="1070" y="480" />
+        <di:waypoint x="1175" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f8_di" bpmnElement="f8">
+        <di:waypoint x="1295" y="480" />
+        <di:waypoint x="1330" y="480" />
+        <di:waypoint x="1330" y="800" />
+        <di:waypoint x="1365" y="800" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f9_di" bpmnElement="f9">
+        <di:waypoint x="1175" y="480" />
+        <di:waypoint x="1045" y="480" />
+        <di:waypoint x="1045" y="160" />
+        <di:waypoint x="915" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f10_di" bpmnElement="f10">
+        <di:waypoint x="1485" y="800" />
+        <di:waypoint x="1520" y="800" />
+        <di:waypoint x="1520" y="160" />
+        <di:waypoint x="1555" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f11_di" bpmnElement="f11">
+        <di:waypoint x="1675" y="160" />
+        <di:waypoint x="1710" y="160" />
+        <di:waypoint x="1710" y="320" />
+        <di:waypoint x="1745" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f12_di" bpmnElement="f12">
+        <di:waypoint x="1865" y="320" />
+        <di:waypoint x="1970" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f13_di" bpmnElement="f13">
+        <di:waypoint x="2020" y="320" />
+        <di:waypoint x="2073" y="320" />
+        <di:waypoint x="2073" y="800" />
+        <di:waypoint x="2125" y="800" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f14_di" bpmnElement="f14">
+        <di:waypoint x="1970" y="320" />
+        <di:waypoint x="1443" y="320" />
+        <di:waypoint x="1443" y="160" />
+        <di:waypoint x="915" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f15_di" bpmnElement="f15">
+        <di:waypoint x="2245" y="800" />
+        <di:waypoint x="2315" y="800" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f16_di" bpmnElement="f16">
+        <di:waypoint x="2435" y="800" />
+        <di:waypoint x="2470" y="800" />
+        <di:waypoint x="2470" y="640" />
+        <di:waypoint x="2505" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f17_di" bpmnElement="f17">
+        <di:waypoint x="2625" y="640" />
+        <di:waypoint x="2730" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f18_di" bpmnElement="f18">
+        <di:waypoint x="2780" y="640" />
+        <di:waypoint x="2833" y="640" />
+        <di:waypoint x="2833" y="800" />
+        <di:waypoint x="2885" y="800" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f19_di" bpmnElement="f19">
+        <di:waypoint x="2780" y="640" />
+        <di:waypoint x="2945" y="640" />
+        <di:waypoint x="2945" y="160" />
+        <di:waypoint x="3110" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f20_di" bpmnElement="f20">
+        <di:waypoint x="3005" y="800" />
+        <di:waypoint x="3058" y="800" />
+        <di:waypoint x="3058" y="160" />
+        <di:waypoint x="3110" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f21_di" bpmnElement="f21">
+        <di:waypoint x="3160" y="160" />
+        <di:waypoint x="3265" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f22_di" bpmnElement="f22">
+        <di:waypoint x="3160" y="160" />
+        <di:waypoint x="3308" y="160" />
+        <di:waypoint x="3308" y="800" />
+        <di:waypoint x="3455" y="800" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f23_di" bpmnElement="f23">
+        <di:waypoint x="3265" y="160" />
+        <di:waypoint x="2850" y="160" />
+        <di:waypoint x="2850" y="800" />
+        <di:waypoint x="2435" y="800" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f24_di" bpmnElement="f24">
+        <di:waypoint x="3575" y="800" />
+        <di:waypoint x="3687" y="800" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f25_di" bpmnElement="f25">
+        <di:waypoint x="1105" y="160" />
+        <di:waypoint x="1140" y="160" />
+        <di:waypoint x="1140" y="800" />
+        <di:waypoint x="1175" y="800" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f26_di" bpmnElement="f26">
+        <di:waypoint x="1295" y="800" />
+        <di:waypoint x="1900" y="800" />
+        <di:waypoint x="1900" y="640" />
+        <di:waypoint x="2505" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="NotePoNumber_di" bpmnElement="NotePoNumber">
+        <dc:Bounds x="160" y="920" width="1600" height="100" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Assoc_PurchaseOrder_1_di" bpmnElement="Assoc_PurchaseOrder_1">
+        <di:waypoint x="2185" y="840" />
+        <di:waypoint x="260" y="920" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="NoteSod_di" bpmnElement="NoteSod">
+        <dc:Bounds x="160" y="1030" width="1600" height="100" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Assoc_PurchaseOrder_2_di" bpmnElement="Assoc_PurchaseOrder_2">
+        <di:waypoint x="1615" y="200" />
+        <di:waypoint x="260" y="1030" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

@@ -1,0 +1,406 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+                  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+                  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+                  id="Definitions_ItemOnboarding" targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:collaboration id="Collaboration_ItemOnboarding">
+    <bpmn:participant id="Participant_ItemOnboarding" name="Unified P2P - 07 Item and Catalog Onboarding (Single, Implicit Auto-create, Bulk, Approve, Lifecycle)" processRef="Process_ItemOnboarding" />
+  </bpmn:collaboration>
+  <bpmn:process id="Process_ItemOnboarding" isExecutable="false">
+    <bpmn:laneSet id="LaneSet_ItemOnboarding">
+      <bpmn:lane id="L_buyer" name="Procurement / Buyer">
+        <bpmn:flowNodeRef>Start</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GwPath</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>CreateItem</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>SourcePriority</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>RequestApproval</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>EditItem</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Offboard</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>UploadFile</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>JoinCreate</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_appr" name="Approver">
+        <bpmn:flowNodeRef>ApproveGw</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ApproveItem</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_sys" name="Platform / System">
+        <bpmn:flowNodeRef>OnboardItem</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>OnboardedGw</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Active</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ImplicitDetect</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ImplicitCreate</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ValidateImport</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ImportGw</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>CommitImport</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="Start" name="New item needed">
+      <bpmn:documentation>Trigger: a buyer/engineer adds a catalog item, a requisition line references an item not yet in the master (implicit auto-create), or a file of items is bulk-loaded. An item follows the same lifecycle as a supplier (PENDING_ONBOARDING -&gt; PENDING_APPROVAL -&gt; ONBOARDED -&gt; OFFBOARDED, plus SUSPENDED). [SCOR OE4 Data/Information | source: RA item onboarding (08) + data-model Item]</bpmn:documentation>
+      <bpmn:outgoing>f1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:exclusiveGateway id="GwPath" name="Single, implicit, or bulk?">
+      <bpmn:documentation>Three creation paths. Expression: SINGLE = items module form (permission items.create); IMPLICIT = auto-create triggered when a requisition line itemId is a non-UUID free-typed string (no lookup, Diagram 02; permission inherited from requisition.create); BULK = file upload (permission items.import, POST /api/items/import). All converge on the lifecycle; all default status PENDING_ONBOARDING. [source: RA two creation entries (form OR implicit) + bulk]</bpmn:documentation>
+      <bpmn:incoming>f1</bpmn:incoming>
+      <bpmn:outgoing>f2</bpmn:outgoing>
+      <bpmn:outgoing>f3</bpmn:outgoing>
+      <bpmn:outgoing>f4</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="CreateItem" name="Create item (form, PENDING_ONBOARDING)">
+      <bpmn:documentation>Buyer/Engineer (permission items.create; Engineering conditional for eng items) creates the item via the module form. FIELDS: code (string, AUTO-generated, pattern DEPARTMENT/SEGMENT_CODE/SUB_SEGMENT_CODE/RUNNING_NUMBER e.g. ME/SG/SSG/000001; runningNumber = 6-digit zero-padded, max+1 parsed from existing codes (0 if none), generated in a transaction race-safe; uniqueness on (runningNumber, code); dept codes {ME|EL|AD|CP|SR|IT}, fallback DEP; segment/sub-segment default SG/SSG; configurable); shortDescription (text, mandatory); description (text, AUTO-populated = segmentDesc + subSegmentDesc + shortDescription, fallback to item code); segment (reference to Segment master, default SG); subSegment (reference, default SSG); stockUom (dropdown from UoM master, mandatory); purchaseUom (dropdown from UoM master, mandatory); hsCode (string, optional, HS tariff code - AB, for import classification/duty); category / finishedProductCategory (reference, optional, for spend reporting); standardSupplierId (reference to Supplier, optional, NULLABLE - need NOT be ONBOARDED, any existing id or null accepted); status = PENDING_ONBOARDING (default). [SCOR OE4 | source: RA item code/description + AB HS code + data-model Item]</bpmn:documentation>
+      <bpmn:incoming>f2</bpmn:incoming>
+      <bpmn:incoming>f9</bpmn:incoming>
+      <bpmn:outgoing>f5</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="SourcePriority" name="Set source priority (unique per item)">
+      <bpmn:documentation>Buyer sets the item's ItemSourcePriority set. FIELDS per entry: priority (number, ordering); sourceType (dropdown, value set {MANUFACTURED | PURCHASED | SUBCONTRACTED | STOCK_TRANSFER}). CONSTRAINTS: unique (itemId, priority) AND unique (itemId, sourceType) - each source type appears at most once per item; the set is REPLACED wholesale on update (not merged). Defines how the item is normally obtained, driving downstream make-vs-buy and PO type. [SCOR OE4 | source: RA ItemSourcePriority unique constraints + data-model]</bpmn:documentation>
+      <bpmn:incoming>f5</bpmn:incoming>
+      <bpmn:outgoing>f6</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="RequestApproval" name="Request approval (PENDING_ONBOARDING -&gt; PENDING_APPROVAL)">
+      <bpmn:documentation>Buyer submits the item for approval (permission items.update). GUARD: status MUST be PENDING_ONBOARDING (wrong status -&gt; BadRequestException, record unchanged). On success: status PENDING_ONBOARDING -&gt; PENDING_APPROVAL; ITEM_APPROVAL_REQUESTED notification emitted (ONLY here, carries getItemCode(code, runningNumber)); audit category ADMIN (no dedicated item audit category). [SCOR OE4 | source: RA item request-approval guard]</bpmn:documentation>
+      <bpmn:incoming>f6</bpmn:incoming>
+      <bpmn:incoming>f15</bpmn:incoming>
+      <bpmn:incoming>f24</bpmn:incoming>
+      <bpmn:outgoing>f7</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="ApproveGw" name="Approve item?">
+      <bpmn:documentation>Expression: APPROVE iff status = PENDING_APPROVAL AND mandatory fields complete (code, description, stockUom, purchaseUom, at least one source priority). Else -&gt; RETURN branch to complete (back to CreateItem), record stays PENDING_APPROVAL. [source: RA item.approve guard]</bpmn:documentation>
+      <bpmn:incoming>f7</bpmn:incoming>
+      <bpmn:outgoing>f8</bpmn:outgoing>
+      <bpmn:outgoing>f9</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="ApproveItem" name="Approve item (PENDING_APPROVAL -&gt; ONBOARDED)">
+      <bpmn:documentation>Approver (permission item.approve; Admin always; Engineering conditional for eng items) approves. GUARD: status MUST be PENDING_APPROVAL (else BadRequestException). On success: status PENDING_APPROVAL -&gt; ONBOARDED. No notification at approve (only at request-approval). The item is now orderable and selectable on requisitions/POs. [SCOR OE4 | source: RA item.approve guard]</bpmn:documentation>
+      <bpmn:incoming>f8</bpmn:incoming>
+      <bpmn:outgoing>f10</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="OnboardItem" name="Mark onboarded, optional ERP sync">
+      <bpmn:documentation>System finalizes the ONBOARDED item. ERP-sync toggle (isErpSynced) allowed ONLY when ONBOARDED; toggling pushes the item master to the external system of record (boundary integration). Any later edit reverts status to PENDING_APPROVAL and resets isErpSynced = false. Audit (category ADMIN) + SSE emitted. [SCOR OE4 integration boundary | source: RA lifecycle + platform-services 13]</bpmn:documentation>
+      <bpmn:incoming>f10</bpmn:incoming>
+      <bpmn:outgoing>f11</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="OnboardedGw" name="Post-onboarding lifecycle event">
+      <bpmn:documentation>Expression: EDIT (any field update) -&gt; revert to PENDING_APPROVAL (isErpSynced reset); SUSPEND (quality stop / obsolescence / supersession) -&gt; SUSPENDED (blocks new ordering of the item without offboarding); OFFBOARD (item retired) -&gt; OFFBOARDED (terminal, soft-delete, retained for history + referencing tickets); otherwise stay ONBOARDED. [source: RA lifecycle + review SUSPENDED state]</bpmn:documentation>
+      <bpmn:incoming>f11</bpmn:incoming>
+      <bpmn:outgoing>f12</bpmn:outgoing>
+      <bpmn:outgoing>f13</bpmn:outgoing>
+      <bpmn:outgoing>f14</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="EditItem" name="Edit item (reverts to PENDING_APPROVAL)">
+      <bpmn:documentation>Buyer/Engineer edits an ONBOARDED item (permission items.update). RULE: ONBOARDED or PENDING_APPROVAL -&gt; recomputed to PENDING_APPROVAL; PENDING_ONBOARDING stays. isErpSynced reset to false. The ItemSourcePriority set is replaced wholesale if changed. Re-enters the approval path (back to RequestApproval). [source: RA edit-reverts-to-pending]</bpmn:documentation>
+      <bpmn:incoming>f12</bpmn:incoming>
+      <bpmn:outgoing>f15</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Offboard" name="Offboard / suspend item">
+      <bpmn:documentation>Buyer/Admin offboards (permission item.offboard) or suspends the item. GUARD: offboard requires status = ONBOARDED. EFFECT: OFFBOARDED is TERMINAL (soft-delete; retained for history + referencing requisition lines/POs; no documented reactivation); SUSPENDED blocks new ordering but is reversible on resolution. No notification at offboard/suspend. Audit category ADMIN. [SCOR OE4 | ISO 7.5 retention | source: RA item.offboard guard + review SUSPENDED]</bpmn:documentation>
+      <bpmn:incoming>f13</bpmn:incoming>
+      <bpmn:outgoing>f16</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="Active" name="Item ONBOARDED / OFFBOARDED">
+      <bpmn:documentation>Terminal: item is ONBOARDED (orderable), SUSPENDED (blocked, reversible), or OFFBOARDED (terminal). ONBOARDED items feed requisition lines (Diagram 02), PO lines (Diagram 05), and GRN (Diagram 08). [source: build-new]</bpmn:documentation>
+      <bpmn:incoming>f14</bpmn:incoming>
+      <bpmn:incoming>f16</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="ImplicitDetect" name="Detect non-UUID requisition line itemId">
+      <bpmn:documentation>IMPLICIT branch. When a requisition is saved (Diagram 02), the System inspects each line itemId: if it is a UUID -&gt; lookup the existing item (404 rejects the whole op); if it is a free-typed string (non-UUID) -&gt; AUTO-CREATE with NO lookup. Supplier and item auto-create paths run in parallel and join before linking + postValueSync. [source: RA e05 auto-create from non-UUID + raphe-edge-cases]</bpmn:documentation>
+      <bpmn:incoming>f3</bpmn:incoming>
+      <bpmn:outgoing>f17</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="ImplicitCreate" name="Auto-create item from line (PENDING_ONBOARDING)">
+      <bpmn:documentation>System auto-creates the item from the requisition line: description = the free-typed string; stockUom + purchaseUom = the line UoM; code generated DEP/SG/SSG/000001-style (6-digit running, race-safe in transaction); status = PENDING_ONBOARDING (unapproved); no source priority required at creation. The unapproved item is usable on the requisition immediately but flows through the standard approval path to become ONBOARDED. [source: RA e05 + raphe-supplier-item-onboarding]</bpmn:documentation>
+      <bpmn:incoming>f17</bpmn:incoming>
+      <bpmn:outgoing>f18</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="UploadFile" name="Upload item import file">
+      <bpmn:documentation>BULK branch. Buyer/Admin uploads an XLSX/CSV of items (permission items.import). Same generic import pipeline as all masters. Parsed: file readable? sheet present? has data rows? [source: RA bulk import + platform-services 7]</bpmn:documentation>
+      <bpmn:incoming>f4</bpmn:incoming>
+      <bpmn:incoming>f22</bpmn:incoming>
+      <bpmn:outgoing>f19</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="ValidateImport" name="Validate header + rows (accumulate all errors)">
+      <bpmn:documentation>System validates: exact header (no missing/extra columns, order-insensitive); iterate rows (header = row 1, first data = row 2); per row validate fields/types/enums + resolve foreign refs by natural key; ITEM IMPORT validates every standardSupplierCode resolves (else whole import fails); ACCUMULATE ALL row errors (never fail-fast). Natural key for upsert = code (new items get incremented runningNumber + generated code). [source: RA bulk import e06 + raphe-bulk-import]</bpmn:documentation>
+      <bpmn:incoming>f19</bpmn:incoming>
+      <bpmn:outgoing>f20</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="ImportGw" name="All rows valid?">
+      <bpmn:documentation>Expression: zero accumulated errors -&gt; COMMIT; any error -&gt; throw ONE BadRequestException listing every {rowNumber, reason}, write NOTHING (all-or-nothing); operator fixes the file and re-uploads. [source: RA e06]</bpmn:documentation>
+      <bpmn:incoming>f20</bpmn:incoming>
+      <bpmn:outgoing>f21</bpmn:outgoing>
+      <bpmn:outgoing>f22</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="CommitImport" name="Upsert by code in one transaction (PENDING_ONBOARDING)">
+      <bpmn:documentation>System opens ONE transaction, upserts each row by natural key code (match -&gt; update; else create with generated code + incremented runningNumber). Duplicate keys within one file resolve last-wins. Commit-all or roll-back-all (late DB failure rolls back fully, audit NOT emitted). Imported items default PENDING_ONBOARDING, isErpSynced false. On success: audit (category ADMIN), returns {created, updated}. [source: RA e06 + raphe-bulk-import]</bpmn:documentation>
+      <bpmn:incoming>f21</bpmn:incoming>
+      <bpmn:outgoing>f23</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="JoinCreate" name="New items join lifecycle">
+      <bpmn:documentation>Implicitly auto-created and bulk-imported items (PENDING_ONBOARDING) merge into the standard lifecycle: each still requires (if not already) source priority + request-approval -&gt; approve to reach ONBOARDED. Convenience routing node joining the happy path. [source: convergence of implicit + bulk into lifecycle]</bpmn:documentation>
+      <bpmn:incoming>f18</bpmn:incoming>
+      <bpmn:incoming>f23</bpmn:incoming>
+      <bpmn:outgoing>f24</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="f1" sourceRef="Start" targetRef="GwPath" />
+    <bpmn:sequenceFlow id="f2" name="single (form)" sourceRef="GwPath" targetRef="CreateItem" />
+    <bpmn:sequenceFlow id="f3" name="implicit (requisition line)" sourceRef="GwPath" targetRef="ImplicitDetect" />
+    <bpmn:sequenceFlow id="f4" name="bulk import" sourceRef="GwPath" targetRef="UploadFile" />
+    <bpmn:sequenceFlow id="f5" sourceRef="CreateItem" targetRef="SourcePriority" />
+    <bpmn:sequenceFlow id="f6" sourceRef="SourcePriority" targetRef="RequestApproval" />
+    <bpmn:sequenceFlow id="f7" sourceRef="RequestApproval" targetRef="ApproveGw" />
+    <bpmn:sequenceFlow id="f8" name="complete + approve" sourceRef="ApproveGw" targetRef="ApproveItem" />
+    <bpmn:sequenceFlow id="f9" name="incomplete, return" sourceRef="ApproveGw" targetRef="CreateItem" />
+    <bpmn:sequenceFlow id="f10" sourceRef="ApproveItem" targetRef="OnboardItem" />
+    <bpmn:sequenceFlow id="f11" sourceRef="OnboardItem" targetRef="OnboardedGw" />
+    <bpmn:sequenceFlow id="f12" name="edit" sourceRef="OnboardedGw" targetRef="EditItem" />
+    <bpmn:sequenceFlow id="f13" name="suspend / offboard" sourceRef="OnboardedGw" targetRef="Offboard" />
+    <bpmn:sequenceFlow id="f14" name="stay onboarded" sourceRef="OnboardedGw" targetRef="Active" />
+    <bpmn:sequenceFlow id="f15" name="reverts to PENDING_APPROVAL" sourceRef="EditItem" targetRef="RequestApproval" />
+    <bpmn:sequenceFlow id="f16" sourceRef="Offboard" targetRef="Active" />
+    <bpmn:sequenceFlow id="f17" sourceRef="ImplicitDetect" targetRef="ImplicitCreate" />
+    <bpmn:sequenceFlow id="f18" sourceRef="ImplicitCreate" targetRef="JoinCreate" />
+    <bpmn:sequenceFlow id="f19" sourceRef="UploadFile" targetRef="ValidateImport" />
+    <bpmn:sequenceFlow id="f20" sourceRef="ValidateImport" targetRef="ImportGw" />
+    <bpmn:sequenceFlow id="f21" name="all rows valid" sourceRef="ImportGw" targetRef="CommitImport" />
+    <bpmn:sequenceFlow id="f22" name="errors, fix + re-upload" sourceRef="ImportGw" targetRef="UploadFile" />
+    <bpmn:sequenceFlow id="f23" sourceRef="CommitImport" targetRef="JoinCreate" />
+    <bpmn:sequenceFlow id="f24" sourceRef="JoinCreate" targetRef="RequestApproval" />
+    <bpmn:textAnnotation id="NoteCode">
+      <bpmn:text>Item code pattern (configurable): DEPARTMENT/SEGMENT_CODE/SUB_SEGMENT_CODE/RUNNING_NUMBER e.g. ME/SG/SSG/000001. runningNumber = 6-digit zero-padded, max+1 from existing codes (0 if none), generated transactionally (race-safe); uniqueness on (runningNumber, code). Dept codes {ME|EL|AD|CP|SR|IT}, fallback DEP; segment/sub-segment default SG/SSG. description auto-populated = segmentDesc + subSegmentDesc + shortDescription, fallback to item code. ItemSourcePriority: sourceType in {MANUFACTURED|PURCHASED|SUBCONTRACTED|STOCK_TRANSFER}, unique (itemId, priority) and (itemId, sourceType), replaced as a set on update. HS code optional (import duty classification). standardSupplier need NOT be ONBOARDED (any id or null accepted).</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Assoc_ItemOnboarding_1" sourceRef="OnboardItem" targetRef="NoteCode" />
+    <bpmn:textAnnotation id="NotePaths">
+      <bpmn:text>Three creation paths converge on one lifecycle (PENDING_ONBOARDING -&gt; PENDING_APPROVAL -&gt; ONBOARDED -&gt; OFFBOARDED, plus SUSPENDED): single (form), implicit (auto-create from a non-UUID requisition line itemId, no lookup, description = string, UoM from line), bulk (import). Lifecycle rules mirror suppliers: request-approval guard status=PENDING_ONBOARDING; approve guard status=PENDING_APPROVAL; offboard guard status=ONBOARDED; edit reverts ONBOARDED/PENDING_APPROVAL to PENDING_APPROVAL with isErpSynced reset; ERP-sync toggle only when ONBOARDED; ITEM_APPROVAL_REQUESTED notification only at request-approval; item audit under category ADMIN. Bulk = exact header, accumulate all errors, all-or-nothing, upsert by code, every standardSupplierCode must resolve.</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Assoc_ItemOnboarding_2" sourceRef="CommitImport" targetRef="NotePaths" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagram_ItemOnboarding">
+    <bpmndi:BPMNPlane id="Plane_ItemOnboarding" bpmnElement="Collaboration_ItemOnboarding">
+      <bpmndi:BPMNShape id="Participant_ItemOnboarding_di" bpmnElement="Participant_ItemOnboarding" isHorizontal="true">
+        <dc:Bounds x="160" y="80" width="2350" height="480" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_buyer_di" bpmnElement="L_buyer" isHorizontal="true">
+        <dc:Bounds x="190" y="80" width="2320" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_appr_di" bpmnElement="L_appr" isHorizontal="true">
+        <dc:Bounds x="190" y="240" width="2320" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_sys_di" bpmnElement="L_sys" isHorizontal="true">
+        <dc:Bounds x="190" y="400" width="2320" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Start_di" bpmnElement="Start">
+        <dc:Bounds x="267" y="142" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="257" y="182" width="56" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GwPath_di" bpmnElement="GwPath" isMarkerVisible="true">
+        <dc:Bounds x="450" y="135" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="440" y="189" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CreateItem_di" bpmnElement="CreateItem">
+        <dc:Bounds x="605" y="120" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SourcePriority_di" bpmnElement="SourcePriority">
+        <dc:Bounds x="795" y="120" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="RequestApproval_di" bpmnElement="RequestApproval">
+        <dc:Bounds x="985" y="120" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ApproveGw_di" bpmnElement="ApproveGw" isMarkerVisible="true">
+        <dc:Bounds x="1210" y="295" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1200" y="349" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ApproveItem_di" bpmnElement="ApproveItem">
+        <dc:Bounds x="1365" y="280" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="OnboardItem_di" bpmnElement="OnboardItem">
+        <dc:Bounds x="1555" y="440" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="OnboardedGw_di" bpmnElement="OnboardedGw" isMarkerVisible="true">
+        <dc:Bounds x="1780" y="455" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1770" y="509" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EditItem_di" bpmnElement="EditItem">
+        <dc:Bounds x="1935" y="120" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Offboard_di" bpmnElement="Offboard">
+        <dc:Bounds x="2125" y="120" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Active_di" bpmnElement="Active">
+        <dc:Bounds x="2357" y="462" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2347" y="502" width="56" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ImplicitDetect_di" bpmnElement="ImplicitDetect">
+        <dc:Bounds x="605" y="440" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ImplicitCreate_di" bpmnElement="ImplicitCreate">
+        <dc:Bounds x="795" y="440" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UploadFile_di" bpmnElement="UploadFile">
+        <dc:Bounds x="1175" y="120" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ValidateImport_di" bpmnElement="ValidateImport">
+        <dc:Bounds x="985" y="440" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ImportGw_di" bpmnElement="ImportGw" isMarkerVisible="true">
+        <dc:Bounds x="1210" y="455" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1200" y="509" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CommitImport_di" bpmnElement="CommitImport">
+        <dc:Bounds x="1365" y="440" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="JoinCreate_di" bpmnElement="JoinCreate" isMarkerVisible="true">
+        <dc:Bounds x="1590" y="135" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1580" y="189" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="f1_di" bpmnElement="f1">
+        <di:waypoint x="303" y="160" />
+        <di:waypoint x="450" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f2_di" bpmnElement="f2">
+        <di:waypoint x="500" y="160" />
+        <di:waypoint x="605" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f3_di" bpmnElement="f3">
+        <di:waypoint x="500" y="160" />
+        <di:waypoint x="553" y="160" />
+        <di:waypoint x="553" y="480" />
+        <di:waypoint x="605" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f4_di" bpmnElement="f4">
+        <di:waypoint x="500" y="160" />
+        <di:waypoint x="1175" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f5_di" bpmnElement="f5">
+        <di:waypoint x="725" y="160" />
+        <di:waypoint x="795" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f6_di" bpmnElement="f6">
+        <di:waypoint x="915" y="160" />
+        <di:waypoint x="985" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f7_di" bpmnElement="f7">
+        <di:waypoint x="1105" y="160" />
+        <di:waypoint x="1158" y="160" />
+        <di:waypoint x="1158" y="320" />
+        <di:waypoint x="1210" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f8_di" bpmnElement="f8">
+        <di:waypoint x="1260" y="320" />
+        <di:waypoint x="1365" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f9_di" bpmnElement="f9">
+        <di:waypoint x="1210" y="320" />
+        <di:waypoint x="968" y="320" />
+        <di:waypoint x="968" y="160" />
+        <di:waypoint x="725" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f10_di" bpmnElement="f10">
+        <di:waypoint x="1485" y="320" />
+        <di:waypoint x="1520" y="320" />
+        <di:waypoint x="1520" y="480" />
+        <di:waypoint x="1555" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f11_di" bpmnElement="f11">
+        <di:waypoint x="1675" y="480" />
+        <di:waypoint x="1780" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f12_di" bpmnElement="f12">
+        <di:waypoint x="1830" y="480" />
+        <di:waypoint x="1883" y="480" />
+        <di:waypoint x="1883" y="160" />
+        <di:waypoint x="1935" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f13_di" bpmnElement="f13">
+        <di:waypoint x="1830" y="480" />
+        <di:waypoint x="1978" y="480" />
+        <di:waypoint x="1978" y="160" />
+        <di:waypoint x="2125" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f14_di" bpmnElement="f14">
+        <di:waypoint x="1830" y="480" />
+        <di:waypoint x="2357" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f15_di" bpmnElement="f15">
+        <di:waypoint x="1995" y="200" />
+        <di:waypoint x="1995" y="230" />
+        <di:waypoint x="1045" y="230" />
+        <di:waypoint x="1045" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f16_di" bpmnElement="f16">
+        <di:waypoint x="2245" y="160" />
+        <di:waypoint x="2301" y="160" />
+        <di:waypoint x="2301" y="480" />
+        <di:waypoint x="2357" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f17_di" bpmnElement="f17">
+        <di:waypoint x="725" y="480" />
+        <di:waypoint x="795" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f18_di" bpmnElement="f18">
+        <di:waypoint x="915" y="480" />
+        <di:waypoint x="1253" y="480" />
+        <di:waypoint x="1253" y="160" />
+        <di:waypoint x="1590" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f19_di" bpmnElement="f19">
+        <di:waypoint x="1175" y="160" />
+        <di:waypoint x="1140" y="160" />
+        <di:waypoint x="1140" y="480" />
+        <di:waypoint x="1105" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f20_di" bpmnElement="f20">
+        <di:waypoint x="1105" y="480" />
+        <di:waypoint x="1210" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f21_di" bpmnElement="f21">
+        <di:waypoint x="1260" y="480" />
+        <di:waypoint x="1365" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f22_di" bpmnElement="f22">
+        <di:waypoint x="1260" y="480" />
+        <di:waypoint x="1280" y="480" />
+        <di:waypoint x="1280" y="160" />
+        <di:waypoint x="1175" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f23_di" bpmnElement="f23">
+        <di:waypoint x="1485" y="480" />
+        <di:waypoint x="1538" y="480" />
+        <di:waypoint x="1538" y="160" />
+        <di:waypoint x="1590" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f24_di" bpmnElement="f24">
+        <di:waypoint x="1615" y="185" />
+        <di:waypoint x="1615" y="215" />
+        <di:waypoint x="1045" y="215" />
+        <di:waypoint x="1045" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="NoteCode_di" bpmnElement="NoteCode">
+        <dc:Bounds x="160" y="600" width="1600" height="100" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Assoc_ItemOnboarding_1_di" bpmnElement="Assoc_ItemOnboarding_1">
+        <di:waypoint x="1615" y="520" />
+        <di:waypoint x="260" y="600" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="NotePaths_di" bpmnElement="NotePaths">
+        <dc:Bounds x="160" y="710" width="1600" height="100" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Assoc_ItemOnboarding_2_di" bpmnElement="Assoc_ItemOnboarding_2">
+        <di:waypoint x="1425" y="520" />
+        <di:waypoint x="260" y="710" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

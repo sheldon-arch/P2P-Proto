@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+                  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+                  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+                  id="Definitions_BudgetCommitment" targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:collaboration id="Collaboration_BudgetCommitment">
+    <bpmn:participant id="Participant_BudgetCommitment" name="Edge Case e02 - Budget Check and Commitment (Encumbrance Accounting)" processRef="Process_BudgetCommitment" />
+  </bpmn:collaboration>
+  <bpmn:process id="Process_BudgetCommitment" isExecutable="false">
+    <bpmn:laneSet id="LaneSet_BudgetCommitment">
+      <bpmn:lane id="L_req" name="Requester">
+        <bpmn:flowNodeRef>Start</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Revise</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_budget" name="Budget Owner">
+        <bpmn:flowNodeRef>GwOverride</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_buyer" name="Procurement / Buyer">
+        <bpmn:flowNodeRef>POIssue</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_sys" name="Platform / System">
+        <bpmn:flowNodeRef>SoftCheck</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GwSoft</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Proceed</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GwHard</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>HoldCommit</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>HardCommit</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GrInvoice</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Relieve</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Report</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>End</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="Start" name="Requisition submitted">
+      <bpmn:documentation>Entry. A requisition is submitted with a value in base currency (totalAmountInBase). This edge case isolates the budget/commitment lifecycle: soft check at requisition, hard commit at PO issue, relief at GR/invoice. Note: approval limits are NOT budget control - a real operation checks funds and encumbers them separately. [SCOR OE11 Enterprise Business Planning | source: data-model Budget/Commitment build-new + best-of-decisions finance control]</bpmn:documentation>
+      <bpmn:outgoing>f1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="SoftCheck" name="Soft budget check (warn if over)">
+      <bpmn:documentation>On submit, the system reads the Budget for the requisition's costCenterId/projectId + period {costCenterId, period, amount, availableAmount, committedAmount, actualAmount}. SOFT check = compares requisition value &lt;= availableAmount; it WARNS but does not block. No ledger change is made at requisition (soft only). The check is informational so the requester/Budget Owner can decide before sourcing effort is spent. [SCOR OE11 | source: data-model 'Budget check fires at requisition (soft)' + platform-services budget service]</bpmn:documentation>
+      <bpmn:incoming>f1</bpmn:incoming>
+      <bpmn:incoming>f7</bpmn:incoming>
+      <bpmn:outgoing>f2</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="GwSoft" name="value &lt;= availableAmount?">
+      <bpmn:documentation>Precise gate. requisitionValueInBase &lt;= Budget.availableAmount -&gt; within budget, proceed (no warning). requisitionValueInBase &gt; Budget.availableAmount -&gt; over budget: a non-blocking warning is shown and the over-budget override gateway is invoked (routes to the Budget Owner). [SCOR OE11 | source: data-model soft-check warns if over]</bpmn:documentation>
+      <bpmn:incoming>f2</bpmn:incoming>
+      <bpmn:outgoing>f3</bpmn:outgoing>
+      <bpmn:outgoing>f4</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="GwOverride" name="Budget Owner override approved?">
+      <bpmn:documentation>Over-budget override gateway. The Budget Owner (budget.approve, budget gate) reviews the over-budget requisition. Approve override -&gt; overrideApprovedBy + overrideReason captured, the event is LOGGED to the audit (category: budget), and the requisition proceeds; the over-budget condition is carried forward so the hard commit at PO can use the override guard. Reject -&gt; the requisition is revised (reduce qty/price/scope) or cancelled; it does not proceed over budget without an approved, logged override. [SCOR OE11 | source: data-model 'guard: available &gt;= amount or override-with-approval' + role-permission-matrix budget.approve]</bpmn:documentation>
+      <bpmn:incoming>f4</bpmn:incoming>
+      <bpmn:incoming>f12</bpmn:incoming>
+      <bpmn:outgoing>f5</bpmn:outgoing>
+      <bpmn:outgoing>f6</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="Revise" name="Revise requisition (reduce scope)">
+      <bpmn:documentation>On a rejected override, the requester edits the requisition (lower quantity, lower unit price, split, or change cost-center) and resubmits, re-entering the soft check. The requisition identifier is unchanged (immutable across delays). [SCOR OE11 | source: data-model requisition immutable identifier + e02 revise loop]</bpmn:documentation>
+      <bpmn:incoming>f6</bpmn:incoming>
+      <bpmn:outgoing>f7</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="Proceed" name="Proceed to sourcing / PO (carry override flag)">
+      <bpmn:documentation>The requisition proceeds through approval and sourcing (diagrams 03/04). The over-budget override flag (if any) and overrideReason are carried on the requisition so the hard-commit guard at PO issue can honour the approved override rather than re-blocking. Still no ledger movement at this point - the soft check never encumbers. [SCOR OE11 | source: data-model 'hard commit happens later at PO issue']</bpmn:documentation>
+      <bpmn:incoming>f3</bpmn:incoming>
+      <bpmn:incoming>f5</bpmn:incoming>
+      <bpmn:outgoing>f8</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="POIssue" name="Buyer issues PO">
+      <bpmn:documentation>Buyer issues the PO (po.issue) from the requisition + selected quote, with PO value in base currency (poValueInBase). PO issue is the point of HARD budget commitment. Buyer cannot approve own PO (SoD). The PO state guard also requires supplier ONBOARDED. [SCOR S2.1 / OE11 | ISO 8.4.3 | source: data-model PO state machine 'issued (guard: budget committed, supplier ONBOARDED)']</bpmn:documentation>
+      <bpmn:incoming>f8</bpmn:incoming>
+      <bpmn:outgoing>f9</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="GwHard" name="availableAmount &gt;= poValue OR override approved?">
+      <bpmn:documentation>Hard-commit guard. Budget.availableAmount &gt;= poValueInBase -&gt; commit allowed. availableAmount &lt; poValueInBase AND an approved+logged Budget Owner override exists -&gt; commit allowed under override. availableAmount &lt; poValueInBase AND no override -&gt; commit BLOCKED; the PO cannot issue until a Budget Owner override is obtained or the PO value is reduced. This is the over-commitment prevention guard. [SCOR OE11 | source: data-model 'PO issue HARD commit ... guard: available &gt;= amount or override-with-approval']</bpmn:documentation>
+      <bpmn:incoming>f9</bpmn:incoming>
+      <bpmn:outgoing>f10</bpmn:outgoing>
+      <bpmn:outgoing>f11</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="HoldCommit" name="Block commit - request override / reduce PO">
+      <bpmn:documentation>Commit blocked. The PO issue is held; the buyer must either obtain a logged Budget Owner override (routes to the override gateway) or reduce the PO value (re-source / re-negotiate / split). No commitment is created and no PO is issued while blocked. [SCOR OE11 | source: data-model over-commitment prevention]</bpmn:documentation>
+      <bpmn:incoming>f11</bpmn:incoming>
+      <bpmn:outgoing>f12</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="HardCommit" name="Hard commit (encumber budget, create Commitment)">
+      <bpmn:documentation>Encumbrance posting at PO issue: Budget.availableAmount -= poValueInBase; Budget.committedAmount += poValueInBase. Create Commitment {budgetId, poId, amount = poValueInBase, status = 'committed'}. This reserves funds against the budget so two POs cannot spend the same money. The posting is a natural GL integration point (commitment/encumbrance to the external system of record). Emits audit + SSE. [SCOR OE11 / OE4 | source: data-model Commitment 'created at PO issue (encumbers budget) ... available -= amount, committed += amount']</bpmn:documentation>
+      <bpmn:incoming>f10</bpmn:incoming>
+      <bpmn:outgoing>f13</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="GrInvoice" name="GR / invoice posted">
+      <bpmn:documentation>Goods receipt (GRN) or matched invoice is posted for the PO line. This is the relief trigger. At GR, a GR/IR accrual is also raised (separate clearing flow); here we focus on moving the encumbrance to actual spend. Partial GR relieves the committed amount pro-rata to the received/invoiced value. [SCOR S2.4 -&gt; S2.7 / OE11 | source: data-model 'relieved at GR/invoice']</bpmn:documentation>
+      <bpmn:incoming>f13</bpmn:incoming>
+      <bpmn:outgoing>f14</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Relieve" name="Relieve commitment to actual">
+      <bpmn:documentation>Relief posting: Budget.committedAmount -= reliefAmount; Budget.actualAmount += reliefAmount; set Commitment.status = 'relieved' (or partially relieved for a partial GR/invoice). availableAmount is unchanged at relief (the funds were already encumbered at commit; relief only moves committed -&gt; actual). For a returned quantity (diagram 11), the relief is reversed for that quantity. Emits audit + SSE. [SCOR OE11 | source: data-model 'GR/invoice: committed -= amount, actual += amount -&gt; relieved']</bpmn:documentation>
+      <bpmn:incoming>f14</bpmn:incoming>
+      <bpmn:outgoing>f15</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Report" name="Commitment-vs-actual reporting">
+      <bpmn:documentation>The Budget carries availableAmount / committedAmount / actualAmount through the cycle, enabling commitment-vs-actual reporting per cost-center/period: open commitments (committed not yet relieved), actual spend, remaining available, and over-commitment exceptions. Feeds the cost analytics (diagram 12) and the Budget Owner / Finance views. [SCOR OE11 / OE3 | source: data-model 'Enables commitment-vs-actual reporting' + platform-services budget service]</bpmn:documentation>
+      <bpmn:incoming>f15</bpmn:incoming>
+      <bpmn:outgoing>f16</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="End" name="Budget reconciled to actual">
+      <bpmn:documentation>Terminal. Soft-checked at requisition, hard-committed (encumbered) at PO, relieved to actual at GR/invoice, with commitment-vs-actual reporting. Over-commitment prevented; every posting audited. [SCOR OE11 | source: build-new finance control]</bpmn:documentation>
+      <bpmn:incoming>f16</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="f1" sourceRef="Start" targetRef="SoftCheck" />
+    <bpmn:sequenceFlow id="f2" sourceRef="SoftCheck" targetRef="GwSoft" />
+    <bpmn:sequenceFlow id="f3" name="value &lt;= availableAmount (within budget)" sourceRef="GwSoft" targetRef="Proceed" />
+    <bpmn:sequenceFlow id="f4" name="value &gt; availableAmount (warn, over budget)" sourceRef="GwSoft" targetRef="GwOverride" />
+    <bpmn:sequenceFlow id="f5" name="override approved (logged)" sourceRef="GwOverride" targetRef="Proceed" />
+    <bpmn:sequenceFlow id="f6" name="override rejected" sourceRef="GwOverride" targetRef="Revise" />
+    <bpmn:sequenceFlow id="f7" sourceRef="Revise" targetRef="SoftCheck" />
+    <bpmn:sequenceFlow id="f8" sourceRef="Proceed" targetRef="POIssue" />
+    <bpmn:sequenceFlow id="f9" sourceRef="POIssue" targetRef="GwHard" />
+    <bpmn:sequenceFlow id="f10" name="available &gt;= poValue OR override approved" sourceRef="GwHard" targetRef="HardCommit" />
+    <bpmn:sequenceFlow id="f11" name="available &lt; poValue AND no override" sourceRef="GwHard" targetRef="HoldCommit" />
+    <bpmn:sequenceFlow id="f12" name="request override or reduce PO" sourceRef="HoldCommit" targetRef="GwOverride" />
+    <bpmn:sequenceFlow id="f13" sourceRef="HardCommit" targetRef="GrInvoice" />
+    <bpmn:sequenceFlow id="f14" sourceRef="GrInvoice" targetRef="Relieve" />
+    <bpmn:sequenceFlow id="f15" sourceRef="Relieve" targetRef="Report" />
+    <bpmn:sequenceFlow id="f16" sourceRef="Report" targetRef="End" />
+    <bpmn:textAnnotation id="NoteBudget">
+      <bpmn:text>Budget/commitment lifecycle (encumbrance accounting), neither company had it; approval limits are NOT budget control. Soft check at requisition warns if value &gt; availableAmount but never blocks and never posts. Over-budget override gateway: Budget Owner approves (logged) or the requisition is revised. Hard commit at PO issue: guard availableAmount &gt;= poValue OR approved override; on commit availableAmount -= amount and committedAmount += amount and a Commitment record is created. Relief at GR/invoice: committedAmount -= amount and actualAmount += amount; availableAmount unchanged at relief. Commitment-vs-actual reporting per cost-center/period. A returned quantity reverses the relief.</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Assoc_BudgetCommitment_1" sourceRef="HardCommit" targetRef="NoteBudget" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagram_BudgetCommitment">
+    <bpmndi:BPMNPlane id="Plane_BudgetCommitment" bpmnElement="Collaboration_BudgetCommitment">
+      <bpmndi:BPMNShape id="Participant_BudgetCommitment_di" bpmnElement="Participant_BudgetCommitment" isHorizontal="true">
+        <dc:Bounds x="160" y="80" width="2730" height="640" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_req_di" bpmnElement="L_req" isHorizontal="true">
+        <dc:Bounds x="190" y="80" width="2700" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_budget_di" bpmnElement="L_budget" isHorizontal="true">
+        <dc:Bounds x="190" y="240" width="2700" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_buyer_di" bpmnElement="L_buyer" isHorizontal="true">
+        <dc:Bounds x="190" y="400" width="2700" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_sys_di" bpmnElement="L_sys" isHorizontal="true">
+        <dc:Bounds x="190" y="560" width="2700" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Start_di" bpmnElement="Start">
+        <dc:Bounds x="267" y="142" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="257" y="182" width="56" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SoftCheck_di" bpmnElement="SoftCheck">
+        <dc:Bounds x="415" y="600" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GwSoft_di" bpmnElement="GwSoft" isMarkerVisible="true">
+        <dc:Bounds x="640" y="615" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="630" y="669" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GwOverride_di" bpmnElement="GwOverride" isMarkerVisible="true">
+        <dc:Bounds x="830" y="295" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="820" y="349" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Revise_di" bpmnElement="Revise">
+        <dc:Bounds x="985" y="120" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Proceed_di" bpmnElement="Proceed">
+        <dc:Bounds x="1175" y="600" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="POIssue_di" bpmnElement="POIssue">
+        <dc:Bounds x="1365" y="440" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GwHard_di" bpmnElement="GwHard" isMarkerVisible="true">
+        <dc:Bounds x="1590" y="615" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1580" y="669" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="HoldCommit_di" bpmnElement="HoldCommit">
+        <dc:Bounds x="1745" y="600" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="HardCommit_di" bpmnElement="HardCommit">
+        <dc:Bounds x="1935" y="600" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GrInvoice_di" bpmnElement="GrInvoice">
+        <dc:Bounds x="2125" y="600" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Relieve_di" bpmnElement="Relieve">
+        <dc:Bounds x="2315" y="600" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Report_di" bpmnElement="Report">
+        <dc:Bounds x="2505" y="600" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_di" bpmnElement="End">
+        <dc:Bounds x="2737" y="622" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2727" y="662" width="56" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="f1_di" bpmnElement="f1">
+        <di:waypoint x="303" y="160" />
+        <di:waypoint x="359" y="160" />
+        <di:waypoint x="359" y="640" />
+        <di:waypoint x="415" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f2_di" bpmnElement="f2">
+        <di:waypoint x="535" y="640" />
+        <di:waypoint x="640" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f3_di" bpmnElement="f3">
+        <di:waypoint x="690" y="640" />
+        <di:waypoint x="1175" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f4_di" bpmnElement="f4">
+        <di:waypoint x="690" y="640" />
+        <di:waypoint x="760" y="640" />
+        <di:waypoint x="760" y="320" />
+        <di:waypoint x="830" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f5_di" bpmnElement="f5">
+        <di:waypoint x="880" y="320" />
+        <di:waypoint x="1028" y="320" />
+        <di:waypoint x="1028" y="640" />
+        <di:waypoint x="1175" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f6_di" bpmnElement="f6">
+        <di:waypoint x="880" y="320" />
+        <di:waypoint x="933" y="320" />
+        <di:waypoint x="933" y="160" />
+        <di:waypoint x="985" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f7_di" bpmnElement="f7">
+        <di:waypoint x="985" y="160" />
+        <di:waypoint x="760" y="160" />
+        <di:waypoint x="760" y="640" />
+        <di:waypoint x="535" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f8_di" bpmnElement="f8">
+        <di:waypoint x="1295" y="640" />
+        <di:waypoint x="1330" y="640" />
+        <di:waypoint x="1330" y="480" />
+        <di:waypoint x="1365" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f9_di" bpmnElement="f9">
+        <di:waypoint x="1485" y="480" />
+        <di:waypoint x="1538" y="480" />
+        <di:waypoint x="1538" y="640" />
+        <di:waypoint x="1590" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f10_di" bpmnElement="f10">
+        <di:waypoint x="1640" y="640" />
+        <di:waypoint x="1935" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f11_di" bpmnElement="f11">
+        <di:waypoint x="1640" y="640" />
+        <di:waypoint x="1745" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f12_di" bpmnElement="f12">
+        <di:waypoint x="1745" y="640" />
+        <di:waypoint x="1313" y="640" />
+        <di:waypoint x="1313" y="320" />
+        <di:waypoint x="880" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f13_di" bpmnElement="f13">
+        <di:waypoint x="2055" y="640" />
+        <di:waypoint x="2125" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f14_di" bpmnElement="f14">
+        <di:waypoint x="2245" y="640" />
+        <di:waypoint x="2315" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f15_di" bpmnElement="f15">
+        <di:waypoint x="2435" y="640" />
+        <di:waypoint x="2505" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f16_di" bpmnElement="f16">
+        <di:waypoint x="2625" y="640" />
+        <di:waypoint x="2737" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="NoteBudget_di" bpmnElement="NoteBudget">
+        <dc:Bounds x="160" y="760" width="1600" height="100" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Assoc_BudgetCommitment_1_di" bpmnElement="Assoc_BudgetCommitment_1">
+        <di:waypoint x="1995" y="680" />
+        <di:waypoint x="260" y="760" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

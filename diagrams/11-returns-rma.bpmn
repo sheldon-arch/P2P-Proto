@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+                  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+                  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+                  id="Definitions_ReturnsRma" targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:collaboration id="Collaboration_ReturnsRma">
+    <bpmn:participant id="Participant_ReturnsRma" name="Returns and RMA (SCOR S4 Source Return)" processRef="Process_ReturnsRma" />
+  </bpmn:collaboration>
+  <bpmn:process id="Process_ReturnsRma" isExecutable="false">
+    <bpmn:laneSet id="LaneSet_ReturnsRma">
+      <bpmn:lane id="L_qc" name="Quality">
+        <bpmn:flowNodeRef>Start</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Initiate</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Identify</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_buyer" name="Procurement / Buyer">
+        <bpmn:flowNodeRef>Authorize</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GwAuth</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Declined</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_supplier" name="Supplier / Vendor">
+        <bpmn:flowNodeRef>Receipt</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_recv" name="Receiving / Warehouse">
+        <bpmn:flowNodeRef>Schedule</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_finmaker" name="Finance - Maker">
+        <bpmn:flowNodeRef>GwAdjust</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>CreditNote</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DebitNote</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_sys" name="Platform / System">
+        <bpmn:flowNodeRef>Close</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>FeedNcr</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>End</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="Start" name="Return trigger raised">
+      <bpmn:documentation>Entry. Two triggers: (a) an NCR disposition is set to 'return' at receiving inspection or post-GRN (link: e04 / diagram 08 QC gate), or (b) a buyer-initiated return outside the NCR path (over-delivery beyond PO tolerance, wrong item shipped, supplier-acknowledged error). The NCR-triggered path carries linkedNcrId; the buyer-initiated path has linkedNcrId = null. [SCOR S4.1 Initiate a Source Return | ISO 8.7 control of nonconforming outputs | source: build-new + AB NCR flow]</bpmn:documentation>
+      <bpmn:outgoing>f1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:userTask id="Initiate" name="S4.1 Initiate source return">
+      <bpmn:documentation>Initiator creates the Return/RMA record. Fields: returnId (auto, configurable pattern e.g. RET/#####, immutable), sourceOrderId (PO reference, mandatory, resolves to PO header), supplierId (auto from PO, read-only), linkedNcrId (mandatory if trigger = NCR disposition 'return', else null), initiatedBy (auto = current user), initiatedAt (auto timestamp), returnType dropdown {full-lot | partial-lot | single-line}, lines [{poLineId, itemId, quantityToReturn (&gt;0 and &lt;= received quantity), unitPrice (auto from PO line), reasonCode}]. Permission return.initiate held by Quality (C: initiate on NCR), Engineering (C: initiate), Buyer (G: handle); Supplier may only respond (C: return goods). On submit, Return status = raised. SSE return.created emitted; audit logged (category: return). [SCOR S4.1 | ISO 8.7 | source: data-model Return/RMA + role-permission-matrix return.initiate]</bpmn:documentation>
+      <bpmn:incoming>f1</bpmn:incoming>
+      <bpmn:outgoing>f2</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Authorize" name="S4.2 Request / authorize product return">
+      <bpmn:documentation>Buyer (return.authorize) requests authorization from the supplier and records the supplier-issued RMA. Fields: rmaNumber (text, supplier-issued authorization reference, mandatory before shipment), authorizationStatus dropdown {requested | authorized | declined}, authorizedBy (supplier contact), authorizedAt (date), returnAuthorizationMethod {email+OTP supplier form | phone-confirmed | contract-clause auto}, supplierReturnAddress (resolves from SupplierAddress, where goods ship back), restockingFeePercent (number, optional, default 0, configurable per contract). The buyer floats the request to the supplier via the authenticated external form (email + OTP, same channel as quote.capture / po.acknowledge). [SCOR S4.2 Request Authorize Product Return | ISO 8.7 (return as a disposition requires supplier agreement) | source: build-new + RA OTP external form]</bpmn:documentation>
+      <bpmn:incoming>f2</bpmn:incoming>
+      <bpmn:outgoing>f3</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="GwAuth" name="authorizationStatus == authorized?">
+      <bpmn:documentation>Precise gate on authorizationStatus. authorizationStatus == 'authorized' AND rmaNumber != null -&gt; proceed to identify condition. authorizationStatus == 'declined' OR (still 'requested' after reminder SLA) -&gt; escalate. A declined return does NOT close the underlying NCR; it forces an alternative disposition (rework / concession / scrap handled in e04) and may itself feed the supplier scorecard as a dispute. [SCOR S4.2 | ISO 8.7 | source: build-new]</bpmn:documentation>
+      <bpmn:incoming>f3</bpmn:incoming>
+      <bpmn:outgoing>f4</bpmn:outgoing>
+      <bpmn:outgoing>f5</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="Declined" name="Escalate declined return (re-disposition)">
+      <bpmn:documentation>On declined / no-response authorization: buyer records declineReason, sets Return status = blocked, and routes back to the NCR handler in e04 to pick an alternative disposition {rework | use-as-is-concession | scrap}. A buyer-raised debit note may still be raised unilaterally for a contractual breach (handled at S4.5 closure). Notification to QC, requester, and management. [SCOR S4.2 | ISO 8.7 disposition alternatives | source: build-new + e04 cross-link]</bpmn:documentation>
+      <bpmn:incoming>f5</bpmn:incoming>
+      <bpmn:outgoing>f6</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Identify" name="S4.3 Identify product condition / return reason">
+      <bpmn:documentation>Quality classifies each return line. reasonCode dropdown (mandatory per line, exact set): {defective | damaged | wrong-item | over-delivery | expired | quality-fail}. Definitions: defective = functional non-conformance to spec; damaged = transit/handling physical damage (RL.3.22-24 damage-free); wrong-item = SKU mismatch vs PO line (RL.3.13 item accuracy); over-delivery = quantity received beyond PO + tolerance (+/-5-10% for labels/cartons per AB, RL.3.14 quantity accuracy); expired = shelf-life past at receipt (food/regulated RM); quality-fail = COA/test fail at QC gate. Fields: conditionDescription (text, mandatory), percentNonConformance (number 0-100, mandatory, copied from linked NCR if present), images [attachments, &gt;=1 mandatory for defective/damaged/quality-fail], rootCauseSuspected (optional, seeds CAPA in e04). The reasonCode drives the financial adjustment direction at S4.5 (over-delivery -&gt; debit note to recover over-billed value; defective/damaged/quality-fail -&gt; credit note expected from supplier). [SCOR S4.3 Identify Product Condition/Return Reason | ISO 8.7 (nature of nonconformity recorded) | source: AB NCR fields + data-model Return reason/condition]</bpmn:documentation>
+      <bpmn:incoming>f4</bpmn:incoming>
+      <bpmn:outgoing>f7</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Schedule" name="S4.4 Schedule product shipment">
+      <bpmn:documentation>Receiving/Warehouse (return.schedule) arranges the physical return. Fields: carrier (dropdown from carrier master / free-text), returnLabelRef (text or attachment; who-pays dropdown {supplier-paid | buyer-paid | shared} default supplier-paid for defective/quality-fail), pickupDate (date, mandatory, &gt;= today), returnTrackingNumber (AWB/BL/LR/courier no., mirrors inbound tracking fields), returnIncoterm (validated against transport mode: FOB/CIF sea-only, air/multimodal FCA/CPT/CIP/DAP per Incoterms 2020), packingNote, segregationLocation (quarantine bin reference; goods physically segregated per ISO 8.7 until dispatched). On dispatch: Return status = in-transit; an ETA-approaching alarm fires a few days before expected supplier receipt (mirrors AB inbound ETA alarm) to buyer + QC. Stock relieved from quarantine on dispatch confirmation. [SCOR S4.4 Schedule Product Shipment | ISO 8.7 (segregate nonconforming) | source: build-new + AB delivery-tracking transport fields]</bpmn:documentation>
+      <bpmn:incoming>f7</bpmn:incoming>
+      <bpmn:outgoing>f8</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:receiveTask id="Receipt" name="Supplier confirms receipt of returned goods">
+      <bpmn:documentation>Supplier acknowledges receipt of the returned goods via the external form (email + OTP). Fields: supplierReceiptDate (date), supplierReceiptCondition (free-text), creditNoteIssued (boolean), creditNoteRef (if issued). This is the trigger event for the credit-note expectation at closure. For buyer-paid return freight the buyer absorbs cost; for supplier-paid the freight is added to the debit/credit reconciliation. [SCOR S4.4/S4.5 | source: build-new + RA external supplier form]</bpmn:documentation>
+      <bpmn:incoming>f8</bpmn:incoming>
+      <bpmn:outgoing>f9</bpmn:outgoing>
+    </bpmn:receiveTask>
+    <bpmn:exclusiveGateway id="GwAdjust" name="financial adjustment direction?">
+      <bpmn:documentation>Branch on reasonCode + invoice state. Branch A (credit note): reasonCode IN {defective, damaged, expired, quality-fail} AND supplier-billed value already invoiced/payable -&gt; expect supplier credit note (reduces payable). Branch B (debit note): reasonCode IN {over-delivery, wrong-item} OR supplier disputes / declines credit -&gt; buyer raises a debit note (raises a receivable / reduces payable unilaterally). Both post against the creditor ledger. Branch C (no financial impact): goods not yet invoiced and GR/IR accrual simply reversed -&gt; no note, only commitment relief. [ISO 8.7 (concession/return disposition) | source: data-model CreditNote/DebitNote + AB creditor ledger]</bpmn:documentation>
+      <bpmn:incoming>f9</bpmn:incoming>
+      <bpmn:outgoing>f10</bpmn:outgoing>
+      <bpmn:outgoing>f11</bpmn:outgoing>
+      <bpmn:outgoing>f12</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="CreditNote" name="Apply supplier credit note">
+      <bpmn:documentation>Finance-Maker (creditNote.manage) records the supplier-issued CreditNote. Fields: creditNoteRef (mandatory), linkedReturnId (auto), linkedInvoiceId (the original invoice), amount (= returned value), taxAmount (reverses input-VAT/GST credit on the returned portion; recoverable tax adjusted), reason (auto from reasonCode). Effect: reduces the payable to the supplier; posts a debit to the creditor ledger entry for that supplier (reduces what is owed). If the original invoice was already paid, the credit note becomes a recoverable balance carried on the creditor ledger against the next payable. GR/IR accrual for the returned quantity is reversed. [ISO 8.7 | source: data-model CreditNote + AB creditor ledger read-model]</bpmn:documentation>
+      <bpmn:incoming>f10</bpmn:incoming>
+      <bpmn:outgoing>f13</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="DebitNote" name="Raise buyer debit note">
+      <bpmn:documentation>Finance-Maker (debitNote.manage) raises a buyer-issued DebitNote when the supplier over-delivered, shipped wrong items, or declines a warranted credit. Fields: debitNoteRef (auto), linkedReturnId (auto), linkedInvoiceId (if invoiced), linkedMatchExceptionId (if it arose from a qty-over / wrong-item match exception in e12), amount (= over-billed or disputed value + supplier-paid return freight where applicable), taxAmount, reason. Effect: reduces the payable / raises a receivable; posts against the creditor ledger. Approval follows the maker/checker control (Finance-Checker releases any resulting payment adjustment). [ISO 8.7 | source: data-model DebitNote + role-permission-matrix debitNote.manage]</bpmn:documentation>
+      <bpmn:incoming>f11</bpmn:incoming>
+      <bpmn:outgoing>f14</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="Close" name="S4.5 Close or adjust return order">
+      <bpmn:documentation>System closes the Return and posts the ledger/budget adjustments. Actions: set Return status = closed; relieve commitment for the returned value (committed -= returnedValue moved correctly, or actual reduced if already relieved at GR); adjust creditor ledger (credit-note reduces payable; debit-note reduces payable / raises receivable); reverse the GR/IR accrual for the returned quantity; update the linked NCR (if linkedNcrId present) to reflect return-resolved; feed the supplier scorecard (return event counts against quality PPM/defect and, if late or documentation-poor, against the four-factor perfect-order RL.1.2). Guard: a return cannot close while authorizationStatus != authorized and goods are still in quarantine. Emits return.closed SSE + audit. [SCOR S4.5 Close or Adjust Return Order | ISO 8.7 (retain disposition record) -&gt; 8.4.1 (feeds re-evaluation) | source: build-new + data-model state machine NCR/Return]</bpmn:documentation>
+      <bpmn:incoming>f12</bpmn:incoming>
+      <bpmn:incoming>f13</bpmn:incoming>
+      <bpmn:incoming>f14</bpmn:incoming>
+      <bpmn:outgoing>f15</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="FeedNcr" name="Update NCR + feed CAPA / scorecard">
+      <bpmn:documentation>If linkedNcrId is set, the closed return updates the NCR record (disposition 'return' marked executed) and hands control to the CAPA loop (e04): the systemic root-cause + corrective action and effectiveness review continue independently of the physical return closing. The return event is written to the supplier scorecard period (quality dimension: NCR/defect count; delivery dimension: a returned line that was late or wrong fails the four-factor perfect-order test). Recurring returns from one supplier may trip the consecutive-below counter and contribute to a SUSPENDED gate in e04. [ISO 8.7 -&gt; 10.2 -&gt; 8.4.1 | source: iso-supply-chain-standards feedback loop + e04 cross-link]</bpmn:documentation>
+      <bpmn:incoming>f15</bpmn:incoming>
+      <bpmn:outgoing>f16</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="End" name="Return closed and adjusted">
+      <bpmn:documentation>Terminal. Return is closed, goods returned or written off, payable adjusted via credit/debit note, GR/IR and commitment reconciled, NCR updated, scorecard updated. Fully audit-traceable. [SCOR S4.5 | source: build-new]</bpmn:documentation>
+      <bpmn:incoming>f6</bpmn:incoming>
+      <bpmn:incoming>f16</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="f1" sourceRef="Start" targetRef="Initiate" />
+    <bpmn:sequenceFlow id="f2" sourceRef="Initiate" targetRef="Authorize" />
+    <bpmn:sequenceFlow id="f3" sourceRef="Authorize" targetRef="GwAuth" />
+    <bpmn:sequenceFlow id="f4" name="authorized + rmaNumber set" sourceRef="GwAuth" targetRef="Identify" />
+    <bpmn:sequenceFlow id="f5" name="declined / no-response" sourceRef="GwAuth" targetRef="Declined" />
+    <bpmn:sequenceFlow id="f6" name="re-dispositioned in e04" sourceRef="Declined" targetRef="End" />
+    <bpmn:sequenceFlow id="f7" sourceRef="Identify" targetRef="Schedule" />
+    <bpmn:sequenceFlow id="f8" sourceRef="Schedule" targetRef="Receipt" />
+    <bpmn:sequenceFlow id="f9" sourceRef="Receipt" targetRef="GwAdjust" />
+    <bpmn:sequenceFlow id="f10" name="credit expected (defective/damaged/expired/quality-fail)" sourceRef="GwAdjust" targetRef="CreditNote" />
+    <bpmn:sequenceFlow id="f11" name="debit raised (over-delivery/wrong-item/dispute)" sourceRef="GwAdjust" targetRef="DebitNote" />
+    <bpmn:sequenceFlow id="f12" name="not invoiced - reverse accrual only" sourceRef="GwAdjust" targetRef="Close" />
+    <bpmn:sequenceFlow id="f13" sourceRef="CreditNote" targetRef="Close" />
+    <bpmn:sequenceFlow id="f14" sourceRef="DebitNote" targetRef="Close" />
+    <bpmn:sequenceFlow id="f15" sourceRef="Close" targetRef="FeedNcr" />
+    <bpmn:sequenceFlow id="f16" sourceRef="FeedNcr" targetRef="End" />
+    <bpmn:textAnnotation id="NoteReturns">
+      <bpmn:text>SCOR S4 Source Return. Trigger is either an NCR disposition = return (link e04 / diagram 08) or a buyer-initiated return. Authorization gateway requires a supplier RMA number before any goods move; a declined return forces re-disposition in e04. Reason code drives the financial direction at closure: credit note (supplier fault) reduces payable; debit note (over-delivery / wrong-item / dispute) reduces payable or raises a receivable; both post to the creditor ledger and reverse the GR/IR accrual and commitment for the returned quantity. Closure always feeds the NCR/CAPA loop and the supplier scorecard.</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Assoc_ReturnsRma_1" sourceRef="Close" targetRef="NoteReturns" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagram_ReturnsRma">
+    <bpmndi:BPMNPlane id="Plane_ReturnsRma" bpmnElement="Collaboration_ReturnsRma">
+      <bpmndi:BPMNShape id="Participant_ReturnsRma_di" bpmnElement="Participant_ReturnsRma" isHorizontal="true">
+        <dc:Bounds x="160" y="80" width="2540" height="960" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_qc_di" bpmnElement="L_qc" isHorizontal="true">
+        <dc:Bounds x="190" y="80" width="2510" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_buyer_di" bpmnElement="L_buyer" isHorizontal="true">
+        <dc:Bounds x="190" y="240" width="2510" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_supplier_di" bpmnElement="L_supplier" isHorizontal="true">
+        <dc:Bounds x="190" y="400" width="2510" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_recv_di" bpmnElement="L_recv" isHorizontal="true">
+        <dc:Bounds x="190" y="560" width="2510" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_finmaker_di" bpmnElement="L_finmaker" isHorizontal="true">
+        <dc:Bounds x="190" y="720" width="2510" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_sys_di" bpmnElement="L_sys" isHorizontal="true">
+        <dc:Bounds x="190" y="880" width="2510" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Start_di" bpmnElement="Start">
+        <dc:Bounds x="267" y="142" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="257" y="182" width="56" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Initiate_di" bpmnElement="Initiate">
+        <dc:Bounds x="415" y="120" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Authorize_di" bpmnElement="Authorize">
+        <dc:Bounds x="605" y="280" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GwAuth_di" bpmnElement="GwAuth" isMarkerVisible="true">
+        <dc:Bounds x="830" y="295" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="820" y="349" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Declined_di" bpmnElement="Declined">
+        <dc:Bounds x="985" y="280" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Identify_di" bpmnElement="Identify">
+        <dc:Bounds x="1175" y="120" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Schedule_di" bpmnElement="Schedule">
+        <dc:Bounds x="1365" y="600" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Receipt_di" bpmnElement="Receipt">
+        <dc:Bounds x="1555" y="440" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GwAdjust_di" bpmnElement="GwAdjust" isMarkerVisible="true">
+        <dc:Bounds x="1780" y="775" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1770" y="829" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CreditNote_di" bpmnElement="CreditNote">
+        <dc:Bounds x="1935" y="760" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DebitNote_di" bpmnElement="DebitNote">
+        <dc:Bounds x="2125" y="760" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Close_di" bpmnElement="Close">
+        <dc:Bounds x="2125" y="920" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="FeedNcr_di" bpmnElement="FeedNcr">
+        <dc:Bounds x="2315" y="920" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_di" bpmnElement="End">
+        <dc:Bounds x="2547" y="942" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2537" y="982" width="56" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="f1_di" bpmnElement="f1">
+        <di:waypoint x="303" y="160" />
+        <di:waypoint x="415" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f2_di" bpmnElement="f2">
+        <di:waypoint x="535" y="160" />
+        <di:waypoint x="570" y="160" />
+        <di:waypoint x="570" y="320" />
+        <di:waypoint x="605" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f3_di" bpmnElement="f3">
+        <di:waypoint x="725" y="320" />
+        <di:waypoint x="830" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f4_di" bpmnElement="f4">
+        <di:waypoint x="880" y="320" />
+        <di:waypoint x="1028" y="320" />
+        <di:waypoint x="1028" y="160" />
+        <di:waypoint x="1175" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f5_di" bpmnElement="f5">
+        <di:waypoint x="880" y="320" />
+        <di:waypoint x="985" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f6_di" bpmnElement="f6">
+        <di:waypoint x="1105" y="320" />
+        <di:waypoint x="1826" y="320" />
+        <di:waypoint x="1826" y="960" />
+        <di:waypoint x="2547" y="960" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f7_di" bpmnElement="f7">
+        <di:waypoint x="1295" y="160" />
+        <di:waypoint x="1330" y="160" />
+        <di:waypoint x="1330" y="640" />
+        <di:waypoint x="1365" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f8_di" bpmnElement="f8">
+        <di:waypoint x="1485" y="640" />
+        <di:waypoint x="1520" y="640" />
+        <di:waypoint x="1520" y="480" />
+        <di:waypoint x="1555" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f9_di" bpmnElement="f9">
+        <di:waypoint x="1675" y="480" />
+        <di:waypoint x="1728" y="480" />
+        <di:waypoint x="1728" y="800" />
+        <di:waypoint x="1780" y="800" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f10_di" bpmnElement="f10">
+        <di:waypoint x="1830" y="800" />
+        <di:waypoint x="1935" y="800" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f11_di" bpmnElement="f11">
+        <di:waypoint x="1830" y="800" />
+        <di:waypoint x="2125" y="800" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f12_di" bpmnElement="f12">
+        <di:waypoint x="1830" y="800" />
+        <di:waypoint x="1978" y="800" />
+        <di:waypoint x="1978" y="960" />
+        <di:waypoint x="2125" y="960" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f13_di" bpmnElement="f13">
+        <di:waypoint x="2055" y="800" />
+        <di:waypoint x="2090" y="800" />
+        <di:waypoint x="2090" y="960" />
+        <di:waypoint x="2125" y="960" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f14_di" bpmnElement="f14">
+        <di:waypoint x="2245" y="800" />
+        <di:waypoint x="2265" y="800" />
+        <di:waypoint x="2265" y="960" />
+        <di:waypoint x="2125" y="960" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f15_di" bpmnElement="f15">
+        <di:waypoint x="2245" y="960" />
+        <di:waypoint x="2315" y="960" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f16_di" bpmnElement="f16">
+        <di:waypoint x="2435" y="960" />
+        <di:waypoint x="2547" y="960" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="NoteReturns_di" bpmnElement="NoteReturns">
+        <dc:Bounds x="160" y="1080" width="1600" height="100" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Assoc_ReturnsRma_1_di" bpmnElement="Assoc_ReturnsRma_1">
+        <di:waypoint x="2185" y="1000" />
+        <di:waypoint x="260" y="1080" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

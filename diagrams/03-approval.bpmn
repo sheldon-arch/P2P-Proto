@@ -1,0 +1,415 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+                  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+                  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+                  id="Definitions_ApprovalWorkflow" targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:collaboration id="Collaboration_ApprovalWorkflow">
+    <bpmn:participant id="Participant_ApprovalWorkflow" name="Unified Procure-to-Pay - Configurable Approval Workflow (Diagram 03)" processRef="Process_ApprovalWorkflow" />
+  </bpmn:collaboration>
+  <bpmn:process id="Process_ApprovalWorkflow" isExecutable="false">
+    <bpmn:laneSet id="LaneSet_ApprovalWorkflow">
+      <bpmn:lane id="L_req" name="Requester">
+        <bpmn:flowNodeRef>Start</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ReturnForRevision</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_appr" name="Approver">
+        <bpmn:flowNodeRef>ManualReview</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ApproveDecision</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_budget" name="Budget Owner">
+        <bpmn:flowNodeRef>BudgetReview</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>BudgetDecisionGate</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_sys" name="Platform / System">
+        <bpmn:flowNodeRef>ResolveChain</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>CreateCompletions</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>AssignStage</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>BudgetStageGate</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>AutoApprovalGate</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>AutoApprove</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>RecordStageApproved</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>MoreStagesGate</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>AdvanceStage</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>FullyApproved</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>End</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>FinancialEditEvent</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>FinancialEditRevert</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="Start" name="Requisition submitted for approval">
+      <bpmn:documentation>Trigger: a requester submits a requisition (or, reusing the same engine, a buyer submits a PO, award, supplier-onboarding, or payment-schedule record). The submitted record carries: recordType {Requisition|PurchaseOrder|Award|Supplier|PaymentSchedule}, recordId, requesterId (owner, immutable), departmentId, category {Items|Spares|Services|ProductDesign}, purchaseType {Local|Import} or {Direct|Indirect}, currency, totalAmount (record currency), totalAmountInBase (FX-normalized by the FX service, the value all thresholds compare against), projectId/costCenterId, priority {ASAP|SameDay|Within2Days|Within1Week}. Owning role for submit action: Requester (requisition.submit) or Buyer (po.issue precursor). On submit the record status moves IN_PROGRESS and is locked for structural edits except via return-for-revision. [SCOR OE2 | ISO 8.4 | source: RA submit + AB requisition-status]</bpmn:documentation>
+      <bpmn:outgoing>f1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="ResolveChain" name="Resolve approval chain (routing rule by department / category / value)">
+      <bpmn:documentation>System resolves the ordered approval chain for this record. Lookup key: RoutingRuleEntry matched on (departmentId, category, recordType) with a value band; unique constraint (department, stage/verticalId). Default chain template (configurable per tenant, fixed order): Stage 1 REQ_DEPARTMENT (assignee = requester, pinned) -&gt; Stage 2 PROCUREMENT -&gt; Stage 3 BUDGET (conditional, see BudgetStageGate) -&gt; Stage 4 FINANCE -&gt; Stage 5 MANAGEMENT -&gt; null (terminal). Al Bahja 'all-to-one' (single FM/PurchaseHead) and Raphe 'multi-stage' are both expressed as routing-rule configurations of this one engine; a site/department-conditional stage models AB 'factory site needs Factory Manager' (FM sites: Barka Engineering, Oman Hygienic Stores, Oman Hygienic Engineering; FM-skip sites: Oman Solar, Accommodation Maintenance, Flavour Division, Photon-01). Each RoutingRuleEntry fields: departmentId (mandatory), verticalId/stage (mandatory), assigneeUserIds[] (optional), approverUserIds[] (mandatory), valueBandMin/valueBandMax (optional, default unbounded). If no routing rule matches: BadRequestException 'No routing rule', record stalls IN_PROGRESS until an Administrator (routingRules.update) fixes the rule. Owning role: Platform/System (automated); configuration owned by Administrator (approval.configureChain). [SCOR OE2 | ISO 8.4 | source: RA routing strategies + AB FM-site config | platform-services 1]</bpmn:documentation>
+      <bpmn:incoming>f1</bpmn:incoming>
+      <bpmn:outgoing>f2</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="CreateCompletions" name="Create per-stage completions (NOT_STARTED)">
+      <bpmn:documentation>System creates one VerticalCompletion record per resolved stage, each initialized status = NOT_STARTED. Completion fields: completionId, recordId, verticalId/stage, status {NOT_STARTED|IN_PROGRESS|AWAITING_APPROVAL|APPROVED}, assignedToId (nullable), approvalRequestedToId (nullable), approvalLimit (resolved per assigned approver, nullable), isAutoApproved (boolean, default false), approvedAt (nullable timestamp), revertedCount (integer, default 0). The three-dimension state model (RA): record STAGE (INITIATION-&gt;ORDERED-&gt;...) is independent of per-stage COMPLETION; this diagram drives COMPLETION only. Completions are created in chain order; index 0 is the first stage to action. Owning role: Platform/System. [SCOR OE2 | ISO 8.4 | source: RA three-dimension completion model | data-model ApprovalChain/VerticalCompletion]</bpmn:documentation>
+      <bpmn:incoming>f2</bpmn:incoming>
+      <bpmn:outgoing>f3</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="AssignStage" name="Assign current stage (least-loaded eligible approver)">
+      <bpmn:documentation>System assigns the current (first not-yet-APPROVED) stage. Stage 1 REQ_DEPARTMENT assignee is pinned to the requester; the stage approver and every later-stage assignee/approver are selected by least-loaded among the eligible pool from the routing rule. Eligibility pool = active users (status ACTIVE) in approverUserIds[] for the stage who satisfy the stage permission (approval.approve) and the SoD rule (userId != record.requesterId for a requisition, userId != record.buyerId for a PO). Least-loaded metric = urgency-weighted count of the user's open (non-APPROVED) completions across both assignedToId and approvalRequestedToId; urgency weights ASAP=4, SameDay=2, Within2Days=1, Within1Week=0; lowest weighted count wins, ties broken by lowest userId. First assignment moves the completion NOT_STARTED -&gt; IN_PROGRESS and emits NOTIFY_ASSIGNED (templated email) + SSE {recordId}. Guard on a manual reassignment (approval.reassign): assigner designation rank &gt;= the stage's required rank (DESIGNATION_RANK) and the completion is not yet APPROVED. Owning role: Platform/System (auto) / Approver or Administrator (manual reassign). [SCOR OE2 | ISO 8.4 | source: RA findLeastLoadedUser urgency-weighted + assignment guard | platform-services 1]</bpmn:documentation>
+      <bpmn:incoming>f3</bpmn:incoming>
+      <bpmn:incoming>f16</bpmn:incoming>
+      <bpmn:incoming>f20</bpmn:incoming>
+      <bpmn:outgoing>f4</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="BudgetStageGate" name="Is current stage the Budget stage (configured)?">
+      <bpmn:documentation>Branch expression: currentStage.verticalId == 'BUDGET' &amp;&amp; tenantConfig.budgetStageEnabled == true. The budget gate is a configurable stage in the chain, not a hard-coded step. TRUE -&gt; route to the Budget Owner for an explicit budget decision (BudgetReview). FALSE -&gt; route to the threshold evaluation for a normal approver stage (AutoApprovalGate). If the budget stage is disabled for the tenant, ResolveChain never creates it, so this gateway only ever sees FALSE in that configuration. Owning role: Platform/System. [SCOR OE11 | source: build-new finance control as configurable approval stage | platform-services 11]</bpmn:documentation>
+      <bpmn:incoming>f4</bpmn:incoming>
+      <bpmn:outgoing>f5</bpmn:outgoing>
+      <bpmn:outgoing>f6</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="BudgetReview" name="Budget Owner reviews commitment vs available budget">
+      <bpmn:documentation>Budget Owner (permission budget.approve, scope = own cost-center) reviews the requisition value against the cost-center / project budget for the period. Displayed read-only fields: costCenterId, period, budget.amount, budget.availableAmount, budget.committedAmount, budget.actualAmount, this record's totalAmountInBase, projected available-after-commit = availableAmount - totalAmountInBase. Action buttons: 'Approve budget' (effect: BudgetDecisionGate TRUE branch, records budgetApprovedBy + budgetApprovedAt, completion -&gt; APPROVED), 'Approve override' (effect: same APPROVED path but sets budget.overrideFlag = true and requires mandatory field overrideReason [text, mandatory when availableAmount &lt; totalAmountInBase], logged to audit), 'Return for revision' (effect: BudgetDecisionGate FALSE branch, mandatory field returnNote [text]). Note: this is the SOFT check at requisition stage; the HARD commit/encumbrance happens later at PO issue (Diagram 05), not here. Owning role: Budget Owner. [SCOR OE11 | source: build-new budget service + AB over-budget override | platform-services 11]</bpmn:documentation>
+      <bpmn:incoming>f5</bpmn:incoming>
+      <bpmn:outgoing>f7</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="BudgetDecisionGate" name="Budget approved or override approved?">
+      <bpmn:documentation>Branch expression: budgetDecision == 'APPROVE' || budgetDecision == 'OVERRIDE'. TRUE (within available budget, i.e. totalAmountInBase &lt;= budget.availableAmount, OR override explicitly approved with overrideReason) -&gt; RecordStageApproved (this stage is done, advance the chain). FALSE (returnNote supplied, no override) -&gt; ReturnForRevision. Owning role: Budget Owner. [SCOR OE11 | source: build-new]</bpmn:documentation>
+      <bpmn:incoming>f7</bpmn:incoming>
+      <bpmn:outgoing>f8</bpmn:outgoing>
+      <bpmn:outgoing>f9</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="AutoApprovalGate" name="Within auto-approval threshold?">
+      <bpmn:documentation>Branch expression: stage.allowAutoApproval == true &amp;&amp; totalAmountInBase &lt;= effectiveApproverLimit, where effectiveApproverLimit = (assignedApprover.approvalLimit ?? DEFAULT_LIMIT) and DEFAULT_LIMIT = 200000 (configurable per tenant, a configured value of 0 stays 0, never falls back to 200000). Comparison is INCLUSIVE: an amount exactly equal to the limit auto-approves (&lt;=). allowAutoApproval is true only for stages flagged auto-approvable in config (RA: Finance stage; AB single-stage tenants may flag none). TRUE -&gt; AutoApprove. FALSE -&gt; ManualReview. The limit used for the auto-approval decision is taken from the stage's resolved approver (approvalRequestedTo ?? assignedTo); note this can diverge from the per-candidate eligibility limit used during nearest-bucket selection (a known Raphe behaviour, documented not changed). Owning role: Platform/System. [SCOR OE2 | source: RA allowAutoApproval guard + nearest-bucket | raphe-routing-approval | platform-services 1]</bpmn:documentation>
+      <bpmn:incoming>f6</bpmn:incoming>
+      <bpmn:incoming>f23</bpmn:incoming>
+      <bpmn:outgoing>f10</bpmn:outgoing>
+      <bpmn:outgoing>f11</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="AutoApprove" name="Auto-approve (nearest-bucket minimum-sufficient approver, logged)">
+      <bpmn:documentation>System auto-approves the stage without a human action. Nearest-bucket selection picks the minimum-sufficient approver so high-limit approvers are reserved for large amounts: (1) load active eligible approvers for the stage; (2) effectiveLimit = approvalLimit ?? 200000 (configured 0 stays 0); (3) keep only those with effectiveLimit &gt;= totalAmountInBase (eligible, inclusive); (4) NEAREST BUCKET = retain only the approvers at the MINIMUM eligible limit; (5) tie-break by least-loaded (urgency-weighted open-completion count). Effects: completion.status = APPROVED, isAutoApproved = true, approvedAt = now, approvalRequestedToId = the bucket approver (for audit), NO approval-requested email is sent, audit log entry 'AUTO_APPROVED' with the limit and amount. Auto-approval does NOT run the human OTIF/user-stats path and does NOT by itself complete the record. Empty pool at step 1 or step 3 -&gt; BadRequestException 'No eligible approver', transaction rolls back, record stalls. Owning role: Platform/System. [SCOR OE2 | source: RA nearest-bucket auto-approval | raphe-routing-approval e01 | platform-services 1]</bpmn:documentation>
+      <bpmn:incoming>f10</bpmn:incoming>
+      <bpmn:outgoing>f12</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="ManualReview" name="Approver reviews requisition">
+      <bpmn:documentation>The resolved approver (approvalRequestedToId user, OR an assignee of sufficient designation rank) opens the record. Authorization (service-layer, on top of the permission guard): the acting user is the approvalRequestedToId OR an assignee with required DESIGNATION_RANK; AND the SoD rule holds (acting user is NOT the record's requester for a requisition, NOT the buyer for a PO - never approve your own record). On open, completion moves IN_PROGRESS -&gt; AWAITING_APPROVAL if request-approval has fired; the approver sees the full record (header, lines, totals in record currency and base currency, attachments, prior-stage decisions, prior return notes). Read-only here; the decision is taken at the ApproveDecision gateway via the action buttons. Displayed action buttons: 'Approve' and 'Return for revision' (with mandatory note). Owning role: Approver (permission approval.approve, conditional per role-permission-matrix). [SCOR OE2 | ISO 8.4 | source: RA approve authorization + SoD | AB FM Approve/Reject/Return]</bpmn:documentation>
+      <bpmn:incoming>f11</bpmn:incoming>
+      <bpmn:outgoing>f13</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="ApproveDecision" name="Approve or return for revision?">
+      <bpmn:documentation>Branch expression: approverDecision == 'APPROVE'. TRUE -&gt; RecordStageApproved. FALSE (approverDecision == 'RETURN', requires mandatory field returnNote [text, mandatory]) -&gt; ReturnForRevision. The 'Approve' button is permission-gated (approval.approve) AND SoD-gated (actingUserId != record.requesterId and != record.buyerId); if SoD fails the button is disabled with reason 'Cannot approve your own record'. The 'Return for revision' button requires returnNote before it submits. Owning role: Approver. [SCOR OE2 | source: RA approve/reject + AB reject-reason-mandatory]</bpmn:documentation>
+      <bpmn:incoming>f13</bpmn:incoming>
+      <bpmn:outgoing>f14</bpmn:outgoing>
+      <bpmn:outgoing>f15</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="ReturnForRevision" name="Revise and resubmit (same record, identifier unchanged)">
+      <bpmn:documentation>The record owner (Requester for a requisition, Buyer for a PO) edits the SAME record per the return note; the record identifier is immutable and unchanged across the revision (AB rule: identifier persists across delays and revisions). Editable fields depend on recordType and the field engine (mandatory-field gating by stage/scope/purchaseType). Effect of resubmit: the record returns to the approval flow at the FIRST stage (re-enters AssignStage / re-evaluation) so changed financial information is re-checked. Note the financial-revert rule (see FinancialEditRevert): if payment terms or payment schedules changed, any auto-approved Finance/Management completions are reverted to AWAITING_APPROVAL on resubmit. Owning role: Requester (requisition.edit, requisition.submit) or Buyer (po.edit). [SCOR OE2 | source: RA edit-same-record + AB return-for-revision loop, identifier immutable]</bpmn:documentation>
+      <bpmn:incoming>f9</bpmn:incoming>
+      <bpmn:incoming>f15</bpmn:incoming>
+      <bpmn:outgoing>f16</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="RecordStageApproved" name="Record stage APPROVED (manual or auto), update stats">
+      <bpmn:documentation>System commits the stage decision in a transaction: completion.status = APPROVED, approvedAt = now, approvedById = acting approver (for manual) or null (for auto, isAutoApproved already true). For a MANUAL approval only (not auto): update the assignee's and approver's OTIF / user-stats streak - remainingTime = allowedDuration(priority) - elapsed(record.createdAt); &lt;=0 = MISS (resets currentStreak to 0), &gt;0 = HIT (same-day upgrades MISS-&gt;HIT once, new-day increments; longestStreak is monotonic; totals always accumulate; otifPercentage = totalHits/(totalHits+totalMisses)*100). Emits NOTIFY_STAGE_APPROVED (templated email) + SSE {recordId} + audit 'STAGE_APPROVED'. Owning role: Platform/System. [SCOR OE2 | ISO 8.4 | source: RA approve transaction + e07 OTIF streak | platform-services 4/6/9]</bpmn:documentation>
+      <bpmn:incoming>f8</bpmn:incoming>
+      <bpmn:incoming>f12</bpmn:incoming>
+      <bpmn:incoming>f14</bpmn:incoming>
+      <bpmn:outgoing>f17</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="MoreStagesGate" name="More stages remaining in chain?">
+      <bpmn:documentation>Branch expression: exists(completion where status != 'APPROVED'). TRUE (at least one later stage is still not APPROVED) -&gt; AdvanceStage (handleRouting to the next stage). FALSE (every completion in the chain is APPROVED) -&gt; FullyApproved. Management is the terminal stage and never auto-approves; the chain completes only when its completion is APPROVED. Owning role: Platform/System. [SCOR OE2 | source: RA handleRouting to next vertical, Management terminal | raphe-routing-approval]</bpmn:documentation>
+      <bpmn:incoming>f17</bpmn:incoming>
+      <bpmn:outgoing>f18</bpmn:outgoing>
+      <bpmn:outgoing>f19</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="AdvanceStage" name="Advance to next stage (handleRouting)">
+      <bpmn:documentation>System advances the chain: set the next not-APPROVED completion as current, resolve its approver per that stage's routing strategy (Procurement: assignee from rule, least-loaded, no auto-approver; Finance: approval-only, approver = assignee via the finance nearest-bucket selection; Management/default: both from rule, least-loaded), then re-enter the assignment + threshold loop. If the next stage is auto-approvable and within limit, the auto-approval path recurses to the following stage (e.g. Finance auto-approves then routes to Management which always requires a human). Loops back to AssignStage. Owning role: Platform/System. [SCOR OE2 | source: RA per-vertical routing strategies + recurse-on-auto | raphe-routing-approval]</bpmn:documentation>
+      <bpmn:incoming>f18</bpmn:incoming>
+      <bpmn:outgoing>f20</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="FullyApproved" name="Record fully approved, release to next domain">
+      <bpmn:documentation>All completions APPROVED. System sets the record's approval state to FULLY_APPROVED and enables the next domain action (a requisition becomes ready for sourcing in Diagram 04; a PO becomes ready to issue in Diagram 05; an award becomes ready to award; a payment schedule becomes ready to release). Emits NOTIFY_FULLY_APPROVED + SSE {recordId} + audit 'FULLY_APPROVED'. Note: full approval is NOT record completion; the record STATUS reaches COMPLETED only at end-of-cycle (POST_DELIVERY + all matches cleared + no open NCR/CAPA). Owning role: Platform/System. [SCOR OE2 | ISO 8.4 | source: RA chain terminal + three-dimension model]</bpmn:documentation>
+      <bpmn:incoming>f19</bpmn:incoming>
+      <bpmn:outgoing>f21</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="End" name="Approval chain complete">
+      <bpmn:documentation>Terminal node of the approval workflow for this record. The record proceeds to its downstream domain diagram. [SCOR OE2 | source: build-new]</bpmn:documentation>
+      <bpmn:incoming>f21</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:boundaryEvent id="FinancialEditEvent" name="Financial info changed" attachedToRef="FullyApproved" cancelActivity="false">
+      <bpmn:documentation>Non-interrupting boundary event. Condition: an edit to the record changed payTerms OR paymentSchedules (postValueSync hook). On fire, the revert path runs without cancelling the main flow. [SCOR OE2 | source: RA postValueSync e02]</bpmn:documentation>
+      <bpmn:outgoing>f22</bpmn:outgoing>
+      <bpmn:conditionalEventDefinition />
+    </bpmn:boundaryEvent>
+    <bpmn:serviceTask id="FinancialEditRevert" name="Revert auto-approved Finance / Management completions">
+      <bpmn:documentation>Auto-approval REVERT (RA postValueSync e02). After any write to the record the system recomputes total = sum(qty x unitPrice) and reconverts to base currency if it changed; THEN, only if payTerms OR paymentSchedules changed, it reverts every completion where (verticalId IN {FINANCE, MANAGEMENT}) AND (status == APPROVED) AND (isAutoApproved == true) back to AWAITING_APPROVAL, increments revertedCount, and re-queues those stages for decision. Manual approvals are NEVER reverted; REQ_DEPARTMENT and PROCUREMENT completions are never reverted. The hook always emits 'record.updated' (SSE) and never aborts the underlying write. This prevents a financial change from riding through on a stale auto-approval. After revert, the reverted stage re-enters the threshold evaluation. Loops back to AutoApprovalGate. Owning role: Platform/System. [SCOR OE2 | source: RA e02 postValueSync auto-approval revert | platform-services 1]</bpmn:documentation>
+      <bpmn:incoming>f22</bpmn:incoming>
+      <bpmn:outgoing>f23</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="f1" sourceRef="Start" targetRef="ResolveChain" />
+    <bpmn:sequenceFlow id="f2" sourceRef="ResolveChain" targetRef="CreateCompletions">
+      <bpmn:documentation>Chain resolved; one completion per stage to be created.</bpmn:documentation>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="f3" sourceRef="CreateCompletions" targetRef="AssignStage" />
+    <bpmn:sequenceFlow id="f4" sourceRef="AssignStage" targetRef="BudgetStageGate" />
+    <bpmn:sequenceFlow id="f5" name="currentStage == BUDGET &amp;&amp; budgetStageEnabled" sourceRef="BudgetStageGate" targetRef="BudgetReview" />
+    <bpmn:sequenceFlow id="f6" name="not a budget stage" sourceRef="BudgetStageGate" targetRef="AutoApprovalGate" />
+    <bpmn:sequenceFlow id="f7" sourceRef="BudgetReview" targetRef="BudgetDecisionGate" />
+    <bpmn:sequenceFlow id="f8" name="budgetDecision in {APPROVE, OVERRIDE}" sourceRef="BudgetDecisionGate" targetRef="RecordStageApproved" />
+    <bpmn:sequenceFlow id="f9" name="returned, no override" sourceRef="BudgetDecisionGate" targetRef="ReturnForRevision" />
+    <bpmn:sequenceFlow id="f10" name="allowAutoApproval &amp;&amp; totalAmountInBase &lt;= effectiveApproverLimit" sourceRef="AutoApprovalGate" targetRef="AutoApprove" />
+    <bpmn:sequenceFlow id="f11" name="manual review required" sourceRef="AutoApprovalGate" targetRef="ManualReview" />
+    <bpmn:sequenceFlow id="f12" sourceRef="AutoApprove" targetRef="RecordStageApproved" />
+    <bpmn:sequenceFlow id="f13" sourceRef="ManualReview" targetRef="ApproveDecision" />
+    <bpmn:sequenceFlow id="f14" name="approverDecision == APPROVE (SoD: not own record)" sourceRef="ApproveDecision" targetRef="RecordStageApproved" />
+    <bpmn:sequenceFlow id="f15" name="approverDecision == RETURN (note mandatory)" sourceRef="ApproveDecision" targetRef="ReturnForRevision" />
+    <bpmn:sequenceFlow id="f16" name="resubmit, re-enter at first stage" sourceRef="ReturnForRevision" targetRef="AssignStage" />
+    <bpmn:sequenceFlow id="f17" sourceRef="RecordStageApproved" targetRef="MoreStagesGate" />
+    <bpmn:sequenceFlow id="f18" name="exists completion status != APPROVED" sourceRef="MoreStagesGate" targetRef="AdvanceStage" />
+    <bpmn:sequenceFlow id="f19" name="all completions APPROVED" sourceRef="MoreStagesGate" targetRef="FullyApproved" />
+    <bpmn:sequenceFlow id="f20" name="next stage current" sourceRef="AdvanceStage" targetRef="AssignStage" />
+    <bpmn:sequenceFlow id="f21" sourceRef="FullyApproved" targetRef="End" />
+    <bpmn:sequenceFlow id="f22" name="payTerms or paymentSchedules changed" sourceRef="FinancialEditEvent" targetRef="FinancialEditRevert" />
+    <bpmn:sequenceFlow id="f23" name="reverted stage re-evaluated" sourceRef="FinancialEditRevert" targetRef="AutoApprovalGate" />
+    <bpmn:textAnnotation id="NoteSoD">
+      <bpmn:text>Segregation of duties (SoD), enforced throughout: a user can never approve their own requisition or PO (actingUserId != record.requesterId and != record.buyerId). Auto-approval within configured thresholds is the ONLY no-second-person path and is always logged with the limit and amount. Buyer != PO approver; the same engine serves requisition, PO, award, supplier-onboarding, and payment-schedule approvals.</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Assoc_ApprovalWorkflow_1" sourceRef="ManualReview" targetRef="NoteSoD" />
+    <bpmn:textAnnotation id="NoteThreshold">
+      <bpmn:text>Threshold and nearest-bucket: effectiveApproverLimit = approvalLimit ?? DEFAULT_LIMIT; DEFAULT_LIMIT = 200000, configurable per tenant; a configured 0 stays 0. Comparison &lt;= is inclusive (amount == limit auto-approves). Nearest-bucket selection keeps only approvers at the minimum eligible limit so high-limit approvers are reserved for large amounts; tie-break least-loaded (urgency-weighted open completions, ASAP=4 / SameDay=2 / Within2Days=1 / Within1Week=0).</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Assoc_ApprovalWorkflow_2" sourceRef="AutoApprovalGate" targetRef="NoteThreshold" />
+    <bpmn:textAnnotation id="NoteRevert">
+      <bpmn:text>Auto-approval revert (RA e02 postValueSync): after any write, recompute total and reconvert base; only if payTerms OR paymentSchedules changed, revert auto-approved Finance/Management completions to AWAITING_APPROVAL. Manual approvals and REQ_DEPARTMENT/PROCUREMENT stages are never reverted. Hook never aborts the write; always emits record.updated + SSE.</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Assoc_ApprovalWorkflow_3" sourceRef="FinancialEditRevert" targetRef="NoteRevert" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagram_ApprovalWorkflow">
+    <bpmndi:BPMNPlane id="Plane_ApprovalWorkflow" bpmnElement="Collaboration_ApprovalWorkflow">
+      <bpmndi:BPMNShape id="Participant_ApprovalWorkflow_di" bpmnElement="Participant_ApprovalWorkflow" isHorizontal="true">
+        <dc:Bounds x="160" y="80" width="2920" height="640" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_req_di" bpmnElement="L_req" isHorizontal="true">
+        <dc:Bounds x="190" y="80" width="2890" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_appr_di" bpmnElement="L_appr" isHorizontal="true">
+        <dc:Bounds x="190" y="240" width="2890" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_budget_di" bpmnElement="L_budget" isHorizontal="true">
+        <dc:Bounds x="190" y="400" width="2890" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_sys_di" bpmnElement="L_sys" isHorizontal="true">
+        <dc:Bounds x="190" y="560" width="2890" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Start_di" bpmnElement="Start">
+        <dc:Bounds x="267" y="142" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="257" y="182" width="56" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ResolveChain_di" bpmnElement="ResolveChain">
+        <dc:Bounds x="415" y="600" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CreateCompletions_di" bpmnElement="CreateCompletions">
+        <dc:Bounds x="605" y="600" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="AssignStage_di" bpmnElement="AssignStage">
+        <dc:Bounds x="795" y="600" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BudgetStageGate_di" bpmnElement="BudgetStageGate" isMarkerVisible="true">
+        <dc:Bounds x="1020" y="615" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1010" y="669" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BudgetReview_di" bpmnElement="BudgetReview">
+        <dc:Bounds x="1175" y="440" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BudgetDecisionGate_di" bpmnElement="BudgetDecisionGate" isMarkerVisible="true">
+        <dc:Bounds x="1400" y="455" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1390" y="509" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="AutoApprovalGate_di" bpmnElement="AutoApprovalGate" isMarkerVisible="true">
+        <dc:Bounds x="1210" y="615" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1200" y="669" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="AutoApprove_di" bpmnElement="AutoApprove">
+        <dc:Bounds x="1365" y="600" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ManualReview_di" bpmnElement="ManualReview">
+        <dc:Bounds x="1365" y="280" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ApproveDecision_di" bpmnElement="ApproveDecision" isMarkerVisible="true">
+        <dc:Bounds x="1590" y="295" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1580" y="349" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ReturnForRevision_di" bpmnElement="ReturnForRevision">
+        <dc:Bounds x="1745" y="120" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="RecordStageApproved_di" bpmnElement="RecordStageApproved">
+        <dc:Bounds x="1745" y="600" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="MoreStagesGate_di" bpmnElement="MoreStagesGate" isMarkerVisible="true">
+        <dc:Bounds x="1970" y="615" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1960" y="669" width="70" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="AdvanceStage_di" bpmnElement="AdvanceStage">
+        <dc:Bounds x="2505" y="600" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="FullyApproved_di" bpmnElement="FullyApproved">
+        <dc:Bounds x="2125" y="600" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_di" bpmnElement="End">
+        <dc:Bounds x="2357" y="622" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2347" y="662" width="56" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="FinancialEditEvent_di" bpmnElement="FinancialEditEvent">
+        <dc:Bounds x="2737" y="622" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2727" y="662" width="56" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="FinancialEditRevert_di" bpmnElement="FinancialEditRevert">
+        <dc:Bounds x="2885" y="600" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="f1_di" bpmnElement="f1">
+        <di:waypoint x="303" y="160" />
+        <di:waypoint x="359" y="160" />
+        <di:waypoint x="359" y="640" />
+        <di:waypoint x="415" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f2_di" bpmnElement="f2">
+        <di:waypoint x="535" y="640" />
+        <di:waypoint x="605" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f3_di" bpmnElement="f3">
+        <di:waypoint x="725" y="640" />
+        <di:waypoint x="795" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f4_di" bpmnElement="f4">
+        <di:waypoint x="915" y="640" />
+        <di:waypoint x="1020" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f5_di" bpmnElement="f5">
+        <di:waypoint x="1070" y="640" />
+        <di:waypoint x="1123" y="640" />
+        <di:waypoint x="1123" y="480" />
+        <di:waypoint x="1175" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f6_di" bpmnElement="f6">
+        <di:waypoint x="1070" y="640" />
+        <di:waypoint x="1210" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f7_di" bpmnElement="f7">
+        <di:waypoint x="1295" y="480" />
+        <di:waypoint x="1400" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f8_di" bpmnElement="f8">
+        <di:waypoint x="1450" y="480" />
+        <di:waypoint x="1598" y="480" />
+        <di:waypoint x="1598" y="640" />
+        <di:waypoint x="1745" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f9_di" bpmnElement="f9">
+        <di:waypoint x="1450" y="480" />
+        <di:waypoint x="1598" y="480" />
+        <di:waypoint x="1598" y="160" />
+        <di:waypoint x="1745" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f10_di" bpmnElement="f10">
+        <di:waypoint x="1260" y="640" />
+        <di:waypoint x="1365" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f11_di" bpmnElement="f11">
+        <di:waypoint x="1260" y="640" />
+        <di:waypoint x="1313" y="640" />
+        <di:waypoint x="1313" y="320" />
+        <di:waypoint x="1365" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f12_di" bpmnElement="f12">
+        <di:waypoint x="1485" y="640" />
+        <di:waypoint x="1745" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f13_di" bpmnElement="f13">
+        <di:waypoint x="1485" y="320" />
+        <di:waypoint x="1590" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f14_di" bpmnElement="f14">
+        <di:waypoint x="1640" y="320" />
+        <di:waypoint x="1693" y="320" />
+        <di:waypoint x="1693" y="640" />
+        <di:waypoint x="1745" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f15_di" bpmnElement="f15">
+        <di:waypoint x="1640" y="320" />
+        <di:waypoint x="1693" y="320" />
+        <di:waypoint x="1693" y="160" />
+        <di:waypoint x="1745" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f16_di" bpmnElement="f16">
+        <di:waypoint x="1745" y="160" />
+        <di:waypoint x="1330" y="160" />
+        <di:waypoint x="1330" y="640" />
+        <di:waypoint x="915" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f17_di" bpmnElement="f17">
+        <di:waypoint x="1865" y="640" />
+        <di:waypoint x="1970" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f18_di" bpmnElement="f18">
+        <di:waypoint x="2020" y="640" />
+        <di:waypoint x="2505" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f19_di" bpmnElement="f19">
+        <di:waypoint x="2020" y="640" />
+        <di:waypoint x="2125" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f20_di" bpmnElement="f20">
+        <di:waypoint x="2565" y="680" />
+        <di:waypoint x="2565" y="710" />
+        <di:waypoint x="855" y="710" />
+        <di:waypoint x="855" y="680" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f21_di" bpmnElement="f21">
+        <di:waypoint x="2245" y="640" />
+        <di:waypoint x="2357" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f22_di" bpmnElement="f22">
+        <di:waypoint x="2773" y="640" />
+        <di:waypoint x="2885" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f23_di" bpmnElement="f23">
+        <di:waypoint x="2945" y="680" />
+        <di:waypoint x="2945" y="710" />
+        <di:waypoint x="1235" y="710" />
+        <di:waypoint x="1235" y="665" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="NoteSoD_di" bpmnElement="NoteSoD">
+        <dc:Bounds x="160" y="760" width="1600" height="100" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Assoc_ApprovalWorkflow_1_di" bpmnElement="Assoc_ApprovalWorkflow_1">
+        <di:waypoint x="1425" y="360" />
+        <di:waypoint x="260" y="760" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="NoteThreshold_di" bpmnElement="NoteThreshold">
+        <dc:Bounds x="160" y="870" width="1600" height="100" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Assoc_ApprovalWorkflow_2_di" bpmnElement="Assoc_ApprovalWorkflow_2">
+        <di:waypoint x="1235" y="665" />
+        <di:waypoint x="260" y="870" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="NoteRevert_di" bpmnElement="NoteRevert">
+        <dc:Bounds x="160" y="980" width="1600" height="100" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Assoc_ApprovalWorkflow_3_di" bpmnElement="Assoc_ApprovalWorkflow_3">
+        <di:waypoint x="2945" y="680" />
+        <di:waypoint x="260" y="980" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
