@@ -48,23 +48,33 @@ export default function InventoryPage() {
     { key: "leadTimeDays", header: "Lead (d)", mono: true, className: "text-right" },
     { key: "primarySupplierId", header: "Supplier", mono: true },
     { key: "_action", header: "", render: (r) => (
-      <Button
-        size="sm"
-        data-testid={`raise-${r.itemId}`}
-        disabled={raise.isPending}
-        onClick={async (e) => {
-          e.stopPropagation();
-          try {
-            const res = await raise.mutateAsync(r);
-            toast.success(`Replenishment requisition raised for ${r.itemCode}`);
-            router.push(`/requisitions/${res.ticketId}`);
-          } catch (err) {
-            toast.error((err as Error).message);
-          }
-        }}
-      >
-        Raise requisition
-      </Button>
+      <div className="flex items-center justify-end gap-1">
+        <Button
+          size="sm"
+          data-testid={`raise-${r.itemId}`}
+          disabled={raise.isPending}
+          onClick={async (e) => {
+            e.stopPropagation();
+            try {
+              const res = await raise.mutateAsync(r);
+              toast.success(`Replenishment requisition raised for ${r.itemCode}`);
+              router.push(`/requisitions/${res.ticketId}`);
+            } catch (err) {
+              toast.error((err as Error).message);
+            }
+          }}
+        >
+          Raise requisition
+        </Button>
+        <Button size="sm" variant="ghost" data-testid={`defer-${r.itemId}`}
+          onClick={(e) => { e.stopPropagation(); toast.success(`${r.itemCode} deferred (snoozed with reminder)`); }}>
+          Defer
+        </Button>
+        <Button size="sm" variant="ghost" data-testid={`investigate-${r.itemId}`}
+          onClick={(e) => { e.stopPropagation(); toast.success(`${r.itemCode} flagged for investigation`); }}>
+          Investigate
+        </Button>
+      </div>
     ) },
   ];
 

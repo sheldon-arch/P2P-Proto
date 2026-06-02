@@ -191,6 +191,18 @@
     "guardCount": 1
   },
   {
+    "id": "13-inventory-replenishment",
+    "name": "13 - Inventory-Driven Demand and Reorder Replenishment",
+    "lanes": [
+      "Inventory Manager",
+      "Platform / System",
+      "Receiving / Warehouse"
+    ],
+    "nodeCount": 20,
+    "flowCount": 22,
+    "guardCount": 9
+  },
+  {
     "id": "e01-approval-routing",
     "name": "Edge Case e01 - Approval Routing, Nearest-Bucket Selection and Auto-Approval",
     "lanes": [

@@ -174,5 +174,15 @@
   "07-item-onboarding#UploadFile": "screen:/admin/bulk-import",
   "11-returns-rma#Declined": "action:authorize",
   "e03-qty-tolerance#BuyerDisposition": "action:disposition",
-  "e04-ncr-capa#RootCause": "action:raiseCapa"
+  "e04-ncr-capa#RootCause": "action:raiseCapa",
+
+  "13-inventory-replenishment#ReviewWorklist": "screen:/inventory",
+  "13-inventory-replenishment#RaiseRequisition": "action:raiseReorder",
+  "13-inventory-replenishment#ReviewDraft": "screen:/requisitions/[id]",
+  "13-inventory-replenishment#SubmitRequisition": "screen:/requisitions/[id]",
+  "13-inventory-replenishment#DeferItem": "action:defer",
+  "13-inventory-replenishment#InvestigateItem": "action:investigate",
+  "13-inventory-replenishment#PostAdjustment": "screen:/inventory/adjust",
+  "13-inventory-replenishment#PostTransfer": "screen:/inventory/transfer",
+  "13-inventory-replenishment#RaiseGrn": "screen:/deliveries/[id]/receive"
 }

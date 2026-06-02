@@ -50,6 +50,7 @@ const LANE_TO_ROLE = {
   "Supplier / Vendor": "supplier",
   "Engineering": "engineering",
   "Tax / Compliance": "tax_compliance",
+  "Inventory Manager": "inventory_manager",
   "Reviewer (Language)": "approver", // configurable reviewer folded into approver chain
 };
 

@@ -1898,6 +1898,146 @@
       "lane": "Platform / System"
     },
     {
+      "diagram": "13-inventory-replenishment",
+      "id": "ReviewWorklist",
+      "type": "userTask",
+      "name": "Review reorder worklist (prioritized by urgency)",
+      "lane": "Inventory Manager"
+    },
+    {
+      "diagram": "13-inventory-replenishment",
+      "id": "DeferItem",
+      "type": "userTask",
+      "name": "Defer (snooze with reason and reminder date)",
+      "lane": "Inventory Manager"
+    },
+    {
+      "diagram": "13-inventory-replenishment",
+      "id": "InvestigateItem",
+      "type": "userTask",
+      "name": "Flag for investigation (suppress trigger)",
+      "lane": "Inventory Manager"
+    },
+    {
+      "diagram": "13-inventory-replenishment",
+      "id": "RaiseRequisition",
+      "type": "userTask",
+      "name": "Raise replenishment requisition (one-click)",
+      "lane": "Inventory Manager"
+    },
+    {
+      "diagram": "13-inventory-replenishment",
+      "id": "ReviewDraft",
+      "type": "userTask",
+      "name": "Review and adjust the draft requisition",
+      "lane": "Inventory Manager"
+    },
+    {
+      "diagram": "13-inventory-replenishment",
+      "id": "SubmitRequisition",
+      "type": "userTask",
+      "name": "Submit requisition (joins standard flow)",
+      "lane": "Inventory Manager"
+    },
+    {
+      "diagram": "13-inventory-replenishment",
+      "id": "RaiseGrn",
+      "type": "userTask",
+      "name": "Raise GRN on physical receipt (Diagram 08)",
+      "lane": "Receiving / Warehouse"
+    },
+    {
+      "diagram": "13-inventory-replenishment",
+      "id": "PostAdjustment",
+      "type": "userTask",
+      "name": "Post ADJUSTMENT movement (note required)",
+      "lane": "Inventory Manager"
+    },
+    {
+      "diagram": "13-inventory-replenishment",
+      "id": "PostTransfer",
+      "type": "userTask",
+      "name": "Post inter-warehouse TRANSFER (debit + credit)",
+      "lane": "Inventory Manager"
+    },
+    {
+      "diagram": "13-inventory-replenishment",
+      "id": "RecomputeAvailable",
+      "type": "serviceTask",
+      "name": "Recompute available = stockOnHand - allocated",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "13-inventory-replenishment",
+      "id": "NoAction",
+      "type": "serviceTask",
+      "name": "No action (above reorder point or open req exists)",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "13-inventory-replenishment",
+      "id": "SurfaceWorklist",
+      "type": "serviceTask",
+      "name": "Surface item on reorder worklist (with suggestedQty)",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "13-inventory-replenishment",
+      "id": "PrefillRequisition",
+      "type": "serviceTask",
+      "name": "Pre-fill draft replenishment requisition",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "13-inventory-replenishment",
+      "id": "PostReceipt",
+      "type": "serviceTask",
+      "name": "Post RECEIPT movement on GRN finalization",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "13-inventory-replenishment",
+      "id": "IncrementStock",
+      "type": "serviceTask",
+      "name": "Increment stockOnHand; recompute available",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "13-inventory-replenishment",
+      "id": "GwReorderTrigger",
+      "type": "exclusiveGateway",
+      "name": "available <= reorderPoint AND no open requisition?",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "13-inventory-replenishment",
+      "id": "GwManagerDecision",
+      "type": "exclusiveGateway",
+      "name": "Manager decision on worklist item",
+      "lane": "Inventory Manager"
+    },
+    {
+      "diagram": "13-inventory-replenishment",
+      "id": "GwClearWorklist",
+      "type": "exclusiveGateway",
+      "name": "available > reorderPoint now?",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "13-inventory-replenishment",
+      "id": "Start",
+      "type": "startEvent",
+      "name": "Stock movement posts",
+      "lane": "Platform / System"
+    },
+    {
+      "diagram": "13-inventory-replenishment",
+      "id": "End",
+      "type": "endEvent",
+      "name": "Replenishment cycle complete / no action",
+      "lane": "Platform / System"
+    },
+    {
       "diagram": "e01-approval-routing",
       "id": "ManualDecide",
       "type": "userTask",
@@ -4236,6 +4376,69 @@
       "from": "GwGrade",
       "to": "WriteScorecard",
       "guard": "grade A/B/C assigned + AVL gate applied"
+    },
+    {
+      "diagram": "13-inventory-replenishment",
+      "id": "f3",
+      "from": "GwReorderTrigger",
+      "to": "SurfaceWorklist",
+      "guard": "available <= reorderPoint AND no open requisition"
+    },
+    {
+      "diagram": "13-inventory-replenishment",
+      "id": "f3b",
+      "from": "GwReorderTrigger",
+      "to": "NoAction",
+      "guard": "available > reorderPoint OR open requisition exists"
+    },
+    {
+      "diagram": "13-inventory-replenishment",
+      "id": "f6",
+      "from": "GwManagerDecision",
+      "to": "PrefillRequisition",
+      "guard": "action == RAISE_REQUISITION"
+    },
+    {
+      "diagram": "13-inventory-replenishment",
+      "id": "f6d",
+      "from": "GwManagerDecision",
+      "to": "DeferItem",
+      "guard": "action == DEFER"
+    },
+    {
+      "diagram": "13-inventory-replenishment",
+      "id": "f6i",
+      "from": "GwManagerDecision",
+      "to": "InvestigateItem",
+      "guard": "action == INVESTIGATE"
+    },
+    {
+      "diagram": "13-inventory-replenishment",
+      "id": "f10",
+      "from": "SubmitRequisition",
+      "to": "RaiseGrn",
+      "guard": "standard approval -> sourcing -> PO -> delivery (02-05, 08)"
+    },
+    {
+      "diagram": "13-inventory-replenishment",
+      "id": "f14",
+      "from": "GwClearWorklist",
+      "to": "End",
+      "guard": "available > reorderPoint -> clear worklist"
+    },
+    {
+      "diagram": "13-inventory-replenishment",
+      "id": "f_adj",
+      "from": "PostAdjustment",
+      "to": "RecomputeAvailable",
+      "guard": "re-evaluate reorder trigger"
+    },
+    {
+      "diagram": "13-inventory-replenishment",
+      "id": "f_xfer",
+      "from": "PostTransfer",
+      "to": "RecomputeAvailable",
+      "guard": "re-evaluate reorder trigger"
     },
     {
       "diagram": "e01-approval-routing",
