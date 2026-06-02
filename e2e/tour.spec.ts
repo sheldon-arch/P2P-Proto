@@ -123,3 +123,53 @@ test("tour: exit closes the overlay", async ({ page }) => {
   await page.getByTestId("tour-exit").click();
   await expect(page.getByTestId("tour-overlay")).toBeHidden();
 });
+
+// ---- Try-it interactivity: prove a REAL user can complete the action --------
+async function startLong(page: Page) {
+  await resetStore(page);
+  await page.goto("/dashboard");
+  await page.waitForLoadState("networkidle").catch(() => {});
+  await page.getByTestId("tour-launch").click();
+  await page.getByTestId("tour-start-long").click();
+  await expect(page.getByTestId("tour-coachmark")).toBeVisible({ timeout: 10_000 });
+}
+async function advanceTo(page: Page, n: number) {
+  for (let i = 1; i < n; i++) {
+    if ((await page.getByTestId("tour-tryit-hint").count()) > 0) await page.getByTestId("tour-skip").click();
+    else await page.getByTestId("tour-next").click();
+    await page.waitForTimeout(400);
+  }
+}
+
+test("Try-it step gates on the action: no Next, Skip + hint present", async ({ page }) => {
+  await startLong(page);
+  await advanceTo(page, 3); // l-reorder-try
+  await page.waitForTimeout(600);
+  await expect(page.getByTestId("tour-tryit-hint")).toBeVisible();
+  await expect(page.getByTestId("tour-skip")).toBeVisible();
+  await expect(page.getByTestId("tour-next")).toHaveCount(0);
+});
+
+test("Try-it: real control is clickable THROUGH the overlay and advances", async ({ page }) => {
+  await startLong(page);
+  await advanceTo(page, 3);
+  await page.waitForTimeout(700);
+  await expect(page.getByTestId("tour-progress")).toHaveText(/^3 \//);
+  const raise = page.locator('[data-testid^="raise-"]').first();
+  // trial click asserts actionability incl. "not covered by another element" —
+  // i.e. the overlay is genuinely click-through on a Try-it step.
+  await raise.click({ trial: true });
+  await raise.click();
+  await expect(page.getByTestId("tour-progress")).not.toHaveText(/^3 \//, { timeout: 8_000 });
+});
+
+test("Try-it: performing the approve action (not Skip) advances", async ({ page }) => {
+  await startLong(page);
+  await advanceTo(page, 8); // l-approve-try
+  await page.waitForTimeout(700);
+  await expect(page.getByTestId("tour-progress")).toHaveText(/^8 \//);
+  const approve = page.getByTestId("approve-btn");
+  await approve.click({ trial: true });
+  await approve.click();
+  await expect(page.getByTestId("tour-progress")).not.toHaveText(/^8 \//, { timeout: 8_000 });
+});
