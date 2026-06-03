@@ -5,16 +5,25 @@
  */
 let currentRole: string | undefined;
 let currentUserId: string | undefined;
+let tourActive = false;
 
 export function setApiIdentity(role: string | undefined, userId: string | undefined) {
   currentRole = role;
   currentUserId = userId;
 }
 
+/** While a guided tour is running, requests carry x-tour so the mock API skips
+ *  its artificial latency (the tour must feel instant). Manual browsing keeps
+ *  the realistic latency. Toggled by the TourProvider on start/exit. */
+export function setTourActive(active: boolean) {
+  tourActive = active;
+}
+
 function headers(): HeadersInit {
   const h: Record<string, string> = { "Content-Type": "application/json" };
   if (currentRole) h["x-role"] = currentRole;
   if (currentUserId) h["x-user-id"] = currentUserId;
+  if (tourActive) h["x-tour"] = "1";
   return h;
 }
 

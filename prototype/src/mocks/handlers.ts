@@ -34,7 +34,10 @@ const ENTITY_LABEL: Record<string, string> = {
 };
 
 let latencySeq = 0;
-function settleDelay(): Promise<void> {
+function settleDelay(request?: Request): Promise<void> {
+  // During a guided tour (x-tour header) skip the artificial latency so steps
+  // feel instant; manual browsing keeps the realistic 120..260ms cycle.
+  if (request?.headers.get("x-tour")) return Promise.resolve();
   // 120..260ms deterministic cycle
   latencySeq = (latencySeq + 1) % 8;
   const ms = 120 + latencySeq * 20;
@@ -75,8 +78,8 @@ export const handlers = [
   }),
 
   // ---- computed: KPIs ------------------------------------------------
-  http.get("/api/kpis", async () => {
-    await settleDelay();
+  http.get("/api/kpis", async ({ request }) => {
+    await settleDelay(request);
     // 12-month portfolio KPIs are precomputed in seed _index; expose with live counts.
     const suppliers = store.list("suppliers");
     const grades = { A: 0, B: 0, C: 0 } as Record<string, number>;
@@ -95,8 +98,8 @@ export const handlers = [
   }),
 
   // ---- computed: spend by category (analytics) ----------------------
-  http.get("/api/spend", async () => {
-    await settleDelay();
+  http.get("/api/spend", async ({ request }) => {
+    await settleDelay(request);
     const tickets = store.list("tickets");
     const byCategory: Record<string, number> = {};
     for (const t of tickets) {
@@ -110,8 +113,8 @@ export const handlers = [
   }),
 
   // ---- computed: reorder worklist (diagram 13) ----------------------
-  http.get("/api/reorder-worklist", async () => {
-    await settleDelay();
+  http.get("/api/reorder-worklist", async ({ request }) => {
+    await settleDelay(request);
     const rows = computeWorklist({
       items: store.list("items"),
       inventory: store.list("inventory"),
@@ -123,7 +126,7 @@ export const handlers = [
 
   // ---- raise a replenishment requisition from a worklist row --------
   http.post("/api/reorder/raise", async ({ request }) => {
-    await settleDelay();
+    await settleDelay(request);
     const body = (await request.json().catch(() => ({}))) as { row: WorklistRow };
     const row = body.row;
     if (!row) return HttpResponse.json({ error: "missing row" }, { status: 400 });
@@ -144,7 +147,7 @@ export const handlers = [
 
   // ---- award an RFQ: split awarded lines into one PO per supplier ---
   http.post("/api/rfq/:id/award", async ({ params, request }) => {
-    await settleDelay();
+    await settleDelay(request);
     const rfqId = params.id as string;
     const body = (await request.json().catch(() => ({}))) as { awards: AwardLine[]; justification?: string };
     const awards = body.awards ?? [];
@@ -211,7 +214,7 @@ export const handlers = [
 
   // ---- post a stock movement (ADJUSTMENT / TRANSFER) ----------------
   http.post("/api/stock-movement", async ({ request }) => {
-    await settleDelay();
+    await settleDelay(request);
     const m = (await request.json().catch(() => ({}))) as Record<string, unknown>;
     const type = String(m.type ?? "ADJUSTMENT");
     if (type === "ADJUSTMENT" && !String(m.note ?? "").trim()) {
@@ -244,16 +247,16 @@ export const handlers = [
   }),
 
   // ---- computed: budget availability --------------------------------
-  http.get("/api/budget/:id", async ({ params }) => {
-    await settleDelay();
+  http.get("/api/budget/:id", async ({ params, request }) => {
+    await settleDelay(request);
     const b = store.get("budgets", params.id as string);
     if (!b) return HttpResponse.json({ error: "not found" }, { status: 404 });
     return HttpResponse.json(b);
   }),
 
   // ---- legal actions for a record (UI gating) -----------------------
-  http.get("/api/:entity/:id/actions", async ({ params }) => {
-    await settleDelay();
+  http.get("/api/:entity/:id/actions", async ({ params, request }) => {
+    await settleDelay(request);
     return HttpResponse.json({
       actions: legalActions(params.entity as string, params.id as string),
     });
@@ -261,7 +264,7 @@ export const handlers = [
 
   // ---- generic transition (the only mutator path) -------------------
   http.post("/api/:entity/:id/transition", async ({ params, request }) => {
-    await settleDelay();
+    await settleDelay(request);
     const body = (await request.json().catch(() => ({}))) as {
       action: string;
       payload?: Record<string, unknown>;
@@ -282,7 +285,7 @@ export const handlers = [
 
   // ---- generic list -------------------------------------------------
   http.get("/api/:entity", async ({ params, request }) => {
-    await settleDelay();
+    await settleDelay(request);
     const entity = params.entity as string;
     const url = new URL(request.url);
     const rows = filterByQuery(store.list(entity), url);
@@ -292,7 +295,7 @@ export const handlers = [
 
   // ---- generic get one ----------------------------------------------
   http.get("/api/:entity/:id", async ({ params, request }) => {
-    await settleDelay();
+    await settleDelay(request);
     const entity = params.entity as string;
     const row = store.get(entity, params.id as string);
     if (!row) return HttpResponse.json({ error: "not found" }, { status: 404 });
@@ -302,7 +305,7 @@ export const handlers = [
 
   // ---- generic create -----------------------------------------------
   http.post("/api/:entity", async ({ params, request }) => {
-    await settleDelay();
+    await settleDelay(request);
     const entity = params.entity as string;
     const body = (await request.json().catch(() => ({}))) as Record<string, unknown>;
     const id = (body.id as string) ?? store.nextId(entity.toUpperCase().slice(0, 3));
@@ -312,7 +315,7 @@ export const handlers = [
 
   // ---- generic patch ------------------------------------------------
   http.patch("/api/:entity/:id", async ({ params, request }) => {
-    await settleDelay();
+    await settleDelay(request);
     const entity = params.entity as string;
     const body = (await request.json().catch(() => ({}))) as Record<string, unknown>;
     const updated = store.patch(entity, params.id as string, body);

@@ -13,12 +13,27 @@
  */
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import { useSession } from "@/lib/session/SessionProvider";
 import type { RoleId } from "@/lib/rbac/rbac";
 import type { TourStep, TourVariant } from "@/lib/tour/types";
 import { TOUR_VARIANTS } from "@/lib/tour/script";
 import { eventBus } from "@/lib/events/event-bus";
+import { setTourActive } from "@/queries/client";
+import { api } from "@/queries/client";
+import { qk } from "@/queries/keys";
 import { TourOverlay } from "./TourOverlay";
+
+// Golden-path records the tour visits, warmed into the query cache on start so
+// steps render from cache with no spinner. (entity, id) pairs + computed names.
+const PREFETCH_ONE: [string, string][] = [
+  ["tickets", "TKT-HERO"], ["tickets", "TKT-LV-002"],
+  ["rfqs", "RFQ-HERO"], ["rfqs", "RFQ-MULTI"],
+  ["purchaseOrders", "PO-HERO"], ["purchaseOrders", "PO-SUSP-1"], ["purchaseOrders", "PO-FOB-1-FF"],
+  ["ncrs", "NCR-LV-1"],
+];
+const PREFETCH_LIST = ["tickets", "rfqs", "purchaseOrders", "invoices", "installments", "ncrs", "returns", "suppliers", "items", "inventory", "budgets"];
+const PREFETCH_COMPUTED = ["kpis", "spend", "reorder-worklist"];
 
 type TourCtx = {
   active: boolean;
@@ -37,6 +52,7 @@ const Ctx = createContext<TourCtx | null>(null);
 
 export function TourProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { setRole } = useSession();
   const [active, setActive] = useState(false);
   const [index, setIndex] = useState(0);
@@ -54,19 +70,39 @@ export function TourProvider({ children }: { children: React.ReactNode }) {
     [router, setRole],
   );
 
+  // Warm the cache so revisited steps render instantly (runs with x-tour active,
+  // so each prefetch is sub-millisecond). staleTime keeps them fresh for the run.
+  const warmCache = useCallback(() => {
+    for (const [entity, id] of PREFETCH_ONE) {
+      queryClient.prefetchQuery({ queryKey: qk.one(entity, id), queryFn: () => api.one(entity, id) });
+    }
+    for (const entity of PREFETCH_LIST) {
+      queryClient.prefetchQuery({ queryKey: qk.list(entity), queryFn: () => api.list(entity) });
+    }
+    for (const name of PREFETCH_COMPUTED) {
+      queryClient.prefetchQuery({ queryKey: qk.computed(name), queryFn: () => api.computed(name) });
+    }
+  }, [queryClient]);
+
   const start = useCallback((v: TourVariant = "long") => {
     stepsRef.current = TOUR_VARIANTS[v];
     setVariant(v);
     setIndex(0);
+    setTourActive(true); // skip mock API latency for the duration of the tour
     setActive(true);
+    warmCache();
     applyStep(0);
-  }, [applyStep]);
+  }, [applyStep, warmCache]);
 
-  const exit = useCallback(() => setActive(false), []);
+  const exit = useCallback(() => {
+    setTourActive(false);
+    setActive(false);
+  }, []);
 
   const next = useCallback(() => {
     setIndex((i) => {
       if (i >= stepsRef.current.length - 1) {
+        setTourActive(false);
         setActive(false);
         return i;
       }
@@ -92,8 +128,8 @@ export function TourProvider({ children }: { children: React.ReactNode }) {
     const want = current.advanceWhen;
     const unsub = eventBus.subscribe((e) => {
       if (e.type === want) {
-        // small delay so the user sees their action's result before moving on
-        setTimeout(() => next(), 600);
+        // brief beat so the viewer registers their action succeeded, then advance
+        setTimeout(() => next(), 250);
       }
     });
     return unsub;

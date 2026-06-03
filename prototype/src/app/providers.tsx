@@ -22,7 +22,10 @@ function getQueryClient(): QueryClient {
   if (!queryClient) {
     queryClient = new QueryClient({
       defaultOptions: {
-        queries: { staleTime: 5_000, retry: false, refetchOnWindowFocus: false },
+        // staleTime well above a tour run so a record fetched once is reused
+        // across steps with no refetch/skeleton. Mutations still invalidate via
+        // the event bridge, so revisited screens update after a transition.
+        queries: { staleTime: 5 * 60_000, gcTime: 10 * 60_000, retry: false, refetchOnWindowFocus: false },
       },
     });
     attachQueryBridge(queryClient);

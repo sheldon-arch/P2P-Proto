@@ -63,8 +63,10 @@ export function TourOverlay() {
         el.scrollIntoView({ block: "center", behavior: "instant" as ScrollBehavior });
         measure(el);
         setResolved(true);
-        // track to final position: re-measure every frame for ~600ms, then stop.
-        const trackUntil = Date.now() + 600;
+        // track to final position: re-measure every frame for a short window
+        // (catches late layout shift), then stop. Scroll/resize listeners keep it
+        // correct after that. 200ms is enough now that tour data loads instantly.
+        const trackUntil = Date.now() + 200;
         const tick = () => {
           if (cancelled || !anchorEl) return;
           measure(anchorEl);
@@ -76,15 +78,16 @@ export function TourOverlay() {
         return;
       }
       if (Date.now() < deadline) {
-        raf = requestAnimationFrame(() => setTimeout(attempt, 80));
+        // retry on the next frame (tight) until the anchor paints
+        raf = requestAnimationFrame(() => setTimeout(attempt, 30));
       } else {
         // anchor never appeared -> centered fallback (no spotlight)
         setRect(null);
         setResolved(true);
       }
     }
-    // give the route a tick to render
-    const t = setTimeout(attempt, 120);
+    // find the anchor on the next paint (no fixed pre-delay)
+    const t = setTimeout(attempt, 0);
     return () => {
       cancelled = true;
       clearTimeout(t);
